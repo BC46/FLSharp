@@ -1,8 +1,8 @@
 #include <winver.h>
 
 VS_VERSION_INFO VERSIONINFO
-FILEVERSION     0,1,0,0
-PRODUCTVERSION  0,1,0,0
+FILEVERSION     0,2,0,0
+PRODUCTVERSION  0,2,0,0
 FILEOS          VOS__WINDOWS32
 FILETYPE        VFT_DLL
 {
@@ -12,12 +12,12 @@ FILETYPE        VFT_DLL
         {
             VALUE "CompanyName",      "BC46"
             VALUE "FileDescription",  "Engine Throttle Sync Fix"
-            VALUE "FileVersion",      "0.1"
+            VALUE "FileVersion",      "0.2"
             VALUE "InternalName",     "Engine Throttle Sync Fix"
             VALUE "LegalCopyright",   "Copyright 2023 BC46"
             VALUE "OriginalFilename", "EngineThrottleSyncFix.dll"
             VALUE "ProductName",      "Freelancer"
-            VALUE "ProductVersion",   "0, 1, 0, 0"
+            VALUE "ProductVersion",   "0, 2, 0, 0"
         }
     }
 

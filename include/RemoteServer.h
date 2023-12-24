@@ -14,15 +14,19 @@ struct SSPObjUpdateInfo
 
 class IServerImpl;
 
-typedef void __fastcall SPObjUpdateCall(IServerImpl* server, PVOID edx, SSPObjUpdateInfo &updateInfo, UINT client);
+// SPObjUpdate function definition
+typedef void (__fastcall SPObjUpdateCall)(IServerImpl* server, PVOID _edx, SSPObjUpdateInfo &updateInfo, UINT client);
 
 class IServerImpl {
 public:
-    void SPObjUpdate(IServerImpl* server, PVOID edx, SSPObjUpdateInfo &updateInfo, UINT client)
+    // Wrapper for the virtual SPObjUpdate function in remoteserver.dll
+    void SPObjUpdate(PVOID _edx, SSPObjUpdateInfo &updateInfo, UINT client)
     {
+        // Get function pointer from the vftable and the determined offset
         SPObjUpdateCall* originalFunction = (SPObjUpdateCall*) *((PDWORD)((char*)vftable + 0xD0));
 
-        (originalFunction)(server, edx, updateInfo, client);
+        // Call the original SPObjUpdate function
+        (originalFunction)(this, _edx, updateInfo, client);
     }
 
 private:

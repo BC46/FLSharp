@@ -9,7 +9,7 @@
 Naked CShip* GetCShip()
 {
     __asm {
-        mov	    eax, 0x54baf0
+        mov	    eax, 0x54BAF0
         call    eax
         test    eax, eax
         jz      noship
@@ -29,21 +29,24 @@ void Patch(LPVOID vOffset, LPVOID mem, UINT len)
     memcpy(vOffset, mem, len);
 }
 
-void __fastcall SPObjUpdate_Hook(IServerImpl* server, PVOID edx, SSPObjUpdateInfo &updateInfo, UINT client)
+void __fastcall SPObjUpdate_Hook(IServerImpl* server, PVOID _edx, SSPObjUpdateInfo &updateInfo, UINT client)
 {
+    // Get the throttle from CShip and set it in the update info
     updateInfo.fThrottle = GetCShip()->get_throttle();
 
-    server->SPObjUpdate(server, edx, updateInfo, client);
+    // Call the original function
+    server->SPObjUpdate(_edx, updateInfo, client);
 }
 
 void Init()
 {
     BYTE callAbsOpcode = 0x15; // Second byte of the absolute dword ptr call opcode
-    Patch((PVOID) (OBJ_UPDATE_CALL_ADDR + 1), &callAbsOpcode, sizeof(BYTE));
+    Patch((PVOID) (OBJ_UPDATE_CALL_ADDR + 1), &callAbsOpcode, sizeof(BYTE)); // Change opcode such that we can hook the function call
 
     static DWORD hookPtr = (DWORD) SPObjUpdate_Hook;
     DWORD hookPtrRef = (DWORD) &hookPtr;
 
+    // Hook SPObjUpdate function call
     Patch((PVOID) (OBJ_UPDATE_CALL_ADDR + 2), &hookPtrRef, sizeof(DWORD));
 }
 
