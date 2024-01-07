@@ -2,19 +2,18 @@
 #include "RemoteServer.h"
 
 #define OBJ_UPDATE_CALL_ADDR 0x54167C
-
 #define Naked __declspec(naked)
+
+const DWORD Get_IOBjRW_ADDR = 0x54BAF0;
 
 // Thanks adoxa
 Naked CShip* GetCShip()
 {
     __asm {
-        mov	    eax, 0x54BAF0
-        call    eax
+        call    Get_IOBjRW_ADDR
         test    eax, eax
         jz      noship
-        add     eax, 12
-        mov     eax, [eax+4]
+        mov     eax, [eax+16]
 
     noship:
         ret
@@ -31,8 +30,11 @@ void Patch(LPVOID vOffset, LPVOID mem, UINT len)
 
 void __fastcall SPObjUpdate_Hook(IServerImpl* server, PVOID _edx, SSPObjUpdateInfo &updateInfo, UINT client)
 {
-    // Get the throttle from CShip and set it in the update info
-    updateInfo.fThrottle = GetCShip()->get_throttle();
+    CShip* ship = GetCShip();
+
+    // Get throttle from the ship and set it in the update info, provided the ship isn't NULL
+    if (ship)
+        updateInfo.fThrottle = ship->get_throttle();
 
     // Call the original function
     server->SPObjUpdate(_edx, updateInfo, client);
