@@ -1,2 +1,3 @@
 EXPORTS
 ?get_throttle@CShip@@QBEMXZ
+?CheckForSync@CRemotePhysicsSimulation@@QAE_NABVVector@@0ABVQuaternion@@@Z
