@@ -8,6 +8,4 @@
 struct Import CShip
 {
     float get_throttle() const;
-
-    BYTE data[0x2DC];
 };
