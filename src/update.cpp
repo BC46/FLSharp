@@ -36,7 +36,7 @@ bool __fastcall CheckForSync_Hook(CRemotePhysicsSimulation* physicsSim, PVOID _e
 
     // If the client doesn't want to sync, we do our own checks to see if it should sync regardless
 
-    // Ensure it syncs at least once every 500 ms
+    // Ensure it syncs at least once every {syncIntervalMs} ms
     if ((double) (clock() - timeSinceLastUpdate) >= syncIntervalMs)
         return true;
 
