@@ -50,7 +50,7 @@ void __fastcall SPObjUpdate_Hook(IServerImpl* server, PVOID _edx, SSPObjUpdateIn
 
     // Get throttle from the ship and set it in the update info, provided the ship isn't NULL
     if (ship)
-        updateInfo.fThrottle = ship->get_throttle();
+        updateInfo.throttle = ship->get_throttle();
 
     // Send update to the server
     server->SPObjUpdate(_edx, updateInfo, client);
