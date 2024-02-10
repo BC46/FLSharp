@@ -10,9 +10,6 @@ void Patch(LPVOID vOffset, LPVOID mem, UINT len)
 
 void Nop(LPVOID vOffset, UINT len)
 {
-    if (len == 0)
-        return;
-
     static DWORD _;
 
     VirtualProtect(vOffset, len, PAGE_EXECUTE_READWRITE, &_);
@@ -30,5 +27,6 @@ void Hook(DWORD location, DWORD hookFunc, UINT instrLen)
     Patch((PVOID) (location + 1), &relOffset, sizeof(DWORD));
 
     // Nop out excess bytes
-    Nop((PVOID) (location + 5), instrLen - 5);
+    if (instrLen > 0)
+        Nop((PVOID) (location + 5), instrLen - 5);
 }
