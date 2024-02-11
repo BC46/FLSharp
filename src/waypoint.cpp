@@ -12,8 +12,8 @@ PDWORD WaypointCheck_Hook(UINT index)
     if (!origResult)
         return NULL;
 
-    PUINT playerSystem = (PUINT) PLAYER_SYSTEM_ADDR;
-    PUINT waypointSystem = (PUINT) ((PBYTE) origResult + 12);
+    UINT playerSystem = *(PUINT) PLAYER_SYSTEM_ADDR;
+    UINT waypointSystem = *(PUINT) ((PBYTE) origResult + 12);
 
-    return *playerSystem == *waypointSystem ? origResult : NULL;
+    return playerSystem == waypointSystem ? origResult : NULL;
 }
