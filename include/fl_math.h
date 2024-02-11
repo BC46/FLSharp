@@ -21,4 +21,4 @@ public:
 
 float CheckRotationDelta(const Quaternion& quat, const Matrix& rot);
 
-Quaternion HkMatrixToQuaternion(const Matrix& m);
+void HkMatrixToQuaternion(const Matrix& m, Quaternion &dest);

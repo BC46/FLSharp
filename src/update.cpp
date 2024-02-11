@@ -9,12 +9,12 @@ const DWORD Get_IOBjRW_ADDR = 0x54BAF0;
 const double syncIntervalMs = 2000;
 const double rotationCheckIntervalMs = 500;
 
-clock_t timeSinceLastUpdate, timeSinceLastRotationCheck;
+Quaternion lastOrientation;
+clock_t timeSinceLastUpdate;
 
-void InitTimesSinceLastUpdate()
+void InitTimeSinceLastUpdate()
 {
     timeSinceLastUpdate = clock();
-    timeSinceLastRotationCheck = clock();
 }
 
 // Thanks adoxa
@@ -36,7 +36,7 @@ bool hasTimeElapsed(const clock_t &lastUpdate, const double &intervalMs)
     return (double) (clock() - lastUpdate) >= intervalMs;
 }
 
-bool isEkFlipped(CEEngine const * engine)
+bool isEkToggled(CEEngine const * engine)
 {
     static bool lastEngineState = false;
 
@@ -48,9 +48,7 @@ bool isEkFlipped(CEEngine const * engine)
 
 bool hasOrientationChanged(CShip* ship)
 {
-    static Quaternion lastDir;
-
-    if (!ship || !hasTimeElapsed(timeSinceLastRotationCheck, rotationCheckIntervalMs))
+    if (!ship || !hasTimeElapsed(timeSinceLastUpdate, rotationCheckIntervalMs))
         return false;
 
     Archetype::Ship const * shipArch = ship->shiparch();
@@ -60,11 +58,7 @@ bool hasOrientationChanged(CShip* ship)
     float maxTurnSpeed = (avgTorque / avgDrag) * 57.29578f;
 
     float turnThreshold = min(30.0f, 15 * sqrtf(maxTurnSpeed) / sqrtf(ship->get_radius()));
-    float rotationDelta = CheckRotationDelta(lastDir, ship->get_orientation());
-
-    timeSinceLastRotationCheck = clock();
-
-    lastDir = HkMatrixToQuaternion(ship->get_orientation());
+    float rotationDelta = CheckRotationDelta(lastOrientation, ship->get_orientation());
 
     return rotationDelta > turnThreshold;
 }
@@ -91,7 +85,7 @@ bool __fastcall CheckForSync_Hook(CRemotePhysicsSimulation* physicsSim, PVOID _e
     if (!engine)
         return false;
 
-    return isEkFlipped(engine);
+    return isEkToggled(engine);
 }
 
 // Hook for function that sends an update to the server
@@ -99,9 +93,14 @@ void __fastcall SPObjUpdate_Hook(IServerImpl* server, PVOID _edx, SSPObjUpdateIn
 {
     CShip* ship = GetCShip();
 
-    // Get throttle from the ship and set it in the update info, provided the ship isn't NULL
     if (ship)
+    {
+        // Get throttle from the ship and set it in the update info
         updateInfo.throttle = ship->get_throttle();
+
+        // Set the last orientation
+        HkMatrixToQuaternion(ship->get_orientation(), lastOrientation);
+    }
 
     // Send update to the server
     server->SPObjUpdate(_edx, updateInfo, client);
