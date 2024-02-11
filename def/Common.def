@@ -1,3 +1,6 @@
 EXPORTS
+?FindFirst@CEquipManager@@QBEPBVCEquip@@I@Z
 ?get_throttle@CShip@@QBEMXZ
+?IsTriggered@FuseAction@@UBE_NXZ
+?cast@CEEngine@@SAPBV1@PBVCEquip@@@Z
 ?CheckForSync@CRemotePhysicsSimulation@@QAE_NABVVector@@0ABVQuaternion@@@Z

@@ -4,7 +4,8 @@
 #define Naked __declspec(naked)
 
 const DWORD Get_IOBjRW_ADDR = 0x54BAF0;
-const double syncIntervalMs = 500;
+const double syncIntervalMs = 1000;
+const double rotationCheckIntervalMs = 500;
 
 clock_t timeSinceLastUpdate;
 
@@ -27,6 +28,26 @@ Naked CShip* GetCShip()
     }
 }
 
+bool hasMaxTimeSinceLastUpdateElapsed()
+{
+    return (double) (clock() - timeSinceLastUpdate) >= syncIntervalMs;
+}
+
+bool isEkFlipped(CEEngine const * engine)
+{
+    static bool lastEngineState = false;
+
+    bool result = lastEngineState != engine->IsTriggered();
+    lastEngineState = engine->IsTriggered();
+
+    return result;
+}
+
+bool hasOrientationChanged(CShip* ship)
+{
+    return false;
+}
+
 // Hook for function that determines whether an update should be sent to the server
 bool __fastcall CheckForSync_Hook(CRemotePhysicsSimulation* physicsSim, PVOID _edx, Vector const &unk1, Vector const &unk2, Quaternion const &unk3)
 {
@@ -36,11 +57,20 @@ bool __fastcall CheckForSync_Hook(CRemotePhysicsSimulation* physicsSim, PVOID _e
 
     // If the client doesn't want to sync, we do our own checks to see if it should sync regardless
 
-    // Ensure it syncs at least once every {syncIntervalMs} ms
-    if ((double) (clock() - timeSinceLastUpdate) >= syncIntervalMs)
+    if (hasMaxTimeSinceLastUpdateElapsed())
         return true;
 
-    return false;
+    CShip* ship = GetCShip();
+
+    if (!ship)
+        return false;
+
+    CEEngine const * engine = CEEngine::cast(ship->equipManager.FindFirst(ENGINE_TYPE));
+
+    if (!engine)
+        return false;
+
+    return isEkFlipped(engine) || hasOrientationChanged(ship);
 }
 
 // Hook for function that sends an update to the server
