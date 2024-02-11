@@ -1,5 +1,7 @@
 #pragma once
 
+#include "fl_math.h"
+
 #define WIN32_LEAN_AND_MEAN
 #include <windows.h>
 
@@ -15,9 +17,29 @@ public:
     CEquip const * FindFirst(UINT type) const;
 };
 
-struct Import CShip
+namespace Archetype
+{
+    struct Ship
+    {
+    private:
+        BYTE data[60];
+    public:
+        Vector angularDrag;
+        Vector steeringTorque;
+    };
+}
+
+class EngineObject
+{
+public:
+    float const get_radius() const;
+    Matrix const & get_orientation() const;
+};
+
+struct Import CShip : public EngineObject
 {
     float get_throttle() const;
+    Archetype::Ship const * shiparch() const;
 private:
     BYTE data[0xE4];
 public:
@@ -40,18 +62,6 @@ class Import CEEngine : public FuseAction
 {
 public:
     static CEEngine const * cast(CEquip const * equip);
-};
-
-class Vector
-{
-public:
-    float x, y, z;
-};
-
-class Quaternion
-{
-public:
-    float w, x, y, z;
 };
 
 struct Import CRemotePhysicsSimulation

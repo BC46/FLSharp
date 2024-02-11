@@ -44,7 +44,9 @@ $(SRC_DIR)\main.cpp: $(INCLUDE_DIR)\update.h $(INCLUDE_DIR)\utils.h $(INCLUDE_DI
 $(SRC_DIR)\update.cpp: $(INCLUDE_DIR)\update.h
 $(SRC_DIR)\utils.cpp: $(INCLUDE_DIR)\utils.h
 $(SRC_DIR)\waypoint.cpp: $(INCLUDE_DIR)\waypoint.h
+$(SRC_DIR)\fl_math.cpp: $(INCLUDE_DIR)\fl_math.h
 $(INCLUDE_DIR)\update.h: $(INCLUDE_DIR)\Common.h $(INCLUDE_DIR)\RemoteServer.h
+$(INCLUDE_DIR)\Common.h: $(INCLUDE_DIR)\fl_math.h
 
 clean:
 	del $(BIN_DIR)\*.dll $(OBJ_DIR)\*.obj $(OBJ_DIR)\*.RES $(OBJ_DIR)\*.lib

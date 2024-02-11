@@ -1,17 +1,20 @@
 #include "update.h"
 #include <time.h>
+#include <cmath>
 
 #define Naked __declspec(naked)
 
 const DWORD Get_IOBjRW_ADDR = 0x54BAF0;
-const double syncIntervalMs = 1000;
+
+const double syncIntervalMs = 2000;
 const double rotationCheckIntervalMs = 500;
 
-clock_t timeSinceLastUpdate;
+clock_t timeSinceLastUpdate, timeSinceLastRotationCheck;
 
-void InitTimeSinceLastUpdate()
+void InitTimesSinceLastUpdate()
 {
     timeSinceLastUpdate = clock();
+    timeSinceLastRotationCheck = clock();
 }
 
 // Thanks adoxa
@@ -28,9 +31,9 @@ Naked CShip* GetCShip()
     }
 }
 
-bool hasMaxTimeSinceLastUpdateElapsed()
+bool hasTimeElapsed(const clock_t &lastUpdate, const double &intervalMs)
 {
-    return (double) (clock() - timeSinceLastUpdate) >= syncIntervalMs;
+    return (double) (clock() - lastUpdate) >= intervalMs;
 }
 
 bool isEkFlipped(CEEngine const * engine)
@@ -45,22 +48,40 @@ bool isEkFlipped(CEEngine const * engine)
 
 bool hasOrientationChanged(CShip* ship)
 {
-    return false;
+    static Quaternion lastDir;
+
+    if (!ship || !hasTimeElapsed(timeSinceLastRotationCheck, rotationCheckIntervalMs))
+        return false;
+
+    Archetype::Ship const * shipArch = ship->shiparch();
+
+    float avgDrag = (shipArch->angularDrag.x + shipArch->angularDrag.y) / 2;
+    float avgTorque = (shipArch->steeringTorque.x + shipArch->steeringTorque.y) / 2;
+    float maxTurnSpeed = (avgTorque / avgDrag) * 57.29578f;
+
+    float turnThreshold = min(30.0f, 15 * sqrtf(maxTurnSpeed) / sqrtf(ship->get_radius()));
+    float rotationDelta = CheckRotationDelta(lastDir, ship->get_orientation());
+
+    timeSinceLastRotationCheck = clock();
+
+    lastDir = HkMatrixToQuaternion(ship->get_orientation());
+
+    return rotationDelta > turnThreshold;
 }
 
 // Hook for function that determines whether an update should be sent to the server
 bool __fastcall CheckForSync_Hook(CRemotePhysicsSimulation* physicsSim, PVOID _edx, Vector const &unk1, Vector const &unk2, Quaternion const &unk3)
 {
+    CShip* ship = GetCShip();
+    bool orientationChanged = hasOrientationChanged(ship);
+
     // Does the client want to sync?
     if (physicsSim->CheckForSync(unk1, unk2, unk3))
         return true;
 
     // If the client doesn't want to sync, we do our own checks to see if it should sync regardless
-
-    if (hasMaxTimeSinceLastUpdateElapsed())
+    if (orientationChanged || hasTimeElapsed(timeSinceLastUpdate, syncIntervalMs))
         return true;
-
-    CShip* ship = GetCShip();
 
     if (!ship)
         return false;
@@ -70,7 +91,7 @@ bool __fastcall CheckForSync_Hook(CRemotePhysicsSimulation* physicsSim, PVOID _e
     if (!engine)
         return false;
 
-    return isEkFlipped(engine) || hasOrientationChanged(ship);
+    return isEkFlipped(engine);
 }
 
 // Hook for function that sends an update to the server
