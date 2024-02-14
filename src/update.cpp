@@ -7,7 +7,7 @@
 const DWORD Get_IOBjRW_ADDR = 0x54BAF0;
 
 const double syncIntervalMs = 2000;
-const double rotationCheckIntervalMs = 500;
+const double rotationCheckIntervalMs = 200;
 
 Quaternion lastOrientation;
 clock_t timeSinceLastUpdate;
