@@ -19,15 +19,22 @@ typedef void (__fastcall SPObjUpdateCall)(IServerImpl* server, PVOID _edx, SSPOb
 class IServerImpl {
 public:
     // Wrapper for the virtual SPObjUpdate function in remoteserver.dll
-    void SPObjUpdate(PVOID _edx, SSPObjUpdateInfo &updateInfo, UINT client)
+    // Very ugly I know, but I couldn't find an easier way to go about it...
+    inline void SPObjUpdate(PVOID _edx, SSPObjUpdateInfo &updateInfo, UINT client)
     {
-        // Get function pointer from the vftable and the determined offset
-        SPObjUpdateCall* originalFunction = (SPObjUpdateCall*) *((PDWORD)((PBYTE)vftable + 0xD0));
+        // Get function pointer from the vftable
+        SPObjUpdateCall* originalFunction = (SPObjUpdateCall*) vftable->SPObjUpdate;
 
         // Call the original SPObjUpdate function
         (originalFunction)(this, _edx, updateInfo, client);
     }
 
 private:
-    PVOID vftable;
+    struct IServerImpl_VFTable
+    {
+        BYTE funcs[0xD0];
+        PVOID SPObjUpdate;
+    };
+
+    IServerImpl_VFTable* vftable;
 };
