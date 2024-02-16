@@ -1,6 +1,7 @@
 #include "utils.h"
 #include "update.h"
 #include "waypoint.h"
+#include "Freelancer.h"
 
 void Init()
 {

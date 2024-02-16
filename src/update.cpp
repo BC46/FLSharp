@@ -1,10 +1,7 @@
+#include "Freelancer.h"
 #include "update.h"
 #include <time.h>
 #include <cmath>
-
-#define Naked __declspec(naked)
-
-const DWORD Get_IOBjRW_ADDR = 0x54BAF0;
 
 const double syncIntervalMs = 2000;
 const double rotationCheckIntervalMs = 200;
@@ -17,18 +14,10 @@ void InitTimeSinceLastUpdate()
     timeSinceLastUpdate = clock();
 }
 
-// Thanks adoxa
-Naked CShip* GetCShip()
+CShip* GetShip()
 {
-    __asm {
-        call    Get_IOBjRW_ADDR
-        test    eax, eax
-        jz      noship
-        mov     eax, [eax+16]
-
-    noship:
-        ret
-    }
+    IObjRW* iObjRW = ((GetIObjRW*) GET_IOBJRW_ADDR)();
+    return !iObjRW ? NULL : iObjRW->ship;
 }
 
 bool hasTimeElapsed(const clock_t &lastUpdate, const double &intervalMs)
@@ -66,7 +55,7 @@ bool hasOrientationChanged(CShip* ship)
 // Hook for function that determines whether an update should be sent to the server
 bool __fastcall CheckForSync_Hook(CRemotePhysicsSimulation* physicsSim, PVOID _edx, Vector const &unk1, Vector const &unk2, Quaternion const &unk3)
 {
-    CShip* ship = GetCShip();
+    CShip* ship = GetShip();
     bool orientationChanged = hasOrientationChanged(ship);
 
     // Does the client want to sync?
@@ -91,7 +80,7 @@ bool __fastcall CheckForSync_Hook(CRemotePhysicsSimulation* physicsSim, PVOID _e
 // Hook for function that sends an update to the server
 void __fastcall SPObjUpdate_Hook(IServerImpl* server, PVOID _edx, SSPObjUpdateInfo &updateInfo, UINT client)
 {
-    CShip* ship = GetCShip();
+    CShip* ship = GetShip();
 
     if (ship)
     {
