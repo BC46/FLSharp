@@ -15,7 +15,7 @@ RES_FILE = $(OBJ_DIR)\main.RES
 OBJ_FILES = $(OBJ_DIR)\*.obj
 COMMON_LIB = $(OBJ_DIR)\Common.lib
 
-OUTPUT_FILE = $(BIN_DIR)\EngineThrottleSyncFix.dll
+OUTPUT_FILE = $(BIN_DIR)\FLSharp.dll
 
 CXX_FLAGS = /c /GX /O2 /nologo /W3 /WX /LD /MD
 LD_FLAGS = /DLL /FILEALIGN:512 /NOLOGO /RELEASE

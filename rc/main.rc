@@ -11,11 +11,11 @@ FILETYPE        VFT_DLL
         BLOCK "040904B0"
         {
             VALUE "CompanyName",      "BC46"
-            VALUE "FileDescription",  "Engine Throttle Sync Fix"
+            VALUE "FileDescription",  "FLSharp"
             VALUE "FileVersion",      "0.4"
-            VALUE "InternalName",     "Engine Throttle Sync Fix"
+            VALUE "InternalName",     "FLSharp"
             VALUE "LegalCopyright",   "Copyright 2023 BC46"
-            VALUE "OriginalFilename", "EngineThrottleSyncFix.dll"
+            VALUE "OriginalFilename", "FLSharp.dll"
             VALUE "ProductName",      "Freelancer"
             VALUE "ProductVersion",   "0, 4, 0, 0"
         }
