@@ -68,3 +68,9 @@ struct Import CRemotePhysicsSimulation
 {
     bool CheckForSync(Vector const &unk1, Vector const &unk2, Quaternion const &unk3);
 };
+
+struct IObjInspectImpl
+{
+    BYTE data[16];
+    CShip* ship;
+};

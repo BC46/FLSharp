@@ -14,12 +14,12 @@ struct SSPObjUpdateInfo
 class IServerImpl;
 
 // SPObjUpdate function definition
-typedef void (__fastcall SPObjUpdateCall)(IServerImpl* server, PVOID _edx, SSPObjUpdateInfo &updateInfo, UINT client);
+typedef void __fastcall SPObjUpdateCall(IServerImpl* server, PVOID _edx, SSPObjUpdateInfo &updateInfo, UINT client);
 
 class IServerImpl {
 public:
     // Wrapper for the virtual SPObjUpdate function in remoteserver.dll
-    // Very ugly I know, but I couldn't find an easier way to go about it...
+    // Very ugly I know, but I couldn't find an easier way to go about it without adding a bunch of dummy virtual functions...
     inline void SPObjUpdate(PVOID _edx, SSPObjUpdateInfo &updateInfo, UINT client)
     {
         // Get function pointer from the vftable

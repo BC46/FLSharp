@@ -30,7 +30,7 @@ float QuaternionAngleDifference(const Quaternion &left, const Quaternion &right)
     return acosf(fabsf(dot)) * 2 * 57.29578f;
 }
 
-float CheckRotationDelta(const Quaternion& quat, const Matrix& rot)
+float GetRotationDelta(const Quaternion& quat, const Matrix& rot)
 {
     Quaternion quat2;
     HkMatrixToQuaternion(rot, quat2);

@@ -1,6 +1,6 @@
 #include "Freelancer.h"
 #include "update.h"
-#include <time.h>
+#include "utils.h"
 #include <cmath>
 
 const double syncIntervalMs = 2000;
@@ -16,13 +16,8 @@ void InitTimeSinceLastUpdate()
 
 CShip* GetShip()
 {
-    IObjRW* iObjRW = ((GetIObjRW*) GET_IOBJRW_ADDR)();
-    return !iObjRW ? NULL : iObjRW->ship;
-}
-
-bool hasTimeElapsed(const clock_t &lastUpdate, const double &intervalMs)
-{
-    return (double) (clock() - lastUpdate) >= intervalMs;
+    IObjInspectImpl* playerIObjInspect = ((GetPlayerIObjInspectImpl*) GET_PLAYERIOBJINSPECTIMPL_ADDR)();
+    return !playerIObjInspect ? NULL : playerIObjInspect->ship;
 }
 
 bool isEkToggled(CEEngine const * engine)
@@ -37,17 +32,20 @@ bool isEkToggled(CEEngine const * engine)
 
 bool hasOrientationChanged(CShip* ship)
 {
-    if (!ship || !hasTimeElapsed(timeSinceLastUpdate, rotationCheckIntervalMs))
+    if (!hasTimeElapsed(timeSinceLastUpdate, rotationCheckIntervalMs))
         return false;
 
     Archetype::Ship const * shipArch = ship->shiparch();
 
+    // TODO: Hook 0x0054B850 in Freelancer.exe (hook for right after the ship gets set)
+    // This way we don't have to re-calculate the ship info each time the orientation has changed
+    // But what happens if these values change dynamically? (e.g. your ship becomes heavier as you tractor in more cargo.)
     float avgDrag = (shipArch->angularDrag.x + shipArch->angularDrag.y) / 2;
     float avgTorque = (shipArch->steeringTorque.x + shipArch->steeringTorque.y) / 2;
     float maxTurnSpeed = (avgTorque / avgDrag) * 57.29578f;
 
     float turnThreshold = min(30.0f, 15 * sqrtf(maxTurnSpeed) / sqrtf(ship->get_radius()));
-    float rotationDelta = CheckRotationDelta(lastOrientation, ship->get_orientation());
+    float rotationDelta = GetRotationDelta(lastOrientation, ship->get_orientation());
 
     return rotationDelta > turnThreshold;
 }
@@ -55,20 +53,20 @@ bool hasOrientationChanged(CShip* ship)
 // Hook for function that determines whether an update should be sent to the server
 bool __fastcall CheckForSync_Hook(CRemotePhysicsSimulation* physicsSim, PVOID _edx, Vector const &unk1, Vector const &unk2, Quaternion const &unk3)
 {
-    CShip* ship = GetShip();
-    bool orientationChanged = hasOrientationChanged(ship);
-
     // Does the client want to sync?
     if (physicsSim->CheckForSync(unk1, unk2, unk3))
         return true;
 
-    // If the client doesn't want to sync, we do our own checks to see if it should sync regardless
-    if (orientationChanged || hasTimeElapsed(timeSinceLastUpdate, syncIntervalMs))
-        return true;
+    CShip* ship = GetShip();
 
     if (!ship)
         return false;
 
+    // If the client doesn't want to sync, we do our own checks below to see if it should sync regardless
+    if (hasOrientationChanged(ship) || hasTimeElapsed(timeSinceLastUpdate, syncIntervalMs))
+        return true;
+
+    // TODO: Save the engine somewhere? What happens if you lose it while flying?
     CEEngine const * engine = CEEngine::cast(ship->equipManager.FindFirst(ENGINE_TYPE));
 
     if (!engine)

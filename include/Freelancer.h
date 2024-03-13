@@ -6,7 +6,7 @@
 #define PLAYER_SYSTEM_ADDR 0x673354
 #define CHECK_FOR_SYNC_CALL_ADDR 0x541602
 #define OBJ_UPDATE_CALL_ADDR 0x54167C
-#define GET_IOBJRW_ADDR 0x54BAF0
+#define GET_PLAYERIOBJINSPECTIMPL_ADDR 0x54BAF0
 #define WAYPOINT_CHECK_CALL_ADDR 0x4F4141
 
 struct WaypointInfo
@@ -15,12 +15,6 @@ struct WaypointInfo
     UINT system;
 };
 
-struct IObjRW
-{
-    BYTE data[16];
-    CShip* ship;
-};
+typedef WaypointInfo* WaypointCheck(UINT index);
 
-typedef WaypointInfo* (WaypointCheck)(UINT index);
-
-typedef IObjRW* (GetIObjRW)();
+typedef IObjInspectImpl* GetPlayerIObjInspectImpl();

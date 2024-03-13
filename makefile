@@ -21,7 +21,7 @@ CXX_FLAGS = /c /GX /O2 /nologo /W3 /WX /LD /MD
 LD_FLAGS = /DLL /FILEALIGN:512 /NOLOGO /RELEASE
 LIB_FLAGS = /NOLOGO /MACHINE:IX86
 
-$(OUTPUT_FILE): $(RES_FILE) $(COMMON_LIB) $(COMMON_DEF) $(OBJ_FILES) $(BIN_DIR)
+$(OUTPUT_FILE): $(RES_FILE) $(COMMON_LIB) $(OBJ_FILES) $(BIN_DIR)
     link $(OBJ_FILES) $(COMMON_LIB) $(RES_FILE) $(LD_FLAGS) /OUT:$(OUTPUT_FILE)
 
 {$(SRC_DIR)}.cpp{$(OBJ_DIR)}.obj::
@@ -41,7 +41,7 @@ $(BIN_DIR):
 
 # Dependencies
 $(SRC_DIR)\main.cpp: $(INCLUDE_DIR)\update.h $(INCLUDE_DIR)\utils.h $(INCLUDE_DIR)\waypoint.h $(INCLUDE_DIR)\Freelancer.h
-$(SRC_DIR)\update.cpp: $(INCLUDE_DIR)\update.h $(INCLUDE_DIR)\Freelancer.h
+$(SRC_DIR)\update.cpp: $(INCLUDE_DIR)\update.h $(INCLUDE_DIR)\Freelancer.h $(INCLUDE_DIR)\utils.h
 $(SRC_DIR)\utils.cpp: $(INCLUDE_DIR)\utils.h
 $(SRC_DIR)\waypoint.cpp: $(INCLUDE_DIR)\waypoint.h $(INCLUDE_DIR)\Freelancer.h
 $(SRC_DIR)\fl_math.cpp: $(INCLUDE_DIR)\fl_math.h
