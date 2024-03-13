@@ -7,6 +7,7 @@ These include:
     - at least every 2 seconds;
     - when engine kill has been toggled;
     - if after every 0.2 seconds the ship's orientation has been changed to some extent.
+- Sets the minimum time between client-server updates to 75 milliseconds such that jitter is prevented when playing with a high framerate
 
 More fixes and improvements may be added in the future.
 

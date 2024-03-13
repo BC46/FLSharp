@@ -3,13 +3,14 @@
 #include "utils.h"
 #include <cmath>
 
-const double syncIntervalMs = 2000;
+const double minSyncIntervalMs = 75;
+const double maxSyncIntervalMs = 2000;
 const double rotationCheckIntervalMs = 200;
 
 Quaternion lastOrientation;
 clock_t timeSinceLastUpdate;
 
-void InitTimeSinceLastUpdate()
+void SetTimeSinceLastUpdate()
 {
     timeSinceLastUpdate = clock();
 }
@@ -53,6 +54,11 @@ bool hasOrientationChanged(CShip* ship)
 // Hook for function that determines whether an update should be sent to the server
 bool __fastcall CheckForSync_Hook(CRemotePhysicsSimulation* physicsSim, PVOID _edx, Vector const &unk1, Vector const &unk2, Quaternion const &unk3)
 {
+    // Prevent the client from sending too many updates in a short amount of time
+    // This resolves the jitter issue that occurs playing on a high framerate
+    if (!hasTimeElapsed(timeSinceLastUpdate, minSyncIntervalMs))
+        return false;
+
     // Does the client want to sync?
     if (physicsSim->CheckForSync(unk1, unk2, unk3))
         return true;
@@ -63,7 +69,7 @@ bool __fastcall CheckForSync_Hook(CRemotePhysicsSimulation* physicsSim, PVOID _e
         return false;
 
     // If the client doesn't want to sync, we do our own checks below to see if it should sync regardless
-    if (hasOrientationChanged(ship) || hasTimeElapsed(timeSinceLastUpdate, syncIntervalMs))
+    if (hasOrientationChanged(ship) || hasTimeElapsed(timeSinceLastUpdate, maxSyncIntervalMs))
         return true;
 
     // TODO: Save the engine somewhere? What happens if you lose it while flying?
@@ -92,6 +98,5 @@ void __fastcall SPObjUpdate_Hook(IServerImpl* server, PVOID _edx, SSPObjUpdateIn
     // Send update to the server
     server->SPObjUpdate(_edx, updateInfo, client);
 
-    // Set time since last update
-    timeSinceLastUpdate = clock();
+    SetTimeSinceLastUpdate();
 }

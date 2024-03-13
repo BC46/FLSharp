@@ -5,6 +5,8 @@
 
 void Init()
 {
+    SetTimeSinceLastUpdate();
+
     // Hook various calls
     Hook(CHECK_FOR_SYNC_CALL_ADDR, (DWORD) CheckForSync_Hook, 5);
     Hook(OBJ_UPDATE_CALL_ADDR, (DWORD) SPObjUpdate_Hook, 6);
