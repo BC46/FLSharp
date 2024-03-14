@@ -31,9 +31,9 @@ bool isEkToggled(CEEngine const * engine)
     return result;
 }
 
-bool hasOrientationChanged(CShip* ship)
+bool hasOrientationChanged(CShip* ship, const clock_t &currentTime)
 {
-    if (!hasTimeElapsed(timeSinceLastUpdate, rotationCheckIntervalMs))
+    if (!hasTimeElapsed(timeSinceLastUpdate, currentTime, rotationCheckIntervalMs))
         return false;
 
     Archetype::Ship const * shipArch = ship->shiparch();
@@ -54,9 +54,11 @@ bool hasOrientationChanged(CShip* ship)
 // Hook for function that determines whether an update should be sent to the server
 bool __fastcall CheckForSync_Hook(CRemotePhysicsSimulation* physicsSim, PVOID _edx, Vector const &unk1, Vector const &unk2, Quaternion const &unk3)
 {
+    clock_t currentTime = clock();
+
     // Prevent the client from sending too many updates in a short amount of time
     // This resolves the jitter issue that occurs playing on a high framerate
-    if (!hasTimeElapsed(timeSinceLastUpdate, minSyncIntervalMs))
+    if (!hasTimeElapsed(timeSinceLastUpdate, currentTime, minSyncIntervalMs))
         return false;
 
     // Does the client want to sync?
@@ -69,7 +71,7 @@ bool __fastcall CheckForSync_Hook(CRemotePhysicsSimulation* physicsSim, PVOID _e
         return false;
 
     // If the client doesn't want to sync, we do our own checks below to see if it should sync regardless
-    if (hasOrientationChanged(ship) || hasTimeElapsed(timeSinceLastUpdate, maxSyncIntervalMs))
+    if (hasOrientationChanged(ship, currentTime) || hasTimeElapsed(timeSinceLastUpdate, currentTime, maxSyncIntervalMs))
         return true;
 
     // TODO: Save the engine somewhere? What happens if you lose it while flying?

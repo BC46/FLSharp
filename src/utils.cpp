@@ -31,8 +31,8 @@ void Hook(DWORD location, DWORD hookFunc, UINT instrLen)
         Nop((PVOID) (location + 5), instrLen - 5);
 }
 
-bool hasTimeElapsed(const clock_t &lastUpdate, const double &intervalMs)
+bool hasTimeElapsed(const clock_t &lastUpdate, const clock_t &currentTime, const double &intervalMs)
 {
-    return (double) (clock() - lastUpdate) >= intervalMs;
+    return (double) (currentTime - lastUpdate) >= intervalMs;
 }
 
