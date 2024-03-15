@@ -10,4 +10,4 @@ void Nop(LPVOID vOffset, UINT len);
 
 void Hook(DWORD location, DWORD hookFunc, UINT instrLen);
 
-bool hasTimeElapsed(const clock_t &lastUpdate, const clock_t &currentTime, const double &intervalMs);
+double getTimeElapsed(const clock_t &lastUpdate);
