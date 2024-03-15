@@ -8,6 +8,7 @@ void Init()
     SetTimeSinceLastUpdate();
 
     // Hook various calls
+    Hook(POST_INIT_DEALLOC_CALL_ADDR, (DWORD) PostInitDealloc_Hook, 5);
     Hook(CHECK_FOR_SYNC_CALL_ADDR, (DWORD) CheckForSync_Hook, 5);
     Hook(OBJ_UPDATE_CALL_ADDR, (DWORD) SPObjUpdate_Hook, 6);
     Hook(WAYPOINT_CHECK_CALL_ADDR, (DWORD) WaypointCheck_Hook, 5);

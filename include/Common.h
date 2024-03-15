@@ -74,3 +74,5 @@ struct IObjInspectImpl
     BYTE data[16];
     CShip* ship;
 };
+
+bool Import SinglePlayer();

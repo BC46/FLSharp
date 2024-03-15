@@ -8,6 +8,7 @@ const double maxSyncIntervalMs = 2000;
 const double rotationCheckIntervalMs = 200;
 
 Quaternion lastOrientation;
+float shipTurnThreshold = 30.0f;
 clock_t timeSinceLastUpdate;
 
 void SetTimeSinceLastUpdate()
@@ -36,19 +37,34 @@ bool hasOrientationChanged(CShip* ship, const clock_t &currentTime)
     if (!hasTimeElapsed(timeSinceLastUpdate, currentTime, rotationCheckIntervalMs))
         return false;
 
+    float rotationDelta = GetRotationDelta(lastOrientation, ship->get_orientation());
+    return rotationDelta > shipTurnThreshold;
+}
+
+// Hook for dealloc function that gets called right after initializing the player's ship (undock or load game in space)
+// This is where we want to calculate the ship's turn threshold
+void PostInitDealloc_Hook(PVOID obj)
+{
+    // Call original function
+    ((Dealloc*) DEALLOC_ADDR)(obj);
+
+    if (SinglePlayer())
+        return;
+
+    CShip* ship = GetShip();
+
+    if (!ship)
+        return;
+
     Archetype::Ship const * shipArch = ship->shiparch();
 
-    // TODO: Hook 0x0054B850 in Freelancer.exe (hook for right after the ship gets set)
-    // This way we don't have to re-calculate the ship info each time the orientation has changed
-    // But what happens if these values change dynamically? (e.g. your ship becomes heavier as you tractor in more cargo.)
+    // TODO: The angular drag is meant to be calculated dynamically using the CShip::get_angular_drag() function
+    // However, the angular drag factor is kind of an unused feature in FL and not many mods use it
     float avgDrag = (shipArch->angularDrag.x + shipArch->angularDrag.y) / 2;
     float avgTorque = (shipArch->steeringTorque.x + shipArch->steeringTorque.y) / 2;
     float maxTurnSpeed = (avgTorque / avgDrag) * 57.29578f;
 
-    float turnThreshold = min(30.0f, 15 * sqrtf(maxTurnSpeed) / sqrtf(ship->get_radius()));
-    float rotationDelta = GetRotationDelta(lastOrientation, ship->get_orientation());
-
-    return rotationDelta > turnThreshold;
+    shipTurnThreshold = min(30.0f, 15 * sqrtf(maxTurnSpeed) / sqrtf(ship->get_radius()));
 }
 
 // Hook for function that determines whether an update should be sent to the server

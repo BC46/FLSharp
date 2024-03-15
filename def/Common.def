@@ -7,3 +7,4 @@ EXPORTS
 ?IsTriggered@FuseAction@@UBE_NXZ
 ?cast@CEEngine@@SAPBV1@PBVCEquip@@@Z
 ?CheckForSync@CRemotePhysicsSimulation@@QAE_NABVVector@@0ABVQuaternion@@@Z
+?SinglePlayer@@YA_NXZ
