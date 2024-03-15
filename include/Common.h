@@ -22,7 +22,7 @@ namespace Archetype
     struct Ship
     {
     private:
-        BYTE data[60];
+        BYTE data[0x108];
     public:
         Vector angularDrag;
         Vector steeringTorque;
