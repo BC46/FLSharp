@@ -8,11 +8,10 @@ SRC_DIR = src
 DEF_DIR = def
 
 RC_FILE = $(RC_DIR)\main.rc
-CPP_FILES = $(SRC_DIR)\*.cpp
 COMMON_DEF = $(DEF_DIR)\Common.def
 
 RES_FILE = $(OBJ_DIR)\main.RES
-OBJ_FILES = $(OBJ_DIR)\*.obj
+OBJ_FILES = $(OBJ_DIR)\fl_math.obj $(OBJ_DIR)\main.obj $(OBJ_DIR)\update.obj $(OBJ_DIR)\utils.obj $(OBJ_DIR)\waypoint.obj
 COMMON_LIB = $(OBJ_DIR)\Common.lib
 
 OUTPUT_FILE = $(BIN_DIR)\FLSharp.dll
@@ -23,6 +22,12 @@ LIB_FLAGS = /NOLOGO /MACHINE:IX86
 
 $(OUTPUT_FILE): $(RES_FILE) $(COMMON_LIB) $(OBJ_FILES) $(BIN_DIR)
     link $(OBJ_FILES) $(COMMON_LIB) $(RES_FILE) $(LD_FLAGS) /OUT:$(OUTPUT_FILE)
+
+$(OBJ_DIR)\fl_math.obj: $(INCLUDE_DIR)\fl_math.h $(SRC_DIR)\fl_math.cpp
+$(OBJ_DIR)\main.obj: $(SRC_DIR)\main.cpp
+$(OBJ_DIR)\update.obj: $(INCLUDE_DIR)\update.h $(SRC_DIR)\update.cpp
+$(OBJ_DIR)\utils.obj: $(INCLUDE_DIR)\utils.h $(SRC_DIR)\utils.cpp
+$(OBJ_DIR)\waypoint.obj: $(INCLUDE_DIR)\waypoint.h $(SRC_DIR)\waypoint.cpp
 
 {$(SRC_DIR)}.cpp{$(OBJ_DIR)}.obj::
     $(CPP) $(CXX_FLAGS) $< -I$(INCLUDE_DIR) /Fo./$(OBJ_DIR)/
@@ -38,16 +43,6 @@ $(OBJ_DIR):
 
 $(BIN_DIR):
     if not exist $(BIN_DIR) mkdir $(BIN_DIR)
-
-# Dependencies
-$(SRC_DIR)\main.cpp: $(INCLUDE_DIR)\update.h $(INCLUDE_DIR)\utils.h $(INCLUDE_DIR)\waypoint.h $(INCLUDE_DIR)\Freelancer.h
-$(SRC_DIR)\update.cpp: $(INCLUDE_DIR)\update.h $(INCLUDE_DIR)\Freelancer.h $(INCLUDE_DIR)\utils.h
-$(SRC_DIR)\utils.cpp: $(INCLUDE_DIR)\utils.h
-$(SRC_DIR)\waypoint.cpp: $(INCLUDE_DIR)\waypoint.h $(INCLUDE_DIR)\Freelancer.h
-$(SRC_DIR)\fl_math.cpp: $(INCLUDE_DIR)\fl_math.h
-$(INCLUDE_DIR)\update.h: $(INCLUDE_DIR)\Common.h $(INCLUDE_DIR)\RemoteServer.h
-$(INCLUDE_DIR)\Common.h: $(INCLUDE_DIR)\fl_math.h
-$(INCLUDE_DIR)\Freelancer.h: $(INCLUDE_DIR)\Common.h
 
 clean:
 	del $(BIN_DIR)\*.dll $(OBJ_DIR)\*.obj $(OBJ_DIR)\*.RES $(OBJ_DIR)\*.lib
