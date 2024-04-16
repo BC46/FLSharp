@@ -16,26 +16,28 @@ COMMON_LIB = $(OBJ_DIR)\Common.lib
 
 OUTPUT_FILE = $(BIN_DIR)\FLSharp.dll
 
-CXX_FLAGS = /c /GX /O2 /nologo /W3 /WX /LD /MD
+CPP_FLAGS = /c /GX /O2 /nologo /W3 /WX /LD /MD
 LD_FLAGS = /DLL /FILEALIGN:512 /NOLOGO /RELEASE
 LIB_FLAGS = /NOLOGO /MACHINE:IX86
 
-$(OUTPUT_FILE): $(RES_FILE) $(COMMON_LIB) $(OBJ_FILES) $(BIN_DIR)
+$(OUTPUT_FILE): $(OBJ_FILES) $(RES_FILE) $(COMMON_LIB) $(BIN_DIR)
     link $(OBJ_FILES) $(COMMON_LIB) $(RES_FILE) $(LD_FLAGS) /OUT:$(OUTPUT_FILE)
 
-$(OBJ_DIR)\fl_math.obj: $(INCLUDE_DIR)\fl_math.h $(SRC_DIR)\fl_math.cpp
-$(OBJ_DIR)\main.obj: $(SRC_DIR)\main.cpp
-$(OBJ_DIR)\update.obj: $(INCLUDE_DIR)\update.h $(SRC_DIR)\update.cpp
-$(OBJ_DIR)\utils.obj: $(INCLUDE_DIR)\utils.h $(SRC_DIR)\utils.cpp
-$(OBJ_DIR)\waypoint.obj: $(INCLUDE_DIR)\waypoint.h $(SRC_DIR)\waypoint.cpp
-
 {$(SRC_DIR)}.cpp{$(OBJ_DIR)}.obj::
-    $(CPP) $(CXX_FLAGS) $< -I$(INCLUDE_DIR) /Fo./$(OBJ_DIR)/
+    $(CPP) $(CPP_FLAGS) $< -I$(INCLUDE_DIR) /Fo./$(OBJ_DIR)/
 
-$(RES_FILE): $(RC_FILE) $(OBJ_DIR)
+$(OBJ_FILES): makefile
+
+$(OBJ_DIR)\fl_math.obj: $(SRC_DIR)\fl_math.cpp $(INCLUDE_DIR)\fl_math.h
+$(OBJ_DIR)\main.obj: $(SRC_DIR)\main.cpp $(INCLUDE_DIR)\utils.h $(INCLUDE_DIR)\update.h $(INCLUDE_DIR)\waypoint.h $(INCLUDE_DIR)\Freelancer.h
+$(OBJ_DIR)\update.obj: $(SRC_DIR)\update.cpp $(INCLUDE_DIR)\update.h $(INCLUDE_DIR)\utils.h
+$(OBJ_DIR)\utils.obj: $(SRC_DIR)\utils.cpp $(INCLUDE_DIR)\utils.h
+$(OBJ_DIR)\waypoint.obj: $(SRC_DIR)\waypoint.cpp $(INCLUDE_DIR)\waypoint.h
+
+$(RES_FILE): $(RC_FILE) $(OBJ_DIR) makefile
     rc /fo $(RES_FILE) $(RC_FILE)
 
-$(COMMON_LIB): $(COMMON_DEF)
+$(COMMON_LIB): $(COMMON_DEF) makefile
     lib $(LIB_FLAGS) /def:$(COMMON_DEF) /name:COMMON /out:$(COMMON_LIB)
 
 $(OBJ_DIR):
