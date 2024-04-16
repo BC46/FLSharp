@@ -16,7 +16,7 @@ public:
 class Matrix
 {
 public:
-	float data[3][3];
+    float data[3][3];
 };
 
 float GetRotationDelta(const Quaternion& quat, const Matrix& rot);
