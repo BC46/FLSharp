@@ -8,3 +8,4 @@ EXPORTS
 ?cast@CEEngine@@SAPBV1@PBVCEquip@@@Z
 ?CheckForSync@CRemotePhysicsSimulation@@QAE_NABVVector@@0ABVQuaternion@@@Z
 ?SinglePlayer@@YA_NXZ
+?GetProjectilesPerFire@CELauncher@@QBEIXZ

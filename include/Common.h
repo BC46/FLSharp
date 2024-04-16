@@ -11,6 +11,12 @@
 
 class CEquip{};
 
+class Import CELauncher
+{
+public:
+    UINT GetProjectilesPerFire() const;
+};
+
 class Import CEquipManager
 {
 public:

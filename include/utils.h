@@ -11,3 +11,5 @@ void Nop(LPVOID vOffset, UINT len);
 void Hook(DWORD location, DWORD hookFunc, UINT instrLen);
 
 double getTimeElapsed(const clock_t &lastUpdate);
+
+void SetPointer(DWORD location, PVOID p);

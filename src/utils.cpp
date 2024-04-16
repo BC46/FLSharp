@@ -31,6 +31,12 @@ void Hook(DWORD location, DWORD hookFunc, UINT instrLen)
         Nop((PVOID) (location + 5), instrLen - 5);
 }
 
+void SetPointer(DWORD location, PVOID p)
+{
+    DWORD pRef = (DWORD) &p;
+    Patch((PVOID) location, (PVOID) pRef, sizeof(DWORD));
+}
+
 double getTimeElapsed(const clock_t &lastUpdate)
 {
     return (double) (clock() - lastUpdate);
