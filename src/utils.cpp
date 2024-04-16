@@ -27,7 +27,7 @@ void Hook(DWORD location, DWORD hookFunc, UINT instrLen)
     Patch((PVOID) (location + 1), &relOffset, sizeof(DWORD));
 
     // Nop out excess bytes
-    if (instrLen > 0)
+    if (instrLen > 5)
         Nop((PVOID) (location + 5), instrLen - 5);
 }
 
