@@ -21,6 +21,6 @@ Building the project using other compilers may require the code to be modified.
 
 ## Credits
 - [Aingar](https://github.com/Aingar)
-  - Identification of the original bugs and improvements and implementations within DiscoveryGC's client hook
+  - Identification of the original bugs/improvements and implementations within DiscoveryGC's client hook
 - [BC46](https://github.com/BC46)
   - Standalone implementations
