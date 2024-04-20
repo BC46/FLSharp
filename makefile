@@ -48,4 +48,4 @@ $(BIN_DIR):
     if not exist $(BIN_DIR) mkdir $(BIN_DIR)
 
 clean:
-	del $(BIN_DIR)\*.dll $(OBJ_DIR)\*.obj $(OBJ_DIR)\*.RES $(OBJ_DIR)\*.lib
+    del $(BIN_DIR)\*.dll $(OBJ_DIR)\*.obj $(OBJ_DIR)\*.RES $(OBJ_DIR)\*.lib
