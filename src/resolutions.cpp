@@ -80,7 +80,7 @@ NN_Preferences* __fastcall InitializeNN_Preferences_Hook(PVOID thisptr, PVOID _e
 
     Patch((PVOID) NN_PREFERENCES_ALLOC_SIZE_PTR, &additionalSize, sizeof(additionalSize));
 
-    // TODO: patch necessary values like 0x004B251F, 0x004B1084
+    // TODO: patch necessary values like 0x004B251F, 0x004B1084, 004B1CBF
 
     return ((InitializeNN_Preferences*) INITIALIZE_NN_PREFERENCES_ADDR)(thisptr, _edx, unk1, unk2);
 }
@@ -119,6 +119,7 @@ bool __fastcall InitializeElements_Hook(NN_Preferences* thisptr, PVOID _edx, DWO
     Patch((PVOID) 0x4B1005, &resSupportedInfoOffset, sizeof(int));
     Patch((PVOID) 0x4B24B3, &resSupportedInfoOffset, sizeof(int));
     Patch((PVOID) 0x4B1005, &resSupportedInfoOffset, sizeof(int));
+    Patch((PVOID) 0x4B1C73, &resSupportedInfoOffset, sizeof(int));
 
     Patch((PVOID) 0x4B24A5, &resSupportedInfoOffsetNeg, sizeof(int));
 
@@ -137,6 +138,7 @@ void InitCustomResolutions()
 
     Patch((PVOID) 0x4B0FEB, &newResStartOffset, sizeof(DWORD));
     Patch((PVOID) 0x4B17FF, &newResStartOffset, sizeof(DWORD));
+    Patch((PVOID) 0x4B1C5C, &newResStartOffset, sizeof(DWORD));
 
     Patch((PVOID) 0x4B24B9, &firstBppOffset, sizeof(DWORD));
 }
