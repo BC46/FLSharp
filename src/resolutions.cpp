@@ -80,7 +80,7 @@ NN_Preferences* __fastcall InitializeNN_Preferences_Hook(PVOID thisptr, PVOID _e
 
     Patch((PVOID) NN_PREFERENCES_ALLOC_SIZE_PTR, &additionalSize, sizeof(additionalSize));
 
-    // TODO: patch necessary values like 0x004B249A, 0x004B0FE9, 0x004B251F, 0x004B1084, 0x004B17FC
+    // TODO: patch necessary values like 0x004B251F, 0x004B1084
 
     return ((InitializeNN_Preferences*) INITIALIZE_NN_PREFERENCES_ADDR)(thisptr, _edx, unk1, unk2);
 }
@@ -109,8 +109,12 @@ bool __fastcall InitializeElements_Hook(NN_Preferences* thisptr, PVOID _edx, DWO
 
     memset((PBYTE) ++nextInfo, 0x00, resolutions.size());
 
+    PBYTE resIndicesVOffset = (PBYTE) nextInfo + resolutions.size();
+    memset(resIndicesVOffset, 0xFF, resolutions.size() * sizeof(int));
+
     int resSupportedInfoOffset = ((PBYTE) nextInfo) - ((PBYTE) thisptr);
     int resSupportedInfoOffsetNeg = -resSupportedInfoOffset;
+    int resIndicesOffset = resIndicesVOffset - ((PBYTE) thisptr);
 
     Patch((PVOID) 0x4B1005, &resSupportedInfoOffset, sizeof(int));
     Patch((PVOID) 0x4B24B3, &resSupportedInfoOffset, sizeof(int));
@@ -118,18 +122,21 @@ bool __fastcall InitializeElements_Hook(NN_Preferences* thisptr, PVOID _edx, DWO
 
     Patch((PVOID) 0x4B24A5, &resSupportedInfoOffsetNeg, sizeof(int));
 
+    Patch((PVOID) 0x4B249C, &resIndicesOffset, sizeof(int));
+    Patch((PVOID) 0x4B17E0, &resIndicesOffset, sizeof(int));
+    Patch((PVOID) 0x4B0FFA, &resIndicesOffset, sizeof(int));
+
     return ((InitializeElements*) INITIALIZE_NN_ELEMENTS_ADDR)(thisptr, _edx, unk1, unk2);
 }
 
 void InitCustomResolutions()
 {
+    // These offsets are always the same so we can just set them once on startup
     DWORD newResStartOffset = NN_PREFERENCES_ALLOC_SIZE;
     DWORD firstBppOffset = NN_PREFERENCES_ALLOC_SIZE + 0x8;
 
     Patch((PVOID) 0x4B0FEB, &newResStartOffset, sizeof(DWORD));
     Patch((PVOID) 0x4B17FF, &newResStartOffset, sizeof(DWORD));
-    //Patch((PVOID) 0x4B17E0, &newResStartOffset, sizeof(DWORD));
 
     Patch((PVOID) 0x4B24B9, &firstBppOffset, sizeof(DWORD));
-    //Patch((PVOID) 0x4B17E0, &firstBppOffset, sizeof(DWORD));
 }
