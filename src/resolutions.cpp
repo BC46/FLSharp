@@ -97,6 +97,14 @@ bool __fastcall InitializeElements_Hook(NN_Preferences* thisptr, PVOID _edx, DWO
         resolutions.erase(it++);
     }
 
+    // We know resolutions.size() <= 256, so casting it directly to a byte is fine
+    BYTE resAmount = resolutions.size();
+
+    Patch((PVOID) 0x4B2521, &resAmount, sizeof(BYTE));
+    Patch((PVOID) 0x4B1086, &resAmount, sizeof(BYTE));
+    Patch((PVOID) 0x4B1CC1, &resAmount, sizeof(BYTE));
+    Patch((PVOID) 0x4B17F0, &resAmount, sizeof(BYTE));
+
     // Fill Resolution info
     for (int i = 0; it != resolutions.end(); ++it)
     {
