@@ -80,13 +80,14 @@ NN_Preferences* __fastcall InitializeNN_Preferences_Hook(PVOID thisptr, PVOID _e
 
     Patch((PVOID) NN_PREFERENCES_ALLOC_SIZE_PTR, &additionalSize, sizeof(additionalSize));
 
-    // TODO: patch necessary values like 0x004B249A, 0x004B24B1, 0x004B24B7, 0x004B1002, 0x004B0FE9, 0x004B251F, 0x004B1084, 0x004B17FC
+    // TODO: patch necessary values like 0x004B249A, 0x004B0FE9, 0x004B251F, 0x004B1084, 0x004B17FC
 
     return ((InitializeNN_Preferences*) INITIALIZE_NN_PREFERENCES_ADDR)(thisptr, _edx, unk1, unk2);
 }
 
 bool __fastcall InitializeElements_Hook(NN_Preferences* thisptr, PVOID _edx, DWORD unk1, DWORD unk2)
 {
+    ResolutionInfo* nextInfo;
     std::set<ResolutionInfo>::iterator it = resolutions.begin();
 
     // TODO: Test 256+ resolutions
@@ -99,8 +100,23 @@ bool __fastcall InitializeElements_Hook(NN_Preferences* thisptr, PVOID _edx, DWO
     // Fill Resolution info
     for (int i = 0; it != resolutions.end(); ++it)
     {
-        Patch(((ResolutionInfo*) &thisptr->newData) + (i++), &(*it), sizeof(ResolutionInfo));
+        nextInfo = ((ResolutionInfo*) &thisptr->newData) + (i++);
+        Patch(nextInfo, &(*it), sizeof(ResolutionInfo));
     }
+
+    DWORD _;
+    VirtualProtect(thisptr, *((PUINT) NN_PREFERENCES_ALLOC_SIZE_PTR), PAGE_EXECUTE_READWRITE, &_);
+
+    memset((PBYTE) ++nextInfo, 0x00, resolutions.size());
+
+    int resSupportedInfoOffset = ((PBYTE) nextInfo) - ((PBYTE) thisptr);
+    int resSupportedInfoOffsetNeg = -resSupportedInfoOffset;
+
+    Patch((PVOID) 0x4B1005, &resSupportedInfoOffset, sizeof(int));
+    Patch((PVOID) 0x4B24B3, &resSupportedInfoOffset, sizeof(int));
+    Patch((PVOID) 0x4B1005, &resSupportedInfoOffset, sizeof(int));
+
+    Patch((PVOID) 0x4B24A5, &resSupportedInfoOffsetNeg, sizeof(int));
 
     return ((InitializeElements*) INITIALIZE_NN_ELEMENTS_ADDR)(thisptr, _edx, unk1, unk2);
 }
