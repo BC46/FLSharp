@@ -87,15 +87,19 @@ NN_Preferences* __fastcall InitializeNN_Preferences_Hook(PVOID thisptr, PVOID _e
 
 bool __fastcall InitializeElements_Hook(NN_Preferences* thisptr, PVOID _edx, DWORD unk1, DWORD unk2)
 {
-    int i = 0;
-    std::set<ResolutionInfo>::iterator it;
+    std::set<ResolutionInfo>::iterator it = resolutions.begin();
 
-    // TODO: Test 256 resolutions
-    for (it = resolutions.begin(); it != resolutions.end(); ++it) {
-        Patch(((ResolutionInfo*) &thisptr->newData) + i, &(*it), sizeof(ResolutionInfo));
+    // TODO: Test 256+ resolutions
+    // Discard lowest resolutions if there's more than 256
+    while (resolutions.size() > 256)
+    {
+        resolutions.erase(it++);
+    }
 
-        if (++i == 256)
-            break;
+    // Fill Resolution info
+    for (int i = 0; it != resolutions.end(); ++it)
+    {
+        Patch(((ResolutionInfo*) &thisptr->newData) + (i++), &(*it), sizeof(ResolutionInfo));
     }
 
     return ((InitializeElements*) INITIALIZE_NN_ELEMENTS_ADDR)(thisptr, _edx, unk1, unk2);
