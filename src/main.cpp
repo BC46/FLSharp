@@ -20,6 +20,8 @@ void Init()
 
     SetPointer(INITIALIZE_NN_PREFERENCES_CALL_ADDR, InitializeNN_Preferences_Hook);
     SetPointer(INITIALIZE_NN_ELEMENTS_CALL_ADDR, InitializeElements_Hook);
+
+    InitCustomResolutions();
 }
 
 BOOL WINAPI DllMain(HINSTANCE hinstDLL, DWORD fdwReason, LPVOID lpReserved)

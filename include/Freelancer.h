@@ -21,18 +21,13 @@ struct WaypointInfo
     UINT system;
 };
 
-// bpp = bits per pixel. FL appears to only support 16 and 32
-struct ResolutionInfo
-{
-    UINT width, height, bpp;
-};
-
 // 0x8cc = start of resolution array (10 * 4 * 3 bytes)
+// 0x8d4 = start of resolution array + 0x8 (points to the bpp of the first element)
 // 0x944 = array of 10 bytes that contains flags of whether the resolution index is supported (1 = supported, 0 = unsupported)
 // 0x94e = unallocated word (2 bytes)
 // 0x950 = amount of supported resolutions (integer)
 // 0x954 = array of 4 * 10 bytes that contains the indices of the resolutions in the selection menu (-1 is unsupported resolution)
-class NN_Preferences
+struct NN_Preferences
 {
     BYTE x00[0x980];
     PBYTE newData;
