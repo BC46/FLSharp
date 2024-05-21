@@ -71,6 +71,15 @@ NN_Preferences* __fastcall InitializeNN_Preferences_Hook(PVOID thisptr, PVOID _e
         ReleaseDC(NULL, hdc);
     }
 
+    std::set<ResolutionInfo>::iterator it = resolutions.begin();
+
+    // TODO: Test 256+ resolutions
+    // Discard lowest resolutions if there's more than 256
+    while (resolutions.size() > 256)
+    {
+        resolutions.erase(it++);
+    }
+
     int resolutionAmount = resolutions.size();
 
     int additionalSize = NN_PREFERENCES_ALLOC_SIZE
@@ -87,13 +96,6 @@ bool __fastcall InitializeElements_Hook(NN_Preferences* thisptr, PVOID _edx, DWO
 {
     ResolutionInfo* nextInfo;
     std::set<ResolutionInfo>::iterator it = resolutions.begin();
-
-    // TODO: Test 256+ resolutions
-    // Discard lowest resolutions if there's more than 256
-    while (resolutions.size() > 256)
-    {
-        resolutions.erase(it++);
-    }
 
     // We know resolutions.size() <= 256, so casting it directly to a byte is fine
     BYTE resAmount = resolutions.size();
