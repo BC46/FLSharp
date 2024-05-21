@@ -18,10 +18,9 @@ void Init()
     static PVOID projectilesPerFireHookPtr = GetProjectilesPerFire_Hook;
     SetPointer(PROJECTILES_PER_FIRE_CALL_ADDR, &projectilesPerFireHookPtr);
 
-    SetPointer(INITIALIZE_NN_PREFERENCES_CALL_ADDR, InitializeNN_Preferences_Hook);
     SetPointer(INITIALIZE_NN_ELEMENTS_CALL_ADDR, InitializeElements_Hook);
 
-    InitCustomResolutions();
+    InitBetterResolutions();
 }
 
 BOOL WINAPI DllMain(HINSTANCE hinstDLL, DWORD fdwReason, LPVOID lpReserved)

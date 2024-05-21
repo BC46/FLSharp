@@ -54,44 +54,6 @@ void AddDisplaySettingsResolutions(HDC hdc)
     }
 }
 
-NN_Preferences* __fastcall InitializeNN_Preferences_Hook(PVOID thisptr, PVOID _edx, DWORD unk1, DWORD unk2)
-{
-    resolutions.clear();
-
-    AddFlResolutions();
-    AddWindowRectResolutions();
-
-    HDC hdc = GetDC(NULL);
-
-    if (hdc)
-    {
-        AddDcResolutions(hdc);
-        AddDisplaySettingsResolutions(hdc);
-
-        ReleaseDC(NULL, hdc);
-    }
-
-    std::set<ResolutionInfo>::iterator it = resolutions.begin();
-
-    // TODO: Test 256+ resolutions
-    // Discard lowest resolutions if there's more than 256
-    while (resolutions.size() > 256)
-    {
-        resolutions.erase(it++);
-    }
-
-    int resolutionAmount = resolutions.size();
-
-    int additionalSize = NN_PREFERENCES_ALLOC_SIZE
-        + resolutionAmount * sizeof(ResolutionInfo) // resolution info
-        + resolutionAmount // supported array
-        + resolutionAmount * sizeof(int); // indices in menu
-
-    Patch((PVOID) NN_PREFERENCES_ALLOC_SIZE_PTR, &additionalSize, sizeof(additionalSize));
-
-    return ((InitializeNN_Preferences*) INITIALIZE_NN_PREFERENCES_ADDR)(thisptr, _edx, unk1, unk2);
-}
-
 bool __fastcall InitializeElements_Hook(NN_Preferences* thisptr, PVOID _edx, DWORD unk1, DWORD unk2)
 {
     ResolutionInfo* nextInfo;
@@ -138,8 +100,39 @@ bool __fastcall InitializeElements_Hook(NN_Preferences* thisptr, PVOID _edx, DWO
     return ((InitializeElements*) INITIALIZE_NN_ELEMENTS_ADDR)(thisptr, _edx, unk1, unk2);
 }
 
-void InitCustomResolutions()
+void InitBetterResolutions()
 {
+    AddFlResolutions();
+    AddWindowRectResolutions();
+
+    HDC hdc = GetDC(NULL);
+
+    if (hdc)
+    {
+        AddDcResolutions(hdc);
+        AddDisplaySettingsResolutions(hdc);
+
+        ReleaseDC(NULL, hdc);
+    }
+
+    std::set<ResolutionInfo>::iterator it = resolutions.begin();
+
+    // TODO: Test 256+ resolutions
+    // Discard lowest resolutions if there's more than 256
+    while (resolutions.size() > 256)
+    {
+        resolutions.erase(it++);
+    }
+
+    int resolutionAmount = resolutions.size();
+
+    int additionalSize = NN_PREFERENCES_ALLOC_SIZE
+        + resolutionAmount * sizeof(ResolutionInfo) // resolution info
+        + resolutionAmount // supported array
+        + resolutionAmount * sizeof(int); // indices in menu
+
+    Patch((PVOID) NN_PREFERENCES_ALLOC_SIZE_PTR, &additionalSize, sizeof(additionalSize));
+
     // These offsets are always the same so we can just set them once on startup
     DWORD newResStartOffset = NN_PREFERENCES_ALLOC_SIZE;
     DWORD firstBppOffset = NN_PREFERENCES_ALLOC_SIZE + 0x8;
