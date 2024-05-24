@@ -32,24 +32,29 @@ void AddWindowRectResolutions()
     }
 }
 
-void AddDcResolutions(HDC hdc)
+void AddDcResolutions()
 {
+    HDC hdc = GetDC(NULL);
+
+    if (!hdc)
+        return;
+
     int horzRes = GetDeviceCaps(hdc, HORZRES);
     int vertRes = GetDeviceCaps(hdc, VERTRES);
 
     resolutions.insert(ResolutionInfo( horzRes, vertRes, 16 ));
     resolutions.insert(ResolutionInfo( horzRes, vertRes, 32 ));
+
+    ReleaseDC(NULL, hdc);
 }
 
-void AddDisplaySettingsResolutions(HDC hdc)
+void AddDisplaySettingsResolutions()
 {
-    int refreshRate = GetDeviceCaps(hdc, VREFRESH);
-
     DEVMODE dm = { 0 };
     dm.dmSize = sizeof(dm);
 
     for (int iModeNum = 0; EnumDisplaySettings(NULL, iModeNum, &dm) != 0; ++iModeNum) {
-        if (IsResolutionAllowed(dm) && dm.dmDisplayFrequency == refreshRate)
+        if (IsResolutionAllowed(dm))
             resolutions.insert(ResolutionInfo( dm.dmPelsWidth, dm.dmPelsHeight, dm.dmBitsPerPel ));
     }
 }
@@ -104,16 +109,8 @@ void InitBetterResolutions()
 {
     AddFlResolutions();
     AddWindowRectResolutions();
-
-    HDC hdc = GetDC(NULL);
-
-    if (hdc)
-    {
-        AddDcResolutions(hdc);
-        AddDisplaySettingsResolutions(hdc);
-
-        ReleaseDC(NULL, hdc);
-    }
+    AddDcResolutions();
+    AddDisplaySettingsResolutions();
 
     std::set<ResolutionInfo>::iterator it = resolutions.begin();
 
