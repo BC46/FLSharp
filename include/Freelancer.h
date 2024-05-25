@@ -19,6 +19,8 @@ struct WaypointInfo
     UINT system;
 };
 
+// 0x330 = current selected width
+// 0x8b8 = current active width (int)
 // 0x8cc = start of resolution array (10 * 4 * 3 bytes)
 // 0x8d4 = start of resolution array + 0x8 (points to the bpp of the first element)
 // 0x944 = array of 10 bytes that contains flags of whether the resolution index is supported (1 = supported, 0 = unsupported)
@@ -28,6 +30,8 @@ struct WaypointInfo
 struct NN_Preferences
 {
     BYTE x00[0x980];
+    UINT selectedHeight;
+    UINT activeHeight;
     PBYTE newData;
 };
 

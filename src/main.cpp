@@ -18,8 +18,6 @@ void Init()
     static PVOID projectilesPerFireHookPtr = GetProjectilesPerFire_Hook;
     SetPointer(PROJECTILES_PER_FIRE_CALL_ADDR, &projectilesPerFireHookPtr);
 
-    SetPointer(INITIALIZE_NN_ELEMENTS_CALL_ADDR, InitializeElements_Hook);
-
     InitBetterResolutions();
 }
 

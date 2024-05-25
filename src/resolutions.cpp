@@ -105,6 +105,72 @@ bool __fastcall InitializeElements_Hook(NN_Preferences* thisptr, PVOID _edx, DWO
     return ((InitializeElements*) INITIALIZE_NN_ELEMENTS_ADDR)(thisptr, _edx, unk1, unk2);
 }
 
+#define SELECTED_HEIGHT_OF 0x980
+#define ACTIVE_HEIGHT_OF 0x984
+
+__declspec(naked) void CurrentResInfoWrite1()
+{
+    __asm {
+        mov [ebp+0x8B8], ebx
+        mov [ebp+SELECTED_HEIGHT_OF], ebx
+        mov [ebp+ACTIVE_HEIGHT_OF], ebx
+        ret
+    }
+}
+
+__declspec(naked) void CurrentResInfoWrite2()
+{
+    __asm {
+        mov [ebx+0x330], eax
+        mov edx, [esp+0x10]
+        mov [ebx+SELECTED_HEIGHT_OF], edx
+        mov [ebx+ACTIVE_HEIGHT_OF], edx
+        ret
+    }
+}
+
+__declspec(naked) void CurrentResInfoWrite3()
+{
+    __asm {
+        mov [edi+0x330], eax
+        mov eax, [esp+0x8]
+        mov [edi+SELECTED_HEIGHT_OF], eax
+        ret
+    }
+}
+
+__declspec(naked) void CurrentResInfoWrite4()
+{
+    __asm {
+        mov [ebp+0x8B8], eax
+        mov eax, [esp+0x20]
+        mov [ebp+ACTIVE_HEIGHT_OF], eax
+        ret
+    }
+}
+
+// Selected to active
+__declspec(naked) void CurrentResInfoWrite5()
+{
+    __asm {
+        mov [ebp+0x8B8], eax
+        mov eax, [ebp+SELECTED_HEIGHT_OF]
+        mov [ebp+ACTIVE_HEIGHT_OF], eax
+        ret
+    }
+}
+
+// Active to selected
+__declspec(naked) void CurrentResInfoWrite6()
+{
+    __asm {
+        mov [esi+0x330], eax
+        mov eax, [esi+ACTIVE_HEIGHT_OF]
+        mov [esi+ACTIVE_HEIGHT_OF], eax
+        ret
+    }
+}
+
 void InitBetterResolutions()
 {
     AddFlResolutions();
@@ -126,17 +192,28 @@ void InitBetterResolutions()
     int additionalSize = NN_PREFERENCES_ALLOC_SIZE
         + resolutionAmount * sizeof(ResolutionInfo) // resolution info
         + resolutionAmount // supported array
-        + resolutionAmount * sizeof(int); // indices in menu
+        + resolutionAmount * sizeof(int) // indices in menu
+        + sizeof(UINT) * 2; // active and selected height
 
     Patch((PVOID) NN_PREFERENCES_ALLOC_SIZE_PTR, &additionalSize, sizeof(additionalSize));
 
     // These offsets are always the same so we can just set them once on startup
-    DWORD newResStartOffset = NN_PREFERENCES_ALLOC_SIZE;
-    DWORD firstBppOffset = NN_PREFERENCES_ALLOC_SIZE + 0x8;
+    DWORD newResStartOffset = NN_PREFERENCES_NEW_DATA;
+    DWORD firstBppOffset = NN_PREFERENCES_NEW_DATA + 0x8;
 
     Patch((PVOID) 0x4B0FEB, &newResStartOffset, sizeof(DWORD));
     Patch((PVOID) 0x4B17FF, &newResStartOffset, sizeof(DWORD));
     Patch((PVOID) 0x4B1C5C, &newResStartOffset, sizeof(DWORD));
 
     Patch((PVOID) 0x4B24B9, &firstBppOffset, sizeof(DWORD));
+
+    SetPointer(INITIALIZE_NN_ELEMENTS_CALL_ADDR, InitializeElements_Hook);
+
+    Hook(0x4A9AAB, (DWORD) CurrentResInfoWrite1, 6);
+    Hook(0x4B1046, (DWORD) CurrentResInfoWrite2, 6);
+    Hook(0x4B180F, (DWORD) CurrentResInfoWrite3, 6);
+    Hook(0x4B1C20, (DWORD) CurrentResInfoWrite4, 6);
+    Hook(0x4AC264, (DWORD) CurrentResInfoWrite5, 6);
+    Hook(0x4B27A6, (DWORD) CurrentResInfoWrite6, 6);
+
 }
