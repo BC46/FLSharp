@@ -71,6 +71,8 @@ bool __fastcall InitializeElements_Hook(NN_Preferences* thisptr, PVOID _edx, DWO
     Patch((PVOID) 0x4B1086, &resAmount, sizeof(BYTE));
     Patch((PVOID) 0x4B1CC1, &resAmount, sizeof(BYTE));
     Patch((PVOID) 0x4B17F0, &resAmount, sizeof(BYTE));
+    Patch((PVOID) 0x4B07DA, &resAmount, sizeof(BYTE));
+    Patch((PVOID) 0x4ACEF1, &resAmount, sizeof(BYTE));
 
     // Fill Resolution info
     for (int i = 0; it != resolutions.end(); ++it)
@@ -91,16 +93,22 @@ bool __fastcall InitializeElements_Hook(NN_Preferences* thisptr, PVOID _edx, DWO
     int resSupportedInfoOffsetNeg = -resSupportedInfoOffset;
     int resIndicesOffset = resIndicesVOffset - ((PBYTE) thisptr);
 
+    // +0x944
     Patch((PVOID) 0x4B1005, &resSupportedInfoOffset, sizeof(int));
     Patch((PVOID) 0x4B24B3, &resSupportedInfoOffset, sizeof(int));
-    Patch((PVOID) 0x4B1005, &resSupportedInfoOffset, sizeof(int));
     Patch((PVOID) 0x4B1C73, &resSupportedInfoOffset, sizeof(int));
+    Patch((PVOID) 0x4B0773, &resSupportedInfoOffset, sizeof(int));
+    Patch((PVOID) 0x4ACEDA, &resSupportedInfoOffset, sizeof(int));
 
+    // weird negated value
     Patch((PVOID) 0x4B24A5, &resSupportedInfoOffsetNeg, sizeof(int));
 
+    // +0x954
     Patch((PVOID) 0x4B249C, &resIndicesOffset, sizeof(int));
     Patch((PVOID) 0x4B17E0, &resIndicesOffset, sizeof(int));
     Patch((PVOID) 0x4B0FFA, &resIndicesOffset, sizeof(int));
+    Patch((PVOID) 0x4ACEF9, &resIndicesOffset, sizeof(int));
+    Patch((PVOID) 0x4B0764, &resIndicesOffset, sizeof(int));
 
     return ((InitializeElements*) INITIALIZE_NN_ELEMENTS_ADDR)(thisptr, _edx, unk1, unk2);
 }
@@ -251,6 +259,25 @@ __declspec(naked) void CurrentResInfoCheck5()
     }
 }
 
+__declspec(naked) void CurrentResInfoCheck6()
+{
+    __asm {
+        mov eax, [ebp+ACTIVE_HEIGHT_OF]
+        cmp eax, [ebx-0x4]
+        jne notequal
+        mov ecx, [ebx]
+        xor eax, eax
+        cmp ecx, 0x20
+        movzx ecx, byte ptr ss:[ebp+0x8BC]
+        sete al
+        push 0x4B0797
+        ret
+    notequal:
+        push 0x4B07D1
+        ret
+    }
+}
+
 typedef bool __fastcall SetResolution(PVOID thisptr, PVOID _edx, DWORD width, DWORD unk, DWORD height);
 
 bool __fastcall CallSetResolution(PVOID thisptr, PVOID _edx, DWORD height, DWORD width, DWORD unk)
@@ -332,11 +359,15 @@ void InitBetterResolutions()
     DWORD newResStartOffset = NN_PREFERENCES_NEW_DATA;
     DWORD firstBppOffset = NN_PREFERENCES_NEW_DATA + 0x8;
 
+    // 0x8CC
     Patch((PVOID) 0x4B0FEB, &newResStartOffset, sizeof(DWORD));
     Patch((PVOID) 0x4B17FF, &newResStartOffset, sizeof(DWORD));
     Patch((PVOID) 0x4B1C5C, &newResStartOffset, sizeof(DWORD));
 
+    // 0x8D4
     Patch((PVOID) 0x4B24B9, &firstBppOffset, sizeof(DWORD));
+    Patch((PVOID) 0x4ACED3, &firstBppOffset, sizeof(DWORD));
+    Patch((PVOID) 0x4B076A, &firstBppOffset, sizeof(DWORD));
 
     SetPointer(INITIALIZE_NN_ELEMENTS_CALL_ADDR, InitializeElements_Hook);
 
@@ -352,6 +383,7 @@ void InitBetterResolutions()
     Hook(0x4B257A, (DWORD) CurrentResInfoCheck3, 6, true);
     Hook(0x4B1C93, (DWORD) CurrentResInfoCheck4, 8, true);
     Hook(0x4B074E, (DWORD) CurrentResInfoCheck5, 6, true);
+    Hook(0x4B0786, (DWORD) CurrentResInfoCheck6, 7, true);
 
     Hook(0x4AC4B0, (DWORD) PostSetRes1, 5, true);
     Hook(0x4B1E65, (DWORD) PostSetRes2, 5, true);
