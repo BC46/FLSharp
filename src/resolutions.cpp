@@ -222,7 +222,7 @@ __declspec(naked) void CurrentResInfoCheck3()
 __declspec(naked) void CurrentResInfoCheck4()
 {
     __asm {
-        cmp edi, [ebp+SELECTED_HEIGHT_OF]
+        cmp edi, [esp+0x48]
         jne notequal
         push 0xFFFFFFFF
         push edi
@@ -232,6 +232,72 @@ __declspec(naked) void CurrentResInfoCheck4()
         ret
     notequal:
         push 0x4B1CB7
+        ret
+    }
+}
+
+__declspec(naked) void CurrentResInfoCheck5()
+{
+    __asm {
+        mov edi, [ebp+ACTIVE_HEIGHT_OF]
+        cmp edi, [ebp+SELECTED_HEIGHT_OF]
+        jne notequal
+        mov cl, byte ptr ss:[ebp+0x8BC]
+        push 0x4B0754
+        ret
+    notequal:
+        push 0x4B0760
+        ret
+    }
+}
+
+typedef bool __fastcall SetResolution(PVOID thisptr, PVOID _edx, DWORD width, DWORD unk, DWORD height);
+
+bool __fastcall CallSetResolution(PVOID thisptr, PVOID _edx, DWORD height, DWORD width, DWORD unk)
+{
+    return ((SetResolution*) 0x4B1C00)(thisptr, _edx, width, unk, height);
+}
+
+__declspec(naked) void PostSetRes1()
+{
+    __asm {
+        mov eax, [ebp+ACTIVE_HEIGHT_OF]
+        push eax
+        call CallSetResolution
+        push 0x4AC4B5
+        ret
+    }
+}
+
+__declspec(naked) void PostSetRes2()
+{
+    __asm {
+        mov eax, [edi+SELECTED_HEIGHT_OF]
+        push eax
+        call CallSetResolution
+        push 0x4B1E6A
+        ret
+    }
+}
+
+__declspec(naked) void PostSetRes3()
+{
+    __asm {
+        mov eax, [esi+SELECTED_HEIGHT_OF]
+        push eax
+        call CallSetResolution
+        push 0x4B2599
+        ret
+    }
+}
+
+__declspec(naked) void PostSetRes4()
+{
+    __asm {
+        mov eax, [esi+ACTIVE_HEIGHT_OF]
+        push eax
+        call CallSetResolution
+        push 0x4B2786
         ret
     }
 }
@@ -285,5 +351,14 @@ void InitBetterResolutions()
     Hook(0x4B102B, (DWORD) CurrentResInfoCheck2, 5, true);
     Hook(0x4B257A, (DWORD) CurrentResInfoCheck3, 6, true);
     Hook(0x4B1C93, (DWORD) CurrentResInfoCheck4, 8, true);
+    Hook(0x4B074E, (DWORD) CurrentResInfoCheck5, 6, true);
 
+    Hook(0x4AC4B0, (DWORD) PostSetRes1, 5, true);
+    Hook(0x4B1E65, (DWORD) PostSetRes2, 5, true);
+    Hook(0x4B2594, (DWORD) PostSetRes3, 5, true);
+    Hook(0x4B2781, (DWORD) PostSetRes4, 5, true);
+
+    WORD paramBytes = 12;
+    Patch((PVOID) 0x4B1D09, &paramBytes, sizeof(WORD));
+    Patch((PVOID) 0x4B1D14, &paramBytes, sizeof(WORD));
 }
