@@ -171,6 +171,71 @@ __declspec(naked) void CurrentResInfoWrite6()
     }
 }
 
+__declspec(naked) void CurrentResInfoCheck1()
+{
+    __asm {
+        mov eax, [ebp+ACTIVE_HEIGHT_OF]
+        cmp eax, [ebp+SELECTED_HEIGHT_OF]
+        jne notequal
+        mov cl, byte ptr ss:[ebp+0x8BC]
+        push 0x04B1F6D
+        ret
+    notequal:
+        push 0x04B1F75
+        ret
+    }
+}
+
+__declspec(naked) void CurrentResInfoCheck2()
+{
+    __asm {
+        cmp [esp+0x88], edi
+        jne notequal
+        push edi
+        push eax
+        cmp ecx, 0x20
+        lea edx, [esp+0xAC]
+        sete cl
+        push 0x4B103A
+        ret
+    notequal:
+        push 0x4B1075
+        ret
+    }
+}
+
+__declspec(naked) void CurrentResInfoCheck3()
+{
+    __asm {
+        mov ecx, [esi+ACTIVE_HEIGHT_OF]
+        cmp ecx, [esi+SELECTED_HEIGHT_OF]
+        jne notequal
+        mov cl, byte ptr ss:[esi+0x8BC]
+        push 0x4B2580
+        ret
+    notequal:
+        push 0x4B2588
+        ret
+    }
+}
+
+__declspec(naked) void CurrentResInfoCheck4()
+{
+    __asm {
+        cmp edi, [ebp+SELECTED_HEIGHT_OF]
+        jne notequal
+        push 0xFFFFFFFF
+        push edi
+        push esi
+        lea ecx, [esp+0x20]
+        push 0x4B1C9B
+        ret
+    notequal:
+        push 0x4B1CB7
+        ret
+    }
+}
+
 void InitBetterResolutions()
 {
     AddFlResolutions();
@@ -215,5 +280,10 @@ void InitBetterResolutions()
     Hook(0x4B1C20, (DWORD) CurrentResInfoWrite4, 6);
     Hook(0x4AC264, (DWORD) CurrentResInfoWrite5, 6);
     Hook(0x4B27A6, (DWORD) CurrentResInfoWrite6, 6);
+
+    Hook(0x4B1F67, (DWORD) CurrentResInfoCheck1, 6, true);
+    Hook(0x4B102B, (DWORD) CurrentResInfoCheck2, 5, true);
+    Hook(0x4B257A, (DWORD) CurrentResInfoCheck3, 6, true);
+    Hook(0x4B1C93, (DWORD) CurrentResInfoCheck4, 8, true);
 
 }
