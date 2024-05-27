@@ -130,9 +130,8 @@ __declspec(naked) void CurrentResInfoWrite2()
 {
     __asm {
         mov [ebx+0x330], eax
-        mov edx, [esp+0x10]
-        mov [ebx+SELECTED_HEIGHT_OF], edx
-        mov [ebx+ACTIVE_HEIGHT_OF], edx
+        mov [ebx+SELECTED_HEIGHT_OF], edi
+        mov [ebx+ACTIVE_HEIGHT_OF], edi
         ret
     }
 }
@@ -175,6 +174,16 @@ __declspec(naked) void CurrentResInfoWrite6()
         mov [esi+0x330], eax
         mov eax, [esi+ACTIVE_HEIGHT_OF]
         mov [esi+ACTIVE_HEIGHT_OF], eax
+        ret
+    }
+}
+
+__declspec(naked) void CurrentResInfoWrite7()
+{
+    __asm {
+        mov [ebx+0x330], eax
+        mov [ebx+SELECTED_HEIGHT_OF], edx
+        mov [ebx+ACTIVE_HEIGHT_OF], edx
         ret
     }
 }
@@ -377,6 +386,7 @@ void InitBetterResolutions()
     Hook(0x4B1C20, (DWORD) CurrentResInfoWrite4, 6);
     Hook(0x4AC264, (DWORD) CurrentResInfoWrite5, 6);
     Hook(0x4B27A6, (DWORD) CurrentResInfoWrite6, 6);
+    Hook(0x4B10C3, (DWORD) CurrentResInfoWrite7, 6);
 
     Hook(0x4B1F67, (DWORD) CurrentResInfoCheck1, 6, true);
     Hook(0x4B102B, (DWORD) CurrentResInfoCheck2, 5, true);
