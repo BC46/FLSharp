@@ -12,13 +12,13 @@ bool inline IsResolutionAllowed(const DEVMODE &dm)
 
 void AddFlResolutions()
 {
-    static int defaultWidths[]  = { 800, 1024, 1152, 1280, 1600 };
-    static int defaultHeights[] = { 600,  768,  864, 960, 1200 };
+    const WidthHeight defaultRes[] =
+        { { 800, 600 }, { 1024, 768 }, { 1152, 864 }, { 1280, 960 }, { 1600, 1200 } };
 
-    for (int i = 0; i < DEFAULT_RES_AMOUNT; ++i)
+    for (int i = 0; i < sizeof(defaultRes) / sizeof(WidthHeight); ++i)
     {
-        resolutions.insert(ResolutionInfo ( defaultWidths[i], defaultHeights[i], 16 ));
-        resolutions.insert(ResolutionInfo ( defaultWidths[i], defaultHeights[i], 32 ));
+        resolutions.insert(ResolutionInfo ( defaultRes[i].width, defaultRes[i].height, 16 ));
+        resolutions.insert(ResolutionInfo ( defaultRes[i].width, defaultRes[i].height, 32 ));
     }
 }
 
@@ -65,15 +65,9 @@ bool __fastcall InitializeElements_Hook(NN_Preferences* thisptr, PVOID _edx, DWO
     ResolutionInfo* nextInfo;
     std::set<ResolutionInfo>::iterator it = resolutions.begin();
 
-    // We know resolutions.size() <= 256, so casting it directly to a byte is fine
-    BYTE resAmount = resolutions.size();
-
-    Patch((PVOID) 0x4B2521, &resAmount, sizeof(BYTE));
-    Patch((PVOID) 0x4B1086, &resAmount, sizeof(BYTE));
-    Patch((PVOID) 0x4B1CC1, &resAmount, sizeof(BYTE));
-    Patch((PVOID) 0x4B17F0, &resAmount, sizeof(BYTE));
-    Patch((PVOID) 0x4B07DA, &resAmount, sizeof(BYTE));
-    Patch((PVOID) 0x4ACEF1, &resAmount, sizeof(BYTE));
+    // We are editing heap memory, so it should be editable by default, but make it writeable just to be sure
+    DWORD _;
+    VirtualProtect(thisptr, *((PUINT) NN_PREFERENCES_ALLOC_SIZE_PTR), PAGE_EXECUTE_READWRITE, &_);
 
     // Fill Resolution info
     for (int i = 0; it != resolutions.end(); ++it)
@@ -81,9 +75,6 @@ bool __fastcall InitializeElements_Hook(NN_Preferences* thisptr, PVOID _edx, DWO
         nextInfo = ((ResolutionInfo*) &thisptr->newData) + (i++);
         Patch(nextInfo, &(*it), sizeof(ResolutionInfo));
     }
-
-    DWORD _;
-    VirtualProtect(thisptr, *((PUINT) NN_PREFERENCES_ALLOC_SIZE_PTR), PAGE_EXECUTE_READWRITE, &_);
 
     memset((PBYTE) ++nextInfo, 0x00, resolutions.size());
 
@@ -366,7 +357,7 @@ __declspec(naked) void DefaultResSet1()
     }
 }
 
-__declspec(naked) void DefaultResSet2() // TODO: test this hook
+__declspec(naked) void DefaultResSet2()
 {
     __asm {
         mov edx, 0x320
@@ -390,9 +381,7 @@ void InitBetterResolutions()
 
     std::set<ResolutionInfo>::iterator it = resolutions.begin();
 
-    // TODO: Test 256+ resolutions
-    // Discard lowest resolutions if there's more than 256
-    while (resolutions.size() > 256)
+    while (resolutions.size() > 127)
     {
         resolutions.erase(it++);
     }
@@ -410,6 +399,16 @@ void InitBetterResolutions()
     // These offsets are always the same so we can just set them once on startup
     DWORD newResStartOffset = NN_PREFERENCES_NEW_DATA;
     DWORD firstBppOffset = NN_PREFERENCES_NEW_DATA + 0x8;
+
+    // We know resolutions.size() <= 127, so casting it directly to a byte is fine
+    BYTE resAmountByte = resolutions.size();
+
+    Patch((PVOID) 0x4B2521, &resAmountByte, sizeof(BYTE));
+    Patch((PVOID) 0x4B1086, &resAmountByte, sizeof(BYTE));
+    Patch((PVOID) 0x4B1CC1, &resAmountByte, sizeof(BYTE));
+    Patch((PVOID) 0x4B17F0, &resAmountByte, sizeof(BYTE));
+    Patch((PVOID) 0x4B07DA, &resAmountByte, sizeof(BYTE));
+    Patch((PVOID) 0x4ACEF1, &resAmountByte, sizeof(BYTE));
 
     // 0x8CC
     Patch((PVOID) 0x4B0FEB, &newResStartOffset, sizeof(DWORD));

@@ -7,11 +7,15 @@
 
 #define MIN_RES_WIDTH 800
 #define MIN_RES_HEIGHT 600
-#define DEFAULT_RES_AMOUNT 5
 
 #define NN_PREFERENCES_ALLOC_SIZE_PTR 0x4B296A
 #define NN_PREFERENCES_ALLOC_SIZE 0x980
 #define NN_PREFERENCES_NEW_DATA 0x988
+
+struct WidthHeight
+{
+    UINT width, height;
+};
 
 struct ResolutionInfo
 {
