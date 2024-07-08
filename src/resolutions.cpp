@@ -3,6 +3,7 @@
 #include <set>
 
 std::set<ResolutionInfo> resolutions;
+int horzRes, vertRes, tempHeight;
 
 bool inline IsResolutionAllowed(const DEVMODE &dm)
 {
@@ -39,8 +40,8 @@ void AddDcResolutions()
     if (!hdc)
         return;
 
-    int horzRes = GetDeviceCaps(hdc, HORZRES);
-    int vertRes = GetDeviceCaps(hdc, VERTRES);
+    horzRes = GetDeviceCaps(hdc, HORZRES);
+    vertRes = GetDeviceCaps(hdc, VERTRES);
 
     resolutions.insert(ResolutionInfo( horzRes, vertRes, 16 ));
     resolutions.insert(ResolutionInfo( horzRes, vertRes, 32 ));
@@ -287,6 +288,22 @@ __declspec(naked) void CurrentResInfoCheck6()
     }
 }
 
+__declspec(naked) void CurrentResInfoCheck7()
+{
+    __asm {
+        cmp [ecx-8], edx
+        jne notequal
+        mov ebx, [ecx-4]
+        cmp ebx, [tempHeight]
+        jne notequal
+        push 0x4ACEE7
+        ret
+    notequal:
+        push 0x4ACEEB
+        ret
+    }
+}
+
 typedef bool __fastcall SetResolution(PVOID thisptr, PVOID _edx, DWORD width, DWORD unk, DWORD height);
 
 bool __fastcall CallSetResolution(PVOID thisptr, PVOID _edx, DWORD height, DWORD width, DWORD unk)
@@ -334,6 +351,32 @@ __declspec(naked) void PostSetRes4()
         push eax
         call CallSetResolution
         push 0x4B2786
+        ret
+    }
+}
+
+__declspec(naked) void DefaultResSet1()
+{
+    __asm {
+        mov edx, [horzRes]
+        mov ebx, [vertRes]
+        mov [tempHeight], ebx
+        push 0x4ACEB0
+        ret
+    }
+}
+
+__declspec(naked) void DefaultResSet2() // TODO: test this hook
+{
+    __asm {
+        mov edx, 0x320
+        mov [tempHeight], 0x258
+        cmp eax, esi
+        jbe conditionmet
+        push 0x4ACEC4
+        ret
+    conditionmet:
+        push 0x4ACEC9
         ret
     }
 }
@@ -394,11 +437,15 @@ void InitBetterResolutions()
     Hook(0x4B1C93, (DWORD) CurrentResInfoCheck4, 8, true);
     Hook(0x4B074E, (DWORD) CurrentResInfoCheck5, 6, true);
     Hook(0x4B0786, (DWORD) CurrentResInfoCheck6, 7, true);
+    Hook(0x4ACEE2, (DWORD) CurrentResInfoCheck7, 5, true);
 
     Hook(0x4AC4B0, (DWORD) PostSetRes1, 5, true);
     Hook(0x4B1E65, (DWORD) PostSetRes2, 5, true);
     Hook(0x4B2594, (DWORD) PostSetRes3, 5, true);
     Hook(0x4B2781, (DWORD) PostSetRes4, 5, true);
+
+    Hook(0x4ACEAB, (DWORD) DefaultResSet1, 5, true);
+    Hook(0x4ACEBB, (DWORD) DefaultResSet2, 7, true);
 
     WORD paramBytes = 12;
     Patch((PVOID) 0x4B1D09, &paramBytes, sizeof(WORD));
