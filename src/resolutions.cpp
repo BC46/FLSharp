@@ -73,7 +73,7 @@ bool __fastcall InitializeElements_Hook(NN_Preferences* thisptr, PVOID _edx, DWO
     for (int i = 0; it != resolutions.end(); ++it)
     {
         nextInfo = ((ResolutionInfo*) &thisptr->newData) + (i++);
-        Patch(nextInfo, &(*it), sizeof(ResolutionInfo));
+        *nextInfo = *it;
     }
 
     memset((PBYTE) ++nextInfo, 0x00, resolutions.size());
@@ -132,8 +132,7 @@ __declspec(naked) void CurrentResInfoWrite3()
 {
     __asm {
         mov [edi+0x330], eax
-        mov eax, [esp+0x8]
-        mov [edi+SELECTED_HEIGHT_OF], eax
+        mov [edi+SELECTED_HEIGHT_OF], ecx
         ret
     }
 }
@@ -295,13 +294,17 @@ __declspec(naked) void CurrentResInfoCheck7()
     }
 }
 
-typedef bool __fastcall SetResolution(PVOID thisptr, PVOID _edx, DWORD width, DWORD unk, DWORD height);
+// Dirty hack which adds an additional parameter to the game's internal CallSetResolution function
+// The purpose of re-ordering the parameters is that the height (new param), doesn't change the offsets of the other two parameters
+// In the PostSetRes funcs we put the height as the first stack param, but we want it to be the last one, which is what this hook does
+typedef bool __fastcall SetResolution(NN_Preferences thisptr, PVOID _edx, UINT width, DWORD unk, UINT height);
 
-bool __fastcall CallSetResolution(PVOID thisptr, PVOID _edx, DWORD height, DWORD width, DWORD unk)
+bool __fastcall CallSetResolution(NN_Preferences thisptr, PVOID _edx, UINT height, DWORD width, UINT unk)
 {
     return ((SetResolution*) 0x4B1C00)(thisptr, _edx, width, unk, height);
 }
 
+// TODO: Replace post set res hooks with C++
 __declspec(naked) void PostSetRes1()
 {
     __asm {
@@ -381,6 +384,7 @@ void InitBetterResolutions()
 
     std::set<ResolutionInfo>::iterator it = resolutions.begin();
 
+    // Discard lowest resolutions if there's more than 127 (this is a hard limit)
     while (resolutions.size() > 127)
     {
         resolutions.erase(it++);
@@ -394,6 +398,7 @@ void InitBetterResolutions()
         + resolutionAmount * sizeof(int) // indices in menu
         + sizeof(UINT) * 2; // active and selected height
 
+    // Expand the allocated heap memory of the NN_Preferences object so that we can store more resolutions
     Patch((PVOID) NN_PREFERENCES_ALLOC_SIZE_PTR, &additionalSize, sizeof(additionalSize));
 
     // These offsets are always the same so we can just set them once on startup
@@ -403,6 +408,7 @@ void InitBetterResolutions()
     // We know resolutions.size() <= 127, so casting it directly to a byte is fine
     BYTE resAmountByte = resolutions.size();
 
+    // Patch resolution amount (byte)
     Patch((PVOID) 0x4B2521, &resAmountByte, sizeof(BYTE));
     Patch((PVOID) 0x4B1086, &resAmountByte, sizeof(BYTE));
     Patch((PVOID) 0x4B1CC1, &resAmountByte, sizeof(BYTE));
@@ -410,18 +416,20 @@ void InitBetterResolutions()
     Patch((PVOID) 0x4B07DA, &resAmountByte, sizeof(BYTE));
     Patch((PVOID) 0x4ACEF1, &resAmountByte, sizeof(BYTE));
 
-    // 0x8CC
+    // Patch references to the start of the resolution array such that it points to the new one (0x8CC)
     Patch((PVOID) 0x4B0FEB, &newResStartOffset, sizeof(DWORD));
     Patch((PVOID) 0x4B17FF, &newResStartOffset, sizeof(DWORD));
     Patch((PVOID) 0x4B1C5C, &newResStartOffset, sizeof(DWORD));
 
-    // 0x8D4
+    // Patch references to the first bpp in the resolution array (0x8D4)
     Patch((PVOID) 0x4B24B9, &firstBppOffset, sizeof(DWORD));
     Patch((PVOID) 0x4ACED3, &firstBppOffset, sizeof(DWORD));
     Patch((PVOID) 0x4B076A, &firstBppOffset, sizeof(DWORD));
 
+    // Set hook that copies the resolutions into the right location when called
     SetPointer(INITIALIZE_NN_ELEMENTS_CALL_ADDR, InitializeElements_Hook);
 
+    // Places where the current resolution info is written to (selected and/or active width)
     Hook(0x4A9AAB, (DWORD) CurrentResInfoWrite1, 6);
     Hook(0x4B1046, (DWORD) CurrentResInfoWrite2, 6);
     Hook(0x4B180F, (DWORD) CurrentResInfoWrite3, 6);
@@ -430,6 +438,7 @@ void InitBetterResolutions()
     Hook(0x4B27A6, (DWORD) CurrentResInfoWrite6, 6);
     Hook(0x4B10C3, (DWORD) CurrentResInfoWrite7, 6);
 
+    // Places where the current resolution info is checked or compared (selected and/or active width)
     Hook(0x4B1F67, (DWORD) CurrentResInfoCheck1, 6, true);
     Hook(0x4B102B, (DWORD) CurrentResInfoCheck2, 5, true);
     Hook(0x4B257A, (DWORD) CurrentResInfoCheck3, 6, true);
@@ -438,15 +447,19 @@ void InitBetterResolutions()
     Hook(0x4B0786, (DWORD) CurrentResInfoCheck6, 7, true);
     Hook(0x4ACEE2, (DWORD) CurrentResInfoCheck7, 5, true);
 
+    // Places where a function is called which sets the new resolution
+    // This is hooked because we need this function to take an additional parameter (the height)
     Hook(0x4AC4B0, (DWORD) PostSetRes1, 5, true);
     Hook(0x4B1E65, (DWORD) PostSetRes2, 5, true);
     Hook(0x4B2594, (DWORD) PostSetRes3, 5, true);
     Hook(0x4B2781, (DWORD) PostSetRes4, 5, true);
 
+    // Places that determine the width of the "default" resolution
     Hook(0x4ACEAB, (DWORD) DefaultResSet1, 5, true);
     Hook(0x4ACEBB, (DWORD) DefaultResSet2, 7, true);
 
-    WORD paramBytes = 12;
+    // Change the amount of bytes that are cleaned from the stack when the function returns
+    WORD paramBytes = 12; // 0xC
     Patch((PVOID) 0x4B1D09, &paramBytes, sizeof(WORD));
     Patch((PVOID) 0x4B1D14, &paramBytes, sizeof(WORD));
 }
