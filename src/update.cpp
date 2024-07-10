@@ -118,3 +118,12 @@ void __fastcall SPObjUpdate_Hook(IServerImpl* server, PVOID _edx, SSPObjUpdateIn
 
     SetTimeSinceLastUpdate();
 }
+
+void InitBetterUpdates()
+{
+    SetTimeSinceLastUpdate();
+
+    Hook(POST_INIT_DEALLOC_CALL_ADDR, PostInitDealloc_Hook, 5);
+    Hook(CHECK_FOR_SYNC_CALL_ADDR, CheckForSync_Hook, 5);
+    Hook(OBJ_UPDATE_CALL_ADDR, SPObjUpdate_Hook, 6);
+}

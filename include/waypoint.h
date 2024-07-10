@@ -5,3 +5,5 @@
 #include "Freelancer.h"
 
 WaypointInfo* WaypointCheck_Hook(UINT index);
+
+void InitWaypointFix();

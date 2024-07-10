@@ -1,4 +1,5 @@
 #include "waypoint.h"
+#include "utils.h"
 
 WaypointInfo* WaypointCheck_Hook(UINT index)
 {
@@ -11,4 +12,9 @@ WaypointInfo* WaypointCheck_Hook(UINT index)
 
     // Only return the waypoint info if the player is in the same system as the waypoint
     return playerSystem == waypointInfo->system ? waypointInfo : NULL;
+}
+
+void InitWaypointFix()
+{
+    Hook(WAYPOINT_CHECK_CALL_ADDR, WaypointCheck_Hook, 5);
 }

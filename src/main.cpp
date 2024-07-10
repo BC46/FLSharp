@@ -1,4 +1,3 @@
-#include "utils.h"
 #include "update.h"
 #include "waypoint.h"
 #include "Freelancer.h"
@@ -7,17 +6,9 @@
 
 void Init()
 {
-    SetTimeSinceLastUpdate();
-
-    // Hook various calls
-    Hook(POST_INIT_DEALLOC_CALL_ADDR, PostInitDealloc_Hook, 5);
-    Hook(CHECK_FOR_SYNC_CALL_ADDR, CheckForSync_Hook, 5);
-    Hook(OBJ_UPDATE_CALL_ADDR, SPObjUpdate_Hook, 6);
-    Hook(WAYPOINT_CHECK_CALL_ADDR, WaypointCheck_Hook, 5);
-
-    static PVOID projectilesPerFireHookPtr = GetProjectilesPerFire_Hook;
-    SetPointer(PROJECTILES_PER_FIRE_CALL_ADDR, &projectilesPerFireHookPtr);
-
+    InitBetterUpdates();
+    InitWaypointFix();
+    InitProjectilesPerFireFix();
     //InitBetterResolutions();
 }
 

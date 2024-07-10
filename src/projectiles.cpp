@@ -1,4 +1,5 @@
 #include "projectiles.h"
+#include "utils.h"
 
 // We hook this function in one instance where it gets called
 // because it uses the return value to play the one_shot_sound of the launchers.
@@ -13,4 +14,10 @@ UINT __fastcall GetProjectilesPerFire_Hook(CELauncher *launcher)
         result = 1;
 
     return result;
+}
+
+void InitProjectilesPerFireFix()
+{
+    static PVOID projectilesPerFireHookPtr = GetProjectilesPerFire_Hook;
+    SetPointer(PROJECTILES_PER_FIRE_CALL_ADDR, &projectilesPerFireHookPtr);
 }
