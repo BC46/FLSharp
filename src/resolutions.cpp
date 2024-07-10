@@ -86,21 +86,21 @@ bool __fastcall InitializeElements_Hook(NN_Preferences* thisptr, PVOID _edx, DWO
     int resIndicesOffset = resIndicesVOffset - ((PBYTE) thisptr);
 
     // +0x944
-    Patch((PVOID) 0x4B1005, &resSupportedInfoOffset, sizeof(int));
-    Patch((PVOID) 0x4B24B3, &resSupportedInfoOffset, sizeof(int));
-    Patch((PVOID) 0x4B1C73, &resSupportedInfoOffset, sizeof(int));
-    Patch((PVOID) 0x4B0773, &resSupportedInfoOffset, sizeof(int));
-    Patch((PVOID) 0x4ACEDA, &resSupportedInfoOffset, sizeof(int));
+    Patch(0x4B1005, &resSupportedInfoOffset, sizeof(int));
+    Patch(0x4B24B3, &resSupportedInfoOffset, sizeof(int));
+    Patch(0x4B1C73, &resSupportedInfoOffset, sizeof(int));
+    Patch(0x4B0773, &resSupportedInfoOffset, sizeof(int));
+    Patch(0x4ACEDA, &resSupportedInfoOffset, sizeof(int));
 
     // weird negated value
-    Patch((PVOID) 0x4B24A5, &resSupportedInfoOffsetNeg, sizeof(int));
+    Patch(0x4B24A5, &resSupportedInfoOffsetNeg, sizeof(int));
 
     // +0x954
-    Patch((PVOID) 0x4B249C, &resIndicesOffset, sizeof(int));
-    Patch((PVOID) 0x4B17E0, &resIndicesOffset, sizeof(int));
-    Patch((PVOID) 0x4B0FFA, &resIndicesOffset, sizeof(int));
-    Patch((PVOID) 0x4ACEF9, &resIndicesOffset, sizeof(int));
-    Patch((PVOID) 0x4B0764, &resIndicesOffset, sizeof(int));
+    Patch(0x4B249C, &resIndicesOffset, sizeof(int));
+    Patch(0x4B17E0, &resIndicesOffset, sizeof(int));
+    Patch(0x4B0FFA, &resIndicesOffset, sizeof(int));
+    Patch(0x4ACEF9, &resIndicesOffset, sizeof(int));
+    Patch(0x4B0764, &resIndicesOffset, sizeof(int));
 
     return ((InitializeElements*) INITIALIZE_NN_ELEMENTS_ADDR)(thisptr, _edx, unk1, unk2);
 }
@@ -359,7 +359,7 @@ void InitBetterResolutions()
         + sizeof(UINT) * 2; // active and selected height
 
     // Expand the allocated heap memory of the NN_Preferences object so that we can store more resolutions
-    Patch((PVOID) NN_PREFERENCES_ALLOC_SIZE_PTR, &additionalSize, sizeof(additionalSize));
+    Patch(NN_PREFERENCES_ALLOC_SIZE_PTR, &additionalSize, sizeof(additionalSize));
 
     // These offsets are always the same so we can just set them once on startup
     DWORD newResStartOffset = NN_PREFERENCES_NEW_DATA;
@@ -369,22 +369,22 @@ void InitBetterResolutions()
     BYTE resAmountByte = resolutions.size();
 
     // Patch resolution amount (byte)
-    Patch((PVOID) 0x4B2521, &resAmountByte, sizeof(BYTE));
-    Patch((PVOID) 0x4B1086, &resAmountByte, sizeof(BYTE));
-    Patch((PVOID) 0x4B1CC1, &resAmountByte, sizeof(BYTE));
-    Patch((PVOID) 0x4B17F0, &resAmountByte, sizeof(BYTE));
-    Patch((PVOID) 0x4B07DA, &resAmountByte, sizeof(BYTE));
-    Patch((PVOID) 0x4ACEF1, &resAmountByte, sizeof(BYTE));
+    Patch(0x4B2521, &resAmountByte, sizeof(BYTE));
+    Patch(0x4B1086, &resAmountByte, sizeof(BYTE));
+    Patch(0x4B1CC1, &resAmountByte, sizeof(BYTE));
+    Patch(0x4B17F0, &resAmountByte, sizeof(BYTE));
+    Patch(0x4B07DA, &resAmountByte, sizeof(BYTE));
+    Patch(0x4ACEF1, &resAmountByte, sizeof(BYTE));
 
     // Patch references to the start of the resolution array such that it points to the new one (0x8CC)
-    Patch((PVOID) 0x4B0FEB, &newResStartOffset, sizeof(DWORD));
-    Patch((PVOID) 0x4B17FF, &newResStartOffset, sizeof(DWORD));
-    Patch((PVOID) 0x4B1C5C, &newResStartOffset, sizeof(DWORD));
+    Patch(0x4B0FEB, &newResStartOffset, sizeof(DWORD));
+    Patch(0x4B17FF, &newResStartOffset, sizeof(DWORD));
+    Patch(0x4B1C5C, &newResStartOffset, sizeof(DWORD));
 
     // Patch references to the first bpp in the resolution array (0x8D4)
-    Patch((PVOID) 0x4B24B9, &firstBppOffset, sizeof(DWORD));
-    Patch((PVOID) 0x4ACED3, &firstBppOffset, sizeof(DWORD));
-    Patch((PVOID) 0x4B076A, &firstBppOffset, sizeof(DWORD));
+    Patch(0x4B24B9, &firstBppOffset, sizeof(DWORD));
+    Patch(0x4ACED3, &firstBppOffset, sizeof(DWORD));
+    Patch(0x4B076A, &firstBppOffset, sizeof(DWORD));
 
     // Set hook that copies the resolutions into the right location when called
     SetPointer(INITIALIZE_NN_ELEMENTS_CALL_ADDR, InitializeElements_Hook);
@@ -420,6 +420,6 @@ void InitBetterResolutions()
 
     // Change the amount of bytes that are cleaned from the stack when the function returns
     WORD paramBytes = 12; // 0xC
-    Patch((PVOID) 0x4B1D09, &paramBytes, sizeof(WORD));
-    Patch((PVOID) 0x4B1D14, &paramBytes, sizeof(WORD));
+    Patch(0x4B1D09, &paramBytes, sizeof(WORD));
+    Patch(0x4B1D14, &paramBytes, sizeof(WORD));
 }
