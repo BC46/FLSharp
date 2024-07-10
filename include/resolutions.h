@@ -38,6 +38,11 @@ struct ResolutionInfo
     }
 };
 
+bool inline IsResolutionAllowed(const DEVMODE &dm)
+{
+    return dm.dmPelsWidth >= MIN_RES_WIDTH && dm.dmPelsHeight >= MIN_RES_HEIGHT && (dm.dmBitsPerPel == 16 || dm.dmBitsPerPel == 32);
+}
+
 bool __fastcall InitializeElements_Hook(NN_Preferences* thisptr, PVOID _edx, DWORD unk1, DWORD unk2);
 
 void InitBetterResolutions();

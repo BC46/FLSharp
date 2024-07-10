@@ -5,11 +5,6 @@
 std::set<ResolutionInfo> resolutions;
 int horzRes, vertRes, tempHeight;
 
-bool inline IsResolutionAllowed(const DEVMODE &dm)
-{
-    return dm.dmPelsWidth >= MIN_RES_WIDTH && dm.dmPelsHeight >= MIN_RES_HEIGHT && (dm.dmBitsPerPel == 16 || dm.dmBitsPerPel == 32);
-}
-
 void AddFlResolutions()
 {
     const WidthHeight defaultRes[] =
@@ -62,6 +57,7 @@ void AddDisplaySettingsResolutions()
 
 bool __fastcall InitializeElements_Hook(NN_Preferences* thisptr, PVOID _edx, DWORD unk1, DWORD unk2)
 {
+    int i;
     ResolutionInfo* nextInfo;
     std::set<ResolutionInfo>::iterator it = resolutions.begin();
 
@@ -70,7 +66,7 @@ bool __fastcall InitializeElements_Hook(NN_Preferences* thisptr, PVOID _edx, DWO
     VirtualProtect(thisptr, *((PUINT) NN_PREFERENCES_ALLOC_SIZE_PTR), PAGE_EXECUTE_READWRITE, &_);
 
     // Fill Resolution info
-    for (int i = 0; it != resolutions.end(); ++it)
+    for (i = 0; it != resolutions.end(); ++it)
     {
         nextInfo = ((ResolutionInfo*) &thisptr->newData) + (i++);
         *nextInfo = *it;
@@ -82,25 +78,20 @@ bool __fastcall InitializeElements_Hook(NN_Preferences* thisptr, PVOID _edx, DWO
     memset(resIndicesVOffset, 0xFF, resolutions.size() * sizeof(int));
 
     int resSupportedInfoOffset = ((PBYTE) nextInfo) - ((PBYTE) thisptr);
-    int resSupportedInfoOffsetNeg = -resSupportedInfoOffset;
     int resIndicesOffset = resIndicesVOffset - ((PBYTE) thisptr);
 
     // +0x944
-    Patch(0x4B1005, &resSupportedInfoOffset, sizeof(int));
-    Patch(0x4B24B3, &resSupportedInfoOffset, sizeof(int));
-    Patch(0x4B1C73, &resSupportedInfoOffset, sizeof(int));
-    Patch(0x4B0773, &resSupportedInfoOffset, sizeof(int));
-    Patch(0x4ACEDA, &resSupportedInfoOffset, sizeof(int));
+    const DWORD supportedInfoRefs[] = { 0x4B1005, 0x4B24B3, 0x4B1C73, 0x4B0773, 0x4ACEDA };
+    for (i = 0; i < sizeof(supportedInfoRefs) / sizeof(DWORD); ++i)
+        Patch_INT(supportedInfoRefs[i], resSupportedInfoOffset);
 
-    // weird negated value
-    Patch(0x4B24A5, &resSupportedInfoOffsetNeg, sizeof(int));
+    // weird negated value (note the minus sign)
+    Patch_INT(0x4B24A5, -resSupportedInfoOffset);
 
     // +0x954
-    Patch(0x4B249C, &resIndicesOffset, sizeof(int));
-    Patch(0x4B17E0, &resIndicesOffset, sizeof(int));
-    Patch(0x4B0FFA, &resIndicesOffset, sizeof(int));
-    Patch(0x4ACEF9, &resIndicesOffset, sizeof(int));
-    Patch(0x4B0764, &resIndicesOffset, sizeof(int));
+    const DWORD resIndicesRefs[] = { 0x4B249C, 0x4B17E0, 0x4B0FFA, 0x4ACEF9, 0x4B0764 };
+    for (i = 0; i < sizeof(resIndicesRefs) / sizeof(DWORD); ++i)
+        Patch_INT(resIndicesRefs[i], resIndicesOffset);
 
     return ((InitializeElements*) INITIALIZE_NN_ELEMENTS_ADDR)(thisptr, _edx, unk1, unk2);
 }
@@ -342,6 +333,7 @@ void InitBetterResolutions()
     AddDcResolutions();
     AddDisplaySettingsResolutions();
 
+    int i;
     std::set<ResolutionInfo>::iterator it = resolutions.begin();
 
     // Discard lowest resolutions if there's more than 127 (this is a hard limit)
@@ -361,30 +353,23 @@ void InitBetterResolutions()
     // Expand the allocated heap memory of the NN_Preferences object so that we can store more resolutions
     Patch(NN_PREFERENCES_ALLOC_SIZE_PTR, &additionalSize, sizeof(additionalSize));
 
-    // These offsets are always the same so we can just set them once on startup
-    DWORD newResStartOffset = NN_PREFERENCES_NEW_DATA;
-    DWORD firstBppOffset = NN_PREFERENCES_NEW_DATA + 0x8;
+    // These offsets below are always the same so we can just set them once on startup
 
+    // Patch resolution amount (byte, 0xA)
+    const DWORD resAmountRefs[] = { 0x4B2521, 0x4B1086, 0x4B1CC1, 0x4B17F0, 0x4B07DA, 0x4ACEF1 };
     // We know resolutions.size() <= 127, so casting it directly to a byte is fine
-    BYTE resAmountByte = resolutions.size();
-
-    // Patch resolution amount (byte)
-    Patch(0x4B2521, &resAmountByte, sizeof(BYTE));
-    Patch(0x4B1086, &resAmountByte, sizeof(BYTE));
-    Patch(0x4B1CC1, &resAmountByte, sizeof(BYTE));
-    Patch(0x4B17F0, &resAmountByte, sizeof(BYTE));
-    Patch(0x4B07DA, &resAmountByte, sizeof(BYTE));
-    Patch(0x4ACEF1, &resAmountByte, sizeof(BYTE));
+    for (i = 0; i < sizeof(resAmountRefs) / sizeof(DWORD); ++i)
+        Patch_CHAR(resAmountRefs[i], (BYTE) resolutions.size());
 
     // Patch references to the start of the resolution array such that it points to the new one (0x8CC)
-    Patch(0x4B0FEB, &newResStartOffset, sizeof(DWORD));
-    Patch(0x4B17FF, &newResStartOffset, sizeof(DWORD));
-    Patch(0x4B1C5C, &newResStartOffset, sizeof(DWORD));
+    const DWORD resStartRefs[] = { 0x4B0FEB, 0x4B17FF, 0x4B1C5C };
+    for (i = 0; i < sizeof(resStartRefs) / sizeof(DWORD); ++i)
+        Patch_INT(resStartRefs[i], NN_PREFERENCES_NEW_DATA);
 
     // Patch references to the first bpp in the resolution array (0x8D4)
-    Patch(0x4B24B9, &firstBppOffset, sizeof(DWORD));
-    Patch(0x4ACED3, &firstBppOffset, sizeof(DWORD));
-    Patch(0x4B076A, &firstBppOffset, sizeof(DWORD));
+    const DWORD firstBppRefs[] = { 0x4B24B9, 0x4ACED3, 0x4B076A };
+    for (i = 0; i < sizeof(firstBppRefs) / sizeof(DWORD); ++i)
+        Patch_INT(firstBppRefs[i], NN_PREFERENCES_NEW_DATA + 0x8);
 
     // Set hook that copies the resolutions into the right location when called
     SetPointer(INITIALIZE_NN_ELEMENTS_CALL_ADDR, InitializeElements_Hook);
@@ -418,7 +403,7 @@ void InitBetterResolutions()
     Hook(0x4ACEAB, DefaultResSet1, 5, true);
     Hook(0x4ACEBB, DefaultResSet2, 7, true);
 
-    // Change the amount of bytes that are cleaned from the stack when the function returns
+    // Change the amount of bytes that are cleaned from the stack when the "set resolution function" returns because an additional parameter has been added
     WORD paramBytes = 12; // 0xC
     Patch(0x4B1D09, &paramBytes, sizeof(WORD));
     Patch(0x4B1D14, &paramBytes, sizeof(WORD));
