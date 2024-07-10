@@ -295,58 +295,18 @@ __declspec(naked) void CurrentResInfoCheck7()
 }
 
 // Dirty hack which adds an additional parameter to the game's internal CallSetResolution function
-// The purpose of re-ordering the parameters is that the height (new param), doesn't change the offsets of the other two parameters
-// In the PostSetRes funcs we put the height as the first stack param, but we want it to be the last one, which is what this hook does
-typedef bool __fastcall SetResolution(NN_Preferences thisptr, PVOID _edx, UINT width, DWORD unk, UINT height);
+// The purpose of putting the new parameter (height) last is so that it doesn't change the offsets of the other two parameters
+// There are two variations of this hook, one sets the active height as the height parameter, the other one sets the selected height
+typedef bool __fastcall SetResolution(NN_Preferences* preferences, PVOID _edx, UINT width, DWORD unk, UINT height);
 
-bool __fastcall CallSetResolution(NN_Preferences thisptr, PVOID _edx, UINT height, DWORD width, UINT unk)
+bool __fastcall CallSetResolution_Active(NN_Preferences* preferences, PVOID _edx, UINT width, DWORD unk)
 {
-    return ((SetResolution*) 0x4B1C00)(thisptr, _edx, width, unk, height);
+    return ((SetResolution*) 0x4B1C00)(preferences, _edx, width, unk, preferences->activeHeight);
 }
 
-// TODO: Replace post set res hooks with C++
-__declspec(naked) void PostSetRes1()
+bool __fastcall CallSetResolution_Selected(NN_Preferences* preferences, PVOID _edx, UINT width, DWORD unk)
 {
-    __asm {
-        mov eax, [ebp+ACTIVE_HEIGHT_OF]
-        push eax
-        call CallSetResolution
-        push 0x4AC4B5
-        ret
-    }
-}
-
-__declspec(naked) void PostSetRes2()
-{
-    __asm {
-        mov eax, [edi+SELECTED_HEIGHT_OF]
-        push eax
-        call CallSetResolution
-        push 0x4B1E6A
-        ret
-    }
-}
-
-__declspec(naked) void PostSetRes3()
-{
-    __asm {
-        mov eax, [esi+SELECTED_HEIGHT_OF]
-        push eax
-        call CallSetResolution
-        push 0x4B2599
-        ret
-    }
-}
-
-__declspec(naked) void PostSetRes4()
-{
-    __asm {
-        mov eax, [esi+ACTIVE_HEIGHT_OF]
-        push eax
-        call CallSetResolution
-        push 0x4B2786
-        ret
-    }
+    return ((SetResolution*) 0x4B1C00)(preferences, _edx, width, unk, preferences->selectedHeight);
 }
 
 __declspec(naked) void DefaultResSet1()
@@ -447,12 +407,12 @@ void InitBetterResolutions()
     Hook(0x4B0786, (DWORD) CurrentResInfoCheck6, 7, true);
     Hook(0x4ACEE2, (DWORD) CurrentResInfoCheck7, 5, true);
 
-    // Places where a function is called which sets the new resolution
+    // Places a hook where a function is called which sets the new resolution
     // This is hooked because we need this function to take an additional parameter (the height)
-    Hook(0x4AC4B0, (DWORD) PostSetRes1, 5, true);
-    Hook(0x4B1E65, (DWORD) PostSetRes2, 5, true);
-    Hook(0x4B2594, (DWORD) PostSetRes3, 5, true);
-    Hook(0x4B2781, (DWORD) PostSetRes4, 5, true);
+    Hook(0x4AC4B0, (DWORD) CallSetResolution_Active, 5);
+    Hook(0x4B1E65, (DWORD) CallSetResolution_Selected, 5);
+    Hook(0x4B2594, (DWORD) CallSetResolution_Selected, 5);
+    Hook(0x4B2781, (DWORD) CallSetResolution_Active, 5);
 
     // Places that determine the width of the "default" resolution
     Hook(0x4ACEAB, (DWORD) DefaultResSet1, 5, true);
