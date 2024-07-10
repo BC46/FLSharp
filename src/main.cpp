@@ -1,6 +1,5 @@
 #include "update.h"
 #include "waypoint.h"
-#include "Freelancer.h"
 #include "projectiles.h"
 #include "resolutions.h"
 

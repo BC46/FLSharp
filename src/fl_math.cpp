@@ -3,13 +3,15 @@
 #include <cmath>
 #include "fl_math.h"
 
-float copysign(float x, float y)
+float inline copysign(float x, float y)
 {
     return (x < 0 && y > 0) || (x > 0 && y < 0) ? -x : x;
 }
 
-void HkMatrixToQuaternion(const Matrix& m, Quaternion &result)
+Quaternion MatrixToQuaternion(const Matrix& m)
 {
+    Quaternion result;
+
     result.w = sqrtf(max(0, 1 + m.data[0][0] + m.data[1][1] + m.data[2][2])) / 2;
     result.x = sqrtf(max(0, 1 + m.data[0][0] - m.data[1][1] - m.data[2][2])) / 2;
     result.y = sqrtf(max(0, 1 - m.data[0][0] + m.data[1][1] - m.data[2][2])) / 2;
@@ -17,6 +19,8 @@ void HkMatrixToQuaternion(const Matrix& m, Quaternion &result)
     result.x = copysign(result.x, m.data[2][1] - m.data[1][2]);
     result.y = copysign(result.y, m.data[0][2] - m.data[2][0]);
     result.z = copysign(result.z, m.data[1][0] - m.data[0][1]);
+
+    return result;
 }
 
 float QuaternionDotProduct(const Quaternion &left, const Quaternion &right)
@@ -32,10 +36,7 @@ float QuaternionAngleDifference(const Quaternion &left, const Quaternion &right)
 
 float GetRotationDelta(const Quaternion& quat, const Matrix& rot)
 {
-    Quaternion quat2;
-    HkMatrixToQuaternion(rot, quat2);
-
-    return QuaternionAngleDifference(quat, quat2);
+    return QuaternionAngleDifference(quat, MatrixToQuaternion(rot));
 }
 
 Quaternion::Quaternion()

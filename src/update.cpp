@@ -110,7 +110,7 @@ void __fastcall SPObjUpdate_Hook(IServerImpl* server, PVOID _edx, SSPObjUpdateIn
         updateInfo.throttle = ship->get_throttle();
 
         // Set the last orientation
-        HkMatrixToQuaternion(ship->get_orientation(), lastOrientation);
+        lastOrientation = MatrixToQuaternion(ship->get_orientation());
     }
 
     // Send update to the server
