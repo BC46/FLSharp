@@ -16,11 +16,11 @@ void Nop(LPVOID vOffset, UINT len)
     memset(vOffset, 0x90, len);
 }
 
-void Hook(DWORD location, DWORD hookFunc, UINT instrLen)
+void Hook(DWORD location, DWORD hookFunc, UINT instrLen, bool jmp)
 {
-    // Set the opcode for the call instruction
-    static BYTE callOpcode = 0xE8;
-    Patch((PVOID) location, &callOpcode, sizeof(BYTE));
+    // Set the opcode for the call or jmp instruction
+    static BYTE callOpcode = 0xE8, jmpOpcode = 0xE9;
+    Patch((PVOID) location, &(jmp ? jmpOpcode : callOpcode), sizeof(BYTE));
 
     // Set and calculate the relative offset for the hook function
     DWORD relOffset = hookFunc - location - 5;

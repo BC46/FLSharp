@@ -3,6 +3,7 @@
 #include "waypoint.h"
 #include "Freelancer.h"
 #include "projectiles.h"
+#include "resolutions.h"
 
 void Init()
 {
@@ -16,6 +17,8 @@ void Init()
 
     static PVOID projectilesPerFireHookPtr = GetProjectilesPerFire_Hook;
     SetPointer(PROJECTILES_PER_FIRE_CALL_ADDR, &projectilesPerFireHookPtr);
+
+    //InitBetterResolutions();
 }
 
 BOOL WINAPI DllMain(HINSTANCE hinstDLL, DWORD fdwReason, LPVOID lpReserved)
