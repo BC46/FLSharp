@@ -390,33 +390,33 @@ void InitBetterResolutions()
     SetPointer(INITIALIZE_NN_ELEMENTS_CALL_ADDR, InitializeElements_Hook);
 
     // Places where the current resolution info is written to (selected and/or active width)
-    Hook(0x4A9AAB, (DWORD) CurrentResInfoWrite1, 6);
-    Hook(0x4B1046, (DWORD) CurrentResInfoWrite2, 6);
-    Hook(0x4B180F, (DWORD) CurrentResInfoWrite3, 6);
-    Hook(0x4B1C20, (DWORD) CurrentResInfoWrite4, 6);
-    Hook(0x4AC264, (DWORD) CurrentResInfoWrite5, 6);
-    Hook(0x4B27A6, (DWORD) CurrentResInfoWrite6, 6);
-    Hook(0x4B10C3, (DWORD) CurrentResInfoWrite7, 6);
+    Hook(0x4A9AAB, CurrentResInfoWrite1, 6);
+    Hook(0x4B1046, CurrentResInfoWrite2, 6);
+    Hook(0x4B180F, CurrentResInfoWrite3, 6);
+    Hook(0x4B1C20, CurrentResInfoWrite4, 6);
+    Hook(0x4AC264, CurrentResInfoWrite5, 6);
+    Hook(0x4B27A6, CurrentResInfoWrite6, 6);
+    Hook(0x4B10C3, CurrentResInfoWrite7, 6);
 
     // Places where the current resolution info is checked or compared (selected and/or active width)
-    Hook(0x4B1F67, (DWORD) CurrentResInfoCheck1, 6, true);
-    Hook(0x4B102B, (DWORD) CurrentResInfoCheck2, 5, true);
-    Hook(0x4B257A, (DWORD) CurrentResInfoCheck3, 6, true);
-    Hook(0x4B1C93, (DWORD) CurrentResInfoCheck4, 8, true);
-    Hook(0x4B074E, (DWORD) CurrentResInfoCheck5, 6, true);
-    Hook(0x4B0786, (DWORD) CurrentResInfoCheck6, 7, true);
-    Hook(0x4ACEE2, (DWORD) CurrentResInfoCheck7, 5, true);
+    Hook(0x4B1F67, CurrentResInfoCheck1, 6, true);
+    Hook(0x4B102B, CurrentResInfoCheck2, 5, true);
+    Hook(0x4B257A, CurrentResInfoCheck3, 6, true);
+    Hook(0x4B1C93, CurrentResInfoCheck4, 8, true);
+    Hook(0x4B074E, CurrentResInfoCheck5, 6, true);
+    Hook(0x4B0786, CurrentResInfoCheck6, 7, true);
+    Hook(0x4ACEE2, CurrentResInfoCheck7, 5, true);
 
     // Places a hook where a function is called which sets the new resolution
     // This is hooked because we need this function to take an additional parameter (the height)
-    Hook(0x4AC4B0, (DWORD) CallSetResolution_Active, 5);
-    Hook(0x4B1E65, (DWORD) CallSetResolution_Selected, 5);
-    Hook(0x4B2594, (DWORD) CallSetResolution_Selected, 5);
-    Hook(0x4B2781, (DWORD) CallSetResolution_Active, 5);
+    Hook(0x4AC4B0, CallSetResolution_Active, 5);
+    Hook(0x4B1E65, CallSetResolution_Selected, 5);
+    Hook(0x4B2594, CallSetResolution_Selected, 5);
+    Hook(0x4B2781, CallSetResolution_Active, 5);
 
     // Places that determine the width of the "default" resolution
-    Hook(0x4ACEAB, (DWORD) DefaultResSet1, 5, true);
-    Hook(0x4ACEBB, (DWORD) DefaultResSet2, 7, true);
+    Hook(0x4ACEAB, DefaultResSet1, 5, true);
+    Hook(0x4ACEBB, DefaultResSet2, 7, true);
 
     // Change the amount of bytes that are cleaned from the stack when the function returns
     WORD paramBytes = 12; // 0xC

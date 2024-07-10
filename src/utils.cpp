@@ -16,14 +16,14 @@ void Nop(LPVOID vOffset, UINT len)
     memset(vOffset, 0x90, len);
 }
 
-void Hook(DWORD location, DWORD hookFunc, UINT instrLen, bool jmp)
+void Hook(DWORD location, PVOID hookFunc, UINT instrLen, bool jmp)
 {
     // Set the opcode for the call or jmp instruction
     static BYTE callOpcode = 0xE8, jmpOpcode = 0xE9;
     Patch((PVOID) location, &(jmp ? jmpOpcode : callOpcode), sizeof(BYTE));
 
     // Set and calculate the relative offset for the hook function
-    DWORD relOffset = hookFunc - location - 5;
+    DWORD relOffset = (DWORD) hookFunc - location - 5;
     Patch((PVOID) (location + 1), &relOffset, sizeof(DWORD));
 
     // Nop out excess bytes
