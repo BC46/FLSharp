@@ -18,7 +18,7 @@ void Init()
     static PVOID projectilesPerFireHookPtr = GetProjectilesPerFire_Hook;
     SetPointer(PROJECTILES_PER_FIRE_CALL_ADDR, &projectilesPerFireHookPtr);
 
-    InitBetterResolutions();
+    //InitBetterResolutions();
 }
 
 BOOL WINAPI DllMain(HINSTANCE hinstDLL, DWORD fdwReason, LPVOID lpReserved)
