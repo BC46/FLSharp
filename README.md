@@ -1,5 +1,5 @@
 # FLSharp
-FLSharp (FL# for short) is a client-side plugin for the game Freelancer (2003) that aims to apply game-related fixes and improvements to the game's code.
+FLSharp (FL# for short) is a plugin for the game Freelancer (2003) that aims to apply game-related fixes and improvements to the game's code.
 These include:
 - Fixed a bug that causes the client to not send the correct engine state of the player's ship to the server.
 - Fixed a bug that causes set waypoints to be cleared despite the player being in a different system.
