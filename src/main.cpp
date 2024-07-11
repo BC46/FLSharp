@@ -5,10 +5,15 @@
 
 void Init()
 {
-    InitBetterUpdates();
-    InitWaypointFix();
-    InitProjectilesPerFireFix();
-    //InitBetterResolutions();
+    if (!IsMPServer())
+    {
+        InitBetterUpdates();
+        InitWaypointFix();
+        InitProjectilesSoundFix();
+        //InitBetterResolutions();
+    }
+
+    InitProjectilesServerFix();
 }
 
 BOOL WINAPI DllMain(HINSTANCE hinstDLL, DWORD fdwReason, LPVOID lpReserved)

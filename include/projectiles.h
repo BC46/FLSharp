@@ -9,4 +9,5 @@
 
 UINT __fastcall GetProjectilesPerFire_Hook(CELauncher* launcher);
 
-void InitProjectilesPerFireFix();
+void InitProjectilesSoundFix();
+void InitProjectilesServerFix();

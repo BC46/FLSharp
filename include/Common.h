@@ -82,3 +82,4 @@ struct IObjInspectImpl
 };
 
 bool Import SinglePlayer();
+bool Import IsMPServer();

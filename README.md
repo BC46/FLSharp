@@ -4,6 +4,7 @@ These include:
 - Fixed a bug that causes the client to not send the correct engine state of the player's ship to the server.
 - Fixed a bug that causes set waypoints to be cleared despite the player being in a different system.
 - Fixed a bug for the `one_shot_sound` not playing when firing multi-barrel launchers.
+- Fixed a bug for the ammo not decrementing correctly when firing multi-barrel launchers.
 - When playing on a server, ensure the client sends an update:
     - at least every 2 seconds;
     - when engine kill has been toggled;
@@ -13,10 +14,10 @@ These include:
 More fixes and improvements may be added in the future.
 
 ## Installation instructions
-Download the latest `FLSharp.dll` from [Releases](https://github.com/BC46/FLSharp/releases). Extract the `dll` to the `EXE` folder of your Freelancer installation. Next, open the `dacom.ini` file and append `FLSharp.dll` to the `[Libraries]` section.
+Download the latest `FLSharp.dll` from [Releases](https://github.com/BC46/FLSharp/releases). Extract the `dll` to the `EXE` folder of your Freelancer installation. Next, open both the `dacom.ini` and `dacomsrv.ini` files and append `FLSharp.dll` to the `[Libraries]` sections.
 
 ## Build instructions
-Build the project using the `NMAKE` tool from Microsoft Visual C++ 6.0 (VC6 or Visual Studio 98) with the included makefile.
+Build the project using the `NMAKE` tool from Microsoft Visual C++ 6.0 (VC6) with the included makefile.
 This will output the `FLSharp.dll` file in the `bin` folder.
 Building the project using other compilers may require the code to be modified.
 
