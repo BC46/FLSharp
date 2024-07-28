@@ -16,12 +16,6 @@ void Nop(DWORD vOffset, UINT len)
     memset((PVOID) vOffset, 0x90, len);
 }
 
-void SetPointer(DWORD location, PVOID p)
-{
-    DWORD pRef = (DWORD) &p;
-    Patch(location, (PVOID) pRef, sizeof(DWORD));
-}
-
 double getTimeElapsed(const clock_t &lastUpdate)
 {
     return (double) (clock() - lastUpdate);

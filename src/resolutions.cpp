@@ -58,7 +58,7 @@ void AddDisplaySettingsResolutions()
     }
 }
 
-bool __fastcall InitializeElements_Hook(NN_Preferences* thisptr, PVOID _edx, DWORD unk1, DWORD unk2)
+bool NN_Preferences::InitElements_Hook(DWORD unk1, DWORD unk2)
 {
     int i;
     ResolutionInfo* nextInfo;
@@ -66,12 +66,12 @@ bool __fastcall InitializeElements_Hook(NN_Preferences* thisptr, PVOID _edx, DWO
 
     // We are editing heap memory, so it should be editable by default, but make it writeable just to be sure
     DWORD _;
-    VirtualProtect(thisptr, *((PUINT) NN_PREFERENCES_ALLOC_SIZE_PTR), PAGE_EXECUTE_READWRITE, &_);
+    VirtualProtect(this, *((PUINT) NN_PREFERENCES_ALLOC_SIZE_PTR), PAGE_EXECUTE_READWRITE, &_);
 
     // Fill Resolution info
     for (i = 0; it != resolutions.end(); ++it)
     {
-        nextInfo = ((ResolutionInfo*) &thisptr->newData) + (i++);
+        nextInfo = ((ResolutionInfo*) &newData) + (i++);
         *nextInfo = *it;
     }
 
@@ -80,8 +80,8 @@ bool __fastcall InitializeElements_Hook(NN_Preferences* thisptr, PVOID _edx, DWO
     PBYTE resIndicesVOffset = (PBYTE) nextInfo + resolutions.size();
     memset(resIndicesVOffset, 0xFF, resolutions.size() * sizeof(int));
 
-    int resSupportedInfoOffset = ((PBYTE) nextInfo) - ((PBYTE) thisptr);
-    int resIndicesOffset = resIndicesVOffset - ((PBYTE) thisptr);
+    int resSupportedInfoOffset = ((PBYTE) nextInfo) - ((PBYTE) this);
+    int resIndicesOffset = resIndicesVOffset - ((PBYTE) this);
 
     // +0x944
     const DWORD supportedInfoRefs[] = { 0x4B1005, 0x4B24B3, 0x4B1C73, 0x4B0773, 0x4ACEDA };
@@ -96,22 +96,25 @@ bool __fastcall InitializeElements_Hook(NN_Preferences* thisptr, PVOID _edx, DWO
     for (i = 0; i < sizeof(resIndicesRefs) / sizeof(DWORD); ++i)
         Patch_INT(resIndicesRefs[i], resIndicesOffset);
 
-    return ((InitializeElements*) INITIALIZE_NN_ELEMENTS_ADDR)(thisptr, _edx, unk1, unk2);
+    // Call original function
+    InitElements initElementsFunc = GetFuncDef<InitElements>(INIT_NN_ELEMENTS_ADDR);
+    return (this->*initElementsFunc)(unk1, unk2);
 }
 
-// Dirty hack which adds an additional parameter to the game's internal CallSetResolution function
+// Dirty hack which adds an additional parameter to the game's internal SetResolution function
 // The purpose of putting the new parameter (height) last is so that it doesn't change the offsets of the other two parameters
 // There are two variations of this hook, one sets the active height as the height parameter, the other one sets the selected height
-typedef bool __fastcall SetResolution(NN_Preferences* preferences, PVOID _edx, UINT width, DWORD unk, UINT height);
 
-bool __fastcall CallSetResolution_Active(NN_Preferences* preferences, PVOID _edx, UINT width, DWORD unk)
+bool NN_Preferences::SetResolution_Active_Hook(UINT width, DWORD unk)
 {
-    return ((SetResolution*) 0x4B1C00)(preferences, _edx, width, unk, preferences->activeHeight);
+    SetResolution setResFunc = GetFuncDef<SetResolution>(SET_RESOLUTION_ADDR);
+    return (this->*setResFunc)(width, unk, activeHeight);
 }
 
-bool __fastcall CallSetResolution_Selected(NN_Preferences* preferences, PVOID _edx, UINT width, DWORD unk)
+bool NN_Preferences::SetResolution_Selected_Hook(UINT width, DWORD unk)
 {
-    return ((SetResolution*) 0x4B1C00)(preferences, _edx, width, unk, preferences->selectedHeight);
+    SetResolution setResFunc = GetFuncDef<SetResolution>(SET_RESOLUTION_ADDR);
+    return (this->*setResFunc)(width, unk, selectedHeight);
 }
 
 void InitBetterResolutions()
@@ -160,7 +163,7 @@ void InitBetterResolutions()
         Patch_INT(firstBppRefs[i], NN_PREFERENCES_NEW_DATA + 0x8);
 
     // Set hook that copies the resolutions into the right location when called
-    SetPointer(INITIALIZE_NN_ELEMENTS_CALL_ADDR, InitializeElements_Hook);
+    SetPointer(INIT_NN_ELEMENTS_CALL_ADDR, NN_Preferences::InitElements_Hook);
 
     // Places where the current resolution info is written to (selected and/or active width)
     Hook(0x4A9AAB, CurrentResInfoWrite1, 6);
@@ -182,10 +185,10 @@ void InitBetterResolutions()
 
     // Places a hook where a function is called which sets the new resolution
     // This is hooked because we need this function to take an additional parameter (the height)
-    Hook(0x4AC4B0, CallSetResolution_Active, 5);
-    Hook(0x4B1E65, CallSetResolution_Selected, 5);
-    Hook(0x4B2594, CallSetResolution_Selected, 5);
-    Hook(0x4B2781, CallSetResolution_Active, 5);
+    Hook(0x4AC4B0, NN_Preferences::SetResolution_Active_Hook, 5);
+    Hook(0x4B1E65, NN_Preferences::SetResolution_Selected_Hook, 5);
+    Hook(0x4B2594, NN_Preferences::SetResolution_Selected_Hook, 5);
+    Hook(0x4B2781, NN_Preferences::SetResolution_Active_Hook, 5);
 
     // Places that determine the width of the "default" resolution
     Hook(0x4ACEAB, DefaultResSet1, 5, true);

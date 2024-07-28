@@ -10,8 +10,9 @@
 #define OBJ_UPDATE_CALL_ADDR 0x54167C
 #define GET_PLAYERIOBJINSPECTIMPL_ADDR 0x54BAF0
 #define WAYPOINT_CHECK_CALL_ADDR 0x4F4141
-#define INITIALIZE_NN_ELEMENTS_CALL_ADDR 0x5D4A80
-#define INITIALIZE_NN_ELEMENTS_ADDR 0x4A9790
+#define INIT_NN_ELEMENTS_CALL_ADDR 0x5D4A80
+#define INIT_NN_ELEMENTS_ADDR 0x4A9790
+#define SET_RESOLUTION_ADDR 0x4B1C00
 
 struct WaypointInfo
 {
@@ -33,7 +34,12 @@ struct NN_Preferences
     UINT selectedHeight;
     UINT activeHeight;
     PBYTE newData;
-};
 
-typedef NN_Preferences* __fastcall InitializeNN_Preferences(PVOID thisptr, PVOID _edx, DWORD unk1, DWORD unk2);
-typedef bool __fastcall InitializeElements(NN_Preferences* thisptr, PVOID _edx, DWORD unk1, DWORD unk2);
+    bool NN_Preferences::InitElements_Hook(DWORD unk1, DWORD unk2);
+    bool NN_Preferences::SetResolution_Active_Hook(UINT width, DWORD unk);
+    bool NN_Preferences::SetResolution_Selected_Hook(UINT width, DWORD unk);
+
+private:
+    typedef bool (NN_Preferences::*InitElements)(DWORD unk1, DWORD unk2);
+    typedef bool (NN_Preferences::*SetResolution)(UINT width, DWORD unk, UINT height);
+};

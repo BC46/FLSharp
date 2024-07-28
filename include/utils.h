@@ -24,11 +24,11 @@ void Hook(DWORD location, Func hookFunc, UINT instrLen, bool jmp = false)
     DWORD _;
 
     // Set the opcode for the call or jmp instruction
-    static BYTE callOpcode = 0xE8, jmpOpcode = 0xE9;
+    BYTE callOpcode = 0xE8, jmpOpcode = 0xE9;
     Patch(location, &(jmp ? jmpOpcode : callOpcode), sizeof(BYTE));
 
     // Set and calculate the relative offset for the hook function
-    VirtualProtect((PVOID) location, sizeof(DWORD), PAGE_EXECUTE_READWRITE, &_);
+    VirtualProtect((PVOID) location, instrLen, PAGE_EXECUTE_READWRITE, &_);
     *(Func*) (location + 1) = hookFunc;
     *(PDWORD) (location + 1) -= location + 5;
 
@@ -37,6 +37,19 @@ void Hook(DWORD location, Func hookFunc, UINT instrLen, bool jmp = false)
         Nop((location + 5), instrLen - 5);
 }
 
-double getTimeElapsed(const clock_t &lastUpdate);
+template <typename Func>
+void SetPointer(DWORD location, Func hookFunc)
+{
+    DWORD _;
 
-void SetPointer(DWORD location, PVOID p);
+    VirtualProtect((PVOID) location, sizeof(DWORD), PAGE_EXECUTE_READWRITE, &_);
+    *(Func*) location = hookFunc;
+}
+
+template <class Func>
+Func inline GetFuncDef(DWORD funcAddr)
+{
+    return *(Func*) &funcAddr;
+}
+
+double getTimeElapsed(const clock_t &lastUpdate);
