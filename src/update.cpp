@@ -18,7 +18,9 @@ void SetTimeSinceLastUpdate()
 
 CShip* GetShip()
 {
+    typedef IObjInspectImpl* GetPlayerIObjInspectImpl();
     IObjInspectImpl* playerIObjInspect = ((GetPlayerIObjInspectImpl*) GET_PLAYERIOBJINSPECTIMPL_ADDR)();
+
     return !playerIObjInspect ? NULL : playerIObjInspect->ship;
 }
 
@@ -46,6 +48,7 @@ bool hasOrientationChanged(CShip* ship, double timeElapsed)
 void PostInitDealloc_Hook(PVOID obj)
 {
     // Call original function
+    typedef void Dealloc(PVOID obj);
     ((Dealloc*) DEALLOC_ADDR)(obj);
 
     if (SinglePlayer()) // No need to calculate the turn threshold in SP

@@ -1,14 +1,16 @@
 #include "projectiles.h"
 #include "utils.h"
 
+#define NAKED __declspec(naked)
+
 // We hook this function in one instance where it gets called
 // because it uses the return value to play the one_shot_sound of the launchers.
 // When the function returns 2 (i.e. the launcher has two barrels), the one_shot_sound fails to play.
 // In this hook we make sure the return value is 1 at most, which fixes the bug.
 // It is not recommended to modify the GetProjectilesPerFire function directly because it gets called in other instances as well.
-UINT __fastcall GetProjectilesPerFire_Hook(CELauncher *launcher)
+UINT CELauncher::GetProjectilesPerFire_Hook() const
 {
-    UINT result = launcher->GetProjectilesPerFire();
+    UINT result = GetProjectilesPerFire();
 
     if (result > 1)
         result = 1;
@@ -16,19 +18,19 @@ UINT __fastcall GetProjectilesPerFire_Hook(CELauncher *launcher)
     return result;
 }
 
+typedef UINT (CELauncher::*GetProjectilesPerFireFunc)() const;
+
 void InitProjectilesSoundFix()
 {
-    static PVOID projectilesPerFireHookPtr = GetProjectilesPerFire_Hook;
-    SetPointer(PROJECTILES_PER_FIRE_CALL_ADDR, &projectilesPerFireHookPtr);
+    static GetProjectilesPerFireFunc gppfHookPtr = CELauncher::GetProjectilesPerFire_Hook;
+    SetPointer(PROJECTILES_PER_FIRE_CALL_ADDR, &gppfHookPtr);
 }
 
 DWORD playerLauncherFireRet;
-
-typedef UINT (CELauncher::*GetProjectilesPerFireFunc)() const;
 GetProjectilesPerFireFunc getProjectilesPerFireFunc = CELauncher::GetProjectilesPerFire;
 
 // Hook function that replaces the hard-coded "1" when decrementing ammo with a GetProjectilesPerFire call
-__declspec(naked) void HandlePlayerLauncherFire_Hook()
+NAKED void HandlePlayerLauncherFire_Hook()
 {
     __asm {
         push 0x3F800000                     // overwritten instruction

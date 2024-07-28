@@ -35,11 +35,5 @@ struct NN_Preferences
     PBYTE newData;
 };
 
-typedef WaypointInfo* WaypointCheck(UINT index);
-
-typedef IObjInspectImpl* GetPlayerIObjInspectImpl();
-
-typedef void Dealloc(PVOID obj);
-
 typedef NN_Preferences* __fastcall InitializeNN_Preferences(PVOID thisptr, PVOID _edx, DWORD unk1, DWORD unk2);
 typedef bool __fastcall InitializeElements(NN_Preferences* thisptr, PVOID _edx, DWORD unk1, DWORD unk2);

@@ -5,19 +5,20 @@
 #define WIN32_LEAN_AND_MEAN
 #include <windows.h>
 
-#define Import __declspec(dllimport)
+#define IMPORT __declspec(dllimport)
 
 #define ENGINE_TYPE 0x20000
 
 class CEquip{};
 
-class Import CELauncher
+class CELauncher
 {
 public:
-    UINT GetProjectilesPerFire() const;
+    UINT IMPORT GetProjectilesPerFire() const;
+    UINT GetProjectilesPerFire_Hook() const;
 };
 
-class Import CEquipManager
+class IMPORT CEquipManager
 {
 public:
     CEquip const * FindFirst(UINT type) const;
@@ -42,7 +43,7 @@ public:
     Matrix const & get_orientation() const;
 };
 
-struct Import CShip : public EngineObject
+struct IMPORT CShip : public EngineObject
 {
     float get_throttle() const;
     Archetype::Ship const * shiparch() const;
@@ -52,19 +53,19 @@ public:
     CEquipManager equipManager;
 };
 
-class Import Fuse
+class IMPORT Fuse
 {
     // We don't call this function; the only purpose of this is to set the correct offset for IsTriggered() in the vftable
     virtual void Dealloc(bool unk);
 };
 
-class Import FuseAction : Fuse
+class IMPORT FuseAction : Fuse
 {
 public:
     virtual bool IsTriggered() const;
 };
 
-class Import CEEngine : public FuseAction
+class IMPORT CEEngine : public FuseAction
 {
 public:
     static CEEngine const * cast(CEquip const * equip);
@@ -72,7 +73,7 @@ public:
 
 struct CRemotePhysicsSimulation
 {
-    bool Import CheckForSync(Vector const &unk1, Vector const &unk2, Quaternion const &unk3);
+    bool IMPORT CheckForSync(Vector const &unk1, Vector const &unk2, Quaternion const &unk3);
     bool CheckForSync_Hook(Vector const &unk1, Vector const &unk2, Quaternion const &unk3);
 };
 
@@ -82,5 +83,5 @@ struct IObjInspectImpl
     CShip* ship;
 };
 
-bool Import SinglePlayer();
-bool Import IsMPServer();
+bool IMPORT SinglePlayer();
+bool IMPORT IsMPServer();

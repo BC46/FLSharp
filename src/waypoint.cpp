@@ -3,6 +3,7 @@
 
 WaypointInfo* WaypointCheck_Hook(UINT index)
 {
+    typedef WaypointInfo* WaypointCheck(UINT index);
     WaypointInfo* waypointInfo = ((WaypointCheck*) WAYPOINT_CHECK_ADDR)(index);
 
     if (!waypointInfo)

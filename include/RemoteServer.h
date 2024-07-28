@@ -3,8 +3,6 @@
 #define WIN32_LEAN_AND_MEAN
 #include <windows.h>
 
-#define Import __declspec(dllimport)
-
 struct SSPObjUpdateInfo
 {
     BYTE data[40];

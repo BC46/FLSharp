@@ -1,11 +1,12 @@
 #include "resolutions_asm.h"
 
+#define NAKED __declspec(naked)
 #define SELECTED_HEIGHT_OF 0x980
 #define ACTIVE_HEIGHT_OF 0x984
 
 int horzRes, vertRes, tempHeight;
 
-__declspec(naked) void CurrentResInfoWrite1()
+NAKED void CurrentResInfoWrite1()
 {
     __asm {
         mov [ebp+0x8B8], ebx
@@ -15,7 +16,7 @@ __declspec(naked) void CurrentResInfoWrite1()
     }
 }
 
-__declspec(naked) void CurrentResInfoWrite2()
+NAKED void CurrentResInfoWrite2()
 {
     __asm {
         mov [ebx+0x330], eax
@@ -25,7 +26,7 @@ __declspec(naked) void CurrentResInfoWrite2()
     }
 }
 
-__declspec(naked) void CurrentResInfoWrite3()
+NAKED void CurrentResInfoWrite3()
 {
     __asm {
         mov [edi+0x330], eax
@@ -34,7 +35,7 @@ __declspec(naked) void CurrentResInfoWrite3()
     }
 }
 
-__declspec(naked) void CurrentResInfoWrite4()
+NAKED void CurrentResInfoWrite4()
 {
     __asm {
         mov [ebp+0x8B8], eax
@@ -45,7 +46,7 @@ __declspec(naked) void CurrentResInfoWrite4()
 }
 
 // Selected to active
-__declspec(naked) void CurrentResInfoWrite5()
+NAKED void CurrentResInfoWrite5()
 {
     __asm {
         mov [ebp+0x8B8], eax
@@ -56,7 +57,7 @@ __declspec(naked) void CurrentResInfoWrite5()
 }
 
 // Active to selected
-__declspec(naked) void CurrentResInfoWrite6()
+NAKED void CurrentResInfoWrite6()
 {
     __asm {
         mov [esi+0x330], eax
@@ -66,7 +67,7 @@ __declspec(naked) void CurrentResInfoWrite6()
     }
 }
 
-__declspec(naked) void CurrentResInfoWrite7()
+NAKED void CurrentResInfoWrite7()
 {
     __asm {
         mov [ebx+0x330], eax
@@ -76,7 +77,7 @@ __declspec(naked) void CurrentResInfoWrite7()
     }
 }
 
-__declspec(naked) void CurrentResInfoCheck1()
+NAKED void CurrentResInfoCheck1()
 {
     __asm {
         mov eax, [ebp+ACTIVE_HEIGHT_OF]
@@ -91,7 +92,7 @@ __declspec(naked) void CurrentResInfoCheck1()
     }
 }
 
-__declspec(naked) void CurrentResInfoCheck2()
+NAKED void CurrentResInfoCheck2()
 {
     __asm {
         cmp [esp+0x88], edi
@@ -109,7 +110,7 @@ __declspec(naked) void CurrentResInfoCheck2()
     }
 }
 
-__declspec(naked) void CurrentResInfoCheck3()
+NAKED void CurrentResInfoCheck3()
 {
     __asm {
         mov ecx, [esi+ACTIVE_HEIGHT_OF]
@@ -124,7 +125,7 @@ __declspec(naked) void CurrentResInfoCheck3()
     }
 }
 
-__declspec(naked) void CurrentResInfoCheck4()
+NAKED void CurrentResInfoCheck4()
 {
     __asm {
         cmp edi, [esp+0x48]
@@ -141,7 +142,7 @@ __declspec(naked) void CurrentResInfoCheck4()
     }
 }
 
-__declspec(naked) void CurrentResInfoCheck5()
+NAKED void CurrentResInfoCheck5()
 {
     __asm {
         mov edi, [ebp+ACTIVE_HEIGHT_OF]
@@ -156,7 +157,7 @@ __declspec(naked) void CurrentResInfoCheck5()
     }
 }
 
-__declspec(naked) void CurrentResInfoCheck6()
+NAKED void CurrentResInfoCheck6()
 {
     __asm {
         mov eax, [ebp+ACTIVE_HEIGHT_OF]
@@ -175,7 +176,7 @@ __declspec(naked) void CurrentResInfoCheck6()
     }
 }
 
-__declspec(naked) void CurrentResInfoCheck7()
+NAKED void CurrentResInfoCheck7()
 {
     __asm {
         cmp [ecx-8], edx
@@ -191,7 +192,7 @@ __declspec(naked) void CurrentResInfoCheck7()
     }
 }
 
-__declspec(naked) void DefaultResSet1()
+NAKED void DefaultResSet1()
 {
     __asm {
         mov edx, [horzRes]
@@ -202,7 +203,7 @@ __declspec(naked) void DefaultResSet1()
     }
 }
 
-__declspec(naked) void DefaultResSet2()
+NAKED void DefaultResSet2()
 {
     __asm {
         mov edx, 0x320
