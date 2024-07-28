@@ -31,7 +31,7 @@ $(OBJ_FILES): makefile
 
 $(OBJ_DIR)\fl_math.obj: $(SRC_DIR)\fl_math.cpp $(INCLUDE_DIR)\fl_math.h
 $(OBJ_DIR)\main.obj: $(SRC_DIR)\main.cpp $(INCLUDE_DIR)\update.h $(INCLUDE_DIR)\waypoint.h $(INCLUDE_DIR)\projectiles.h $(INCLUDE_DIR)\resolutions.h
-$(OBJ_DIR)\update.obj: $(SRC_DIR)\update.cpp $(INCLUDE_DIR)\update.h $(INCLUDE_DIR)\Freelancer.h $(INCLUDE_DIR)\utils.h
+$(OBJ_DIR)\update.obj: $(SRC_DIR)\update.cpp $(INCLUDE_DIR)\update.h $(INCLUDE_DIR)\Freelancer.h $(INCLUDE_DIR)\utils.h $(INCLUDE_DIR)\Common.h $(INCLUDE_DIR)\RemoteServer.h
 $(OBJ_DIR)\utils.obj: $(SRC_DIR)\utils.cpp $(INCLUDE_DIR)\utils.h
 $(OBJ_DIR)\waypoint.obj: $(SRC_DIR)\waypoint.cpp $(INCLUDE_DIR)\waypoint.h $(INCLUDE_DIR)\utils.h
 $(OBJ_DIR)\projectiles.obj: $(SRC_DIR)\projectiles.cpp $(INCLUDE_DIR)\projectiles.h $(INCLUDE_DIR)\utils.h

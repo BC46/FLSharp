@@ -70,9 +70,10 @@ public:
     static CEEngine const * cast(CEquip const * equip);
 };
 
-struct Import CRemotePhysicsSimulation
+struct CRemotePhysicsSimulation
 {
-    bool CheckForSync(Vector const &unk1, Vector const &unk2, Quaternion const &unk3);
+    bool Import CheckForSync(Vector const &unk1, Vector const &unk2, Quaternion const &unk3);
+    bool CheckForSync_Hook(Vector const &unk1, Vector const &unk2, Quaternion const &unk3);
 };
 
 struct IObjInspectImpl

@@ -11,29 +11,25 @@ struct SSPObjUpdateInfo
     float throttle;
 };
 
-class IServerImpl;
-
-// SPObjUpdate function definition
-typedef void __fastcall SPObjUpdateCall(IServerImpl* server, PVOID _edx, SSPObjUpdateInfo &updateInfo, UINT client);
-
 class IServerImpl {
 public:
     // Wrapper for the virtual SPObjUpdate function in remoteserver.dll
-    // Very ugly I know, but I couldn't find an easier way to go about it without adding a bunch of dummy virtual functions...
-    inline void SPObjUpdate(PVOID _edx, SSPObjUpdateInfo &updateInfo, UINT client)
+    // This is the alternative way to adding a bunch of dummy virtual functions to mimic a filled vftable
+    inline void SPObjUpdate(SSPObjUpdateInfo &updateInfo, UINT client)
     {
-        // Get function pointer from the vftable
-        SPObjUpdateCall* originalFunction = (SPObjUpdateCall*) vftable->SPObjUpdate;
-
         // Call the original SPObjUpdate function
-        (originalFunction)(this, _edx, updateInfo, client);
+        (this->*(vftable->SPObjUpdate))(updateInfo, client);
     }
 
+    void SPObjUpdate_Hook(SSPObjUpdateInfo &updateInfo, UINT client);
+
 private:
+    typedef void (IServerImpl::*SPObjUpdateFunc)(SSPObjUpdateInfo &updateInfo, UINT client);
+
     struct IServerImpl_VFTable
     {
         BYTE funcs[0xD0];
-        PVOID SPObjUpdate;
+        SPObjUpdateFunc SPObjUpdate;
     };
 
     IServerImpl_VFTable* vftable;

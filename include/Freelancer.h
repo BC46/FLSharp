@@ -15,7 +15,7 @@
 
 struct WaypointInfo
 {
-    BYTE data[12];
+    Vector pos;
     UINT system;
 };
 

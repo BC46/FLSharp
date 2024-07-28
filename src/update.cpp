@@ -68,7 +68,7 @@ void PostInitDealloc_Hook(PVOID obj)
 }
 
 // Hook for function that determines whether an update should be sent to the server
-bool __fastcall CheckForSync_Hook(CRemotePhysicsSimulation* physicsSim, PVOID _edx, Vector const &unk1, Vector const &unk2, Quaternion const &unk3)
+bool CRemotePhysicsSimulation::CheckForSync_Hook(Vector const &unk1, Vector const &unk2, Quaternion const &unk3)
 {
     double timeElapsed = getTimeElapsed(timeSinceLastUpdate); // Time elapsed since the last update
 
@@ -78,7 +78,7 @@ bool __fastcall CheckForSync_Hook(CRemotePhysicsSimulation* physicsSim, PVOID _e
         return false;
 
     // Does the client want to sync?
-    if (physicsSim->CheckForSync(unk1, unk2, unk3))
+    if (CheckForSync(unk1, unk2, unk3))
         return true;
 
     CShip* ship = GetShip();
@@ -100,7 +100,7 @@ bool __fastcall CheckForSync_Hook(CRemotePhysicsSimulation* physicsSim, PVOID _e
 }
 
 // Hook for function that sends an update to the server
-void __fastcall SPObjUpdate_Hook(IServerImpl* server, PVOID _edx, SSPObjUpdateInfo &updateInfo, UINT client)
+void IServerImpl::SPObjUpdate_Hook(SSPObjUpdateInfo &updateInfo, UINT client)
 {
     CShip* ship = GetShip();
 
@@ -114,7 +114,7 @@ void __fastcall SPObjUpdate_Hook(IServerImpl* server, PVOID _edx, SSPObjUpdateIn
     }
 
     // Send update to the server
-    server->SPObjUpdate(_edx, updateInfo, client);
+    SPObjUpdate(updateInfo, client);
 
     SetTimeSinceLastUpdate();
 }
@@ -124,6 +124,6 @@ void InitBetterUpdates()
     SetTimeSinceLastUpdate();
 
     Hook(POST_INIT_DEALLOC_CALL_ADDR, PostInitDealloc_Hook, 5);
-    Hook(CHECK_FOR_SYNC_CALL_ADDR, CheckForSync_Hook, 5);
-    Hook(OBJ_UPDATE_CALL_ADDR, SPObjUpdate_Hook, 6);
+    Hook(CHECK_FOR_SYNC_CALL_ADDR, CRemotePhysicsSimulation::CheckForSync_Hook, 5);
+    Hook(OBJ_UPDATE_CALL_ADDR, IServerImpl::SPObjUpdate_Hook, 6);
 }
