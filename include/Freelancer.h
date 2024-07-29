@@ -13,11 +13,25 @@
 #define INIT_NN_ELEMENTS_CALL_ADDR 0x5D4A80
 #define INIT_NN_ELEMENTS_ADDR 0x4A9790
 #define SET_RESOLUTION_ADDR 0x4B1C00
+#define NAV_MAP_GET_HIGHLIGHTED_OBJ_ADDR 0x496D40
 
 struct WaypointInfo
 {
     Vector pos;
     UINT system;
+};
+
+struct NavMapObj
+{
+    UINT type;
+};
+
+struct NeuroNetNavMap
+{
+    NavMapObj* GetHighlightedObject_Hook(DWORD unk1, DWORD unk2);
+
+private:
+    typedef NavMapObj* (NeuroNetNavMap::*GetHighlightedObject)(DWORD unk1, DWORD unk2);
 };
 
 // 0x330 = current selected width
@@ -35,9 +49,9 @@ struct NN_Preferences
     UINT activeHeight;
     PBYTE newData;
 
-    bool NN_Preferences::InitElements_Hook(DWORD unk1, DWORD unk2);
-    bool NN_Preferences::SetResolution_Active_Hook(UINT width, DWORD unk);
-    bool NN_Preferences::SetResolution_Selected_Hook(UINT width, DWORD unk);
+    bool InitElements_Hook(DWORD unk1, DWORD unk2);
+    bool SetResolution_Active_Hook(UINT width, DWORD unk);
+    bool SetResolution_Selected_Hook(UINT width, DWORD unk);
 
 private:
     typedef bool (NN_Preferences::*InitElements)(DWORD unk1, DWORD unk2);

@@ -8,7 +8,7 @@ void Init()
     if (!IsMPServer())
     {
         InitBetterUpdates();
-        InitWaypointFix();
+        InitWaypointFixes();
         InitProjectilesSoundFix();
         //InitBetterResolutions();
     }

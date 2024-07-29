@@ -4,4 +4,4 @@
 #include <windows.h>
 #include "Freelancer.h"
 
-void InitWaypointFix();
+void InitWaypointFixes();
