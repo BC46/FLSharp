@@ -19,15 +19,14 @@ UINT CELauncher::GetProjectilesPerFire_Hook() const
 }
 
 typedef UINT (CELauncher::*GetProjectilesPerFireFunc)() const;
+GetProjectilesPerFireFunc getProjectilesPerFireFunc = CELauncher::GetProjectilesPerFire;
 
 void InitProjectilesSoundFix()
 {
-    static GetProjectilesPerFireFunc gppfHookPtr = CELauncher::GetProjectilesPerFire_Hook;
-    SetPointer(PROJECTILES_PER_FIRE_CALL_ADDR, &gppfHookPtr);
+    SetPointer(PROJECTILES_PER_FIRE_CALL_ADDR, &getProjectilesPerFireFunc);
 }
 
 DWORD playerLauncherFireRet;
-GetProjectilesPerFireFunc getProjectilesPerFireFunc = CELauncher::GetProjectilesPerFire;
 
 // Hook function that replaces the hard-coded "1" when decrementing ammo with a GetProjectilesPerFire call
 NAKED void HandlePlayerLauncherFire_Hook()
