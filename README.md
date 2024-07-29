@@ -3,9 +3,9 @@ FLSharp (FL# for short) is a plugin for the game Freelancer (2003) that aims to 
 These include:
 - Fixed a bug that causes the client to not send the correct engine state of the player's ship to the server.
 - Fixed a bug that causes set waypoints to be cleared despite the player being in a different system.
-- Fixed a bug that makes the player ship be a selectable target for creating waypoints on the nav map.
+- Fixed a bug that makes the player ship a selectable target for creating waypoints on the nav map.
 - Fixed a bug for the `one_shot_sound` not playing when firing multi-barrel launchers.
-- Fixed a bug for the ammo not decrementing correctly when firing multi-barrel launchers.
+- Fixed a bug for the ammo count not decrementing correctly when firing multi-barrel launchers.
 - When playing on a server, ensure the client sends an update:
     - at least every 2 seconds;
     - when engine kill has been toggled;
