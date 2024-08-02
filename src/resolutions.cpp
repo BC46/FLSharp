@@ -3,6 +3,12 @@
 #include "utils.h"
 #include <set>
 
+#define DEFAULT_RES_WIDTH_PTR_1 0x56223C
+#define DEFAULT_RES_HEIGHT_PTR_1 (DEFAULT_RES_WIDTH_PTR_1 + 0x7)
+
+#define DEFAULT_RES_WIDTH_PTR_2 0x424E9D
+#define DEFAULT_RES_HEIGHT_PTR_2 (DEFAULT_RES_WIDTH_PTR_2 + 0x5)
+
 std::set<ResolutionInfo> resolutions;
 
 void AddFlResolutions()
@@ -37,14 +43,18 @@ void AddDcResolutions()
 
     int horzRes = GetDeviceCaps(hdc, HORZRES);
     int vertRes = GetDeviceCaps(hdc, VERTRES);
+    ReleaseDC(NULL, hdc);
 
     SetHorzRes(horzRes);
     SetVertRes(vertRes);
 
+    Patch_INT(DEFAULT_RES_WIDTH_PTR_1, horzRes);
+    Patch_INT(DEFAULT_RES_WIDTH_PTR_2, horzRes);
+    Patch_INT(DEFAULT_RES_HEIGHT_PTR_1, vertRes);
+    Patch_INT(DEFAULT_RES_HEIGHT_PTR_2, vertRes);
+
     resolutions.insert(ResolutionInfo( horzRes, vertRes, 16 ));
     resolutions.insert(ResolutionInfo( horzRes, vertRes, 32 ));
-
-    ReleaseDC(NULL, hdc);
 }
 
 void AddDisplaySettingsResolutions()
@@ -52,7 +62,8 @@ void AddDisplaySettingsResolutions()
     DEVMODE dm = { 0 };
     dm.dmSize = sizeof(dm);
 
-    for (int iModeNum = 0; EnumDisplaySettings(NULL, iModeNum, &dm) != 0; ++iModeNum) {
+    for (int iModeNum = 0; EnumDisplaySettings(NULL, iModeNum, &dm) != FALSE; ++iModeNum)
+    {
         if (IsResolutionAllowed(dm))
             resolutions.insert(ResolutionInfo( dm.dmPelsWidth, dm.dmPelsHeight, dm.dmBitsPerPel ));
     }
@@ -117,22 +128,28 @@ bool NN_Preferences::SetResolution_Selected_Hook(UINT width, DWORD unk)
     return (this->*setResFunc)(width, unk, selectedHeight);
 }
 
-void InitBetterResolutions()
+void DiscardLowestResolutions(size_t newSize)
 {
-    AddFlResolutions();
-    AddWindowRectResolutions();
-    AddDcResolutions();
-    AddDisplaySettingsResolutions();
-
-    int i;
     std::set<ResolutionInfo>::iterator it = resolutions.begin();
 
-    // Discard lowest resolutions if there's more than 127 (this is a hard limit)
-    while (resolutions.size() > 127)
+    while (resolutions.size() > newSize)
     {
         resolutions.erase(it++);
     }
+}
 
+void InitBetterResolutions()
+{
+    AddDisplaySettingsResolutions();
+
+    // Make sure there can only be 127 resolutions at most after the resolutions below have been added too
+    DiscardLowestResolutions(127 - 14);
+
+    AddFlResolutions();
+    AddWindowRectResolutions();
+    AddDcResolutions();
+
+    int i;
     int resolutionAmount = resolutions.size();
 
     int additionalSize = NN_PREFERENCES_ALLOC_SIZE
