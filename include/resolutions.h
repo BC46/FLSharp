@@ -10,11 +10,15 @@
 
 #define NN_PREFERENCES_ALLOC_SIZE_PTR 0x4B296A
 #define NN_PREFERENCES_ALLOC_SIZE 0x980
-#define NN_PREFERENCES_NEW_DATA 0x988
 
 struct WidthHeight
 {
     UINT width, height;
+
+    bool Equals(const WidthHeight &other)
+    {
+        return memcmp(this, &other, sizeof(WidthHeight)) == 0;
+    }
 };
 
 struct ResolutionInfo
@@ -44,3 +48,4 @@ bool inline IsResolutionAllowed(const DEVMODE &dm)
 }
 
 void InitBetterResolutions();
+void CleanupBetterResolutions();

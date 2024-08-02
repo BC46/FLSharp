@@ -3,13 +3,39 @@
 #include "utils.h"
 #include <set>
 
-#define DEFAULT_RES_WIDTH_PTR_1 0x56223C
+#define DEFAULT_RES_WIDTH_PTR_1 0x56223F
 #define DEFAULT_RES_HEIGHT_PTR_1 (DEFAULT_RES_WIDTH_PTR_1 + 0x7)
 
 #define DEFAULT_RES_WIDTH_PTR_2 0x424E9D
 #define DEFAULT_RES_HEIGHT_PTR_2 (DEFAULT_RES_WIDTH_PTR_2 + 0x5)
 
 std::set<ResolutionInfo> resolutions;
+UINT lastSupportedResAmount = 0;
+bool lastUnk_x97C = true;
+BYTE* lastResSupportedArr = NULL;
+
+WidthHeight mainMonitorRes;
+
+WidthHeight GetMainMonitorResolution()
+{
+    WidthHeight result;
+
+    HDC hdc = GetDC(NULL);
+
+    if (hdc)
+    {
+        result.width = GetDeviceCaps(hdc, HORZRES);
+        result.height = GetDeviceCaps(hdc, VERTRES);
+    }
+    else
+    {
+        result.width = 1024;
+        result.height = 768;
+    }
+
+    ReleaseDC(NULL, hdc);
+    return result;
+}
 
 void AddFlResolutions()
 {
@@ -34,27 +60,18 @@ void AddWindowRectResolutions()
     }
 }
 
-void AddDcResolutions()
+void AddMainMonitorResolutions()
 {
-    HDC hdc = GetDC(NULL);
+    SetHorzRes(mainMonitorRes.width);
+    SetVertRes(mainMonitorRes.height);
 
-    if (!hdc)
-        return;
+    Patch_INT(DEFAULT_RES_WIDTH_PTR_1, mainMonitorRes.width);
+    Patch_INT(DEFAULT_RES_WIDTH_PTR_2, mainMonitorRes.width);
+    Patch_INT(DEFAULT_RES_HEIGHT_PTR_1, mainMonitorRes.height);
+    Patch_INT(DEFAULT_RES_HEIGHT_PTR_2, mainMonitorRes.height);
 
-    int horzRes = GetDeviceCaps(hdc, HORZRES);
-    int vertRes = GetDeviceCaps(hdc, VERTRES);
-    ReleaseDC(NULL, hdc);
-
-    SetHorzRes(horzRes);
-    SetVertRes(vertRes);
-
-    Patch_INT(DEFAULT_RES_WIDTH_PTR_1, horzRes);
-    Patch_INT(DEFAULT_RES_WIDTH_PTR_2, horzRes);
-    Patch_INT(DEFAULT_RES_HEIGHT_PTR_1, vertRes);
-    Patch_INT(DEFAULT_RES_HEIGHT_PTR_2, vertRes);
-
-    resolutions.insert(ResolutionInfo( horzRes, vertRes, 16 ));
-    resolutions.insert(ResolutionInfo( horzRes, vertRes, 32 ));
+    resolutions.insert(ResolutionInfo( mainMonitorRes.width, mainMonitorRes.height, 16 ));
+    resolutions.insert(ResolutionInfo( mainMonitorRes.width, mainMonitorRes.height, 32 ));
 }
 
 void AddDisplaySettingsResolutions()
@@ -91,6 +108,7 @@ bool NN_Preferences::InitElements_Hook(DWORD unk1, DWORD unk2)
     PBYTE resIndicesVOffset = (PBYTE) nextInfo + resolutions.size();
     memset(resIndicesVOffset, 0xFF, resolutions.size() * sizeof(int));
 
+    this->resSupportedArr = (bool*) nextInfo;
     int resSupportedInfoOffset = ((PBYTE) nextInfo) - ((PBYTE) this);
     int resIndicesOffset = resIndicesVOffset - ((PBYTE) this);
 
@@ -128,6 +146,35 @@ bool NN_Preferences::SetResolution_Selected_Hook(UINT width, DWORD unk)
     return (this->*setResFunc)(width, unk, selectedHeight);
 }
 
+// Hook that ensures the resolutions are tested only when necessary (optimization)
+void NN_Preferences::TestResolutions_Hook(DWORD unk)
+{
+    WidthHeight currentMainRes = GetMainMonitorResolution();
+
+    if (lastSupportedResAmount && currentMainRes.Equals(mainMonitorRes))
+    {
+        // If the monitor settings haven't changed and we know the supported resolution info,
+        // set the info without testing the resolutions
+        memcpy(this->resSupportedArr, lastResSupportedArr, resolutions.size() * 5);
+        this->supportedResAmount = lastSupportedResAmount;
+        this->unk_x97C = lastUnk_x97C;
+    }
+    else
+    {
+        // If the monitor settings have changed or the resolutions haven't been tested yet,
+        // test the resolutions
+        TestResolutions testResFunc = GetFuncDef<TestResolutions>(TEST_RESOLUTIONS_ADDR);
+        (this->*testResFunc)(unk);
+
+        // Save the supported resolution info for later use
+        memcpy(lastResSupportedArr, this->resSupportedArr, resolutions.size() * 5);
+        lastSupportedResAmount = this->supportedResAmount;
+        lastUnk_x97C = this->unk_x97C;
+    }
+
+    mainMonitorRes = currentMainRes;
+}
+
 void DiscardLowestResolutions(size_t newSize)
 {
     std::set<ResolutionInfo>::iterator it = resolutions.begin();
@@ -147,16 +194,19 @@ void InitBetterResolutions()
 
     AddFlResolutions();
     AddWindowRectResolutions();
-    AddDcResolutions();
+    mainMonitorRes = GetMainMonitorResolution();
+    AddMainMonitorResolutions();
 
     int i;
     int resolutionAmount = resolutions.size();
+
+    lastResSupportedArr = new BYTE[resolutionAmount * 5];
 
     int additionalSize = NN_PREFERENCES_ALLOC_SIZE
         + resolutionAmount * sizeof(ResolutionInfo) // resolution info
         + resolutionAmount // supported array
         + resolutionAmount * sizeof(int) // indices in menu
-        + sizeof(UINT) * 2; // active and selected height
+        + sizeof(UINT) * 3; // active and selected height + pointer to supported array
 
     // Expand the allocated heap memory of the NN_Preferences object so that we can store more resolutions
     Patch(NN_PREFERENCES_ALLOC_SIZE_PTR, &additionalSize, sizeof(additionalSize));
@@ -207,6 +257,10 @@ void InitBetterResolutions()
     Hook(0x4B2594, NN_Preferences::SetResolution_Selected_Hook, 5);
     Hook(0x4B2781, NN_Preferences::SetResolution_Active_Hook, 5);
 
+    // Hook test resolutions functions so that we only test the resolutions when it's actually necessary (optimization)
+    Hook(0x4A98E7, NN_Preferences::TestResolutions_Hook, 5);
+    Hook(0x4AE761, NN_Preferences::TestResolutions_Hook, 5);
+
     // Places that determine the width of the "default" resolution
     Hook(0x4ACEAB, DefaultResSet1, 5, true);
     Hook(0x4ACEBB, DefaultResSet2, 7, true);
@@ -215,4 +269,9 @@ void InitBetterResolutions()
     WORD paramBytes = 12; // 0xC
     Patch(0x4B1D09, &paramBytes, sizeof(WORD));
     Patch(0x4B1D14, &paramBytes, sizeof(WORD));
+}
+
+void CleanupBetterResolutions()
+{
+    delete[] lastResSupportedArr;
 }

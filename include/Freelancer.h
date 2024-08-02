@@ -13,6 +13,7 @@
 #define INIT_NN_ELEMENTS_CALL_ADDR 0x5D4A80
 #define INIT_NN_ELEMENTS_ADDR 0x4A9790
 #define SET_RESOLUTION_ADDR 0x4B1C00
+#define TEST_RESOLUTIONS_ADDR 0x4B2440
 #define NAV_MAP_GET_HIGHLIGHTED_OBJ_ADDR 0x496D40
 
 struct WaypointInfo
@@ -34,6 +35,8 @@ private:
     typedef NavMapObj* (NeuroNetNavMap::*GetHighlightedObject)(DWORD unk1, DWORD unk2);
 };
 
+#define NN_PREFERENCES_NEW_DATA 0x98C
+
 // 0x330 = current selected width
 // 0x8b8 = current active width (int)
 // 0x8cc = start of resolution array (10 * 4 * 3 bytes)
@@ -44,16 +47,23 @@ private:
 // 0x954 = array of 4 * 10 bytes that contains the indices of the resolutions in the selection menu (-1 is unsupported resolution)
 struct NN_Preferences
 {
-    BYTE x00[0x980];
+    BYTE x00[0x950];
+    UINT supportedResAmount;
+    BYTE x954[0x28];
+    bool unk_x97C;
+    BYTE x97D[0x3];
     UINT selectedHeight;
     UINT activeHeight;
+    bool* resSupportedArr; // Points to new version of 0x944
     PBYTE newData;
 
     bool InitElements_Hook(DWORD unk1, DWORD unk2);
     bool SetResolution_Active_Hook(UINT width, DWORD unk);
     bool SetResolution_Selected_Hook(UINT width, DWORD unk);
+    void TestResolutions_Hook(DWORD unk);
 
 private:
     typedef bool (NN_Preferences::*InitElements)(DWORD unk1, DWORD unk2);
     typedef bool (NN_Preferences::*SetResolution)(UINT width, DWORD unk, UINT height);
+    typedef void (NN_Preferences::*TestResolutions)(DWORD unk);
 };
