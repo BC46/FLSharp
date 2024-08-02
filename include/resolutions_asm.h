@@ -17,5 +17,5 @@ void CurrentResInfoCheck7();
 void DefaultResSet1();
 void DefaultResSet2();
 
-void SetHorzRes(int value);
-void SetVertRes(int value);
+void SetMainResWidth(int value);
+void SetMainResHeight(int value);

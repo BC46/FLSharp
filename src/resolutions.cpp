@@ -62,8 +62,8 @@ void AddWindowRectResolutions()
 
 void AddMainMonitorResolutions()
 {
-    SetHorzRes(mainMonitorRes.width);
-    SetVertRes(mainMonitorRes.height);
+    SetMainResWidth(mainMonitorRes.width);
+    SetMainResHeight(mainMonitorRes.height);
 
     Patch_INT(DEFAULT_RES_WIDTH_PTR_1, mainMonitorRes.width);
     Patch_INT(DEFAULT_RES_WIDTH_PTR_2, mainMonitorRes.width);
@@ -99,7 +99,7 @@ bool NN_Preferences::InitElements_Hook(DWORD unk1, DWORD unk2)
     // Fill Resolution info
     for (i = 0; it != resolutions.end(); ++it)
     {
-        nextInfo = ((ResolutionInfo*) &newData) + (i++);
+        nextInfo = ((ResolutionInfo*) &(this->newData)) + (i++);
         *nextInfo = *it;
     }
 
@@ -137,13 +137,13 @@ bool NN_Preferences::InitElements_Hook(DWORD unk1, DWORD unk2)
 bool NN_Preferences::SetResolution_Active_Hook(UINT width, DWORD unk)
 {
     SetResolution setResFunc = GetFuncDef<SetResolution>(SET_RESOLUTION_ADDR);
-    return (this->*setResFunc)(width, unk, activeHeight);
+    return (this->*setResFunc)(width, unk, this->activeHeight);
 }
 
 bool NN_Preferences::SetResolution_Selected_Hook(UINT width, DWORD unk)
 {
     SetResolution setResFunc = GetFuncDef<SetResolution>(SET_RESOLUTION_ADDR);
-    return (this->*setResFunc)(width, unk, selectedHeight);
+    return (this->*setResFunc)(width, unk, this->selectedHeight);
 }
 
 // Hook that ensures the resolutions are tested only when necessary (optimization)

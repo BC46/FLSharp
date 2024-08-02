@@ -55,7 +55,7 @@ struct NN_Preferences
     UINT selectedHeight;
     UINT activeHeight;
     bool* resSupportedArr; // Points to new version of 0x944
-    PBYTE newData;
+    BYTE newData;
 
     bool InitElements_Hook(DWORD unk1, DWORD unk2);
     bool SetResolution_Active_Hook(UINT width, DWORD unk);

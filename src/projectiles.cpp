@@ -10,7 +10,7 @@
 // It is not recommended to modify the GetProjectilesPerFire function directly because it gets called in other instances as well.
 UINT CELauncher::GetProjectilesPerFire_Hook() const
 {
-    UINT result = GetProjectilesPerFire();
+    UINT result = this->GetProjectilesPerFire();
 
     if (result > 1)
         result = 1;

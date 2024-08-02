@@ -4,7 +4,7 @@
 #define SELECTED_HEIGHT_OF 0x980
 #define ACTIVE_HEIGHT_OF 0x984
 
-int horzRes, vertRes, tempHeight;
+int mainResWidth, mainResHeight, tempHeight;
 
 NAKED void CurrentResInfoWrite1()
 {
@@ -195,8 +195,8 @@ NAKED void CurrentResInfoCheck7()
 NAKED void DefaultResSet1()
 {
     __asm {
-        mov edx, [horzRes]
-        mov ebx, [vertRes]
+        mov edx, [mainResWidth]
+        mov ebx, [mainResHeight]
         mov [tempHeight], ebx
         push 0x4ACEB0
         ret
@@ -218,12 +218,12 @@ NAKED void DefaultResSet2()
     }
 }
 
-void SetHorzRes(int value)
+void SetMainResWidth(int value)
 {
-    horzRes = value;
+    mainResWidth = value;
 }
 
-void SetVertRes(int value)
+void SetMainResHeight(int value)
 {
-    vertRes = value;
+    mainResHeight = value;
 }
