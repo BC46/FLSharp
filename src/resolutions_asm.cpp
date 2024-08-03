@@ -6,6 +6,8 @@
 
 int mainResWidth, mainResHeight, tempHeight;
 
+// Inline assembly functions that are used to add additional instructions to the existing game's code
+
 NAKED void CurrentResInfoWrite1()
 {
     __asm {
