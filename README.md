@@ -11,6 +11,7 @@ These include:
     - when engine kill has been toggled;
     - if after every 0.4 seconds the ship's orientation has been changed to some extent.
 - Sets the minimum time between client-server updates to 75 milliseconds such that jitter is prevented when playing with a high framerate.
+- Allow `ui_music_test` to play when the current background music has finished playing.
 
 More fixes and improvements may be added in the future.
 

@@ -2,6 +2,7 @@
 #include "waypoint.h"
 #include "projectiles.h"
 #include "resolutions.h"
+#include "test_sounds.h"
 
 void Init()
 {
@@ -11,6 +12,7 @@ void Init()
         InitWaypointFixes();
         InitProjectilesSoundFix();
         //InitBetterResolutions();
+        InitTestSounds();
     }
 
     InitProjectilesServerFix();
