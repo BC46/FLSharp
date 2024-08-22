@@ -3,15 +3,6 @@
 
 struct SoundHandle
 {
-    typedef DWORD (__stdcall *FreeReferenceFunc)(SoundHandle *handle);
-
-    struct SoundHandle_VFTable
-    {
-        BYTE funcs[0x08];
-        FreeReferenceFunc freeReferenceFunc;
-    };
-
-    SoundHandle_VFTable* vftable; // Weird struct; it has a vftable, yet none of the functions in there honor the __thiscall calling convention.
     BYTE data_x04[0x2C];
     UINT unkBytePtr; // I don't know anything about this value (besides it being a pointer to some byte), but it gets nulled when the music stops playing.
 
@@ -20,10 +11,9 @@ struct SoundHandle
         return unkBytePtr == NULL;
     }
 
-    inline DWORD FreeReference()
-    {
-        return ((FreeReferenceFunc) vftable->freeReferenceFunc)(this);
-    }
+    virtual void Vftable_x00();
+    virtual void Vftable_x04();
+    virtual DWORD __stdcall FreeReference();
 };
 
 bool GetBackgroundMusicHandle_Hook(SoundHandle **handle);
