@@ -9,6 +9,24 @@
 
 #define ENGINE_TYPE 0x20000
 
+class IMPORT INI_Reader
+{
+public:
+    INI_Reader();
+    ~INI_Reader();
+
+    bool open(LPCSTR path, bool throwExceptionOnFail = false);
+    bool read_header();
+    bool is_header(LPCSTR name);
+    bool read_value();
+    bool is_value(LPCSTR name);
+    LPCSTR get_value_string(UINT index = 0);
+    void close();
+
+private:
+    BYTE data[0x1565];
+};
+
 class CEquip{};
 
 class CELauncher

@@ -1,4 +1,14 @@
 EXPORTS
+??0INI_Reader@@QAE@XZ
+??1INI_Reader@@QAE@XZ
+?open@INI_Reader@@QAE_NPBD_N@Z
+?read_header@INI_Reader@@QAE_NXZ
+?is_header@INI_Reader@@QAE_NPBD@Z
+?read_value@INI_Reader@@QAE_NXZ
+?is_value@INI_Reader@@QAE_NPBD@Z
+?get_value_string@INI_Reader@@QAEPBDI@Z
+?close@INI_Reader@@QAEXXZ
+
 ?FindFirst@CEquipManager@@QBEPBVCEquip@@I@Z
 ?get_throttle@CShip@@QBEMXZ
 ?shiparch@CShip@@QBEPBUShip@Archetype@@XZ
