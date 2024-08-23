@@ -16,6 +16,16 @@ void inline Patch_CHAR(DWORD vOffset, char value)
     Patch(vOffset, &value, sizeof(char));
 }
 
+void inline Patch_BYTE(DWORD vOffset, BYTE value)
+{
+    Patch(vOffset, &value, sizeof(BYTE));
+}
+
+void inline Patch_WORD(DWORD vOffset, WORD value)
+{
+    Patch(vOffset, &value, sizeof(WORD));
+}
+
 void Nop(DWORD vOffset, UINT len);
 
 template <typename Func>

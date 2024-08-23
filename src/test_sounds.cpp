@@ -5,6 +5,49 @@
 #define INTERFACE_VOLUME_SOUND_ID   0x21
 #define AMBIENCE_VOLUME_SOUND_ID    0x22
 
+void CheckTestSoundSupport(bool& interfaceSounds, bool& ambienceSounds)
+{
+    #define INDEPENDENT_INTERFACE_VOLUME_VAL ((PBYTE) 0x4B1503)
+    #define INDEPENDENT_AMBIENCE_VOLUME_VAL ((PBYTE) 0x4B1554)
+
+    interfaceSounds = *INDEPENDENT_INTERFACE_VOLUME_VAL == 0x83;
+    ambienceSounds = *INDEPENDENT_AMBIENCE_VOLUME_VAL == 0x84;
+
+    if (!interfaceSounds && !ambienceSounds)
+        return;
+
+    INI_Reader reader;
+    // The actual path is defined in Freelancer.ini, but looking it up is a bit cumbersome, hence it's assumed.
+    if (!reader.open("..\\DATA\\AUDIO\\interface_sounds.ini"))
+    {
+        interfaceSounds = false;
+        ambienceSounds = false;
+        return;
+    }
+
+    bool interfaceTestSoundDefined = false, ambienceTestSoundDefined = false;
+
+    while (reader.read_header())
+    {
+        if (!reader.is_header("Sound"))
+            continue;
+
+        while (reader.read_value())
+        {
+            if (reader.is_value("nickname"))
+            {
+                if (stricmp(reader.get_value_string(), "ui_interface_test") == 0)
+                    interfaceTestSoundDefined = true;
+                else if (stricmp(reader.get_value_string(), "ui_ambiance_test") == 0)
+                    ambienceTestSoundDefined = true;
+            }
+        }
+    }
+
+    interfaceSounds &= interfaceTestSoundDefined;
+    ambienceSounds &= ambienceTestSoundDefined;
+}
+
 // There exists a bug in the game where if for example you are docked at a planet and its music has stopped playing,
 // you will not hear any test music while adjusting the music volume in the options menu.
 // FL tests if there currently exists background music, but not if it has actually ever stopped playing.
@@ -88,6 +131,22 @@ void InitTestSounds()
     #define STOP_MUSIC_TEST_SOUND_1 0x4ADD81
     #define STOP_MUSIC_TEST_SOUND_2 0x4B0689
     #define STOP_MUSIC_TEST_SOUND_3 0x4B0903
+
+    bool supportInterfaceTestSounds = false, supportAmbienceTestSounds = false;
+    CheckTestSoundSupport(supportInterfaceTestSounds, supportAmbienceTestSounds);
+
+    // Allow interface and ambience test sounds to play while adjusting the sliders.
+    if (supportInterfaceTestSounds)
+    {
+        Patch_WORD(0x4B1533, 0x00FA);
+        Patch_BYTE(0x4B154E, 0xDF);
+    }
+
+    if (supportAmbienceTestSounds)
+    {
+        Patch_BYTE(0x4B1584, 0xA9);
+        Patch_BYTE(0x4B159F, 0x8E);
+    }
 
     // Boilerplate code for setting the volume slider adjust end hook.
     BYTE patches[] = { 0xEB, 0x70, 0x51, 0x89, 0xE9 };
