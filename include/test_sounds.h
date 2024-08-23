@@ -16,6 +16,14 @@ struct SoundHandle
     virtual DWORD __stdcall FreeReference();
 };
 
+inline void StopSound(BYTE soundId)
+{
+    #define STOP_SOUND_ADDR 0x5646E0
+
+    typedef void StopSound(BYTE soundId);
+    ((StopSound*) STOP_SOUND_ADDR)(soundId);
+}
+
 bool GetBackgroundMusicHandle_Hook(SoundHandle **handle);
 
 void InitTestSounds();
