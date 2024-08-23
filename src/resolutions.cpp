@@ -266,9 +266,8 @@ void InitBetterResolutions()
     Hook(0x4ACEBB, DefaultResSet2, 7, true);
 
     // Change the amount of bytes that are cleaned from the stack when the "set resolution function" returns because an additional parameter has been added
-    WORD paramBytes = 12; // 0xC
-    Patch(0x4B1D09, &paramBytes, sizeof(WORD));
-    Patch(0x4B1D14, &paramBytes, sizeof(WORD));
+    Patch_WORD(0x4B1D09, 12); // 0xC
+    Patch_WORD(0x4B1D14, 12); // 0xC
 }
 
 void CleanupBetterResolutions()

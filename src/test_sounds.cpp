@@ -5,6 +5,8 @@
 #define INTERFACE_VOLUME_SOUND_ID   0x21
 #define AMBIENCE_VOLUME_SOUND_ID    0x22
 
+// First checks if both necessary hex edits are set for independently controlling the interface and ambience sounds,
+// then it checks if there are test sounds present for these.
 void CheckTestSoundSupport(bool& interfaceSounds, bool& ambienceSounds)
 {
     #define INDEPENDENT_INTERFACE_VOLUME_VAL ((PBYTE) 0x4B1503)
@@ -25,8 +27,6 @@ void CheckTestSoundSupport(bool& interfaceSounds, bool& ambienceSounds)
         return;
     }
 
-    bool interfaceTestSoundDefined = false, ambienceTestSoundDefined = false;
-
     while (reader.read_header())
     {
         if (!reader.is_header("Sound"))
@@ -37,15 +37,16 @@ void CheckTestSoundSupport(bool& interfaceSounds, bool& ambienceSounds)
             if (reader.is_value("nickname"))
             {
                 if (stricmp(reader.get_value_string(), "ui_interface_test") == 0)
-                    interfaceTestSoundDefined = true;
+                    interfaceSounds &= true;
                 else if (stricmp(reader.get_value_string(), "ui_ambiance_test") == 0)
-                    ambienceTestSoundDefined = true;
+                    ambienceSounds &= true;
             }
+
+            // There's not much point in breaking early as these values are found near the end of the ini file.
         }
     }
 
-    interfaceSounds &= interfaceTestSoundDefined;
-    ambienceSounds &= ambienceTestSoundDefined;
+    reader.close();
 }
 
 // There exists a bug in the game where if for example you are docked at a planet and its music has stopped playing,
