@@ -26,4 +26,6 @@ inline void StopSound(BYTE soundId)
 
 bool GetBackgroundMusicHandle_Hook(SoundHandle **handle);
 
+void StopMusicTestSound_Hook(BYTE soundId);
+
 void InitTestSounds();

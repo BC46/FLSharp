@@ -2,6 +2,9 @@
 #include "utils.h"
 #include "Freelancer.h"
 
+#define INTERFACE_VOLUME_SOUND_ID   0x21
+#define AMBIENCE_VOLUME_SOUND_ID    0x22
+
 // There exists a bug in the game where if for example you are docked at a planet and its music has stopped playing,
 // you will not hear any test music while adjusting the music volume in the options menu.
 // FL tests if there currently exists background music, but not if it has actually ever stopped playing.
@@ -38,6 +41,8 @@ void NN_Preferences::VolumeSliderAdjustEnd_Hook(PVOID adjustedScrollElement)
     #define DIALOGUE_VOLUME_IDS         1409
     #define SFX_VOLUME_IDS              1336
     #define MUSIC_VOLUME_IDS            1337
+    #define INTERFACE_VOLUME_IDS        1411
+    #define AMBIENCE_VOLUME_IDS         1412
     #define DIALOGUE_VOLUME_SOUND_ID    0x1E
     #define SFX_VOLUME_SOUND_ID         0x1F
     #define MUSIC_VOLUME_SOUND_ID       0x20
@@ -58,14 +63,31 @@ void NN_Preferences::VolumeSliderAdjustEnd_Hook(PVOID adjustedScrollElement)
             case MUSIC_VOLUME_IDS:
                 StopSound(MUSIC_VOLUME_SOUND_ID);
                 break;
+            case INTERFACE_VOLUME_IDS:
+                StopSound(INTERFACE_VOLUME_SOUND_ID);
+                break;
+            case AMBIENCE_VOLUME_IDS:
+                StopSound(AMBIENCE_VOLUME_SOUND_ID);
+                break;
         }
     }
+}
+
+// Make sure to stop the new test sounds too.
+void StopMusicTestSound_Hook(BYTE soundId)
+{
+    StopSound(soundId); // soundId should always be 0x20
+    StopSound(INTERFACE_VOLUME_SOUND_ID);
+    StopSound(AMBIENCE_VOLUME_SOUND_ID);
 }
 
 void InitTestSounds()
 {
     #define GET_BGM_INSTANCE_CALL_ADDR 0x4B17A1
     #define VOLUME_SLIDER_ADJUST_END_CALL 0x4ACBAB
+    #define STOP_MUSIC_TEST_SOUND_1 0x4ADD81
+    #define STOP_MUSIC_TEST_SOUND_2 0x4B0689
+    #define STOP_MUSIC_TEST_SOUND_3 0x4B0903
 
     // Boilerplate code for setting the volume slider adjust end hook.
     BYTE patches[] = { 0xEB, 0x70, 0x51, 0x89, 0xE9 };
@@ -74,5 +96,8 @@ void InitTestSounds()
 
     Hook(VOLUME_SLIDER_ADJUST_END_CALL + 3, NN_Preferences::VolumeSliderAdjustEnd_Hook, 5);
     Hook(GET_BGM_INSTANCE_CALL_ADDR, GetBackgroundMusicHandle_Hook, 5);
+    Hook(STOP_MUSIC_TEST_SOUND_1, StopMusicTestSound_Hook, 5);
+    Hook(STOP_MUSIC_TEST_SOUND_2, StopMusicTestSound_Hook, 5);
+    Hook(STOP_MUSIC_TEST_SOUND_3, StopMusicTestSound_Hook, 5);
 }
 
