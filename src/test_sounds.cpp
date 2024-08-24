@@ -181,6 +181,9 @@ void StartAmbienceTestSound_Hook(BYTE soundId)
     SoundHandle *bga = NULL;
     if (GetBackgroundAmbienceHandle(&bga))
     {
+        if (bga->IsPaused())
+            StartSound(soundId);
+
         bga->FreeReference();
     }
     else
