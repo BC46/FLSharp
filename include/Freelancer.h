@@ -58,8 +58,8 @@ struct NN_Preferences
     BYTE x00[0x528];
     AudioOption* audioOptions; // pointer to array of audio info from up to 14 UI scroll elements
     BYTE x52C[0x128];
-    PVOID scrollElements[14]; // array of pointers to 14 volume scroll elements (there's more but we only need up to 14)
-    BYTE x6A4[0x2AC];
+    PVOID scrollElements[14]; // 0x654, array of pointers to 14 volume scroll elements (there's more but we only need up to 14)
+    BYTE x68C[0x2C4];
     UINT supportedResAmount;
     BYTE x954[0x28];
     bool unk_x97C;
