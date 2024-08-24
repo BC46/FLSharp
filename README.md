@@ -12,7 +12,10 @@ These include:
     - if after every 0.4 seconds the ship's orientation has been changed to some extent.
 - Sets the minimum time between client-server updates to 75 milliseconds such that jitter is prevented when playing with a high framerate.
 - Allow `ui_music_test` to play when the current background music has finished playing.
-- Added support for playing `ui_interface_test` and `ui_ambiance_test` when adjusting the respective sliders in the options menu.
+- Added support for playing the `ui_interface_test` and `ui_ambiance_test` sounds when adjusting the respective sliders in the options menu.
+- Automatically prevent crashes when adjusting the interface and ambience volume sliders.
+- Temporarily mute background music when adjusting ambience volume and vice versa.
+
 
 More fixes and improvements may be added in the future.
 

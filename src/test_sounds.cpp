@@ -6,6 +6,7 @@
 #define AMBIENCE_VOLUME_SOUND_ID    0x22
 
 bool interfaceTestSoundAvailable = false, ambienceTestSoundAvailable = false;
+bool shouldResumeBGM = false, shouldResumeBGA = false;
 
 void EnsureTestSoundsPlay()
 {
@@ -65,6 +66,22 @@ void SetTestSoundAvailability(bool &interfaceSounds, bool &ambienceSounds)
     reader.close();
 }
 
+bool inline GetBackgroundMusicHandle(SoundHandle **pHandle)
+{
+    #define GET_BGM_INSTANCE_ADDR 0x428BA0
+
+    typedef bool GetBackgroundMusicHandle(SoundHandle **pHandle);
+    return ((GetBackgroundMusicHandle*) GET_BGM_INSTANCE_ADDR)(pHandle);
+}
+
+bool inline GetBackgroundAmbienceHandle(SoundHandle **pHandle)
+{
+    #define GET_BGA_INSTANCE_ADDR 0x428BC0
+
+    typedef bool GetBackgroundAmbienceHandle(SoundHandle **pHandle);
+    return ((GetBackgroundAmbienceHandle*) GET_BGA_INSTANCE_ADDR)(pHandle);
+}
+
 // There exists a bug in the game where if for example you are docked at a planet and its music has stopped playing,
 // you will not hear any test music while adjusting the music volume in the options menu.
 // FL tests if there currently exists background music, but not if it has actually ever stopped playing.
@@ -72,17 +89,12 @@ void SetTestSoundAvailability(bool &interfaceSounds, bool &ambienceSounds)
 // As a result, you'll now hear the iconic Tau music when the BGM stopped playing; this way you can more easily fine tune the volume to your liking.
 bool GetBackgroundMusicHandle_Hook(SoundHandle **pHandle)
 {
-    #define GET_BGM_INSTANCE_ADDR 0x428BA0
-
-    typedef bool GetBackgroundMusicHandle(SoundHandle **pHandle);
-    bool getHandleResult = ((GetBackgroundMusicHandle*) GET_BGM_INSTANCE_ADDR)(pHandle);
-
-    if (!getHandleResult)
+    if (!GetBackgroundMusicHandle(pHandle))
         return false;
 
     SoundHandle *handle = *pHandle;
 
-    if (handle->StoppedPlaying())
+    if (handle->FinishedPlaying())
     {
         handle->FreeReference();
         handle = NULL;
@@ -131,6 +143,8 @@ void NN_Preferences::VolumeSliderAdjustEnd_Hook(PVOID adjustedScrollElement)
                 break;
         }
     }
+
+    ForceResumeBGM();
 }
 
 // Make sure to stop the new test sounds too.
@@ -139,6 +153,8 @@ void StopMusicTestSound_Hook(BYTE soundId)
     StopSound(soundId); // soundId should always be 0x20 here
     StopSound(INTERFACE_VOLUME_SOUND_ID);
     StopSound(AMBIENCE_VOLUME_SOUND_ID);
+
+    ForceResumeBGM();
 }
 
 // Prevent the interface test sound from starting if it isn't available (prevent crashes)
@@ -155,8 +171,41 @@ void StartAmbienceTestSound_Hook(BYTE soundId)
     // Check if it's paused
     // Check if the new ambience sound is available
 
-    if (ambienceTestSoundAvailable)
-        StartSound(soundId); // soundId should always be 0x22 here
+    if (!ambienceTestSoundAvailable)
+        return;
+
+    StartSound(soundId); // soundId should always be 0x22 here
+
+    SoundHandle *bgm = NULL;
+    if (!GetBackgroundMusicHandle(&bgm))
+        return;
+
+    if (!bgm->IsPaused())
+    {
+        // Pause the music so the ambience sound can be heard better.
+        bgm->ForcePause();
+        shouldResumeBGM = true;
+    }
+
+    bgm->FreeReference();
+}
+
+void ForceResumeBGM()
+{
+    if (!shouldResumeBGM)
+        return;
+
+    SoundHandle *bgm = NULL;
+    if (!GetBackgroundMusicHandle(&bgm))
+        return;
+
+    if (bgm->IsPaused())
+    {
+        bgm->ForceResume();
+        shouldResumeBGM = false;
+    }
+
+    bgm->FreeReference();
 }
 
 // TODO: hook music test sound thing
@@ -186,5 +235,9 @@ void InitTestSounds()
     Hook(STOP_MUSIC_TEST_SOUND_3, StopMusicTestSound_Hook, 5);
     Hook(START_INTERFACE_TEST_SOUND, StartInterfaceTestSound_Hook, 5);
     Hook(START_AMBIENCE_TEST_SOUND, StartAmbienceTestSound_Hook, 5);
+
+    DWORD _;
+    VirtualProtect((PVOID) JMP_NO_PAUSE_FOR_BGM, sizeof(BYTE), PAGE_EXECUTE_READWRITE, &_);
+    VirtualProtect((PVOID) JMP_NO_RESUME_FOR_BGM, sizeof(BYTE), PAGE_EXECUTE_READWRITE, &_);
 }
 
