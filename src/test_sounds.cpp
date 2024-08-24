@@ -178,7 +178,15 @@ void StartAmbienceTestSound_Hook(BYTE soundId)
     if (!ambienceTestSoundAvailable)
         return;
 
-    StartSound(soundId); // soundId should always be 0x22 here
+    SoundHandle *bga = NULL;
+    if (GetBackgroundAmbienceHandle(&bga))
+    {
+        bga->FreeReference();
+    }
+    else
+    {
+        StartSound(soundId); // soundId should always be 0x22 here
+    }
 
     // Pause the background music.
     SoundHandle *bgm = NULL;
