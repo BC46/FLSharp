@@ -217,10 +217,10 @@ void PauseSound(bool &shouldResume, SoundHandle *handle, bool getHandleResult, b
 
 void ResumeSound(bool &shouldResume, SoundHandle *handle, bool getHandleResult, bool force)
 {
-    if (!shouldResume)
+    if (!getHandleResult)
         return;
 
-    if (getHandleResult && handle->IsPaused())
+    if (shouldResume && handle->IsPaused())
     {
         if (force)
             handle->ForceResume();
