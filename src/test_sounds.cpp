@@ -5,19 +5,35 @@
 #define INTERFACE_VOLUME_SOUND_ID   0x21
 #define AMBIENCE_VOLUME_SOUND_ID    0x22
 
-// First checks if both necessary hex edits are set for independently controlling the interface and ambience sounds,
-// then it checks if there are test sounds present for these.
-void CheckTestSoundSupport(bool& interfaceSounds, bool& ambienceSounds)
+bool interfaceTestSoundAvailable = false, ambienceTestSoundAvailable = false;
+
+void EnsureTestSoundsPlay()
 {
     #define INDEPENDENT_INTERFACE_VOLUME_VAL ((PBYTE) 0x4B1503)
     #define INDEPENDENT_AMBIENCE_VOLUME_VAL ((PBYTE) 0x4B1554)
 
-    interfaceSounds = *INDEPENDENT_INTERFACE_VOLUME_VAL == 0x83;
-    ambienceSounds = *INDEPENDENT_AMBIENCE_VOLUME_VAL == 0x84;
+    // Test if the interface and ambience volume controls are independent from the sound effects and music, respectively.
+    // If these custom edits are applied, then the respective test sounds will never play.
+    // Hence patch Freelancer.exe to make the sounds actually play.
 
-    if (!interfaceSounds && !ambienceSounds)
-        return;
+    if (*INDEPENDENT_INTERFACE_VOLUME_VAL == 0x83)
+    {
+        Patch_WORD(0x4B1533, 0x00FA);
+        Patch_BYTE(0x4B154E, 0xDF);
+    }
 
+    if (*INDEPENDENT_AMBIENCE_VOLUME_VAL == 0x84)
+    {
+        Patch_BYTE(0x4B1584, 0xA9);
+        Patch_BYTE(0x4B159F, 0x8E);
+    }
+}
+
+// Checks whether test sound entries exist for the interface and ambience sounds.
+// This is important, because if these do not exist, then the game should not attempt to play these.
+// A crash will occur if otherwise.
+void SetTestSoundAvailability(bool &interfaceSounds, bool &ambienceSounds)
+{
     INI_Reader reader;
     // The actual path is defined in Freelancer.ini, but looking it up is a bit cumbersome, hence it's assumed.
     if (!reader.open("..\\DATA\\AUDIO\\interface_sounds.ini"))
@@ -37,9 +53,9 @@ void CheckTestSoundSupport(bool& interfaceSounds, bool& ambienceSounds)
             if (reader.is_value("nickname"))
             {
                 if (stricmp(reader.get_value_string(), "ui_interface_test") == 0)
-                    interfaceSounds &= true;
+                    interfaceSounds = true;
                 else if (stricmp(reader.get_value_string(), "ui_ambiance_test") == 0)
-                    ambienceSounds &= true;
+                    ambienceSounds = true;
             }
 
             // There's not much point in breaking early as these values are found near the end of the ini file.
@@ -120,10 +136,30 @@ void NN_Preferences::VolumeSliderAdjustEnd_Hook(PVOID adjustedScrollElement)
 // Make sure to stop the new test sounds too.
 void StopMusicTestSound_Hook(BYTE soundId)
 {
-    StopSound(soundId); // soundId should always be 0x20
+    StopSound(soundId); // soundId should always be 0x20 here
     StopSound(INTERFACE_VOLUME_SOUND_ID);
     StopSound(AMBIENCE_VOLUME_SOUND_ID);
 }
+
+// Prevent the interface test sound from starting if it isn't available (prevent crashes)
+void StartInterfaceTestSound_Hook(BYTE soundId)
+{
+    if (interfaceTestSoundAvailable)
+        StartSound(soundId); // soundId should always be 0x21 here
+}
+
+// TODO: explain
+void StartAmbienceTestSound_Hook(BYTE soundId)
+{
+    // TODO: get current ambience sound
+    // Check if it's paused
+    // Check if the new ambience sound is available
+
+    if (ambienceTestSoundAvailable)
+        StartSound(soundId); // soundId should always be 0x22 here
+}
+
+// TODO: hook music test sound thing
 
 void InitTestSounds()
 {
@@ -132,22 +168,11 @@ void InitTestSounds()
     #define STOP_MUSIC_TEST_SOUND_1 0x4ADD81
     #define STOP_MUSIC_TEST_SOUND_2 0x4B0689
     #define STOP_MUSIC_TEST_SOUND_3 0x4B0903
+    #define START_INTERFACE_TEST_SOUND 0x4B1967
+    #define START_AMBIENCE_TEST_SOUND 0x4B1949
 
-    bool supportInterfaceTestSounds = false, supportAmbienceTestSounds = false;
-    CheckTestSoundSupport(supportInterfaceTestSounds, supportAmbienceTestSounds);
-
-    // Allow interface and ambience test sounds to play while adjusting the sliders.
-    if (supportInterfaceTestSounds)
-    {
-        Patch_WORD(0x4B1533, 0x00FA);
-        Patch_BYTE(0x4B154E, 0xDF);
-    }
-
-    if (supportAmbienceTestSounds)
-    {
-        Patch_BYTE(0x4B1584, 0xA9);
-        Patch_BYTE(0x4B159F, 0x8E);
-    }
+    EnsureTestSoundsPlay();
+    SetTestSoundAvailability(interfaceTestSoundAvailable, ambienceTestSoundAvailable);
 
     // Boilerplate code for setting the volume slider adjust end hook.
     BYTE patches[] = { 0xEB, 0x70, 0x51, 0x89, 0xE9 };
@@ -159,5 +184,7 @@ void InitTestSounds()
     Hook(STOP_MUSIC_TEST_SOUND_1, StopMusicTestSound_Hook, 5);
     Hook(STOP_MUSIC_TEST_SOUND_2, StopMusicTestSound_Hook, 5);
     Hook(STOP_MUSIC_TEST_SOUND_3, StopMusicTestSound_Hook, 5);
+    Hook(START_INTERFACE_TEST_SOUND, StartInterfaceTestSound_Hook, 5);
+    Hook(START_AMBIENCE_TEST_SOUND, StartAmbienceTestSound_Hook, 5);
 }
 
