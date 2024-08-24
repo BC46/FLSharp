@@ -89,6 +89,10 @@ bool inline GetBackgroundAmbienceHandle(SoundHandle **pHandle)
 // As a result, you'll now hear the iconic Tau music when the BGM stopped playing; this way you can more easily fine tune the volume to your liking.
 bool GetBackgroundMusicHandle_Hook(SoundHandle **pHandle)
 {
+    // Pause the background ambience.
+    SoundHandle *bga = NULL;
+    PauseSound(shouldResumeBGA, bga, GetBackgroundAmbienceHandle(&bga));
+
     if (!GetBackgroundMusicHandle(pHandle))
         return false;
 
@@ -102,6 +106,7 @@ bool GetBackgroundMusicHandle_Hook(SoundHandle **pHandle)
         return false;
     }
 
+    // Handle is freed by the caller.
     return true;
 }
 
@@ -144,7 +149,9 @@ void NN_Preferences::VolumeSliderAdjustEnd_Hook(PVOID adjustedScrollElement)
         }
     }
 
-    ForceResumeBGM();
+    SoundHandle *bgm = NULL, *bga = NULL;
+    ResumeSound(shouldResumeBGM, bgm, GetBackgroundMusicHandle(&bgm), true);
+    ResumeSound(shouldResumeBGA, bga, GetBackgroundAmbienceHandle(&bga));
 }
 
 // Make sure to stop the new test sounds too.
@@ -154,7 +161,9 @@ void StopMusicTestSound_Hook(BYTE soundId)
     StopSound(INTERFACE_VOLUME_SOUND_ID);
     StopSound(AMBIENCE_VOLUME_SOUND_ID);
 
-    ForceResumeBGM();
+    SoundHandle *bgm = NULL, *bga = NULL;
+    ResumeSound(shouldResumeBGM, bgm, GetBackgroundMusicHandle(&bgm), true);
+    ResumeSound(shouldResumeBGA, bga, GetBackgroundAmbienceHandle(&bga));
 }
 
 // Prevent the interface test sound from starting if it isn't available (prevent crashes)
@@ -164,51 +173,53 @@ void StartInterfaceTestSound_Hook(BYTE soundId)
         StartSound(soundId); // soundId should always be 0x21 here
 }
 
-// TODO: explain
 void StartAmbienceTestSound_Hook(BYTE soundId)
 {
-    // TODO: get current ambience sound
-    // Check if it's paused
-    // Check if the new ambience sound is available
-
     if (!ambienceTestSoundAvailable)
         return;
 
     StartSound(soundId); // soundId should always be 0x22 here
 
+    // Pause the background music.
     SoundHandle *bgm = NULL;
-    if (!GetBackgroundMusicHandle(&bgm))
+    PauseSound(shouldResumeBGM, bgm, GetBackgroundMusicHandle(&bgm), true);
+}
+
+void PauseSound(bool &shouldResume, SoundHandle *handle, bool getHandleResult, bool force)
+{
+    if (!getHandleResult)
         return;
 
-    if (!bgm->IsPaused())
+    if (!handle->IsPaused())
     {
         // Pause the music so the ambience sound can be heard better.
-        bgm->ForcePause();
-        shouldResumeBGM = true;
+        if (force)
+            handle->ForcePause();
+        else
+            handle->Pause();
+
+        shouldResume = true;
     }
 
-    bgm->FreeReference();
+    handle->FreeReference();
 }
 
-void ForceResumeBGM()
+void ResumeSound(bool &shouldResume, SoundHandle *handle, bool getHandleResult, bool force)
 {
-    if (!shouldResumeBGM)
+    if (!shouldResume)
         return;
 
-    SoundHandle *bgm = NULL;
-    if (!GetBackgroundMusicHandle(&bgm))
-        return;
-
-    if (bgm->IsPaused())
+    if (getHandleResult && handle->IsPaused())
     {
-        bgm->ForceResume();
-        shouldResumeBGM = false;
+        if (force)
+            handle->ForceResume();
+        else
+            handle->Resume();
     }
 
-    bgm->FreeReference();
+    shouldResume = false;
+    handle->FreeReference();
 }
-
-// TODO: hook music test sound thing
 
 void InitTestSounds()
 {

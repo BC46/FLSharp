@@ -74,4 +74,5 @@ void StopMusicTestSound_Hook(BYTE soundId);
 
 void InitTestSounds();
 
-void ForceResumeBGM();
+void PauseSound(bool &shouldResume, SoundHandle *handle, bool getHandleResult, bool force = false);
+void ResumeSound(bool &shouldResume, SoundHandle *handle, bool getHandleResult, bool force = false);
