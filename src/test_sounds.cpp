@@ -5,7 +5,6 @@
 #define INTERFACE_VOLUME_SOUND_ID   0x21
 #define AMBIENCE_VOLUME_SOUND_ID    0x22
 
-bool independentAmbienceVolume = false;
 bool interfaceTestSoundAvailable = false, ambienceTestSoundAvailable = false;
 bool shouldResumeBGM = false, shouldResumeBGA = false;
 
@@ -28,7 +27,6 @@ void EnsureTestSoundsPlay()
     {
         Patch_BYTE(0x4B1584, 0xA9);
         Patch_BYTE(0x4B159F, 0x8E);
-        //independentAmbienceVolume = true;
     }
 }
 
@@ -178,18 +176,19 @@ void StartInterfaceTestSound_Hook(BYTE soundId)
 
 void StartAmbienceTestSound_Hook(BYTE soundId) // soundId should always be 0x22 here
 {
-    if (!ambienceTestSoundAvailable)
-        return;
-
     SoundHandle *bga = NULL;
     if (GetBackgroundAmbienceHandle(&bga))
     {
         bool bgaPlaying = !(bga->FinishedPlaying() || bga->IsPaused());
+
         bga->FreeReference();
 
         if (bgaPlaying)
             return;
     }
+
+    if (!ambienceTestSoundAvailable)
+        return;
 
     StartSound(soundId);
 
