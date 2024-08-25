@@ -5,6 +5,7 @@
 #define INTERFACE_VOLUME_SOUND_ID   0x21
 #define AMBIENCE_VOLUME_SOUND_ID    0x22
 
+bool independentAmbienceVolume = false;
 bool interfaceTestSoundAvailable = false, ambienceTestSoundAvailable = false;
 bool shouldResumeBGM = false, shouldResumeBGA = false;
 
@@ -27,6 +28,7 @@ void EnsureTestSoundsPlay()
     {
         Patch_BYTE(0x4B1584, 0xA9);
         Patch_BYTE(0x4B159F, 0x8E);
+        //independentAmbienceVolume = true;
     }
 }
 
@@ -87,27 +89,28 @@ bool inline GetBackgroundAmbienceHandle(SoundHandle **pHandle)
 // FL tests if there currently exists background music, but not if it has actually ever stopped playing.
 // The hook below makes it so that it only returns the handle if the music has stopped playing.
 // As a result, you'll now hear the iconic Tau music when the BGM stopped playing; this way you can more easily fine tune the volume to your liking.
-bool GetBackgroundMusicHandle_Hook(SoundHandle **pHandle)
+bool GetBackgroundMusicHandle_Hook(SoundHandle **pBgm)
 {
+    if (GetBackgroundMusicHandle(pBgm))
+    {
+        SoundHandle *bgm = *pBgm;
+
+        bool bgmPlaying = !(bgm->FinishedPlaying() || bgm->IsPaused());
+        if (bgmPlaying)
+        {
+            // Handle is freed by the caller.
+            return true;
+        }
+
+        bgm->FreeReference();
+        bgm = NULL;
+    }
+
     // Pause the background ambience.
     SoundHandle *bga = NULL;
     PauseSound(shouldResumeBGA, bga, GetBackgroundAmbienceHandle(&bga));
 
-    if (!GetBackgroundMusicHandle(pHandle))
-        return false;
-
-    SoundHandle *handle = *pHandle;
-
-    if (handle->FinishedPlaying())
-    {
-        handle->FreeReference();
-        handle = NULL;
-
-        return false;
-    }
-
-    // Handle is freed by the caller.
-    return true;
+    return false;
 }
 
 // Hook of code section that stops the test sounds when the user stops adjusting the volume sliders.
@@ -173,7 +176,7 @@ void StartInterfaceTestSound_Hook(BYTE soundId)
         StartSound(soundId); // soundId should always be 0x21 here
 }
 
-void StartAmbienceTestSound_Hook(BYTE soundId)
+void StartAmbienceTestSound_Hook(BYTE soundId) // soundId should always be 0x22 here
 {
     if (!ambienceTestSoundAvailable)
         return;
@@ -181,15 +184,14 @@ void StartAmbienceTestSound_Hook(BYTE soundId)
     SoundHandle *bga = NULL;
     if (GetBackgroundAmbienceHandle(&bga))
     {
-        if (bga->IsPaused())
-            StartSound(soundId);
-
+        bool bgaPlaying = !(bga->FinishedPlaying() || bga->IsPaused());
         bga->FreeReference();
+
+        if (bgaPlaying)
+            return;
     }
-    else
-    {
-        StartSound(soundId); // soundId should always be 0x22 here
-    }
+
+    StartSound(soundId);
 
     // Pause the background music.
     SoundHandle *bgm = NULL;
