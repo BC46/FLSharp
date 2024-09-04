@@ -71,15 +71,11 @@ public:
     CEquipManager equipManager;
 };
 
-class IMPORT Fuse
-{
-    // We don't call this function; the only purpose of this is to set the correct offset for IsTriggered() in the vftable
-    virtual void Dealloc(bool unk);
-};
-
-class IMPORT FuseAction : Fuse
+class IMPORT FuseAction
 {
 public:
+    // We never call Dealloc; the only purpose of defining it is to set the correct offset for IsTriggered() in the vftable
+    virtual void Dealloc(bool unk);
     virtual bool IsTriggered() const;
 };
 

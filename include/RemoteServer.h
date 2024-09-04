@@ -2,6 +2,7 @@
 
 #define WIN32_LEAN_AND_MEAN
 #include <windows.h>
+#include "vftable.h"
 
 struct SSPObjUpdateInfo
 {
@@ -11,24 +12,20 @@ struct SSPObjUpdateInfo
 
 class IServerImpl {
 public:
-    // Wrapper for the virtual SPObjUpdate function in remoteserver.dll
-    // This is the alternative way to adding a bunch of dummy virtual functions to mimic a filled vftable
-    inline void SPObjUpdate(SSPObjUpdateInfo &updateInfo, UINT client)
-    {
-        // Call the original SPObjUpdate function
-        (this->*(vftable->SPObjUpdate))(updateInfo, client);
-    }
+    FILL_VFTABLE(0)
+    FILL_VFTABLE(1)
+    FILL_VFTABLE(2)
+    FILL_VFTABLE(3)
+    FILL_VFTABLE(4)
+    FILL_VFTABLE(5)
+    FILL_VFTABLE(6)
+    FILL_VFTABLE(7)
+    FILL_VFTABLE(8)
+    FILL_VFTABLE(9)
+    FILL_VFTABLE(A)
+    FILL_VFTABLE(B)
+    FILL_VFTABLE(C)
+    virtual void SPObjUpdate(SSPObjUpdateInfo &updateInfo, UINT client);
 
     void SPObjUpdate_Hook(SSPObjUpdateInfo &updateInfo, UINT client);
-
-private:
-    typedef void (IServerImpl::*SPObjUpdateFunc)(SSPObjUpdateInfo &updateInfo, UINT client);
-
-    struct IServerImpl_VFTable
-    {
-        BYTE funcs[0xD0];
-        SPObjUpdateFunc SPObjUpdate;
-    };
-
-    IServerImpl_VFTable* vftable;
 };

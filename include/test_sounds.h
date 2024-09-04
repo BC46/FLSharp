@@ -1,14 +1,9 @@
 #define WIN32_LEAN_AND_MEAN
 #include <windows.h>
+#include "vftable.h"
 
 #define JMP_NO_PAUSE_FOR_BGM ((PBYTE) 0x42A3A7)
 #define JMP_NO_RESUME_FOR_BGM ((PBYTE) 0x42A3EB)
-
-#define DEFINE_DUMMY_VFTABLE_FUNCS(tensPlace) \
-    virtual void Vftable_x ##tensPlace## 0(); \
-    virtual void Vftable_x ##tensPlace## 4(); \
-    virtual void Vftable_x ##tensPlace## 8(); \
-    virtual void Vftable_x ##tensPlace## C(); \
 
 struct SoundHandle
 {
@@ -40,11 +35,11 @@ struct SoundHandle
     virtual void Vftable_x04();
     virtual DWORD __stdcall FreeReference();
     virtual void Vftable_x0C();
-    DEFINE_DUMMY_VFTABLE_FUNCS(1)
-    DEFINE_DUMMY_VFTABLE_FUNCS(2)
-    DEFINE_DUMMY_VFTABLE_FUNCS(3)
-    DEFINE_DUMMY_VFTABLE_FUNCS(4)
-    DEFINE_DUMMY_VFTABLE_FUNCS(5)
+    FILL_VFTABLE(1)
+    FILL_VFTABLE(2)
+    FILL_VFTABLE(3)
+    FILL_VFTABLE(4)
+    FILL_VFTABLE(5)
     virtual void Vftable_x60();
     virtual void Vftable_x64();
     virtual void Pause();
