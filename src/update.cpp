@@ -144,7 +144,14 @@ __declspec(naked) void __stdcall UpdateLevelCamera(DWORD keyPressed)
 void BaseWatcher::set_pointer_Hook(Watchable const * watchable)
 {
     this->set_pointer(watchable);
+
     UpdateLevelCamera(NULL);
+
+    if (!(*(bool*) 0x612700))
+    {
+        typedef void UpdateAutoLevel(bool);
+        ((UpdateAutoLevel*) 0x4C79A0)(false);
+    }
 }
 
 void InitBetterUpdates()
