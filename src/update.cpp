@@ -122,6 +122,31 @@ void IServerImpl::SPObjUpdate_Hook(SSPObjUpdateInfo &updateInfo, UINT client)
     SetTimeSinceLastUpdate();
 }
 
+__declspec(naked) void __stdcall UpdateLevelCamera(DWORD keyPressed)
+{
+    __asm {
+        push esi
+        mov esi, 0x678E40
+        mov al, [esi+0x44]
+        test al, al
+        jne done
+        push edi
+        push ebx
+        xor bl, bl
+        push 0x51A1D8
+        ret
+    done:
+        pop esi
+        ret 4
+    }
+}
+
+void BaseWatcher::set_pointer_Hook(Watchable const * watchable)
+{
+    this->set_pointer(watchable);
+    UpdateLevelCamera(NULL);
+}
+
 void InitBetterUpdates()
 {
     SetTimeSinceLastUpdate();
@@ -129,4 +154,5 @@ void InitBetterUpdates()
     Hook(POST_INIT_DEALLOC_CALL_ADDR, PostInitDealloc_Hook, 5);
     Hook(CHECK_FOR_SYNC_CALL_ADDR, CRemotePhysicsSimulation::CheckForSync_Hook, 5);
     Hook(OBJ_UPDATE_CALL_ADDR, IServerImpl::SPObjUpdate_Hook, 6);
+    Hook(0x51CBCD, BaseWatcher::set_pointer_Hook, 6);
 }

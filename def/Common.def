@@ -20,3 +20,4 @@ EXPORTS
 ?SinglePlayer@@YA_NXZ
 ?GetProjectilesPerFire@CELauncher@@QBEIXZ
 ?IsMPServer@@YA_NXZ
+?set_pointer@BaseWatcher@@IAEXPBUWatchable@@@Z

@@ -97,5 +97,15 @@ struct IObjInspectImpl
     CShip* ship;
 };
 
+struct Watchable{};
+
+struct BaseWatcher
+{
+public:
+    void set_pointer_Hook(Watchable const * watchable);
+protected:
+    void IMPORT set_pointer(Watchable const * watchable);
+};
+
 bool IMPORT SinglePlayer();
 bool IMPORT IsMPServer();
