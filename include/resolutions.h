@@ -42,6 +42,12 @@ struct ResolutionInfo
     }
 };
 
+struct ResolutionInitInfo
+{
+    BYTE x00[0x8];
+    ResolutionInfo resolutionInfo;
+};
+
 bool inline IsResolutionAllowed(const DEVMODE &dm)
 {
     return dm.dmPelsWidth >= MIN_RES_WIDTH && dm.dmPelsHeight >= MIN_RES_HEIGHT && (dm.dmBitsPerPel == 16 || dm.dmBitsPerPel == 32);

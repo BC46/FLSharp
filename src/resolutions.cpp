@@ -185,6 +185,21 @@ void DiscardLowestResolutions(size_t newSize)
     }
 }
 
+bool ResolutionInit(DWORD unk1, ResolutionInitInfo* info, DWORD unk2)
+{
+    #define ResolutionInit_ADDR 0x424DD0
+
+    // If a resolution has been set in the ini file which is beyond the display's capabilities, the game may still run with it, but it'll make everything look strange.
+    if (info->resolutionInfo.height > mainMonitorRes.height || info->resolutionInfo.width > mainMonitorRes.width)
+    {
+        // Zero the resolution's width, causing FL to use a default resolution.
+        info->resolutionInfo.width = 0;
+    }
+
+    typedef bool ResolutionInit(DWORD unk1, ResolutionInitInfo* info, DWORD unk2);
+    return ((ResolutionInit*) ResolutionInit_ADDR)(unk1, info, unk2);
+}
+
 void InitBetterResolutions()
 {
     AddDisplaySettingsResolutions();
@@ -196,6 +211,8 @@ void InitBetterResolutions()
     AddWindowRectResolutions();
     mainMonitorRes = GetMainMonitorResolution();
     AddMainMonitorResolutions();
+    // Hook the resolution call address to allow for an additional resolution check.
+    Hook(0x5B17AE, ResolutionInit, 5);
 
     int i;
     int resolutionAmount = resolutions.size();
