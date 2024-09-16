@@ -29,18 +29,28 @@ void inline Patch_WORD(DWORD vOffset, WORD value)
 void Nop(DWORD vOffset, UINT len);
 
 template <typename Func>
+DWORD SetRelPointer(DWORD location, Func hookFunc)
+{
+    DWORD originalPointer, _;
+
+    // Set and calculate the relative offset for the hook function
+    VirtualProtect((PVOID) location, sizeof(DWORD), PAGE_EXECUTE_READWRITE, &_);
+    originalPointer = location + (*(PDWORD) location) + 4;
+
+    *(Func*) (location) = hookFunc;
+    *(PDWORD) (location) -= location + 4;
+
+    return originalPointer;
+}
+
+template <typename Func>
 void Hook(DWORD location, Func hookFunc, UINT instrLen, bool jmp = false)
 {
-    DWORD _;
-
     // Set the opcode for the call or jmp instruction
     BYTE callOpcode = 0xE8, jmpOpcode = 0xE9;
     Patch(location, &(jmp ? jmpOpcode : callOpcode), sizeof(BYTE));
 
-    // Set and calculate the relative offset for the hook function
-    VirtualProtect((PVOID) location, instrLen, PAGE_EXECUTE_READWRITE, &_);
-    *(Func*) (location + 1) = hookFunc;
-    *(PDWORD) (location + 1) -= location + 5;
+    SetRelPointer(location + 1, hookFunc);
 
     // Nop out excess bytes
     if (instrLen > 5)

@@ -11,6 +11,8 @@ Quaternion lastOrientation;
 float shipTurnThreshold = 30.0f;
 clock_t timeSinceLastUpdate;
 
+DWORD deallocOriginal;
+
 void SetTimeSinceLastUpdate()
 {
     timeSinceLastUpdate = clock();
@@ -49,7 +51,7 @@ void PostInitDealloc_Hook(PVOID obj)
 {
     // Call original function
     typedef void Dealloc(PVOID obj);
-    ((Dealloc*) DEALLOC_ADDR)(obj);
+    ((Dealloc*) deallocOriginal)(obj);
 
     if (SinglePlayer()) // No need to calculate the turn threshold in SP
         return;
@@ -126,7 +128,7 @@ void InitBetterUpdates()
 {
     SetTimeSinceLastUpdate();
 
-    Hook(POST_INIT_DEALLOC_CALL_ADDR, PostInitDealloc_Hook, 5);
+    deallocOriginal = SetRelPointer(POST_INIT_DEALLOC_CALL_ADDR + 1, PostInitDealloc_Hook);
     Hook(CHECK_FOR_SYNC_CALL_ADDR, CRemotePhysicsSimulation::CheckForSync_Hook, 5);
     Hook(OBJ_UPDATE_CALL_ADDR, IServerImpl::SPObjUpdate_Hook, 6);
 }
