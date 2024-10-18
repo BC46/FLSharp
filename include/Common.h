@@ -55,7 +55,7 @@ class IMPORT CEquipTraverser
 public:
     CEquipTraverser(int equipClass);
 private:
-    BYTE data[0x100]; // Check if this works
+    BYTE data[0x10];
 };
 
 class IMPORT CEquipManager
