@@ -20,3 +20,7 @@ EXPORTS
 ?SinglePlayer@@YA_NXZ
 ?GetProjectilesPerFire@CELauncher@@QBEIXZ
 ?IsMPServer@@YA_NXZ
+
+??0CEquipTraverser@@QAE@H@Z
+?Traverse@CEquipManager@@QAEPAVCEquip@@AAVCEquipTraverser@@@Z
+?cast@CELightEquip@@SAPAV1@PAVCEquip@@@Z

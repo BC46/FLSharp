@@ -1,6 +1,7 @@
 #pragma once
 
 #include "fl_math.h"
+#include "vftable.h"
 
 #define WIN32_LEAN_AND_MEAN
 #include <windows.h>
@@ -27,7 +28,20 @@ private:
     BYTE data[0x1565];
 };
 
-class CEquip{};
+class IMPORT CEquip
+{
+public:
+    FILL_VFTABLE(1);
+    FILL_VFTABLE(2);
+    FILL_VFTABLE(3);
+    virtual bool Activate(bool value);
+};
+
+class IMPORT CELightEquip : public CEquip
+{
+public:
+    static CELightEquip * cast(CEquip * equip);
+};
 
 class CELauncher
 {
@@ -36,10 +50,19 @@ public:
     UINT GetProjectilesPerFire_Hook() const;
 };
 
+class IMPORT CEquipTraverser
+{
+public:
+    CEquipTraverser(int equipClass);
+private:
+    BYTE data[0x100]; // Check if this works
+};
+
 class IMPORT CEquipManager
 {
 public:
     CEquip const * FindFirst(UINT type) const;
+    CEquip * Traverse(CEquipTraverser& equipTraverser);
 };
 
 namespace Archetype
@@ -61,15 +84,22 @@ public:
     Matrix const & get_orientation() const;
 };
 
-struct IMPORT CShip : public EngineObject
+struct IMPORT CEqObj : public EngineObject
 {
-    float get_throttle() const;
-    Archetype::Ship const * shiparch() const;
 private:
     BYTE data[0xE4];
 public:
     CEquipManager equipManager;
 };
+
+struct IMPORT CShip : public CEqObj
+{
+    float get_throttle() const;
+    Archetype::Ship const * shiparch() const;
+};
+
+struct CSolar : public CEqObj
+{};
 
 class IMPORT FuseAction
 {
@@ -94,7 +124,7 @@ struct CRemotePhysicsSimulation
 
 struct IObjInspectImpl
 {
-    BYTE data[16];
+    BYTE data[0x10];
     CShip* ship;
 };
 

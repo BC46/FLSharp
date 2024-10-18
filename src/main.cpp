@@ -3,6 +3,7 @@
 #include "projectiles.h"
 #include "resolutions.h"
 #include "test_sounds.h"
+#include "trade_lane_lights.h"
 
 void Init()
 {
@@ -13,6 +14,7 @@ void Init()
         InitProjectilesSoundFix();
         InitBetterResolutions();
         InitTestSounds();
+        InitTradeLaneLightsFix();
     }
 
     InitProjectilesServerFix();

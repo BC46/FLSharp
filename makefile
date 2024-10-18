@@ -11,7 +11,7 @@ RC_FILE = $(RC_DIR)\main.rc
 COMMON_DEF = $(DEF_DIR)\Common.def
 
 RES_FILE = $(OBJ_DIR)\main.RES
-OBJ_FILES = $(OBJ_DIR)\fl_math.obj $(OBJ_DIR)\main.obj $(OBJ_DIR)\update.obj $(OBJ_DIR)\utils.obj $(OBJ_DIR)\waypoint.obj $(OBJ_DIR)\projectiles.obj $(OBJ_DIR)\resolutions.obj $(OBJ_DIR)\resolutions_asm.obj $(OBJ_DIR)\test_sounds.obj
+OBJ_FILES = $(OBJ_DIR)\fl_math.obj $(OBJ_DIR)\main.obj $(OBJ_DIR)\update.obj $(OBJ_DIR)\utils.obj $(OBJ_DIR)\waypoint.obj $(OBJ_DIR)\projectiles.obj $(OBJ_DIR)\resolutions.obj $(OBJ_DIR)\resolutions_asm.obj $(OBJ_DIR)\test_sounds.obj $(OBJ_DIR)\trade_lane_lights.obj
 COMMON_LIB = $(OBJ_DIR)\Common.lib
 EXTERNAL_LIBS = User32.lib Gdi32.lib
 
@@ -38,6 +38,7 @@ $(OBJ_DIR)\projectiles.obj: $(SRC_DIR)\projectiles.cpp $(INCLUDE_DIR)\projectile
 $(OBJ_DIR)\resolutions.obj: $(SRC_DIR)\resolutions.cpp $(INCLUDE_DIR)\resolutions.h $(INCLUDE_DIR)\resolutions_asm.h $(INCLUDE_DIR)\utils.h
 $(OBJ_DIR)\resolutions_asm.obj: $(SRC_DIR)\resolutions_asm.cpp $(INCLUDE_DIR)\resolutions_asm.h
 $(OBJ_DIR)\test_sounds.obj: $(SRC_DIR)\test_sounds.cpp $(INCLUDE_DIR)\test_sounds.h
+$(OBJ_DIR)\trade_lane_lights.obj: $(SRC_DIR)\trade_lane_lights.cpp $(INCLUDE_DIR)\trade_lane_lights.h $(INCLUDE_DIR)\utils.h
 
 $(RES_FILE): $(RC_FILE) $(OBJ_DIR) makefile
     rc /fo $(RES_FILE) $(RC_FILE)
