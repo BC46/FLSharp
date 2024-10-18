@@ -3,9 +3,11 @@
 #include "utils.h"
 #include <cmath>
 
-const double minSyncIntervalMs = 75;
-const double maxSyncIntervalMs = 2000;
-const double rotationCheckIntervalMs = 400;
+const double minSyncIntervalMs = 100.0;
+const double maxSyncIntervalMs = 1500.0;
+const double rotationCheckIntervalMs = 250.0;
+
+bool sendUpdateAsap = false;
 
 Quaternion lastOrientation;
 float shipTurnThreshold = 30.0f;
@@ -56,6 +58,8 @@ void PostInitDealloc_Hook(PVOID obj)
     if (SinglePlayer()) // No need to calculate the turn threshold in SP
         return;
 
+    sendUpdateAsap = false;
+
     CShip* ship = GetShip();
 
     if (!ship)
@@ -72,16 +76,8 @@ void PostInitDealloc_Hook(PVOID obj)
     shipTurnThreshold = min(30.0f, 15 * sqrtf(maxTurnSpeed) / sqrtf(ship->get_radius()));
 }
 
-// Hook for function that determines whether an update should be sent to the server
-bool CRemotePhysicsSimulation::CheckForSync_Hook(Vector const &unk1, Vector const &unk2, Quaternion const &unk3)
+bool CRemotePhysicsSimulation::ShouldSendUpdate(Vector const &unk1, Vector const &unk2, Quaternion const &unk3, double timeElapsed)
 {
-    double timeElapsed = getTimeElapsed(timeSinceLastUpdate); // Time elapsed since the last update
-
-    // Prevent the client from sending too many updates in a short amount of time
-    // This resolves the jitter issue that occurs playing on a high framerate
-    if (timeElapsed < minSyncIntervalMs)
-        return false;
-
     // Does the client want to sync?
     if (CheckForSync(unk1, unk2, unk3))
         return true;
@@ -102,6 +98,29 @@ bool CRemotePhysicsSimulation::CheckForSync_Hook(Vector const &unk1, Vector cons
         return false;
 
     return isEkToggled(engine);
+}
+
+// Hook for function that determines whether an update should be sent to the server
+bool CRemotePhysicsSimulation::CheckForSync_Hook(Vector const &unk1, Vector const &unk2, Quaternion const &unk3)
+{
+    double timeElapsed = getTimeElapsed(timeSinceLastUpdate); // Time elapsed since the last update
+    bool sendUpdateNow = ShouldSendUpdate(unk1, unk2, unk3, timeElapsed);
+
+    if (timeElapsed < minSyncIntervalMs)
+    {
+        // Prevent the client from sending too many updates in a short amount of time
+        // This resolves the jitter issue that occurs when playing on a high framerate
+        sendUpdateAsap |= sendUpdateNow;
+        return false;
+    }
+    else if (sendUpdateAsap)
+    {
+        // If an update has been missed, send an update as soon as this becomes possible, but do it only once
+        sendUpdateAsap = false;
+        return true;
+    }
+
+    return sendUpdateNow;
 }
 
 // Hook for function that sends an update to the server
