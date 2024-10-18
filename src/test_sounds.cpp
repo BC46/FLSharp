@@ -59,7 +59,8 @@ void SetTestSoundAvailability(bool &interfaceSounds, bool &ambienceSounds)
                     ambienceSounds = true;
             }
 
-            // There's not much point in breaking early as these values are found near the end of the ini file.
+            if (interfaceSounds && ambienceSounds)
+                break;
         }
     }
 
