@@ -12,7 +12,7 @@ void Init()
         InitWaypointFixes();
         InitProjectilesSoundFix();
         //InitBetterResolutions();
-        InitTestSounds();
+        //InitTestSounds();
     }
 
     InitProjectilesServerFix();
