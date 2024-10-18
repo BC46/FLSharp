@@ -11,8 +11,8 @@ void Init()
         InitBetterUpdates();
         InitWaypointFixes();
         InitProjectilesSoundFix();
-        //InitBetterResolutions();
-        //InitTestSounds();
+        InitBetterResolutions();
+        InitTestSounds();
     }
 
     InitProjectilesServerFix();
@@ -22,7 +22,7 @@ void Cleanup()
 {
     if (!IsMPServer())
     {
-        //CleanupBetterResolutions();
+        CleanupBetterResolutions();
     }
 }
 

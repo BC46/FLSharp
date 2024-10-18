@@ -11,15 +11,16 @@ These include:
     - when engine kill has been toggled;
     - if after every 0.4 seconds the ship's orientation has been changed to some extent.
 - Sets the minimum time between client-server updates to 75 milliseconds such that jitter is prevented when playing with a high framerate.
-<!-- - Allow `ui_music_test` to play when the current background music has finished playing.
+- Allow `ui_music_test` to play when the current background music has finished playing.
 - Added support for playing the `ui_interface_test` and `ui_ambiance_test` sounds when adjusting the respective sliders in the options menu.
 - Automatically prevent crashes while adjusting the interface and ambience volume sliders in the event that the test sounds are not defined.
 - While adjusting the ambience and music volume, mute other background sounds accordingly so that the volume can be fine-tuned more easily.
 - Allows up to 127 selectable resolutions in the general options menu; these are automatically determined based on the user's main monitor resolution.
 - Fixes the problem where the general options menu can't distinguish two different resolutions with the same width.
 - Makes the default resolution button in the general options menu select the user's main monitor resolution instead of 1024x768.
+- Prevent Freelancer from running with resolutions beyond the main display's capabilities.
 - Sets the user's main monitor resolution as the default in-game resolution.
-- Only check if the available resolutions are supported when needed (optimization). -->
+- Instead of checking if the available resolutions are supported each time the option menu opens, do it only when needed (optimization).
 
 More fixes and improvements may be added in the future.
 
