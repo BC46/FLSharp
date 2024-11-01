@@ -160,7 +160,7 @@ void NN_Preferences::TestResolutions_Hook(DWORD unk)
     {
         // If the monitor settings haven't changed and we know the supported resolution info,
         // set the info without testing the resolutions
-        memcpy(this->resSupportedArr, lastResSupportedArr, resolutions.size() * 5);
+        memcpy(this->resSupportedArr, lastResSupportedArr, resolutions.size() * 5); // 5 = sizeof(int) + sizeof(BYTE), for the indices in menu and supported array entry
         this->supportedResAmount = lastSupportedResAmount;
         this->unk_x97C = lastUnk_x97C;
     }
@@ -172,7 +172,7 @@ void NN_Preferences::TestResolutions_Hook(DWORD unk)
         (this->*testResFunc)(unk);
 
         // Save the supported resolution info for later use
-        memcpy(lastResSupportedArr, this->resSupportedArr, resolutions.size() * 5);
+        memcpy(lastResSupportedArr, this->resSupportedArr, resolutions.size() * 5); // 5 = sizeof(int) + sizeof(BYTE), for the indices in menu and supported array entry
         lastSupportedResAmount = this->supportedResAmount;
         lastUnk_x97C = this->unk_x97C;
     }
@@ -222,7 +222,7 @@ void InitBetterResolutions()
     int i;
     int resolutionAmount = resolutions.size();
 
-    lastResSupportedArr = new BYTE[resolutionAmount * 5];
+    lastResSupportedArr = new BYTE[resolutionAmount * 5]; // 5 = sizeof(int) + sizeof(BYTE), for the indices in menu and supported array entry
 
     int additionalSize = NN_PREFERENCES_ALLOC_SIZE
         + resolutionAmount * sizeof(ResolutionInfo) // resolution info
