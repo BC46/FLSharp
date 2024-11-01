@@ -11,7 +11,7 @@ struct TradeLaneEquipObj
     DWORD vftable;
     CETradeLaneEquip* tradeLaneEquip;
     BYTE x08[0x28];
-    bool isDisrupted;
+    BOOL isDisrupted;
 
     void SetLightsState_Hook();
 };

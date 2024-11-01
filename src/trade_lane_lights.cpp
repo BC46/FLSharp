@@ -7,7 +7,7 @@ void TradeLaneEquipObj::SetLightsState_Hook()
 {
     #define CELIGHTEQUIP_CLASS_TYPE 1
 
-    bool activateLights = !this->isDisrupted;
+    bool activateLights = this->isDisrupted == FALSE;
     CSolar* tradeLaneSolar = this->tradeLaneEquip->solar;
 
     CEquipTraverser tr = CEquipTraverser(CELIGHTEQUIP_CLASS_TYPE);
