@@ -76,13 +76,18 @@ void AddMainMonitorResolutions()
 
 void AddDisplaySettingsResolutions()
 {
+    bool isMainResNarrow = IsResolutionNarrow(mainMonitorRes.width, mainMonitorRes.height);
     DEVMODE dm = { 0 };
     dm.dmSize = sizeof(dm);
 
     for (int iModeNum = 0; EnumDisplaySettings(NULL, iModeNum, &dm) != FALSE; ++iModeNum)
     {
-        if (IsResolutionAllowed(dm))
-            resolutions.insert(ResolutionInfo( dm.dmPelsWidth, dm.dmPelsHeight, dm.dmBitsPerPel ));
+        // Discard resolutions that are not allowed.
+        // Moreover, discard resolutions that are too narrow (e.g. 5:4) since FL doesn't run well with those.
+        if (!IsResolutionAllowed(dm) || (!isMainResNarrow && IsResolutionNarrow(dm.dmPelsWidth, dm.dmPelsHeight)))
+            continue;
+
+        resolutions.insert(ResolutionInfo( dm.dmPelsWidth, dm.dmPelsHeight, dm.dmBitsPerPel ));
     }
 }
 
@@ -202,6 +207,7 @@ bool ResolutionInit(DWORD unk1, ResolutionInitInfo* info, DWORD unk2)
 
 void InitBetterResolutions()
 {
+    mainMonitorRes = GetMainMonitorResolution();
     AddDisplaySettingsResolutions();
 
     // Make sure there can only be 127 resolutions at most after the resolutions below have been added too
@@ -209,7 +215,6 @@ void InitBetterResolutions()
 
     AddFlResolutions();
     AddWindowRectResolutions();
-    mainMonitorRes = GetMainMonitorResolution();
     AddMainMonitorResolutions();
     // Hook the resolution call address to allow for an additional resolution check.
     Hook(0x5B17AE, ResolutionInit, 5);
