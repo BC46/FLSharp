@@ -3,7 +3,7 @@
 #include "utils.h"
 #include <cmath>
 
-const double minSyncIntervalMs = 100.0;
+const double minSyncIntervalMs = 125.0;
 const double maxSyncIntervalMs = 1500.0;
 const double rotationCheckIntervalMs = 250.0;
 
@@ -78,10 +78,6 @@ void PostInitDealloc_Hook(PVOID obj)
 
 bool CRemotePhysicsSimulation::ShouldSendUpdate(Vector const &unk1, Vector const &unk2, Quaternion const &unk3, double timeElapsed)
 {
-    // Does the client want to sync?
-    if (CheckForSync(unk1, unk2, unk3))
-        return true;
-
     CShip* ship = GetShip();
 
     if (!ship)
@@ -105,6 +101,11 @@ bool CRemotePhysicsSimulation::CheckForSync_Hook(Vector const &unk1, Vector cons
 {
     double timeElapsed = getTimeElapsed(timeSinceLastUpdate); // Time elapsed since the last update
     bool sendUpdateNow = ShouldSendUpdate(unk1, unk2, unk3, timeElapsed);
+
+    if (sendUpdateNow)
+        return true;
+
+    sendUpdateNow = CheckForSync(unk1, unk2, unk3); // Does the client want to sync?
 
     if (timeElapsed < minSyncIntervalMs)
     {
