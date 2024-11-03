@@ -6,3 +6,5 @@
 void SetTimeSinceLastUpdate();
 
 void InitBetterUpdates();
+
+bool ShouldSendUpdate();

@@ -119,7 +119,6 @@ struct CRemotePhysicsSimulation
 {
     bool IMPORT CheckForSync(Vector const &unk1, Vector const &unk2, Quaternion const &unk3);
     bool CheckForSync_Hook(Vector const &unk1, Vector const &unk2, Quaternion const &unk3);
-    bool ShouldSendUpdate(Vector const &unk1, Vector const &unk2, Quaternion const &unk3, double timeElapsed);
 };
 
 struct IObjInspectImpl

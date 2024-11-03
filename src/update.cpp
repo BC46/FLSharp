@@ -76,7 +76,7 @@ void PostInitDealloc_Hook(PVOID obj)
     shipTurnThreshold = min(30.0f, 15 * sqrtf(maxTurnSpeed) / sqrtf(ship->get_radius()));
 }
 
-bool CRemotePhysicsSimulation::ShouldSendUpdate(Vector const &unk1, Vector const &unk2, Quaternion const &unk3, double timeElapsed)
+bool ShouldSendUpdate(double timeElapsed)
 {
     CShip* ship = GetShip();
 
@@ -100,12 +100,11 @@ bool CRemotePhysicsSimulation::ShouldSendUpdate(Vector const &unk1, Vector const
 bool CRemotePhysicsSimulation::CheckForSync_Hook(Vector const &unk1, Vector const &unk2, Quaternion const &unk3)
 {
     double timeElapsed = getTimeElapsed(timeSinceLastUpdate); // Time elapsed since the last update
-    bool sendUpdateNow = ShouldSendUpdate(unk1, unk2, unk3, timeElapsed);
 
-    if (sendUpdateNow)
+    if (ShouldSendUpdate(timeElapsed)) // Custom update checks
         return true;
 
-    sendUpdateNow = CheckForSync(unk1, unk2, unk3); // Does the client want to sync?
+    bool sendUpdateNow = CheckForSync(unk1, unk2, unk3); // Does the client want to sync?
 
     if (timeElapsed < minSyncIntervalMs)
     {
