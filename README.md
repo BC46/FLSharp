@@ -7,10 +7,10 @@ These include:
 - Fixed a bug for the `one_shot_sound` not playing when firing multi-barrel launchers.
 - Fixed a bug for the ammo count not decrementing correctly when firing multi-barrel launchers.
 - When playing on a server, ensure the client sends an update:
-    - at least every 2 seconds;
+    - at least every 1.5 seconds;
     - when engine kill has been toggled;
-    - if after every 0.4 seconds the ship's orientation has been changed to some extent.
-- Sets the minimum time between client-server updates to 75 milliseconds such that jitter is prevented when playing with a high framerate.
+    - if after every 0.25 seconds the ship's orientation has been changed to some extent.
+- Sets the minimum time between client-server updates to 125 milliseconds such that jitter is prevented when playing with a high framerate.
 - Allow `ui_music_test` to play when the current background music has finished playing.
 - Added support for playing the `ui_interface_test` and `ui_ambiance_test` sounds when adjusting the respective sliders in the options menu; these sounds should be defined in `interface_sounds.ini`.
 - Automatically prevent crashes while adjusting the interface and ambience volume sliders in the event that the test sounds are not defined.
