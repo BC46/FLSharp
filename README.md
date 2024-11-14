@@ -11,6 +11,7 @@ These include:
     - when engine kill has been toggled;
     - if after every 0.25 seconds the ship's orientation has been changed to some extent.
 - Sets the minimum time between client-server updates to 125 milliseconds such that jitter is prevented when playing with a high framerate.
+- Fixed a bug that caused the lights of a trade lane to never turn back on after the trade lane got disrupted.
 - Allow `ui_music_test` to play when the current background music has finished playing.
 - Added support for playing the `ui_interface_test` and `ui_ambiance_test` sounds when adjusting the respective sliders in the options menu; these sounds should be defined in `interface_sounds.ini`.
 - Automatically prevent crashes while adjusting the interface and ambience volume sliders in the event that the test sounds are not defined.
