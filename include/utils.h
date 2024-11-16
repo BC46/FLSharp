@@ -47,9 +47,9 @@ template <typename Func>
 void Hook(DWORD location, Func hookFunc, UINT instrLen, bool jmp = false)
 {
     // Set the opcode for the call or jmp instruction
-    BYTE callOpcode = 0xE8, jmpOpcode = 0xE9;
-    Patch(location, &(jmp ? jmpOpcode : callOpcode), sizeof(BYTE));
+    Patch_BYTE(location, jmp ? 0xE9 : 0xE8); // 0xE9 = jmp, 0xE8 = call
 
+    // Set the relative address
     SetRelPointer(location + 1, hookFunc);
 
     // Nop out excess bytes
