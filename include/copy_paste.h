@@ -28,12 +28,13 @@ struct KeyMapInfo
 
 struct InputBoxWindow
 {
-    BYTE x00[0x49C];
+    BYTE x04[0x498];
     int pos; // 0x49C
-    BYTE x450[0x28];
+    BYTE x4A0[0x24];
     std::vector<InputChar> chars; // 0x4C4
-    DWORD charFlags; // 0x4D4
-    UINT maxCharsLength; // 0x510
+    BYTE x4E4[0x3C];
+    int maxCharsLength; // 0x510
+    BYTE x514[0x18];
     wchar_t forbiddenChar; // 0x528
     bool noForbiddenChar; // 0x52A
     PDWORD ime; // 0x52C

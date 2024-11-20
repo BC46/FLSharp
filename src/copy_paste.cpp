@@ -36,13 +36,14 @@ void InputBoxWindow::PasteFromClipboard(KeyMapInfo *kmi)
                 return;
 
             LPCWSTR clipboardStr = static_cast<LPCWSTR>(GlobalLock(clipboard));
+            size_t clipboardLen = wcslen(clipboardStr);
 
             if (!clipboardStr)
                 return;
 
             KeyMapInfo temp;
 
-            for (size_t i = 0; i < wcslen(clipboardStr) && chars.size() < maxCharsLength; ++i)
+            for (size_t i = 0; i < clipboardLen && chars.size() < (size_t) maxCharsLength; ++i)
             {
                 temp.enteredKey = clipboardStr[i];
                 this->AddTypedKey(&temp);
@@ -103,7 +104,7 @@ NAKED void ButtonAnimFix()
 // I noticed that often the button texts slide out about nine times faster than their respective button background.
 // Ideally I wanted to make it so that the slide out speeds match, but my attempts proved to be unsuccesful.
 // Turns out that the buttons that do have matching slide speeds (e.g. in the main menu), use completely different code to achieve this.
-// Now for all animations with the different slide-out speeds I just hide the text when the slide-out animation is active; 
+// Now for all animations with the different slide-out speeds I just hide the text when the slide-out animation is active;
 // by default this already happens in the slide-in animation.
 // Now the animations feel a lot more seamless and smooth.
 int UITextMsgButton::SlideAnimation_Hook(BYTE unk1, const float* newXPos, BYTE unk2)
@@ -122,7 +123,7 @@ void InitCopyPasteFeature()
     SetPointer(HANDLE_DEFAULT_INPUT_KEY_ADDR, &HandleDefaultInputKey_Hook);
 
     int i;
-    const DWORD slideAnimationCalls[] = { 
+    const DWORD slideAnimationCalls[] = {
         0x56FB13, 0x56FB2A, 0x56FB41, 0x56FB58,             // "FREELANCER SERVERS" menu
         0x56A86F, 0x56A885, 0x56A89B, 0x56A8B1, 0x56A8C7,   // "SELECT A CHARACTER" menu
         0x561A43, 0x561A5A                                  // "CREATE A NEW CHARACTER" menu
