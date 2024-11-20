@@ -37,6 +37,6 @@ NavMapObj* NeuroNetNavMap::GetHighlightedObject_Hook(DWORD unk1, DWORD unk2)
 void InitWaypointFixes()
 {
     Hook(WAYPOINT_CHECK_CALL_ADDR, WaypointCheck_Hook, 5);
-    Hook(NAV_MAP_GET_HIGHLIGHTED_OBJ_WAYPOINT_CALL_ADDR, NeuroNetNavMap::GetHighlightedObject_Hook, 5);
-    Hook(NAV_MAP_GET_HIGHLIGHTED_OBJ_BESTPATH_CALL_ADDR, NeuroNetNavMap::GetHighlightedObject_Hook, 5);
+    Hook(NAV_MAP_GET_HIGHLIGHTED_OBJ_WAYPOINT_CALL_ADDR, &NeuroNetNavMap::GetHighlightedObject_Hook, 5);
+    Hook(NAV_MAP_GET_HIGHLIGHTED_OBJ_BESTPATH_CALL_ADDR, &NeuroNetNavMap::GetHighlightedObject_Hook, 5);
 }

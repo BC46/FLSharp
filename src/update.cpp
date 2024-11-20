@@ -148,6 +148,6 @@ void InitBetterUpdates()
     SetTimeSinceLastUpdate();
 
     deallocOriginal = SetRelPointer(POST_INIT_DEALLOC_CALL_ADDR + 1, PostInitDealloc_Hook);
-    Hook(CHECK_FOR_SYNC_CALL_ADDR, CRemotePhysicsSimulation::CheckForSync_Hook, 5);
-    Hook(OBJ_UPDATE_CALL_ADDR, IServerImpl::SPObjUpdate_Hook, 6);
+    Hook(CHECK_FOR_SYNC_CALL_ADDR, &CRemotePhysicsSimulation::CheckForSync_Hook, 5);
+    Hook(OBJ_UPDATE_CALL_ADDR, &IServerImpl::SPObjUpdate_Hook, 6);
 }

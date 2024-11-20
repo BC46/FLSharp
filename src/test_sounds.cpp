@@ -53,9 +53,9 @@ void SetTestSoundAvailability(bool &interfaceSounds, bool &ambienceSounds)
         {
             if (reader.is_value("nickname"))
             {
-                if (stricmp(reader.get_value_string(), "ui_interface_test") == 0)
+                if (_stricmp(reader.get_value_string(), "ui_interface_test") == 0)
                     interfaceSounds = true;
-                else if (stricmp(reader.get_value_string(), "ui_ambiance_test") == 0)
+                else if (_stricmp(reader.get_value_string(), "ui_ambiance_test") == 0)
                     ambienceSounds = true;
             }
 
@@ -252,7 +252,7 @@ void InitTestSounds()
     Patch(VOLUME_SLIDER_ADJUST_END_CALL - 0x70 - 0x2, patches,     2); // jmp 0x04ACBAB
     Patch(VOLUME_SLIDER_ADJUST_END_CALL,              patches + 2, 3); // push ecx + mov ecx, ebp
 
-    Hook(VOLUME_SLIDER_ADJUST_END_CALL + 3, NN_Preferences::VolumeSliderAdjustEnd_Hook, 5);
+    Hook(VOLUME_SLIDER_ADJUST_END_CALL + 3, &NN_Preferences::VolumeSliderAdjustEnd_Hook, 5);
     Hook(GET_BGM_INSTANCE_CALL_ADDR, GetBackgroundMusicHandle_Hook, 5);
     Hook(STOP_MUSIC_TEST_SOUND_1, StopMusicTestSound_Hook, 5);
     Hook(STOP_MUSIC_TEST_SOUND_2, StopMusicTestSound_Hook, 5);

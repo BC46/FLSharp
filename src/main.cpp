@@ -4,6 +4,7 @@
 #include "resolutions.h"
 #include "test_sounds.h"
 #include "trade_lane_lights.h"
+#include "copy_paste.h"
 
 void Init()
 {
@@ -15,6 +16,7 @@ void Init()
         InitBetterResolutions();
         InitTestSounds();
         InitTradeLaneLightsFix();
+        InitCopyPasteFeature();
     }
 
     InitProjectilesServerFix();

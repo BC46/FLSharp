@@ -97,10 +97,6 @@ bool NN_Preferences::InitElements_Hook(DWORD unk1, DWORD unk2)
     ResolutionInfo* nextInfo;
     std::set<ResolutionInfo>::iterator it = resolutions.begin();
 
-    // We are editing heap memory, so it should be editable by default, but make it writeable just to be sure
-    DWORD _;
-    VirtualProtect(this, *((PUINT) NN_PREFERENCES_ALLOC_SIZE_PTR), PAGE_EXECUTE_READWRITE, &_);
-
     // Fill Resolution info
     for (i = 0; it != resolutions.end(); ++it)
     {
@@ -252,40 +248,40 @@ void InitBetterResolutions()
         Patch_INT(firstBppRefs[i], NN_PREFERENCES_NEW_DATA + 0x8);
 
     // Set hook that copies the resolutions into the right location when called
-    SetPointer(INIT_NN_ELEMENTS_CALL_ADDR, NN_Preferences::InitElements_Hook);
+    SetPointer(INIT_NN_ELEMENTS_CALL_ADDR, &NN_Preferences::InitElements_Hook);
 
     // Places where the current resolution info is written to (selected and/or active width)
-    Hook(0x4A9AAB, CurrentResInfoWrite1, 6);
-    Hook(0x4B1046, CurrentResInfoWrite2, 6);
-    Hook(0x4B180F, CurrentResInfoWrite3, 6);
-    Hook(0x4B1C20, CurrentResInfoWrite4, 6);
-    Hook(0x4AC264, CurrentResInfoWrite5, 6);
-    Hook(0x4B27A6, CurrentResInfoWrite6, 6);
-    Hook(0x4B10C3, CurrentResInfoWrite7, 6);
+    Hook(0x4A9AAB, &CurrentResInfoWrite1, 6);
+    Hook(0x4B1046, &CurrentResInfoWrite2, 6);
+    Hook(0x4B180F, &CurrentResInfoWrite3, 6);
+    Hook(0x4B1C20, &CurrentResInfoWrite4, 6);
+    Hook(0x4AC264, &CurrentResInfoWrite5, 6);
+    Hook(0x4B27A6, &CurrentResInfoWrite6, 6);
+    Hook(0x4B10C3, &CurrentResInfoWrite7, 6);
 
     // Places where the current resolution info is checked or compared (selected and/or active width)
-    Hook(0x4B1F67, CurrentResInfoCheck1, 6, true);
-    Hook(0x4B102B, CurrentResInfoCheck2, 5, true);
-    Hook(0x4B257A, CurrentResInfoCheck3, 6, true);
-    Hook(0x4B1C93, CurrentResInfoCheck4, 8, true);
-    Hook(0x4B074E, CurrentResInfoCheck5, 6, true);
-    Hook(0x4B0786, CurrentResInfoCheck6, 7, true);
-    Hook(0x4ACEE2, CurrentResInfoCheck7, 5, true);
+    Hook(0x4B1F67, &CurrentResInfoCheck1, 6, true);
+    Hook(0x4B102B, &CurrentResInfoCheck2, 5, true);
+    Hook(0x4B257A, &CurrentResInfoCheck3, 6, true);
+    Hook(0x4B1C93, &CurrentResInfoCheck4, 8, true);
+    Hook(0x4B074E, &CurrentResInfoCheck5, 6, true);
+    Hook(0x4B0786, &CurrentResInfoCheck6, 7, true);
+    Hook(0x4ACEE2, &CurrentResInfoCheck7, 5, true);
 
     // Places a hook where a function is called which sets the new resolution
     // This is hooked because we need this function to take an additional parameter (the height)
-    Hook(0x4AC4B0, NN_Preferences::SetResolution_Active_Hook, 5);
-    Hook(0x4B1E65, NN_Preferences::SetResolution_Selected_Hook, 5);
-    Hook(0x4B2594, NN_Preferences::SetResolution_Selected_Hook, 5);
-    Hook(0x4B2781, NN_Preferences::SetResolution_Active_Hook, 5);
+    Hook(0x4AC4B0, &NN_Preferences::SetResolution_Active_Hook, 5);
+    Hook(0x4B1E65, &NN_Preferences::SetResolution_Selected_Hook, 5);
+    Hook(0x4B2594, &NN_Preferences::SetResolution_Selected_Hook, 5);
+    Hook(0x4B2781, &NN_Preferences::SetResolution_Active_Hook, 5);
 
     // Hook test resolutions functions so that we only test the resolutions when it's actually necessary (optimization)
-    Hook(0x4A98E7, NN_Preferences::TestResolutions_Hook, 5);
-    Hook(0x4AE761, NN_Preferences::TestResolutions_Hook, 5);
+    Hook(0x4A98E7, &NN_Preferences::TestResolutions_Hook, 5);
+    Hook(0x4AE761, &NN_Preferences::TestResolutions_Hook, 5);
 
     // Places that determine the width of the "default" resolution
-    Hook(0x4ACEAB, DefaultResSet1, 5, true);
-    Hook(0x4ACEBB, DefaultResSet2, 7, true);
+    Hook(0x4ACEAB, &DefaultResSet1, 5, true);
+    Hook(0x4ACEBB, &DefaultResSet2, 7, true);
 
     // Change the amount of bytes that are cleaned from the stack when the "set resolution function" returns because an additional parameter has been added
     Patch_WORD(0x4B1D09, 12); // 0xC
