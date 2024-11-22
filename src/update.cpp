@@ -58,7 +58,7 @@ void PostInitDealloc_Hook(PVOID obj)
     if (SinglePlayer()) // No need to calculate the turn threshold in SP
         return;
 
-    sendUpdateAsap = false;
+    sendUpdateAsap = true;
 
     CShip* ship = GetShip();
 
@@ -83,7 +83,7 @@ bool ShouldSendUpdate(double timeElapsed)
     if (!ship)
         return false;
 
-    // If the client doesn't want to sync, we do our own checks below to see if it should sync regardless
+    // Has the orientation been changed to some extent? Has it been a while since the last update?
     if (hasOrientationChanged(ship, timeElapsed) || (timeElapsed >= maxSyncIntervalMs))
         return true;
 

@@ -8,14 +8,14 @@ NAKED void HandleDefaultInputKey_Hook()
     __asm {
         mov ecx, esi
         push edi
-        call InputBoxWindow::PasteFromClipboard
+        call InputBoxWindow::HandleCopyPaste
         mov byte ptr [esp+0x13], 0
         mov eax, HANDLE_DEFAULT_INPUT_KEY_OG
         jmp eax
     }
 }
 
-void InputBoxWindow::PasteFromClipboard(KeyMapInfo *kmi)
+void InputBoxWindow::HandleCopyPaste(KeyMapInfo *kmi)
 {
     // Maybe unnecessary?
     // if (this->ime == NULL)
@@ -75,31 +75,6 @@ void InputBoxWindow::PasteFromClipboard(KeyMapInfo *kmi)
     }
 }
 
-float nine = 9.0f;
-float testing = 0.2f;
-
-NAKED void ButtonAnimFix()
-{
-    __asm {
-        // x
-        fstp st(0)
-        fld dword ptr [edi]
-        fmul dword ptr [nine]
-        fstp dword ptr [esp+0x8]
-
-        // y
-        fld dword ptr [edi+0x4]
-        fmul dword ptr [nine]
-        fstp dword ptr [esp+0xC]
-
-        // z
-        fld dword ptr [edi+0x8]
-        fmul dword ptr [nine]
-        mov edx, 0x5A08DE
-        jmp edx
-    }
-}
-
 // In many of the MP-related menus there is an animation for all the buttons where they slide out as you close the menu.
 // I noticed that often the button texts slide out about nine times faster than their respective button background.
 // Ideally I wanted to make it so that the slide out speeds match, but my attempts proved to be unsuccesful.
@@ -119,7 +94,6 @@ int UITextMsgButton::SlideAnimation_Hook(BYTE unk1, const float* newXPos, BYTE u
 void InitCopyPasteFeature()
 {
     #define HANDLE_DEFAULT_INPUT_KEY_ADDR 0x57CE3C
-
     SetPointer(HANDLE_DEFAULT_INPUT_KEY_ADDR, &HandleDefaultInputKey_Hook);
 
     int i;

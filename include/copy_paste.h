@@ -53,9 +53,9 @@ struct InputBoxWindow
     FILL_VFTABLE(B)
     virtual void Vftable_xC0();
     virtual void Vftable_xC4();
-    virtual bool AddTypedKey(KeyMapInfo *kmi);
+    virtual bool AddTypedKey(const KeyMapInfo *kmi);
 
-    void PasteFromClipboard(KeyMapInfo *kmi);
+    void HandleCopyPaste(KeyMapInfo *kmi);
 };
 
 struct UITextMsgButton
