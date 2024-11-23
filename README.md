@@ -22,6 +22,8 @@ These include:
 - Prevent Freelancer from running with resolutions beyond the main display's capabilities.
 - Sets the user's main monitor resolution as the default in-game resolution.
 - Instead of checking if the available resolutions are supported each time the option menu opens, do it only when needed (optimization).
+- Allows for the Ctrl + C and Ctrl + V hotkeys to copy all text from any FL input box to the clipboard, and paste text from the clipboard to any FL input box, respectively.
+- Improved the slide-out animation for some UI buttons in the multiplayer menus.
 
 More fixes and improvements may be added in the future.
 

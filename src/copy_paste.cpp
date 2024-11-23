@@ -26,7 +26,7 @@ void InputBoxWindow::CopyFromClipboard()
 
     if (!clipboard)
         goto _closeClipboard;
-    
+
     LPCWSTR clipboardStr = static_cast<LPCWSTR>(GlobalLock(clipboard));
 
     if (!clipboardStr)
@@ -34,7 +34,7 @@ void InputBoxWindow::CopyFromClipboard()
 
     WriteString(clipboardStr);
     GlobalUnlock(clipboard);
-    
+
 _closeClipboard:
     CloseClipboard();
 }
@@ -60,10 +60,11 @@ void InputBoxWindow::CopyToClipboard()
     if (!OpenClipboard(NULL))
         return;
 
-    EmptyClipboard();
+    if (!EmptyClipboard())
+        goto _closeClipboard;
 
     size_t inputLength = this->chars.size();
-    HGLOBAL clipboardData = GlobalAlloc(GMEM_DDESHARE, sizeof(WCHAR) * (inputLength + 1));
+    HGLOBAL clipboardData = GlobalAlloc(GMEM_MOVEABLE, sizeof(WCHAR) * (inputLength + 1));
 
     if (!clipboardData)
         goto _closeClipboard;
@@ -71,17 +72,20 @@ void InputBoxWindow::CopyToClipboard()
     LPWSTR clipboardStr = static_cast<LPWSTR>(GlobalLock(clipboardData));
 
     if (!clipboardStr)
+    {
+        GlobalFree(clipboardData);
         goto _closeClipboard;
+    }
 
-    // Copy every char from the buffer to clipboardStr.
+    // Copy every char from the input box buffer to clipboardStr.
     for (size_t i = 0; i < inputLength; ++i)
         clipboardStr[i] = this->chars[i].c;
 
-    clipboardStr[inputLength] = L'\0';
+    clipboardStr[inputLength] = L'\0'; // Set the null character at the end.
 
-    if (GlobalUnlock(clipboardData) == TRUE)
-        SetClipboardData(CF_UNICODETEXT, clipboardData);
-    else
+    GlobalUnlock(clipboardData);
+
+    if (!SetClipboardData(CF_UNICODETEXT, clipboardData))
         GlobalFree(clipboardData);
 
 _closeClipboard:
@@ -90,6 +94,10 @@ _closeClipboard:
 
 void InputBoxWindow::HandleCopyPaste(KeyMapInfo *kmi)
 {
+    // I saw this check being made in many key handling function, but for this one I don't think it's necessary.
+    // if (this->ime == NULL)
+    //     return;
+
     if (kmi->IsCtrlPressed())
     {
         // Ctrl + V pressed?
@@ -98,7 +106,7 @@ void InputBoxWindow::HandleCopyPaste(KeyMapInfo *kmi)
             CopyFromClipboard();
         }
         // Ctrl + C pressed?
-        else if (toupper(kmi->enteredKey) == 'C')
+        else if (toupper(kmi->enteredKey) == L'C')
         {
             CopyToClipboard();
         }
