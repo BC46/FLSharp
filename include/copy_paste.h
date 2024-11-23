@@ -4,8 +4,6 @@
 #include "vftable.h"
 #include "Common.h"
 
-#define NAKED __declspec(naked)
-
 struct InputChar
 {
     WCHAR c;
@@ -35,7 +33,7 @@ struct InputBoxWindow
     BYTE x4E4[0x3C];
     int maxCharsLength; // 0x510
     BYTE x514[0x18];
-    wchar_t forbiddenChar; // 0x528
+    WCHAR forbiddenChar; // 0x528
     bool noForbiddenChar; // 0x52A
     PDWORD ime; // 0x52C
 
@@ -59,32 +57,6 @@ struct InputBoxWindow
     void CopyToClipboard();
     void CopyFromClipboard();
     void WriteString(LPCWSTR str);
-};
-
-struct UITextMsgButton
-{
-public:
-    int SlideAnimation_Hook(BYTE unk1, const float* newXPos, BYTE unk2);
-
-private:
-    FILL_VFTABLE(0)
-    FILL_VFTABLE(1)
-    FILL_VFTABLE(2)
-    FILL_VFTABLE(3)
-    FILL_VFTABLE(4)
-    FILL_VFTABLE(5)
-    FILL_VFTABLE(6)
-    FILL_VFTABLE(7)
-    FILL_VFTABLE(8)
-    FILL_VFTABLE(9)
-    virtual void Vftable_xC0();
-    virtual void Vftable_xC4();
-    virtual int SlideAnimation(BYTE unk1, const float* newXPos, BYTE unk2);
-
-    BYTE x04[0x3E8];
-    PVOID textInfo; // 0x3EC. textInfo = NULL will prevent the text from rendering
-    BYTE x3F0[0x81];
-    bool disableHovering; // 0x471
 };
 
 void HandleDefaultInputKey_Hook();

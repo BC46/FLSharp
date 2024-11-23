@@ -5,6 +5,7 @@
 #include "test_sounds.h"
 #include "trade_lane_lights.h"
 #include "copy_paste.h"
+#include "ui_anim.h"
 
 void Init()
 {
@@ -17,6 +18,7 @@ void Init()
         InitTestSounds();
         InitTradeLaneLightsFix();
         InitCopyPasteFeature();
+        InitSlideUiAnimFix();
     }
 
     InitProjectilesServerFix();
