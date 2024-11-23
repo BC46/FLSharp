@@ -15,62 +15,90 @@ NAKED void HandleDefaultInputKey_Hook()
     }
 }
 
+void InputBoxWindow::CopyFromClipboard()
+{
+    if (!OpenClipboard(NULL))
+        return;
+
+    HANDLE clipboard = GetClipboardData(CF_UNICODETEXT);
+
+    if (!clipboard)
+        goto _closeClipboard;
+    
+    LPCWSTR clipboardStr = static_cast<LPCWSTR>(GlobalLock(clipboard));
+
+    if (!clipboardStr)
+        goto _closeClipboard;
+
+    WriteString(clipboardStr);
+    GlobalUnlock(clipboard);
+    
+_closeClipboard:
+    CloseClipboard();
+}
+
+// There exists a AddTypedKey function which takes the typedKey variable from a KeyMapInfo object and writes it to the input box.
+// However, this typedKey variable is the only thing that the function needs from this entire object.
+// So we just define a dummy KeyMapInfo object where we fill the character we want to enter in every loop iteration.
+void InputBoxWindow::WriteString(LPCWSTR str)
+{
+    KeyMapInfo temp;
+    size_t strLen = wcslen(str);
+
+    // Stop when the end of the string has been reached, or if the buffer is full.
+    for (size_t i = 0; i < strLen && chars.size() < (size_t) maxCharsLength; ++i)
+    {
+        temp.enteredKey = str[i];
+        this->AddTypedKey(&temp);
+    }
+}
+
+void InputBoxWindow::CopyToClipboard()
+{
+    if (!OpenClipboard(NULL))
+        return;
+
+    EmptyClipboard();
+
+    size_t inputLength = this->chars.size();
+    HGLOBAL clipboardData = GlobalAlloc(GMEM_DDESHARE, sizeof(WCHAR) * (inputLength + 1));
+
+    if (!clipboardData)
+        goto _closeClipboard;
+
+    LPWSTR clipboardStr = static_cast<LPWSTR>(GlobalLock(clipboardData));
+
+    if (!clipboardStr)
+        goto _closeClipboard;
+
+    // Copy every char from the buffer to clipboardStr.
+    for (size_t i = 0; i < inputLength; ++i)
+        clipboardStr[i] = this->chars[i].c;
+
+    clipboardStr[inputLength] = L'\0';
+
+    if (GlobalUnlock(clipboardData) == TRUE)
+        SetClipboardData(CF_UNICODETEXT, clipboardData);
+    else
+        GlobalFree(clipboardData);
+
+_closeClipboard:
+    CloseClipboard();
+}
+
 void InputBoxWindow::HandleCopyPaste(KeyMapInfo *kmi)
 {
-    // Maybe unnecessary?
-    // if (this->ime == NULL)
-    // {
-    //     return;
-    // }
-
     if (kmi->IsCtrlPressed())
     {
+        // Ctrl + V pressed?
         if (toupper(kmi->enteredKey) == L'V')
         {
-            if (!OpenClipboard(NULL))
-                return;
-
-            HANDLE clipboard = GetClipboardData(CF_UNICODETEXT);
-
-            if (!clipboard)
-                return;
-
-            LPCWSTR clipboardStr = static_cast<LPCWSTR>(GlobalLock(clipboard));
-            size_t clipboardLen = wcslen(clipboardStr);
-
-            if (!clipboardStr)
-                return;
-
-            KeyMapInfo temp;
-
-            for (size_t i = 0; i < clipboardLen && chars.size() < (size_t) maxCharsLength; ++i)
-            {
-                temp.enteredKey = clipboardStr[i];
-                this->AddTypedKey(&temp);
-            }
-
-            GlobalUnlock(clipboard);
-            CloseClipboard();
+            CopyFromClipboard();
         }
+        // Ctrl + C pressed?
         else if (toupper(kmi->enteredKey) == 'C')
         {
-            if (!OpenClipboard(NULL))
-                return;
-
-            EmptyClipboard();
-
-            size_t inputLength = this->chars.size();
-            HGLOBAL clipboardData = GlobalAlloc(GMEM_DDESHARE, sizeof(wchar_t) * (inputLength + 1));
-            LPWSTR clipboardStr = static_cast<LPWSTR>(GlobalLock(clipboardData));
-
-            for (size_t i = 0; i < inputLength; ++i)
-                clipboardStr[i] = this->chars[i].c;
-
-            clipboardStr[inputLength] = L'\0';
-
-            GlobalUnlock(clipboardData);
-            SetClipboardData(CF_UNICODETEXT, clipboardData);
-            CloseClipboard();
+            CopyToClipboard();
         }
     }
 }

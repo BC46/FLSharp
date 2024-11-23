@@ -8,7 +8,7 @@
 
 struct InputChar
 {
-    wchar_t c;
+    WCHAR c;
     DWORD flags; // I don't know whether this field actually represents flags; it's just an educated guess.
     DWORD unk; // Allocated but never assigned.
 };
@@ -18,7 +18,7 @@ struct KeyMapInfo
     BYTE x00[0x8];
     DWORD controlCharacterFlags; // 0x8
     DWORD x0C;
-    wchar_t enteredKey; // 0x10
+    WCHAR enteredKey; // 0x10
 
     inline bool IsCtrlPressed()
     {
@@ -56,6 +56,9 @@ struct InputBoxWindow
     virtual bool AddTypedKey(const KeyMapInfo *kmi);
 
     void HandleCopyPaste(KeyMapInfo *kmi);
+    void CopyToClipboard();
+    void CopyFromClipboard();
+    void WriteString(LPCWSTR str);
 };
 
 struct UITextMsgButton
