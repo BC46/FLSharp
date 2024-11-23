@@ -117,5 +117,5 @@ void InputBoxWindow::HandleCopyPaste(KeyMapInfo *kmi)
 void InitCopyPasteFeature()
 {
     #define HANDLE_DEFAULT_INPUT_KEY_ADDR 0x57CE3C
-    SetPointer(HANDLE_DEFAULT_INPUT_KEY_ADDR, &HandleDefaultInputKey_Hook);
+    SetPointer(HANDLE_DEFAULT_INPUT_KEY_ADDR, HandleDefaultInputKey_Hook);
 }

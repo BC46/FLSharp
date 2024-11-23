@@ -56,5 +56,5 @@ void InitProjectilesServerFix()
     // Add file offset and server handle to set the hook's return address
     playerLauncherFireRet = serverHandle + 0xD91A;
 
-    Hook(serverHandle + 0xD913, &HandlePlayerLauncherFire_Hook, 5, true);
+    Hook(serverHandle + 0xD913, HandlePlayerLauncherFire_Hook, 5, true);
 }
