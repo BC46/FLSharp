@@ -19,9 +19,12 @@ These include:
 - Allows up to 127 selectable resolutions in the general options menu; these are automatically determined based on the user's main monitor resolution.
 - Fixes the problem where the general options menu can't distinguish two different resolutions with the same width.
 - Makes the default resolution button in the general options menu select the user's main monitor resolution instead of 1024x768.
-- Prevent Freelancer from running with resolutions beyond the main display's capabilities.
+- Prevent Freelancer from running with resolutions beyond the main display's capabilities in terms of horizontal and vertical resolution.
 - Sets the user's main monitor resolution as the default in-game resolution.
 - Instead of checking if the available resolutions are supported each time the option menu opens, do it only when needed (optimization).
+- Allows for the Ctrl + C hotkey to copy text from any Freelancer input box to the clipboard.
+- Allows for the Ctrl + V hotkey to paste text from the clipboard to any Freelancer input box.
+- Improved the slide-out animation for some UI buttons in the multiplayer menus.
 
 More fixes and improvements may be added in the future.
 
@@ -29,7 +32,7 @@ More fixes and improvements may be added in the future.
 Download the latest `FLSharp.dll` from [Releases](https://github.com/BC46/FLSharp/releases). Extract the `dll` to the `EXE` folder of your Freelancer installation. Next, open both the `dacom.ini` and `dacomsrv.ini` files and append `FLSharp.dll` to the `[Libraries]` sections.
 
 ## Build instructions
-Build the project using the `NMAKE` tool from Microsoft Visual C++ 6.0 (VC6) with the included makefile.
+Build the project using the `NMAKE` tool from Microsoft Visual C++ 7.0 (VC7) + the VC6 runtime libraries.
 This will output the `FLSharp.dll` file in the `bin` folder.
 Building the project using other compilers may require the code to be modified.
 

@@ -35,5 +35,5 @@ void InitTradeLaneLightsFix()
     // However, the latter doesn't work in the retail version of FL, resulting in the trade lanes remaining off permanently after one disruption.
     // The legacy code looked overly complicated for such a simple task and there seemed to be no easy way to just "fix" it.
     // Hence new code has been written that simply activates/deactivates the lights based on whether or not the tradelane is disrupted.
-    Hook(ENABLE_TLR_LIGHTS_CALL_ADDR, TradeLaneEquipObj::SetLightsState_Hook, 5);
+    Hook(ENABLE_TLR_LIGHTS_CALL_ADDR, &TradeLaneEquipObj::SetLightsState_Hook, 5);
 }

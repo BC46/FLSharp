@@ -93,16 +93,11 @@ void AddDisplaySettingsResolutions()
 
 bool NN_Preferences::InitElements_Hook(DWORD unk1, DWORD unk2)
 {
-    int i;
     ResolutionInfo* nextInfo;
     std::set<ResolutionInfo>::iterator it = resolutions.begin();
 
-    // We are editing heap memory, so it should be editable by default, but make it writeable just to be sure
-    DWORD _;
-    VirtualProtect(this, *((PUINT) NN_PREFERENCES_ALLOC_SIZE_PTR), PAGE_EXECUTE_READWRITE, &_);
-
     // Fill Resolution info
-    for (i = 0; it != resolutions.end(); ++it)
+    for (int i = 0; it != resolutions.end(); ++it)
     {
         nextInfo = ((ResolutionInfo*) &(this->newData)) + (i++);
         *nextInfo = *it;
@@ -119,7 +114,7 @@ bool NN_Preferences::InitElements_Hook(DWORD unk1, DWORD unk2)
 
     // +0x944
     const DWORD supportedInfoRefs[] = { 0x4B1005, 0x4B24B3, 0x4B1C73, 0x4B0773, 0x4ACEDA };
-    for (i = 0; i < sizeof(supportedInfoRefs) / sizeof(DWORD); ++i)
+    for (int i = 0; i < sizeof(supportedInfoRefs) / sizeof(DWORD); ++i)
         Patch_INT(supportedInfoRefs[i], resSupportedInfoOffset);
 
     // weird negated value (note the minus sign)
@@ -127,7 +122,7 @@ bool NN_Preferences::InitElements_Hook(DWORD unk1, DWORD unk2)
 
     // +0x954
     const DWORD resIndicesRefs[] = { 0x4B249C, 0x4B17E0, 0x4B0FFA, 0x4ACEF9, 0x4B0764 };
-    for (i = 0; i < sizeof(resIndicesRefs) / sizeof(DWORD); ++i)
+    for (int i = 0; i < sizeof(resIndicesRefs) / sizeof(DWORD); ++i)
         Patch_INT(resIndicesRefs[i], resIndicesOffset);
 
     // Call original function
@@ -219,7 +214,6 @@ void InitBetterResolutions()
     // Hook the resolution call address to allow for an additional resolution check.
     Hook(0x5B17AE, ResolutionInit, 5);
 
-    int i;
     int resolutionAmount = resolutions.size();
 
     lastResSupportedArr = new BYTE[resolutionAmount * 5]; // 5 = sizeof(int) + sizeof(BYTE), for the indices in menu and supported array entry
@@ -238,21 +232,21 @@ void InitBetterResolutions()
     // Patch resolution amount (byte, 0xA)
     const DWORD resAmountRefs[] = { 0x4B2521, 0x4B1086, 0x4B1CC1, 0x4B17F0, 0x4B07DA, 0x4ACEF1 };
     // We know resolutions.size() <= 127, so casting it directly to a byte is fine
-    for (i = 0; i < sizeof(resAmountRefs) / sizeof(DWORD); ++i)
+    for (int i = 0; i < sizeof(resAmountRefs) / sizeof(DWORD); ++i)
         Patch_CHAR(resAmountRefs[i], (BYTE) resolutions.size());
 
     // Patch references to the start of the resolution array such that it points to the new one (0x8CC)
     const DWORD resStartRefs[] = { 0x4B0FEB, 0x4B17FF, 0x4B1C5C };
-    for (i = 0; i < sizeof(resStartRefs) / sizeof(DWORD); ++i)
+    for (int i = 0; i < sizeof(resStartRefs) / sizeof(DWORD); ++i)
         Patch_INT(resStartRefs[i], NN_PREFERENCES_NEW_DATA);
 
     // Patch references to the first bpp in the resolution array (0x8D4)
     const DWORD firstBppRefs[] = { 0x4B24B9, 0x4ACED3, 0x4B076A };
-    for (i = 0; i < sizeof(firstBppRefs) / sizeof(DWORD); ++i)
+    for (int i = 0; i < sizeof(firstBppRefs) / sizeof(DWORD); ++i)
         Patch_INT(firstBppRefs[i], NN_PREFERENCES_NEW_DATA + 0x8);
 
     // Set hook that copies the resolutions into the right location when called
-    SetPointer(INIT_NN_ELEMENTS_CALL_ADDR, NN_Preferences::InitElements_Hook);
+    SetPointer(INIT_NN_ELEMENTS_CALL_ADDR, &NN_Preferences::InitElements_Hook);
 
     // Places where the current resolution info is written to (selected and/or active width)
     Hook(0x4A9AAB, CurrentResInfoWrite1, 6);
@@ -274,14 +268,14 @@ void InitBetterResolutions()
 
     // Places a hook where a function is called which sets the new resolution
     // This is hooked because we need this function to take an additional parameter (the height)
-    Hook(0x4AC4B0, NN_Preferences::SetResolution_Active_Hook, 5);
-    Hook(0x4B1E65, NN_Preferences::SetResolution_Selected_Hook, 5);
-    Hook(0x4B2594, NN_Preferences::SetResolution_Selected_Hook, 5);
-    Hook(0x4B2781, NN_Preferences::SetResolution_Active_Hook, 5);
+    Hook(0x4AC4B0, &NN_Preferences::SetResolution_Active_Hook, 5);
+    Hook(0x4B1E65, &NN_Preferences::SetResolution_Selected_Hook, 5);
+    Hook(0x4B2594, &NN_Preferences::SetResolution_Selected_Hook, 5);
+    Hook(0x4B2781, &NN_Preferences::SetResolution_Active_Hook, 5);
 
     // Hook test resolutions functions so that we only test the resolutions when it's actually necessary (optimization)
-    Hook(0x4A98E7, NN_Preferences::TestResolutions_Hook, 5);
-    Hook(0x4AE761, NN_Preferences::TestResolutions_Hook, 5);
+    Hook(0x4A98E7, &NN_Preferences::TestResolutions_Hook, 5);
+    Hook(0x4AE761, &NN_Preferences::TestResolutions_Hook, 5);
 
     // Places that determine the width of the "default" resolution
     Hook(0x4ACEAB, DefaultResSet1, 5, true);
