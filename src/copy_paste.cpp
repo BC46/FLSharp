@@ -57,13 +57,16 @@ void InputBoxWindow::WriteString(LPCWSTR str)
 
 void InputBoxWindow::CopyToClipboard()
 {
-    if (!OpenClipboard(NULL))
+    size_t inputLength = this->chars.size();
+
+    // If the chars vector is empty, there isn't anything to copy to the clipboard.
+    // If the clipboard won't even open, there's no point in trying either.
+    if (inputLength == 0 || !OpenClipboard(NULL))
         return;
 
     if (!EmptyClipboard())
         goto _closeClipboard;
 
-    size_t inputLength = this->chars.size();
     HGLOBAL clipboardData = GlobalAlloc(GMEM_MOVEABLE, sizeof(WCHAR) * (inputLength + 1));
 
     if (!clipboardData)
