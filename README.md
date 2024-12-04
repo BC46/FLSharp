@@ -6,6 +6,7 @@ These include:
 - Fixed a bug that makes the player ship a selectable target for creating waypoints on the nav map.
 - Fixed a bug for the `one_shot_sound` not playing when firing multi-barrel launchers.
 - Fixed a bug for the ammo count not decrementing correctly when firing multi-barrel launchers.
+- Fixed a bug that caused the `use_animation` entries in `weapon_equip.ini` to not work.
 - When playing on a server, ensure the client sends an update:
     - at least every 1.5 seconds;
     - when engine kill has been toggled;
@@ -41,3 +42,5 @@ Building the project using other compilers may require the code to be modified.
   - Identification of the client-to-server communication bugs/improvements and implementations within DiscoveryGC's client hook
 - [BC46](https://github.com/BC46)
   - Standalone implementations
+- [Venemon](https://github.com/Venemon)
+  - Original implementations of the multi-barrel launcher sound and weapon animation fixes

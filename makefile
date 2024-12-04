@@ -22,7 +22,9 @@ $(OBJ_DIR)\resolutions_asm.obj \
 $(OBJ_DIR)\test_sounds.obj \
 $(OBJ_DIR)\trade_lane_lights.obj \
 $(OBJ_DIR)\copy_paste.obj \
-$(OBJ_DIR)\ui_anim.obj
+$(OBJ_DIR)\ui_anim.obj \
+$(OBJ_DIR)\weapon_anim.obj
+
 COMMON_LIB = $(OBJ_DIR)\Common.lib
 EXTERNAL_LIBS = User32.lib Gdi32.lib
 
@@ -52,6 +54,7 @@ $(OBJ_DIR)\test_sounds.obj: $(SRC_DIR)\test_sounds.cpp $(INCLUDE_DIR)\test_sound
 $(OBJ_DIR)\trade_lane_lights.obj: $(SRC_DIR)\trade_lane_lights.cpp $(INCLUDE_DIR)\trade_lane_lights.h $(INCLUDE_DIR)\utils.h
 $(OBJ_DIR)\copy_paste.obj: $(SRC_DIR)\copy_paste.cpp $(INCLUDE_DIR)\copy_paste.h $(INCLUDE_DIR)\utils.h
 $(OBJ_DIR)\ui_anim.obj: $(SRC_DIR)\ui_anim.cpp $(INCLUDE_DIR)\ui_anim.h $(INCLUDE_DIR)\utils.h
+$(OBJ_DIR)\weapon_anim.obj: $(SRC_DIR)\weapon_anim.cpp $(INCLUDE_DIR)\weapon_anim.h $(INCLUDE_DIR)\utils.h
 
 $(RES_FILE): $(RC_FILE) $(OBJ_DIR) makefile
     rc /fo $(RES_FILE) $(RC_FILE)

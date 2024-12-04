@@ -6,6 +6,7 @@
 #include "trade_lane_lights.h"
 #include "copy_paste.h"
 #include "ui_anim.h"
+#include "weapon_anim.h"
 
 void Init()
 {
@@ -19,6 +20,7 @@ void Init()
         InitTradeLaneLightsFix();
         InitCopyPasteFeature();
         InitSlideUiAnimFix();
+        InitWeaponAnimFix();
     }
 
     InitProjectilesServerFix();
