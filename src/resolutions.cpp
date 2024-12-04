@@ -80,7 +80,7 @@ void AddDisplaySettingsResolutions()
     DEVMODE dm = { 0 };
     dm.dmSize = sizeof(dm);
 
-    for (int iModeNum = 0; EnumDisplaySettings(NULL, iModeNum, &dm) != FALSE; ++iModeNum)
+    for (DWORD iModeNum = 0; EnumDisplaySettings(NULL, iModeNum, &dm) != FALSE; ++iModeNum)
     {
         // Discard resolutions that are not allowed.
         // Moreover, discard resolutions that are too narrow (e.g. 5:4) since FL doesn't run well with those.
