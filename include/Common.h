@@ -67,6 +67,12 @@ public:
 
 namespace Archetype
 {
+    struct Root
+    {
+        BYTE data[0x44];
+        int scriptIndex; // 0x44
+    };
+
     struct Ship
     {
     private:
@@ -76,6 +82,33 @@ namespace Archetype
         Vector steeringTorque;
     };
 }
+
+struct IMPORT CObject
+{
+    Archetype::Root* get_archetype() const;
+
+    BYTE x00[0x4];
+    long engineInstance;
+};
+
+class CAttachedEquip
+{
+    FILL_VFTABLE(0);
+    FILL_VFTABLE(1);
+    FILL_VFTABLE(2);
+    FILL_VFTABLE(3);
+    FILL_VFTABLE(4);
+    FILL_VFTABLE(5);
+    FILL_VFTABLE(6);
+    FILL_VFTABLE(7);
+    virtual void Vftable_x80();
+
+public:
+    virtual long GetRootIndex() const;
+
+    CObject* parent; // x04
+};
+
 
 class EngineObject
 {

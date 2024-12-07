@@ -19,6 +19,7 @@ EXPORTS
 ?CheckForSync@CRemotePhysicsSimulation@@QAE_NABVVector@@0ABVQuaternion@@@Z
 ?SinglePlayer@@YA_NXZ
 ?GetProjectilesPerFire@CELauncher@@QBEIXZ
+?get_archetype@CObject@@QBEPAURoot@Archetype@@XZ
 ?IsMPServer@@YA_NXZ
 
 ??0CEquipTraverser@@QAE@H@Z

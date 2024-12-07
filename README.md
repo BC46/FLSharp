@@ -7,6 +7,7 @@ These include:
 - Fixed a bug for the `one_shot_sound` not playing when firing multi-barrel launchers.
 - Fixed a bug for the ammo count not decrementing correctly when firing multi-barrel launchers.
 - Fixed a bug that caused the `use_animation` entries in `weapon_equip.ini` to not work.
+- Allows a gun's `use_animation` entry to be played on the parent (e.g. ship) if the animation name has a leading underscore (`_`); this leading underscore should **not** be included in the cmp file's animation name.
 - When playing on a server, ensure the client sends an update:
     - at least every 1.5 seconds;
     - when engine kill has been toggled;
