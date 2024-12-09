@@ -14,11 +14,10 @@ bool EngAnimation::SetModel_Hook(PDWORD unk, ModelBinary* model)
     // Find the parent (ship hull) of the weapon model.
     while (currentModel)
     {
-        // If the parent has been found, ensure this is used as the model for the animation.
+        // If the parent has been found, ensure this is used as the model for the animation, but keep checking for greater parents.
         if (currentModel->type == MODELTYPE_SHIPHULL)
         {
             model = currentModel;
-            break;
         }
 
         currentModel = currentModel->parent;
