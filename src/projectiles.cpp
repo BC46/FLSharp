@@ -22,9 +22,62 @@ typedef UINT (CELauncher::*GetProjectilesPerFireFunc)() const;
 GetProjectilesPerFireFunc getProjectilesPerFireFunc = &CELauncher::GetProjectilesPerFire;
 GetProjectilesPerFireFunc getProjectilesPerFireHookFunc = &CELauncher::GetProjectilesPerFire_Hook;
 
+NAKED void PlayFlashEffect_Hook()
+{
+    __asm {
+        mov ecx, dword ptr ds:[ebx+0x4] // overwritten instruction
+        push esi
+        push ebx
+        call CELauncher::PlayFlashEffectForAllBarrels
+        mov eax, 0x52D271
+        jmp eax
+    }
+}
+
+NAKED void CELauncher::PlayFlashEffectForBarrel(PVOID launcherInfo, PVOID flashEffect, UINT barrelIndex)
+{
+    __asm {
+        sub esp, 0x58
+        push ebx
+        push ebp
+        push esi
+        push edi
+        mov ebx, [esp+0x6C]
+        mov esi, [esp+0x70]
+        push [esp+0x74]
+        mov eax, 0x52D1DC
+        jmp eax
+    }
+}
+
+NAKED void CELauncher::PlayFlashEffectForBarrel_Setup(PVOID launcherInfo, PVOID flashEffect, UINT barrelIndex)
+{
+    __asm {
+        push [esp+0xC]
+        push [esp+0xC]
+        push [esp+0xC]
+        call CELauncher::PlayFlashEffectForBarrel
+        add esp, 0xC
+        ret 0xC
+    }
+}
+
+void CELauncher::PlayFlashEffectForAllBarrels(LauncherInfo* launcherInfo, PVOID flashEffect)
+{
+    UINT barrelAmount = GetProjectilesPerFire();
+
+    for (UINT i = 0; i < barrelAmount; ++i)
+    {
+        launcherInfo->somePtr = NULL;
+        PlayFlashEffectForBarrel_Setup(launcherInfo, flashEffect, i);
+    }
+}
+
 void InitProjectilesSoundFix()
 {
     SetPointer(PROJECTILES_PER_FIRE_CALL_ADDR, &getProjectilesPerFireHookFunc);
+
+    Hook(0x52D1D7, PlayFlashEffect_Hook, 5, true);
 }
 
 DWORD playerLauncherFireRet;
