@@ -9,6 +9,8 @@ DEF_DIR = def
 
 RC_FILE = $(RC_DIR)\main.rc
 COMMON_DEF = $(DEF_DIR)\Common.def
+DEPS_FILE = makefile.deps
+DEPS_GEN_FILE = make_dependencies.py
 
 RES_FILE = $(OBJ_DIR)\main.RES
 OBJ_FILES = $(OBJ_DIR)\fl_math.obj \
@@ -34,7 +36,7 @@ CPP_FLAGS = /c /O2 /nologo /W3 /WX /LD /MD /EHsc
 LD_FLAGS = /DLL /NOLOGO /RELEASE
 LIB_FLAGS = /NOLOGO /MACHINE:IX86
 
-$(OUTPUT_FILE): $(OBJ_FILES) $(RES_FILE) $(COMMON_LIB) $(BIN_DIR)
+$(OUTPUT_FILE): $(OBJ_FILES) $(RES_FILE) $(COMMON_LIB) $(BIN_DIR) $(DEPS_FILE)
     link $(OBJ_FILES) $(EXTERNAL_LIBS) $(COMMON_LIB) $(RES_FILE) $(LD_FLAGS) /OUT:$(OUTPUT_FILE)
 
 {$(SRC_DIR)}.cpp{$(OBJ_DIR)}.obj::
@@ -42,19 +44,8 @@ $(OUTPUT_FILE): $(OBJ_FILES) $(RES_FILE) $(COMMON_LIB) $(BIN_DIR)
 
 $(OBJ_FILES): makefile
 
-$(OBJ_DIR)\fl_math.obj: $(SRC_DIR)\fl_math.cpp $(INCLUDE_DIR)\fl_math.h
-$(OBJ_DIR)\main.obj: $(SRC_DIR)\main.cpp $(INCLUDE_DIR)\update.h $(INCLUDE_DIR)\waypoint.h $(INCLUDE_DIR)\projectiles.h $(INCLUDE_DIR)\resolutions.h
-$(OBJ_DIR)\update.obj: $(SRC_DIR)\update.cpp $(INCLUDE_DIR)\update.h $(INCLUDE_DIR)\Freelancer.h $(INCLUDE_DIR)\utils.h $(INCLUDE_DIR)\Common.h $(INCLUDE_DIR)\RemoteServer.h
-$(OBJ_DIR)\utils.obj: $(SRC_DIR)\utils.cpp $(INCLUDE_DIR)\utils.h
-$(OBJ_DIR)\waypoint.obj: $(SRC_DIR)\waypoint.cpp $(INCLUDE_DIR)\waypoint.h $(INCLUDE_DIR)\utils.h
-$(OBJ_DIR)\projectiles.obj: $(SRC_DIR)\projectiles.cpp $(INCLUDE_DIR)\projectiles.h $(INCLUDE_DIR)\utils.h
-$(OBJ_DIR)\resolutions.obj: $(SRC_DIR)\resolutions.cpp $(INCLUDE_DIR)\resolutions.h $(INCLUDE_DIR)\resolutions_asm.h $(INCLUDE_DIR)\utils.h
-$(OBJ_DIR)\resolutions_asm.obj: $(SRC_DIR)\resolutions_asm.cpp $(INCLUDE_DIR)\resolutions_asm.h
-$(OBJ_DIR)\test_sounds.obj: $(SRC_DIR)\test_sounds.cpp $(INCLUDE_DIR)\test_sounds.h
-$(OBJ_DIR)\trade_lane_lights.obj: $(SRC_DIR)\trade_lane_lights.cpp $(INCLUDE_DIR)\trade_lane_lights.h $(INCLUDE_DIR)\utils.h
-$(OBJ_DIR)\copy_paste.obj: $(SRC_DIR)\copy_paste.cpp $(INCLUDE_DIR)\copy_paste.h $(INCLUDE_DIR)\utils.h
-$(OBJ_DIR)\ui_anim.obj: $(SRC_DIR)\ui_anim.cpp $(INCLUDE_DIR)\ui_anim.h $(INCLUDE_DIR)\utils.h
-$(OBJ_DIR)\weapon_anim.obj: $(SRC_DIR)\weapon_anim.cpp $(INCLUDE_DIR)\weapon_anim.h $(INCLUDE_DIR)\utils.h
+$(DEPS_FILE): $(DEPS_GEN_FILE)
+    python $(DEPS_GEN_FILE)
 
 $(RES_FILE): $(RC_FILE) $(OBJ_DIR) makefile
     rc /fo $(RES_FILE) $(RC_FILE)
@@ -70,3 +61,5 @@ $(BIN_DIR):
 
 clean:
     del $(BIN_DIR)\*.dll $(OBJ_DIR)\*.obj $(OBJ_DIR)\*.RES $(OBJ_DIR)\*.lib
+
+!INCLUDE $(DEPS_FILE)
