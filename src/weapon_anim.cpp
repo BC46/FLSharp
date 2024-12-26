@@ -32,7 +32,7 @@ bool EngAnimation::SetModel_Hook(PDWORD unk, ModelBinary* model)
 // Normally in FL the gun .cmp files have their gun animation included.
 // However, the cruiser gun model is part of the Cruiser ship model itself, and thus the animation is also in the ship model.
 // In vanilla FL it's not possible to call ship animations when firing a gun.
-// This hook allows an animation to be played on the parent of the gun if there is a leading underscore in the animation name (_). 
+// This hook allows an animation to be played on the parent of the gun if there is a leading underscore in the animation name (_).
 int IAnimation2::Open_Hook(LPCSTR animationScript, int scriptIndex, CAttachedEquip *equip)
 {
     // If the animation script has a leading underscore, open the animation on the parent of the equipment.
@@ -53,6 +53,7 @@ int IAnimation2::Open_Hook(LPCSTR animationScript, int scriptIndex, CAttachedEqu
     return Open(scriptIndex, equip->GetRootIndex(), animationScript);
 }
 
+// Fixes the weapon animations and allows weapons to play ship animations (e.g. wings).
 void InitWeaponAnimFix()
 {
     #define SET_MODEL_FUNC_FILE_OFFSET_ENGBASE 0xADC0

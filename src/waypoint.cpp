@@ -34,6 +34,7 @@ NavMapObj* NeuroNetNavMap::GetHighlightedObject_Hook(DWORD unk1, DWORD unk2)
     return result->type == PLAYERSHIP_NAVMAP_OBJ_TYPE ? NULL : result;
 }
 
+// Adds some minor waypoint-related fixes.
 void InitWaypointFixes()
 {
     Hook(WAYPOINT_CHECK_CALL_ADDR, WaypointCheck_Hook, 5);

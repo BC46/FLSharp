@@ -234,6 +234,10 @@ void ResumeSound(bool &shouldResume, SoundHandle *handle, bool getHandleResult, 
     handle->FreeReference();
 }
 
+// Improves the way FL handles test sounds in the options menu.
+// For instance, provide better support for playing the interface and ambience test sounds.
+// Mute background music accordingly when adjusting the ambience volume.
+// Also allow the test background music to play if the current planetscape background music has stopped playing.
 void InitTestSounds()
 {
     #define GET_BGM_INSTANCE_CALL_ADDR 0x4B17A1

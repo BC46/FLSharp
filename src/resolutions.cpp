@@ -200,6 +200,10 @@ bool ResolutionInit(DWORD unk1, ResolutionInitInfo* info, DWORD unk2)
     return ((ResolutionInit*) ResolutionInit_ADDR)(unk1, info, unk2);
 }
 
+// Expands the hard-coded resolutions array of size 10 used in the options menu to allow for up to 127 resolutions instead.
+// The new resolutions are determined dynamically based on the current user's main monitor resolution.
+// Also adds an optimization to make the game only verify the resolutions when necessary.
+// Moreover, FL can now distinguish resolutions that have the same width but a different height.
 void InitBetterResolutions()
 {
     mainMonitorRes = GetMainMonitorResolution();

@@ -26,8 +26,8 @@ void TradeLaneEquipObj::SetLightsState_Hook()
 
 void InitTradeLaneLightsFix()
 {
-    #define IS_TLR_DISRUPTED_CHECK_ADDR 0x0516965
-    #define ENABLE_TLR_LIGHTS_CALL_ADDR 0x0516978
+    #define IS_TLR_DISRUPTED_CHECK_ADDR 0x516965
+    #define ENABLE_TLR_LIGHTS_CALL_ADDR 0x516978
 
     Patch_BYTE(IS_TLR_DISRUPTED_CHECK_ADDR, 0xEB); // Redirect trade lane disrupt calls to the hook below as well.
 
