@@ -51,7 +51,7 @@ struct InputBoxWindow
     FILL_VFTABLE(B)
     virtual void Vftable_xC0();
     virtual void Vftable_xC4();
-    virtual bool AddTypedKey(const KeyMapInfo *kmi);
+    virtual bool WriteTypedKey(const KeyMapInfo *kmi);
 
     void HandleCopyPaste(KeyMapInfo *kmi);
     void CopyToClipboard();

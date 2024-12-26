@@ -45,13 +45,12 @@ _closeClipboard:
 void InputBoxWindow::WriteString(LPCWSTR str)
 {
     KeyMapInfo temp;
-    size_t strLen = wcslen(str);
 
     // Stop when the end of the string has been reached, or if the buffer is full.
-    for (size_t i = 0; i < strLen && chars.size() < (size_t) maxCharsLength; ++i)
+    for (size_t i = 0; str[i] != L'\0' && chars.size() < (size_t) maxCharsLength; ++i)
     {
         temp.enteredKey = str[i];
-        this->AddTypedKey(&temp);
+        this->WriteTypedKey(&temp);
     }
 }
 
