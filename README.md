@@ -44,4 +44,4 @@ Building the project using other compilers may require the code to be modified.
 - [BC46](https://github.com/BC46)
   - Standalone implementations
 - [Venemon](https://github.com/Venemon)
-  - Original implementations of the multi-barrel launcher sound and weapon animation fixes
+  - Original implementations of the multi-barrel launcher sound and [weapon animation fixes](https://www.moddb.com/mods/weapon-animations)
