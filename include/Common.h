@@ -129,6 +129,7 @@ struct IMPORT CShip : public CEqObj
 {
     float get_throttle() const;
     Archetype::Ship const * shiparch() const;
+    bool is_using_tradelane() const;
 };
 
 struct CSolar : public CEqObj

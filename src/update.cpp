@@ -3,11 +3,13 @@
 #include "utils.h"
 #include <cmath>
 
-const double minSyncIntervalMs = 125.0;
+const double minSyncIntervalMs = 35.0;
+const double minSyncIntervalTlrMs = 750.0;
 const double maxSyncIntervalMs = 1500.0;
 const double rotationCheckIntervalMs = 250.0;
 
 bool sendUpdateAsap = false;
+bool engineKillDisabledLastTime = false;
 
 Quaternion lastOrientation;
 float shipTurnThreshold = 30.0f;
@@ -28,17 +30,23 @@ CShip* GetShip()
     return !playerIObjInspect ? NULL : playerIObjInspect->ship;
 }
 
-bool isEkToggled(CEEngine const * engine)
+bool IsEkToggled(CShip* ship)
 {
-    static bool lastEngineState = false;
+    // TODO: Save the engine somewhere? What happens if you lose it while flying?
+    CEEngine const * engine = CEEngine::cast(ship->equipManager.FindFirst(ENGINE_TYPE));
 
-    bool result = lastEngineState != engine->IsTriggered();
-    lastEngineState = engine->IsTriggered();
+    if (!engine)
+        return false;
+
+    bool engineTriggered = engine->IsTriggered();
+
+    bool result = engineKillDisabledLastTime != engineTriggered;
+    engineKillDisabledLastTime = engineTriggered;
 
     return result;
 }
 
-bool hasOrientationChanged(CShip* ship, double timeElapsed)
+bool HasOrientationChanged(CShip* ship, double timeElapsed)
 {
     if (timeElapsed < rotationCheckIntervalMs)
         return false;
@@ -76,51 +84,53 @@ void PostInitDealloc_Hook(PVOID obj)
     shipTurnThreshold = min(30.0f, 15 * sqrtf(maxTurnSpeed) / sqrtf(ship->get_radius()));
 }
 
-bool ShouldSendUpdate(double timeElapsed)
+bool ShouldSendUpdate(CShip* ship, double timeElapsed)
 {
-    CShip* ship = GetShip();
-
     if (!ship)
         return false;
 
-    // Has the orientation been changed to some extent? Has it been a while since the last update?
-    if (hasOrientationChanged(ship, timeElapsed) || (timeElapsed >= maxSyncIntervalMs))
-        return true;
+    // Has engine kill been toggled?
+    // Has it been a while since the last update?
+    // Has the orientation been changed to some extent?
+    return IsEkToggled(ship) || (timeElapsed >= maxSyncIntervalMs) || HasOrientationChanged(ship, timeElapsed);
+}
 
-    // TODO: Save the engine somewhere? What happens if you lose it while flying?
-    CEEngine const * engine = CEEngine::cast(ship->equipManager.FindFirst(ENGINE_TYPE));
+inline double GetShipMinSyncInterval(CShip* ship)
+{
+    if (!ship)
+        return minSyncIntervalMs;
 
-    if (!engine)
-        return false;
-
-    return isEkToggled(engine);
+    // Ensure updates are sent less frequently when the player ship is taking a tradelane to prevent jitter
+    return ship->is_using_tradelane() ? minSyncIntervalTlrMs : minSyncIntervalMs;
 }
 
 // Hook for function that determines whether an update should be sent to the server
 bool CRemotePhysicsSimulation::CheckForSync_Hook(Vector const &unk1, Vector const &unk2, Quaternion const &unk3)
 {
     double timeElapsed = getTimeElapsed(timeSinceLastUpdate); // Time elapsed since the last update
+    CShip* ship = GetShip();
 
-    if (ShouldSendUpdate(timeElapsed)) // Custom update checks
-        return true;
-
-    bool sendUpdateNow = CheckForSync(unk1, unk2, unk3); // Does the client want to sync?
-
-    if (timeElapsed < minSyncIntervalMs)
+    if (timeElapsed < GetShipMinSyncInterval(ship))
     {
         // Prevent the client from sending too many updates in a short amount of time
         // This resolves the jitter issue that occurs when playing on a high framerate
-        sendUpdateAsap |= sendUpdateNow;
+        if (!sendUpdateAsap)
+            sendUpdateAsap = ShouldSendUpdate(ship, timeElapsed) || CheckForSync(unk1, unk2, unk3);
+
         return false;
     }
     else if (sendUpdateAsap)
     {
+        // Call this function to update the engineKillDisabledLastTime value
+        if (ship)
+            IsEkToggled(ship);
+
         // If an update has been missed, send an update as soon as this becomes possible, but do it only once
         sendUpdateAsap = false;
         return true;
     }
 
-    return sendUpdateNow;
+    return ShouldSendUpdate(ship, timeElapsed) || CheckForSync(unk1, unk2, unk3);
 }
 
 // Hook for function that sends an update to the server
@@ -130,8 +140,9 @@ void IServerImpl::SPObjUpdate_Hook(SSPObjUpdateInfo &updateInfo, UINT client)
 
     if (ship)
     {
-        // Get throttle from the ship and set it in the update info
-        updateInfo.throttle = ship->get_throttle();
+        // Get throttle from the ship and set it in the update info if engine kill is currently disabled.
+        // If it's enabled we want to set the throttle value to 0.
+        updateInfo.throttle = engineKillDisabledLastTime ? ship->get_throttle() : 0.0f;
 
         // Set the last orientation
         lastOrientation = MatrixToQuaternion(ship->get_orientation());
@@ -143,6 +154,8 @@ void IServerImpl::SPObjUpdate_Hook(SSPObjUpdateInfo &updateInfo, UINT client)
     SetTimeSinceLastUpdate();
 }
 
+// This allows for extra checks to prevent jitters and smoother updates from the client to the server.
+// Also fixes a bug where the client always sends the throttle state as 0.
 void InitBetterUpdates()
 {
     SetTimeSinceLastUpdate();

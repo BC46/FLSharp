@@ -11,6 +11,7 @@ EXPORTS
 
 ?FindFirst@CEquipManager@@QBEPBVCEquip@@I@Z
 ?get_throttle@CShip@@QBEMXZ
+?is_using_tradelane@CShip@@QBE_NXZ
 ?shiparch@CShip@@QBEPBUShip@Archetype@@XZ
 ?get_radius@EngineObject@@QBE?BMXZ
 ?get_orientation@EngineObject@@QBEABVMatrix@@XZ
