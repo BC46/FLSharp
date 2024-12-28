@@ -10,7 +10,6 @@ DEF_DIR = def
 RC_FILE = $(RC_DIR)\main.rc
 COMMON_DEF = $(DEF_DIR)\Common.def
 DEPS_FILE = makefile.deps
-DEPS_GEN_FILE = make_dependencies.py
 
 RES_FILE = $(OBJ_DIR)\main.RES
 OBJ_FILES = $(OBJ_DIR)\fl_math.obj \
@@ -36,16 +35,11 @@ CPP_FLAGS = /c /O2 /nologo /W3 /WX /LD /MD /EHsc
 LD_FLAGS = /DLL /NOLOGO /RELEASE
 LIB_FLAGS = /NOLOGO /MACHINE:IX86
 
-$(OUTPUT_FILE): $(OBJ_FILES) $(RES_FILE) $(COMMON_LIB) $(BIN_DIR) $(DEPS_FILE)
+$(OUTPUT_FILE): $(OBJ_FILES) $(RES_FILE) $(COMMON_LIB) $(BIN_DIR)
     link $(OBJ_FILES) $(EXTERNAL_LIBS) $(COMMON_LIB) $(RES_FILE) $(LD_FLAGS) /OUT:$(OUTPUT_FILE)
 
 {$(SRC_DIR)}.cpp{$(OBJ_DIR)}.obj::
     $(CPP) $(CPP_FLAGS) $< -I$(INCLUDE_DIR) /Fo./$(OBJ_DIR)/
-
-$(OBJ_FILES): makefile
-
-$(DEPS_FILE): $(DEPS_GEN_FILE)
-    python $(DEPS_GEN_FILE)
 
 $(RES_FILE): $(RC_FILE) $(OBJ_DIR) makefile
     rc /fo $(RES_FILE) $(RC_FILE)
