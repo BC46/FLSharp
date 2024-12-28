@@ -264,8 +264,7 @@ void InitTestSounds()
     Hook(START_INTERFACE_TEST_SOUND, StartInterfaceTestSound_Hook, 5);
     Hook(START_AMBIENCE_TEST_SOUND, StartAmbienceTestSound_Hook, 5);
 
-    DWORD _;
-    VirtualProtect((PVOID) JMP_NO_PAUSE_FOR_BGM, sizeof(BYTE), PAGE_EXECUTE_READWRITE, &_);
-    VirtualProtect((PVOID) JMP_NO_RESUME_FOR_BGM, sizeof(BYTE), PAGE_EXECUTE_READWRITE, &_);
+    ReadWriteProtect((DWORD) JMP_NO_PAUSE_FOR_BGM, sizeof(BYTE));
+    ReadWriteProtect((DWORD) JMP_NO_RESUME_FOR_BGM, sizeof(BYTE));
 }
 

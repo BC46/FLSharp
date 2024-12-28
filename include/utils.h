@@ -28,13 +28,19 @@ void inline Patch_WORD(DWORD vOffset, WORD value)
 
 void Nop(DWORD vOffset, UINT len);
 
+void inline ReadWriteProtect(DWORD location, DWORD size)
+{
+    DWORD _;
+    VirtualProtect((PVOID) location, size, PAGE_EXECUTE_READWRITE, &_);
+}
+
 template <typename Func>
 DWORD SetRelPointer(DWORD location, Func hookFunc)
 {
-    DWORD originalPointer, _;
+    DWORD originalPointer;
 
     // Set and calculate the relative offset for the hook function
-    VirtualProtect((PVOID) location, sizeof(DWORD), PAGE_EXECUTE_READWRITE, &_);
+    ReadWriteProtect(location, sizeof(DWORD));
     originalPointer = location + (*(PDWORD) location) + 4;
 
     *(Func*) (location) = hookFunc;
@@ -60,9 +66,7 @@ void Hook(DWORD location, Func hookFunc, UINT instrLen, bool jmp = false)
 template <typename Func>
 void SetPointer(DWORD location, Func hookFunc)
 {
-    DWORD _;
-
-    VirtualProtect((PVOID) location, sizeof(DWORD), PAGE_EXECUTE_READWRITE, &_);
+    ReadWriteProtect(location, sizeof(DWORD));
     *(Func*) location = hookFunc;
 }
 

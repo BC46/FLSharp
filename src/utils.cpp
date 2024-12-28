@@ -2,17 +2,13 @@
 
 void Patch(DWORD vOffset, LPVOID mem, UINT len)
 {
-    DWORD _;
-
-    VirtualProtect((PVOID) vOffset, len, PAGE_EXECUTE_READWRITE, &_);
+    ReadWriteProtect(vOffset, len);
     memcpy((PVOID) vOffset, mem, len);
 }
 
 void Nop(DWORD vOffset, UINT len)
 {
-    DWORD _;
-
-    VirtualProtect((PVOID) vOffset, len, PAGE_EXECUTE_READWRITE, &_);
+    ReadWriteProtect(vOffset, len);
     memset((PVOID) vOffset, 0x90, len);
 }
 
