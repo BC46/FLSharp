@@ -109,7 +109,6 @@ public:
     CObject* parent; // x04
 };
 
-
 class EngineObject
 {
 public:
@@ -149,8 +148,9 @@ public:
     static CEEngine const * cast(CEquip const * equip);
 };
 
-struct CRemotePhysicsSimulation
+class CRemotePhysicsSimulation
 {
+public:
     bool IMPORT CheckForSync(Vector const &unk1, Vector const &unk2, Quaternion const &unk3);
     bool CheckForSync_Hook(Vector const &unk1, Vector const &unk2, Quaternion const &unk3);
 };

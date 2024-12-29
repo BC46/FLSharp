@@ -1,19 +1,19 @@
 # FLSharp
 FLSharp (FL# for short) is a plugin for the game Freelancer (2003) that aims to apply game-related fixes and improvements to the game's code.
 These include:
-- Fixed a bug that caused the client to not send the correct engine state of the player's ship to the server.
+- Fixed a bug that caused the lights of a trade lane to never turn back on after the trade lane got disrupted.
 - Fixed a bug that caused waypoints to be cleared when the player reaches the coordinates in a different system.
 - Fixed a bug that makes the player ship a selectable target for creating waypoints on the nav map.
 - Fixed a bug for the `one_shot_sound` not playing when firing multi-barrel launchers.
 - Fixed a bug for the ammo count not decrementing correctly when firing multi-barrel launchers.
 - Fixed a bug that caused the `use_animation` entries in `weapon_equip.ini` to not work, i.e. enables weapon animations.
 - Allows a gun's `use_animation` entry to be played on the parent (e.g. ship) if the animation name has a leading underscore (`_`); this leading underscore should **not** be included in the cmp file's animation name.
+- Fixed a bug that caused the client to not send the correct engine state of the player's ship to the server.
 - When playing on a server, ensure the client sends an update:
-    - at least every 1.5 seconds;
+    - at least every 2 seconds;
     - when engine kill has been toggled;
     - if after every 0.25 seconds the ship's orientation has been changed to some extent.
-- Sets the minimum time between client-server updates to 25 milliseconds (or 750 ms while in a trade lane) such that jitter is prevented when playing with a high framerate.
-- Fixed a bug that caused the lights of a trade lane to never turn back on after the trade lane got disrupted.
+- Sets the minimum time between client-server updates to 40 milliseconds (or 750 ms while in a trade lane) such that jitter is prevented when playing with a high or inconsistent framerate.
 - Allow `ui_music_test` to play when the current background music has finished playing.
 - Added support for playing the `ui_interface_test` and `ui_ambiance_test` sounds when adjusting the respective sliders in the options menu; these sounds should be defined in `interface_sounds.ini`.
 - Automatically prevent crashes while adjusting the interface and ambience volume sliders in the event that the test sounds are not defined.

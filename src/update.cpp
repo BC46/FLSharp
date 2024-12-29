@@ -3,9 +3,9 @@
 #include "utils.h"
 #include <cmath>
 
-const double minSyncIntervalMs = 25.0;
+const double minSyncIntervalMs = 40.0;
 const double minSyncIntervalTlrMs = 750.0;
-const double maxSyncIntervalMs = 1500.0;
+const double maxSyncIntervalMs = 2000.0;
 const double rotationCheckIntervalMs = 250.0;
 
 bool sendUpdateAsap = false;
