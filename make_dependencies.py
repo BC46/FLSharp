@@ -38,7 +38,7 @@ def run():
 
         f.write(obj_file + ": \\\n")
 
-        f.write((" " * 4) + cpp_file + " \\\n")
+        #f.write((" " * 4) + cpp_file + " \\\n")
         for dep in deps[:-1]:
             f.write((" " * 4) + os.path.relpath(dep) + " \\\n")
         f.write((" " * 4) + os.path.relpath(deps[-1]) + "\n\n")
