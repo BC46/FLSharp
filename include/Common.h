@@ -43,21 +43,12 @@ public:
     static CELightEquip * cast(CEquip * equip);
 };
 
-struct LauncherInfo
-{
-    BYTE x00[0x28];
-    DWORD somePtr;
-};
-
 class CELauncher
 {
 public:
     UINT IMPORT GetProjectilesPerFire() const;
     UINT GetProjectilesPerFire_Hook() const;
 };
-
-class CEGun : public CELauncher
-{};
 
 class IMPORT CEquipTraverser
 {

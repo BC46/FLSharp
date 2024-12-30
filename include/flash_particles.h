@@ -3,14 +3,12 @@
 
 void InitFlashParticlesFix();
 
-struct ParticleParams
-{};
-
 struct EffectInstance
 {
     virtual void Vftable_x00();
     virtual void FreeEngineEffect();
 
+    // Dealloc function which the game calls before creating a new flash effect instance for the same barrel/launcher.
     inline void Dealloc()
     {
         FreeAleEffect();
@@ -18,6 +16,7 @@ struct EffectInstance
         FreeHeapMemory();
     }
 
+    // Dealloc function which the game calls right after quitting the play session.
     inline void PostGameDealloc()
     {
         ResetBaseWatcher();
@@ -60,22 +59,28 @@ private:
     }
 };
 
-struct GunHandler
+struct LauncherHandler
 {
     DWORD vftable;
-    CELauncher* gun; // 0x04
+    CELauncher* launcher; // 0x04
     BYTE x08[0x20];
+    // After playing the flash particle on a launcher, the effect instance is stored in 0x28.
+    // We need to keep track of more than one effect instance if the launcher has multiple barrels.
+    // Expanding the struct's memory is not feasible due to there existing many variations of this struct,
+    // which each have their own unique constructor and object size. Hence we dynamically manage this array at the same offset as currentFlashParticle.
     union { // 0x28
         EffectInstance* currentFlashParticle;
-        EffectInstance** flashParticles;
+        EffectInstance** flashParticlesArr;
     };
 
     void CreateFlashParticlesArray();
     void PlayAllFlashParticles(ID_String* idString);
+    // PlayFlashParticleForBarrel must be __cdecl because this code jumps to a vanilla FL function which does ret instead of ret n at the end.
+    // Therefore, the caller must clean the stack.
     void __cdecl PlayFlashParticleForBarrel(ID_String* idString, UINT barrelIndex);
 
     void Destructor_Hook();
 
 private:
-    typedef void (GunHandler::*Destructor)();
+    typedef void (LauncherHandler::*Destructor)();
 };

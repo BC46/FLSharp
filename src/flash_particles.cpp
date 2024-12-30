@@ -4,103 +4,125 @@
 
 #define NAKED __declspec(naked)
 
+// This hook gets called when Freelancer wants to play a flash effect animation.
+// We intercept this call to play the flash effect for every barrel.
 NAKED void PlayFlashEffect_Hook()
 {
+    #define PLAY_FLASH_EFFECT_RET_ADDR 0x52D271
+
     __asm {
         mov ecx, ebx
         push esi // ID_String
-        call GunHandler::PlayAllFlashParticles
-        mov eax, 0x52D271
+        call LauncherHandler::PlayAllFlashParticles
+        mov eax, PLAY_FLASH_EFFECT_RET_ADDR
         jmp eax
     }
 }
 
-NAKED void GunHandler::PlayFlashParticleForBarrel(ID_String* idString, UINT barrelIndex)
+// This function has some asm setup code which redirects us to FLs original code
+// to allow the flash particle to play on a given barrel index.
+// This is convenient because this way we are reusing FL's own code.
+NAKED void LauncherHandler::PlayFlashParticleForBarrel(ID_String* idString, UINT barrelIndex)
 {
+    #define GET_BARREL_INFO_FOR_FLASH_PROJ_CALL_ADDR 0x52D1DC
+
     __asm {
         sub esp, 0x58
         push ebx
         push ebp
         push esi
         push edi
-        mov ebx, [esp+0x6C] // GunHandler
-        mov ecx, [ebx+0x4] // CEGun
+        mov ebx, [esp+0x6C] // LauncherHandler
+        mov ecx, [ebx+0x4] // CELauncher
         mov esi, [esp+0x70] // ID_String
         push [esp+0x74] // barrel index
-        mov eax, 0x52D1DC
+        mov eax, GET_BARREL_INFO_FOR_FLASH_PROJ_CALL_ADDR
         jmp eax
     }
 }
 
-void GunHandler::PlayAllFlashParticles(ID_String* idString)
+// In this function we play the flash particle effect for every barrel, instead of only the first barrel.
+// We do this by keeping track of a custom heap-allocated array of size n (n = amount of barrels of the launcher).
+void LauncherHandler::PlayAllFlashParticles(ID_String* idString)
 {
-    if (!this->flashParticles)
+    // Create the flash particles array if it doesn't exist yet.
+    if (!this->flashParticlesArr)
         CreateFlashParticlesArray();
 
-    size_t barrelAmount = this->gun->GetProjectilesPerFire();
+    size_t barrelAmount = this->launcher->GetProjectilesPerFire();
 
     for (size_t i = 0; i < barrelAmount; ++i)
     {
-        // Clean up previous instance.
-        if (this->flashParticles[i])
+        // Clean up the previous instance.
+        if (this->flashParticlesArr[i])
         {
-            this->flashParticles[i]->Dealloc();
-            this->flashParticles[i] = NULL;
+            this->flashParticlesArr[i]->Dealloc();
+            this->flashParticlesArr[i] = NULL;
         }
 
-        EffectInstance** ogFlashParticles = this->flashParticles;
-
-        // Play a new flash particle and save its instance.
+        // The PlayFlashParticleForBarrel function stores the effect instance in the currentFlashParticle variable (provided creation was successful).
+        // However, this offset also stores our custom array.
+        // So temporarily keep a copy of the original array pointer, and after calling the function,
+        // save the instance in the original array, and then restore the array at the original offset.
+        EffectInstance** ogFlashParticlesArr = this->flashParticlesArr;
         PlayFlashParticleForBarrel(idString, i);
-        ogFlashParticles[i] = this->currentFlashParticle;
-        this->flashParticles = ogFlashParticles;
+        ogFlashParticlesArr[i] = this->currentFlashParticle;
+        this->flashParticlesArr = ogFlashParticlesArr;
     }
 }
 
-void GunHandler::CreateFlashParticlesArray()
+// Initialize the array with a size equal to the barrel amount of the launcher.
+void LauncherHandler::CreateFlashParticlesArray()
 {
-    // Initialize the array.
-    UINT barrelAmount = this->gun->GetProjectilesPerFire();
-    this->flashParticles = new EffectInstance*[barrelAmount];
-    ZeroMemory(this->flashParticles, barrelAmount * sizeof(EffectInstance*));
+    UINT barrelAmount = this->launcher->GetProjectilesPerFire();
+    this->flashParticlesArr = new EffectInstance*[barrelAmount];
+    ZeroMemory(this->flashParticlesArr, barrelAmount * sizeof(EffectInstance*));
 }
 
-void GunHandler::Destructor_Hook()
+// This hook gets called when the LauncherHandler's destructor is being executed.
+// Here we want to deallocate all flash particles we have stored in the custom array.
+void LauncherHandler::Destructor_Hook()
 {
-    #define OG_GUN_HANDLER_DESTRUCTOR_ADDR 0x52CAA0
+    #define OG_LAUNCHER_HANDLER_DESTRUCTOR_ADDR 0x52CAA0
 
-    if (this->flashParticles)
+    if (this->flashParticlesArr)
     {
-        size_t barrelAmount = this->gun->GetProjectilesPerFire();
+        size_t barrelAmount = this->launcher->GetProjectilesPerFire();
 
-        // Deallocate all flash particles.
+        // Deallocate all active flash particle instances.
         for (size_t i = 0; i < barrelAmount; ++i)
         {
-            if (flashParticles[i])
-                flashParticles[i]->PostGameDealloc();
+            if (flashParticlesArr[i])
+                flashParticlesArr[i]->PostGameDealloc();
         }
 
         // Destruct the array.
-        delete[] this->flashParticles;
+        delete[] this->flashParticlesArr;
     }
 
     // Call the original destructor.
-    Destructor destructorFunc = GetFuncDef<Destructor>(OG_GUN_HANDLER_DESTRUCTOR_ADDR);
+    Destructor destructorFunc = GetFuncDef<Destructor>(OG_LAUNCHER_HANDLER_DESTRUCTOR_ADDR);
     (this->*destructorFunc)();
 }
 
+// In vanilla Freelancer, if you fire any launcher with a flash particle, the game explicitly plays the particle on barrel index 0 only.
+// For most launchers this isn't an issue, but if you have a multi-barrel launcher, the flash effect will only play on the first barrel.
 void InitFlashParticlesFix()
 {
-    #define GUN_HANDLER_OBJ_SIZE_ADDR 0x5333EB
+    #define PLAY_FLASH_EFFECT_ADDR 0x52D1B4
+    #define LAUNCHER_HANDLER_DESTRUCTOR_CALL_ADDR 0x52D5B0
+    #define LAUNCHER_HANDLER_OBJ_SIZE_ADDR 0x5333EB
     #define FLASH_PARTICLES_DEALLOC_CHECK 0x52CAED
 
-    // Increase the size of the gun handler obj such that we can add an array to it.
-    ReadWriteProtect(GUN_HANDLER_OBJ_SIZE_ADDR, sizeof(char));
-    *((PCHAR) GUN_HANDLER_OBJ_SIZE_ADDR) += sizeof(EffectInstance**);
+    // Increase the size of the launcher handler obj such that we can add an array to it.
+    ReadWriteProtect(LAUNCHER_HANDLER_OBJ_SIZE_ADDR, sizeof(char));
+    *((PCHAR) LAUNCHER_HANDLER_OBJ_SIZE_ADDR) += sizeof(EffectInstance**);
 
-    Hook(0x52D1B4, PlayFlashEffect_Hook, 5, true);
-    Hook(0x52D5B0, &GunHandler::Destructor_Hook, 5, true);
+    Hook(PLAY_FLASH_EFFECT_ADDR, PlayFlashEffect_Hook, 5, true);
+    Hook(LAUNCHER_HANDLER_DESTRUCTOR_CALL_ADDR, &LauncherHandler::Destructor_Hook, 5, true);
 
+    // Prevent the original code from deallocating LauncherHandler::currentFlashParticle.
+    // The new code takes over that responsibility.
     BYTE skipDeallocPatch[3] = { 0xE9, 0x81, 0x00 };
     Patch(FLASH_PARTICLES_DEALLOC_CHECK, skipDeallocPatch, sizeof(skipDeallocPatch));
     Patch_BYTE(FLASH_PARTICLES_DEALLOC_CHECK + 0x5, 0x90);
