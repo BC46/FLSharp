@@ -54,9 +54,6 @@ class CELauncher
 public:
     UINT IMPORT GetProjectilesPerFire() const;
     UINT GetProjectilesPerFire_Hook() const;
-
-    void PlayFlashEffectForAllBarrels(LauncherInfo* launcherInfo, PVOID flashEffect);
-    void __cdecl PlayFlashEffectForBarrel(PVOID launcherInfo, PVOID flashEffect, UINT barrelIndex);
 };
 
 class CEGun : public CELauncher
@@ -172,6 +169,9 @@ struct IObjInspectImpl
     BYTE data[0x10];
     CShip* ship;
 };
+
+struct ID_String
+{};
 
 bool IMPORT SinglePlayer();
 bool IMPORT IsMPServer();

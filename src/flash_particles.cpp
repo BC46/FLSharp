@@ -7,16 +7,15 @@
 NAKED void PlayFlashEffect_Hook()
 {
     __asm {
-        mov ecx, dword ptr ds:[ebx+0x4] // overwritten instruction
-        push esi
-        push ebx
-        call CELauncher::PlayFlashEffectForAllBarrels
+        mov ecx, ebx
+        push esi // ID_String
+        call GunHandler::PlayAllFlashParticles
         mov eax, 0x52D271
         jmp eax
     }
 }
 
-NAKED void CELauncher::PlayFlashEffectForBarrel(PVOID launcherInfo, PVOID flashEffect, UINT barrelIndex)
+NAKED void GunHandler::PlayFlashParticleForBarrel(ID_String* idString, UINT barrelIndex)
 {
     __asm {
         sub esp, 0x58
@@ -24,23 +23,29 @@ NAKED void CELauncher::PlayFlashEffectForBarrel(PVOID launcherInfo, PVOID flashE
         push ebp
         push esi
         push edi
-        mov ecx, [esp+0x6C]
-        mov ebx, [esp+0x70]
-        mov esi, [esp+0x74]
-        push [esp+0x78]
+        mov ebx, [esp+0x6C] // GunHandler
+        mov ecx, [ebx+0x4] // CEGun
+        mov esi, [esp+0x70] // ID_String
+        push [esp+0x74] // barrel index
         mov eax, 0x52D1DC
         jmp eax
     }
 }
 
-void CELauncher::PlayFlashEffectForAllBarrels(LauncherInfo* launcherInfo, PVOID flashEffect)
+void GunHandler::PlayAllFlashParticles(ID_String* idString)
 {
-    UINT barrelAmount = GetProjectilesPerFire();
+    size_t barrelAmount = flashParticles.size();
 
-    for (UINT i = 0; i < barrelAmount; ++i)
+    for (size_t i = 0; i < barrelAmount; ++i)
     {
-        launcherInfo->somePtr = NULL;
-        PlayFlashEffectForBarrel(launcherInfo, flashEffect, i);
+        // TODO: cleanup previous instance
+        if (this->flashParticles[i])
+        {
+            this->flashParticles[i] = NULL;
+        }
+
+        PlayFlashParticleForBarrel(idString, i);
+        this->flashParticles[i] = this->currentFlashParticle;
     }
 }
 
@@ -49,8 +54,11 @@ GunHandler* GunHandler::Constructor_Hook(CEGun* gun, PDWORD unk)
     #define OG_GUN_HANDLER_CONSTRUCTOR_ADDR 0x52D880
 
     // Initialize the vector.
-    // TODO: determine type for vector
-    this->objs = std::vector<int>(gun->GetProjectilesPerFire(), NULL);
+    size_t barrelAmount = gun->GetProjectilesPerFire();
+    this->flashParticles = std::vector<ParticleInstance*>(barrelAmount, NULL);
+
+    // for (size_t i = 0; i < barrelAmount; ++i)
+    //     this->flashParticles.push_back(NULL);
 
     // Call the original constructor.
     Constructor constructorFunc = GetFuncDef<Constructor>(OG_GUN_HANDLER_CONSTRUCTOR_ADDR);
@@ -61,17 +69,19 @@ void GunHandler::Destructor_Hook()
 {
     #define OG_GUN_HANDLER_DESTRUCTOR_ADDR 0x52CAA0
 
-    size_t objSize = objs.size();
+    size_t barrelAmount = flashParticles.size();
 
-    for (size_t i = 0; i < objSize; ++i)
+    for (size_t i = 0; i < barrelAmount; ++i)
     {
-        if (!objs[i])
-            continue;
-
-        // TODO: clean objs
+        if (flashParticles[i])
+        {
+            // TODO: clean objs
+            flashParticles[i] = NULL;
+        }
     }
 
-    this->objs.~vector();
+    // Destruct vector.
+    this->flashParticles.~vector();
 
     // Call the original destructor.
     Destructor destructorFunc = GetFuncDef<Destructor>(OG_GUN_HANDLER_DESTRUCTOR_ADDR);
@@ -84,9 +94,9 @@ void InitFlashParticlesFix()
 
     // Increase the size of the gun handler obj such that we can add a vector to it.
     ReadWriteProtect(GUN_HANDLER_OBJ_SIZE_ADDR, sizeof(char));
-    *((PCHAR) GUN_HANDLER_OBJ_SIZE_ADDR) += (char) sizeof(std::vector<int>);
+    *((PCHAR) GUN_HANDLER_OBJ_SIZE_ADDR) += (char) 32; // sizeof(GunHandler::flashParticles)
 
-    Hook(0x52D1D7, PlayFlashEffect_Hook, 5, true);
+    Hook(0x52D1B4, PlayFlashEffect_Hook, 5, true);
     Hook(0x533408, &GunHandler::Constructor_Hook, 5);
     Hook(0x52D5B0, &GunHandler::Destructor_Hook, 5, true);
 }
