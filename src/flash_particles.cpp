@@ -34,6 +34,9 @@ NAKED void GunHandler::PlayFlashParticleForBarrel(ID_String* idString, UINT barr
 
 void GunHandler::PlayAllFlashParticles(ID_String* idString)
 {
+    if (!this->flashParticles)
+        CreateFlashParticlesArray();
+
     size_t barrelAmount = this->gun->GetProjectilesPerFire();
 
     for (size_t i = 0; i < barrelAmount; ++i)
@@ -45,41 +48,41 @@ void GunHandler::PlayAllFlashParticles(ID_String* idString)
             this->flashParticles[i] = NULL;
         }
 
+        EffectInstance** ogFlashParticles = this->flashParticles;
+
         // Play a new flash particle and save its instance.
         PlayFlashParticleForBarrel(idString, i);
-        this->flashParticles[i] = this->currentFlashParticle;
+        ogFlashParticles[i] = this->currentFlashParticle;
+        this->flashParticles = ogFlashParticles;
     }
 }
 
-GunHandler* GunHandler::Constructor_Hook(CEGun* gun, PDWORD unk)
+void GunHandler::CreateFlashParticlesArray()
 {
-    #define OG_GUN_HANDLER_CONSTRUCTOR_ADDR 0x52D880
-
     // Initialize the array.
-    UINT barrelAmount = gun->GetProjectilesPerFire();
+    UINT barrelAmount = this->gun->GetProjectilesPerFire();
     this->flashParticles = new EffectInstance*[barrelAmount];
     ZeroMemory(this->flashParticles, barrelAmount * sizeof(EffectInstance*));
-
-    // Call the original constructor.
-    Constructor constructorFunc = GetFuncDef<Constructor>(OG_GUN_HANDLER_CONSTRUCTOR_ADDR);
-    return (this->*constructorFunc)(gun, unk);
 }
 
 void GunHandler::Destructor_Hook()
 {
     #define OG_GUN_HANDLER_DESTRUCTOR_ADDR 0x52CAA0
 
-    size_t barrelAmount = this->gun->GetProjectilesPerFire();
-
-    // Deallocate all flash particles.
-    for (size_t i = 0; i < barrelAmount; ++i)
+    if (this->flashParticles)
     {
-        if (flashParticles[i])
-            flashParticles[i]->PostGameDealloc();
-    }
+        size_t barrelAmount = this->gun->GetProjectilesPerFire();
 
-    // Destruct the array.
-    delete[] this->flashParticles;
+        // Deallocate all flash particles.
+        for (size_t i = 0; i < barrelAmount; ++i)
+        {
+            if (flashParticles[i])
+                flashParticles[i]->PostGameDealloc();
+        }
+
+        // Destruct the array.
+        delete[] this->flashParticles;
+    }
 
     // Call the original destructor.
     Destructor destructorFunc = GetFuncDef<Destructor>(OG_GUN_HANDLER_DESTRUCTOR_ADDR);
@@ -96,7 +99,6 @@ void InitFlashParticlesFix()
     *((PCHAR) GUN_HANDLER_OBJ_SIZE_ADDR) += sizeof(EffectInstance**);
 
     Hook(0x52D1B4, PlayFlashEffect_Hook, 5, true);
-    Hook(0x533408, &GunHandler::Constructor_Hook, 5);
     Hook(0x52D5B0, &GunHandler::Destructor_Hook, 5, true);
 
     BYTE skipDeallocPatch[3] = { 0xE9, 0x81, 0x00 };

@@ -63,19 +63,19 @@ private:
 struct GunHandler
 {
     DWORD vftable;
-    CEGun* gun; // 0x04
+    CELauncher* gun; // 0x04
     BYTE x08[0x20];
-    EffectInstance* currentFlashParticle; // 0x28
-    BYTE x2C[0x18];
-    EffectInstance** flashParticles; // 0x44 (custom data: stores the flash particle for every barrel of the gun)
+    union { // 0x28
+        EffectInstance* currentFlashParticle;
+        EffectInstance** flashParticles;
+    };
 
+    void CreateFlashParticlesArray();
     void PlayAllFlashParticles(ID_String* idString);
     void __cdecl PlayFlashParticleForBarrel(ID_String* idString, UINT barrelIndex);
 
-    GunHandler* Constructor_Hook(CEGun* gun, PDWORD unk);
     void Destructor_Hook();
 
 private:
-    typedef GunHandler* (GunHandler::*Constructor)(CEGun* gun, PDWORD unk);
     typedef void (GunHandler::*Destructor)();
 };
