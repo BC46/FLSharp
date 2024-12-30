@@ -39,9 +39,9 @@ def run():
         f.write(obj_file + ": \\\n")
 
         #f.write((" " * 4) + cpp_file + " \\\n")
-        for dep in deps[:-1]:
+        for dep in deps:
             f.write((" " * 4) + os.path.relpath(dep) + " \\\n")
-        f.write((" " * 4) + os.path.relpath(deps[-1]) + "\n\n")
+        f.write((" " * 4) + "makefile\n\n")
 
     f.close()
 
