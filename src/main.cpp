@@ -7,6 +7,7 @@
 #include "copy_paste.h"
 #include "ui_anim.h"
 #include "weapon_anim.h"
+#include "flash_particles.h"
 
 void Init()
 {
@@ -21,6 +22,7 @@ void Init()
         InitCopyPasteFeature();
         InitSlideUiAnimFix();
         InitWeaponAnimFix();
+        InitFlashParticlesFix();
     }
 
     InitProjectilesServerFix();

@@ -24,7 +24,8 @@ $(OBJ_DIR)\test_sounds.obj \
 $(OBJ_DIR)\trade_lane_lights.obj \
 $(OBJ_DIR)\copy_paste.obj \
 $(OBJ_DIR)\ui_anim.obj \
-$(OBJ_DIR)\weapon_anim.obj
+$(OBJ_DIR)\weapon_anim.obj \
+$(OBJ_DIR)\flash_particles.obj
 
 COMMON_LIB = $(OBJ_DIR)\Common.lib
 EXTERNAL_LIBS = User32.lib Gdi32.lib

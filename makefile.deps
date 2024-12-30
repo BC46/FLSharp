@@ -1,17 +1,21 @@
 obj\copy_paste.obj: \
-    src\copy_paste.cpp \
     include\copy_paste.h \
     include\vftable.h \
     include\Common.h \
     include\fl_math.h \
     include\utils.h
 
+obj\flash_particles.obj: \
+    include\flash_particles.h \
+    include\Common.h \
+    include\fl_math.h \
+    include\vftable.h \
+    include\utils.h
+
 obj\fl_math.obj: \
-    src\fl_math.cpp \
     include\fl_math.h
 
 obj\main.obj: \
-    src\main.cpp \
     include\update.h \
     include\Common.h \
     include\fl_math.h \
@@ -25,10 +29,10 @@ obj\main.obj: \
     include\trade_lane_lights.h \
     include\copy_paste.h \
     include\ui_anim.h \
-    include\weapon_anim.h
+    include\weapon_anim.h \
+    include\flash_particles.h
 
 obj\projectiles.obj: \
-    src\projectiles.cpp \
     include\projectiles.h \
     include\Common.h \
     include\fl_math.h \
@@ -36,7 +40,6 @@ obj\projectiles.obj: \
     include\utils.h
 
 obj\resolutions.obj: \
-    src\resolutions.cpp \
     include\resolutions.h \
     include\Freelancer.h \
     include\Common.h \
@@ -46,11 +49,9 @@ obj\resolutions.obj: \
     include\utils.h
 
 obj\resolutions_asm.obj: \
-    src\resolutions_asm.cpp \
     include\resolutions_asm.h
 
 obj\test_sounds.obj: \
-    src\test_sounds.cpp \
     include\test_sounds.h \
     include\vftable.h \
     include\utils.h \
@@ -59,7 +60,6 @@ obj\test_sounds.obj: \
     include\fl_math.h
 
 obj\trade_lane_lights.obj: \
-    src\trade_lane_lights.cpp \
     include\trade_lane_lights.h \
     include\Common.h \
     include\fl_math.h \
@@ -67,13 +67,11 @@ obj\trade_lane_lights.obj: \
     include\utils.h
 
 obj\ui_anim.obj: \
-    src\ui_anim.cpp \
     include\ui_anim.h \
     include\vftable.h \
     include\utils.h
 
 obj\update.obj: \
-    src\update.cpp \
     include\Freelancer.h \
     include\Common.h \
     include\fl_math.h \
@@ -83,11 +81,9 @@ obj\update.obj: \
     include\utils.h
 
 obj\utils.obj: \
-    src\utils.cpp \
     include\utils.h
 
 obj\waypoint.obj: \
-    src\waypoint.cpp \
     include\waypoint.h \
     include\Freelancer.h \
     include\Common.h \
@@ -96,7 +92,6 @@ obj\waypoint.obj: \
     include\utils.h
 
 obj\weapon_anim.obj: \
-    src\weapon_anim.cpp \
     include\weapon_anim.h \
     include\Common.h \
     include\fl_math.h \
