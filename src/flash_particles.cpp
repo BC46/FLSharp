@@ -112,7 +112,6 @@ void InitFlashParticlesFix()
 {
     #define PLAY_FLASH_EFFECT_ADDR 0x52D1B4
     #define LAUNCHER_HANDLER_DESTRUCTOR_CALL_ADDR 0x52D5B0
-    #define FLASH_PARTICLES_DEALLOC_CHECK 0x52CAED
 
     Hook(PLAY_FLASH_EFFECT_ADDR, PlayFlashEffect_Hook, 5, true);
     Hook(LAUNCHER_HANDLER_DESTRUCTOR_CALL_ADDR, &LauncherHandler::Destructor_Hook, 5, true);
