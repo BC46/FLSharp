@@ -59,6 +59,8 @@ private:
     }
 };
 
+EffectInstance** CreateFlashParticlesArray(UINT barrelAmount);
+
 struct LauncherHandler
 {
     DWORD vftable;
@@ -73,7 +75,6 @@ struct LauncherHandler
         EffectInstance** flashParticlesArr;
     };
 
-    void CreateFlashParticlesArray();
     void PlayAllFlashParticles(ID_String* idString);
     // PlayFlashParticleForBarrel must be __cdecl because this code jumps to a vanilla FL function which does ret instead of ret n at the end.
     // Therefore, the caller must clean the stack.

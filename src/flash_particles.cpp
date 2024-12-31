@@ -11,7 +11,7 @@ NAKED void PlayFlashEffect_Hook()
     #define PLAY_FLASH_EFFECT_RET_ADDR 0x52D271
 
     __asm {
-        mov ecx, ebx
+        mov ecx, ebx // LauncherHandler
         push esi // ID_String
         call LauncherHandler::PlayAllFlashParticles
         mov eax, PLAY_FLASH_EFFECT_RET_ADDR
@@ -45,13 +45,13 @@ NAKED void LauncherHandler::PlayFlashParticleForBarrel(ID_String* idString, UINT
 // We do this by keeping track of a custom heap-allocated array of size n (n = amount of barrels of the launcher).
 void LauncherHandler::PlayAllFlashParticles(ID_String* idString)
 {
+    UINT barrelAmount = this->launcher->GetProjectilesPerFire();
+
     // Create the flash particles array if it doesn't exist yet.
     if (!this->flashParticlesArr)
-        CreateFlashParticlesArray();
+        this->flashParticlesArr = CreateFlashParticlesArray(barrelAmount);
 
-    size_t barrelAmount = this->launcher->GetProjectilesPerFire();
-
-    for (size_t i = 0; i < barrelAmount; ++i)
+    for (UINT i = 0; i < barrelAmount; ++i)
     {
         // Clean up the previous instance.
         if (this->flashParticlesArr[i])
@@ -71,12 +71,12 @@ void LauncherHandler::PlayAllFlashParticles(ID_String* idString)
     }
 }
 
-// Initialize the array with a size equal to the barrel amount of the launcher.
-void LauncherHandler::CreateFlashParticlesArray()
+// Creates an array with a size equal to the barrel amount of the launcher.
+EffectInstance** CreateFlashParticlesArray(UINT barrelAmount)
 {
-    UINT barrelAmount = this->launcher->GetProjectilesPerFire();
-    this->flashParticlesArr = new EffectInstance*[barrelAmount];
-    ZeroMemory(this->flashParticlesArr, barrelAmount * sizeof(EffectInstance*));
+    EffectInstance** flashParticlesArr = new EffectInstance*[barrelAmount];
+    ZeroMemory(flashParticlesArr, barrelAmount * sizeof(EffectInstance*));
+    return flashParticlesArr;
 }
 
 // This hook gets called when the LauncherHandler's destructor is being executed.
@@ -87,10 +87,10 @@ void LauncherHandler::Destructor_Hook()
 
     if (this->flashParticlesArr)
     {
-        size_t barrelAmount = this->launcher->GetProjectilesPerFire();
+        UINT barrelAmount = this->launcher->GetProjectilesPerFire();
 
         // Deallocate all active flash particle instances.
-        for (size_t i = 0; i < barrelAmount; ++i)
+        for (UINT i = 0; i < barrelAmount; ++i)
         {
             if (flashParticlesArr[i])
                 flashParticlesArr[i]->PostGameDealloc();
@@ -98,6 +98,7 @@ void LauncherHandler::Destructor_Hook()
 
         // Destruct the array.
         delete[] this->flashParticlesArr;
+        this->flashParticlesArr = NULL; // Prevent the original destructor from deallocating LauncherHandler::currentFlashParticle.
     }
 
     // Call the original destructor.
@@ -111,19 +112,8 @@ void InitFlashParticlesFix()
 {
     #define PLAY_FLASH_EFFECT_ADDR 0x52D1B4
     #define LAUNCHER_HANDLER_DESTRUCTOR_CALL_ADDR 0x52D5B0
-    #define LAUNCHER_HANDLER_OBJ_SIZE_ADDR 0x5333EB
     #define FLASH_PARTICLES_DEALLOC_CHECK 0x52CAED
-
-    // Increase the size of the launcher handler obj such that we can add an array to it.
-    ReadWriteProtect(LAUNCHER_HANDLER_OBJ_SIZE_ADDR, sizeof(char));
-    *((PCHAR) LAUNCHER_HANDLER_OBJ_SIZE_ADDR) += sizeof(EffectInstance**);
 
     Hook(PLAY_FLASH_EFFECT_ADDR, PlayFlashEffect_Hook, 5, true);
     Hook(LAUNCHER_HANDLER_DESTRUCTOR_CALL_ADDR, &LauncherHandler::Destructor_Hook, 5, true);
-
-    // Prevent the original code from deallocating LauncherHandler::currentFlashParticle.
-    // The new code takes over that responsibility.
-    BYTE skipDeallocPatch[3] = { 0xE9, 0x81, 0x00 };
-    Patch(FLASH_PARTICLES_DEALLOC_CHECK, skipDeallocPatch, sizeof(skipDeallocPatch));
-    Patch_BYTE(FLASH_PARTICLES_DEALLOC_CHECK + 0x5, 0x90);
 }
