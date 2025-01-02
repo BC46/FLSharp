@@ -86,7 +86,7 @@ bool inline GetBackgroundAmbienceHandle(SoundHandle **pHandle)
 // There exists a bug in the game where if for example you are docked at a planet and its music has stopped playing,
 // you will not hear any test music while adjusting the music volume in the options menu.
 // FL tests if there currently exists background music, but not if it has actually ever stopped playing.
-// The hook below makes it so that it only returns the handle if the music has stopped playing.
+// The hook below makes it so that it only returns the handle if the music is still playing.
 // As a result, you'll now hear the iconic Tau music when the BGM stopped playing; this way you can more easily fine tune the volume to your liking.
 bool GetBackgroundMusicHandle_Hook(SoundHandle **pBgm)
 {
@@ -205,7 +205,6 @@ void PauseSound(bool &shouldResume, SoundHandle *handle, bool getHandleResult, b
 
     if (!handle->IsPaused())
     {
-        // Pause the music so the ambience sound can be heard better.
         if (force)
             handle->ForcePause();
         else

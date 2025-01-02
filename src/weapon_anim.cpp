@@ -39,10 +39,9 @@ int IAnimation2::Open_Hook(LPCSTR animationScript, int scriptIndex, CAttachedEqu
     if (animationScript && animationScript[0] == '_')
     {
         // Remove the leading underscore.
-        animationScript = (LPCSTR) (((PBYTE) animationScript) + 1);
-        CObject* parent = equip->parent;
+        ++animationScript;
 
-        if (parent)
+        if (CObject* parent = equip->parent)
         {
             // Open the animation on the parent.
             return Open(parent->get_archetype()->scriptIndex, parent->engineInstance, animationScript);

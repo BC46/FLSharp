@@ -154,7 +154,7 @@ void IServerImpl::SPObjUpdate_Hook(SSPObjUpdateInfo &updateInfo, UINT client)
     SetTimeSinceLastUpdate();
 }
 
-// This allows for extra checks to prevent jitters and smoother updates from the client to the server.
+// This allows for extra checks to prevent jitters and allow smoother updates from the client to the server.
 // Also fixes a bug where the client always sends the throttle state as 0.
 void InitBetterUpdates()
 {
