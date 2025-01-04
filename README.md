@@ -4,7 +4,7 @@ These include:
 - Fixed a bug that caused the lights of a trade lane to never turn back on after the trade lane got disrupted.
 - Fixed a bug that caused waypoints to be cleared when the player reaches the coordinates in a different system.
 - Fixed a bug that makes the player ship a selectable target for creating waypoints on the nav map.
-- Allows a weapon's flash particle effect to play on all barrels instead of only on the first barrel.
+- Makes the weapon flash particle effect play on all barrels instead of only on the first barrel.
 - Fixed a bug for the `one_shot_sound` not playing when firing multi-barrel launchers.
 - Fixed a bug for the ammo count not decrementing correctly when firing multi-barrel launchers.
 - Fixed a bug that caused the `use_animation` entries in `weapon_equip.ini` to not work, i.e. enables weapon animations.
