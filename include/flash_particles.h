@@ -29,11 +29,11 @@ struct EffectInstance
         EngineDealloc();
     }
 
-    inline int FreeHeapMemory()
+    inline void FreeHeapMemory()
     {
         #define FREE_HEAP_MEMORY_EFFECT_ADDR 0x4F7A90
         FreeHeapMemoryFunc freeHeapMemory = GetFuncDef<FreeHeapMemoryFunc>(FREE_HEAP_MEMORY_EFFECT_ADDR);
-        return (this->*freeHeapMemory)();
+        (this->*freeHeapMemory)();
     }
 
 private:
@@ -88,4 +88,6 @@ struct LauncherHandler
     void CleanFlashParticlesPostGame_Hook();
     void CleanFlashParticlesEngine_Hook();
     void CleanFlashParticlesMemory_Hook();
+
+    void CleanFlashParticlesArr(void (EffectInstance::*deallocFunc)());
 };
