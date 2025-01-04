@@ -109,11 +109,8 @@ void LauncherHandler::CleanFlashParticlesEngine_Hook()
 
 void LauncherHandler::CleanFlashParticlesMemory_Hook()
 {
-    if (this->flashParticlesArr)
-    {
-        CleanFlashParticlesArr(&EffectInstance::FreeHeapMemory);
-        this->flashParticlesArr = NULL;
-    }
+    CleanFlashParticlesArr(&EffectInstance::FreeHeapMemory);
+    this->flashParticlesArr = NULL;
 }
 
 // In vanilla Freelancer, if you fire any launcher with a flash particle, the game explicitly plays the particle on barrel index 0 only.
