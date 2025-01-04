@@ -56,7 +56,7 @@ void LauncherHandler::PlayAllFlashParticles(ID_String* idString)
         // Clean up the previous instance.
         if (this->flashParticlesArr[i])
         {
-            this->flashParticlesArr[i]->Dealloc();
+            this->flashParticlesArr[i]->GeneralDealloc();
             this->flashParticlesArr[i] = NULL;
         }
 
@@ -79,31 +79,56 @@ EffectInstance** CreateFlashParticlesArray(UINT barrelAmount)
     return flashParticlesArr;
 }
 
-// This hook gets called when the LauncherHandler's destructor is being executed.
-// Here we want to deallocate all flash particles we have stored in the custom array.
-void LauncherHandler::Destructor_Hook()
+// The three hooks below are there to ensure that all flash particles stored in the new array are cleaned.
+// Hence we hook the instances where FL tries to clean up the individual object, and clean up the whole array instead.
+// There are three different versions of this hook because for each instance the game calls a different sequence of functions for the cleaning.
+void LauncherHandler::CleanFlashParticlesPostGame_Hook()
 {
-    #define OG_LAUNCHER_HANDLER_DESTRUCTOR_ADDR 0x52CAA0
+    UINT barrelAmount = this->launcher->GetProjectilesPerFire();
 
-    if (this->flashParticlesArr)
+    // Deallocate all active flash particle instances.
+    for (UINT i = 0; i < barrelAmount; ++i)
     {
-        UINT barrelAmount = this->launcher->GetProjectilesPerFire();
-
-        // Deallocate all active flash particle instances.
-        for (UINT i = 0; i < barrelAmount; ++i)
-        {
-            if (flashParticlesArr[i])
-                flashParticlesArr[i]->PostGameDealloc();
-        }
-
-        // Destruct the array.
-        delete[] this->flashParticlesArr;
-        this->flashParticlesArr = NULL; // Prevent the original destructor from deallocating LauncherHandler::currentFlashParticle.
+        if (flashParticlesArr[i])
+            flashParticlesArr[i]->PostGameDealloc();
     }
 
-    // Call the original destructor.
-    Destructor destructorFunc = GetFuncDef<Destructor>(OG_LAUNCHER_HANDLER_DESTRUCTOR_ADDR);
-    (this->*destructorFunc)();
+    // Destruct the array.
+    delete[] this->flashParticlesArr;
+}
+
+void LauncherHandler::CleanFlashParticlesEngine_Hook()
+{
+    UINT barrelAmount = this->launcher->GetProjectilesPerFire();
+
+    // Deallocate all active flash particle instances.
+    for (UINT i = 0; i < barrelAmount; ++i)
+    {
+        if (flashParticlesArr[i])
+            flashParticlesArr[i]->EngineDealloc();
+    }
+
+    // Destruct the array.
+    delete[] this->flashParticlesArr;
+}
+
+void LauncherHandler::CleanFlashParticlesMemory_Hook()
+{
+    if (!this->flashParticlesArr)
+        return;
+
+    UINT barrelAmount = this->launcher->GetProjectilesPerFire();
+
+    // Deallocate all active flash particle instances.
+    for (UINT i = 0; i < barrelAmount; ++i)
+    {
+        if (flashParticlesArr[i])
+            flashParticlesArr[i]->FreeHeapMemory();
+    }
+
+    // Destruct the array.
+    delete[] this->flashParticlesArr;
+    this->flashParticlesArr = NULL;
 }
 
 // In vanilla Freelancer, if you fire any launcher with a flash particle, the game explicitly plays the particle on barrel index 0 only.
@@ -111,8 +136,24 @@ void LauncherHandler::Destructor_Hook()
 void InitFlashParticlesFix()
 {
     #define PLAY_FLASH_EFFECT_ADDR 0x52D1B4
-    #define LAUNCHER_HANDLER_DESTRUCTOR_CALL_ADDR 0x52D5B0
+    #define LAUNCHER_HANDLER_DESTRUCTOR_CALL_ADDR 0x52CB6B
 
     Hook(PLAY_FLASH_EFFECT_ADDR, PlayFlashEffect_Hook, 5, true);
-    Hook(LAUNCHER_HANDLER_DESTRUCTOR_CALL_ADDR, &LauncherHandler::Destructor_Hook, 5, true);
+
+    BYTE ecxPatch[] = { 0x89, 0xF1, 0x90 }; // mov ecx, esi followed by nop
+
+    Patch(0x52CAF3, ecxPatch, 2);
+    Patch_WORD(0x52CAF5, 0x74EB); // jmp
+    Hook(LAUNCHER_HANDLER_DESTRUCTOR_CALL_ADDR, &LauncherHandler::CleanFlashParticlesPostGame_Hook, 5);
+
+    Patch(0x52F6B2, ecxPatch, 3);
+    Hook(0x52F6B5, &LauncherHandler::CleanFlashParticlesMemory_Hook, 5);
+
+    const DWORD engineDeallocCalls[] = { 0x52CD0F, 0x52D68D, 0x52D836, 0x52DBC7 };
+    for (int i = 0; i < sizeof(engineDeallocCalls) / sizeof(DWORD); ++i)
+    {
+        Patch_WORD(engineDeallocCalls[i], 0x03EB); // jmp
+        Patch(engineDeallocCalls[i] + 0x5, ecxPatch, 3);
+        Hook(engineDeallocCalls[i] + 0x8, &LauncherHandler::CleanFlashParticlesEngine_Hook, 5);
+    }
 }

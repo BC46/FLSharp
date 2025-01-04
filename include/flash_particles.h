@@ -8,20 +8,32 @@ struct EffectInstance
     virtual void Vftable_x00();
     virtual void FreeEngineEffect();
 
-    // Dealloc function which the game calls before creating a new flash effect instance for the same barrel/launcher.
-    inline void Dealloc()
+    // Dealloc function which the game calls to clean up the effects when e.g. a ship or solar gets destroyed.
+    inline void EngineDealloc()
     {
-        FreeAleEffect();
         FreeEngineEffect();
         FreeHeapMemory();
+    }
+
+    // Dealloc function which the game calls before creating a new flash effect instance for the same barrel/launcher.
+    inline void GeneralDealloc()
+    {
+        FreeAleEffect();
+        EngineDealloc();
     }
 
     // Dealloc function which the game calls right after quitting the play session.
     inline void PostGameDealloc()
     {
         ResetBaseWatcher();
-        FreeEngineEffect();
-        FreeHeapMemory();
+        EngineDealloc();
+    }
+
+    inline int FreeHeapMemory()
+    {
+        #define FREE_HEAP_MEMORY_EFFECT_ADDR 0x4F7A90
+        FreeHeapMemoryFunc freeHeapMemory = GetFuncDef<FreeHeapMemoryFunc>(FREE_HEAP_MEMORY_EFFECT_ADDR);
+        return (this->*freeHeapMemory)();
     }
 
 private:
@@ -39,13 +51,6 @@ private:
         #define FREE_ALE_EFFECT_ADDR 0x4F8110
         FreeAleEffectFunc freeAleEffect = GetFuncDef<FreeAleEffectFunc>(FREE_ALE_EFFECT_ADDR);
         (this->*freeAleEffect)();
-    }
-
-    inline int FreeHeapMemory()
-    {
-        #define FREE_HEAP_MEMORY_EFFECT_ADDR 0x4F7A90
-        FreeHeapMemoryFunc freeHeapMemory = GetFuncDef<FreeHeapMemoryFunc>(FREE_HEAP_MEMORY_EFFECT_ADDR);
-        return (this->*freeHeapMemory)();
     }
 
     inline void ResetBaseWatcher()
@@ -80,8 +85,7 @@ struct LauncherHandler
     // Therefore, the caller must clean the stack.
     void __cdecl PlayFlashParticleForBarrel(ID_String* idString, UINT barrelIndex);
 
-    void Destructor_Hook();
-
-private:
-    typedef void (LauncherHandler::*Destructor)();
+    void CleanFlashParticlesPostGame_Hook();
+    void CleanFlashParticlesEngine_Hook();
+    void CleanFlashParticlesMemory_Hook();
 };
