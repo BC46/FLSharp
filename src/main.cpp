@@ -8,6 +8,7 @@
 #include "ui_anim.h"
 #include "weapon_anim.h"
 #include "flash_particles.h"
+#include "rep_requirements.h"
 
 void Init()
 {
@@ -23,6 +24,7 @@ void Init()
         InitSlideUiAnimFix();
         InitWeaponAnimFix();
         InitFlashParticlesFix();
+        InitPrintRepRequirements();
     }
 
     InitProjectilesServerFix();

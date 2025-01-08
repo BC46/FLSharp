@@ -35,6 +35,7 @@ obj\main.obj: \
     include\weapon_anim.h \
     include\flash_particles.h \
     include\utils.h \
+    include\rep_requirements.h \
     makefile
 
 obj\projectiles.obj: \
@@ -42,6 +43,11 @@ obj\projectiles.obj: \
     include\Common.h \
     include\fl_math.h \
     include\vftable.h \
+    include\utils.h \
+    makefile
+
+obj\rep_requirements.obj: \
+    include\rep_requirements.h \
     include\utils.h \
     makefile
 
