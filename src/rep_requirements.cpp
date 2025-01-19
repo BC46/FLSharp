@@ -3,7 +3,7 @@
 
 void NN_Dealer::PrintFmtStrPurchaseInfo_Hook(UINT idsPurchaseInfo, DealerStack* stack)
 {
-    // Get the reputation percentage from the stack (custom variable)
+    // Get the reputation percentage from the stack (custom variable).
     int repPercentage = static_cast<int>(stack->repRequired * 100.0f);
 
     // Call the original function.
@@ -23,5 +23,5 @@ void InitPrintRepRequirements()
     #define REP_REQUIREMENTS_NOT_MET_ADDR 0x480739
 
     Hook(REP_REQUIREMENTS_NOT_MET_ADDR + 0x9, &NN_Dealer::PrintFmtStrPurchaseInfo_Hook, 5);
-    Patch_WORD(REP_REQUIREMENTS_NOT_MET_ADDR, 0x9054); // push esi followed by nop
+    Patch_WORD(REP_REQUIREMENTS_NOT_MET_ADDR, 0x9054); // push esp followed by nop (replaces param 0 with a stack pointer)
 }

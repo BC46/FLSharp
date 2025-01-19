@@ -11,7 +11,7 @@ struct DealerStack
 
 struct NN_Dealer
 {
-    void PrintFmtStrPurchaseInfo_Hook(UINT idsPurchaseInfo, DealerStack* Dealerstack);
+    void PrintFmtStrPurchaseInfo_Hook(UINT idsPurchaseInfo, DealerStack* stack);
 
 private:
     typedef void (NN_Dealer::*PrintFmtStrPurchaseInfo)(UINT idsPurchaseInfo, int fmtValue);
