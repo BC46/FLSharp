@@ -1,3 +1,9 @@
+obj\cgun_wrapper.obj: \
+    include\cgun_wrapper.h \
+    include\DALib.h \
+    include\utils.h \
+    makefile
+
 obj\copy_paste.obj: \
     include\copy_paste.h \
     include\vftable.h \
@@ -36,6 +42,7 @@ obj\main.obj: \
     include\flash_particles.h \
     include\utils.h \
     include\rep_requirements.h \
+    include\cgun_wrapper.h \
     makefile
 
 obj\projectiles.obj: \

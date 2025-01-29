@@ -29,6 +29,7 @@ These include:
 - Allows for the Ctrl + V hotkey to paste text from the clipboard to any Freelancer input box.
 - Improved the slide-out animation for some UI buttons in the multiplayer menus.
 - When the "You must be on friendlier terms to purchase this." message is displayed in the Dealer menu, allow the reputation requirements to be printed too. Include `%d` in the IDS (S 1564, `resources.dll`) to make it work.
+- Fixed a bug that caused the Freelancer process to not always terminate after closing the game.
 
 More fixes and improvements may be added in the future.
 
@@ -39,6 +40,8 @@ Download the latest `FLSharp.dll` from [Releases](https://github.com/BC46/FLShar
 Build the project using the `NMAKE` tool from Microsoft Visual C++ 7.0 (VC7) + the VC6 runtime libraries.
 This will output the `FLSharp.dll` file in the `bin` folder.
 Building the project using other compilers may require the code to be modified.
+Last time I checked, the build succeeded out of the box with VS2022.
+However, if FL#'s code references anything from the VC6 standard library within Freelancer itself, then that code won't work as intended.
 
 ## Credits
 - [Aingar](https://github.com/Aingar)

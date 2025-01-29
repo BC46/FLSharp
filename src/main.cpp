@@ -9,6 +9,7 @@
 #include "weapon_anim.h"
 #include "flash_particles.h"
 #include "rep_requirements.h"
+#include "cgun_wrapper.h"
 
 void Init()
 {
@@ -25,6 +26,7 @@ void Init()
         InitWeaponAnimFix();
         InitFlashParticlesFix();
         InitPrintRepRequirements();
+        InitPostGameDeadlockFix();
     }
 
     InitProjectilesServerFix();
