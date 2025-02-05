@@ -56,7 +56,7 @@ bool inline IsResolutionAllowed(const DEVMODE &dm)
 // Returns true if the given resolution is narrower than 4:3.
 bool inline IsResolutionNarrow(UINT width, UINT height)
 {
-    #define MIN_4_BY_3_FACTOR (4.0 / 3.0) - 0.02
+    #define MIN_4_BY_3_FACTOR (4.0f / 3.0f) - 0.02f
 
     if (height == 0)
         return true;
