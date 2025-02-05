@@ -39,7 +39,7 @@ _closeClipboard:
     CloseClipboard();
 }
 
-// There exists a AddTypedKey function which takes the typedKey variable from a KeyMapInfo object and writes it to the input box.
+// There exists a WriteTypedKey function which takes the typedKey variable from a KeyMapInfo object and writes it to the input box.
 // However, this typedKey variable is the only thing that the function needs from this entire object.
 // So we just define a dummy KeyMapInfo object where we fill the character we want to enter in every loop iteration.
 void InputBoxWindow::WriteString(LPCWSTR str)

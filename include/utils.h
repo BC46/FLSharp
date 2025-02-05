@@ -43,8 +43,8 @@ DWORD SetRelPointer(DWORD location, Func hookFunc)
     ReadWriteProtect(location, sizeof(DWORD));
     originalPointer = location + (*(PDWORD) location) + 4;
 
-    *(Func*) (location) = hookFunc;
-    *(PDWORD) (location) -= location + 4;
+    DWORD hookFuncLocation = *((PDWORD) &hookFunc);
+    *(PDWORD) location = hookFuncLocation - (location + 4);
 
     return originalPointer;
 }
@@ -61,6 +61,35 @@ void Hook(DWORD location, Func hookFunc, UINT instrLen, bool jmp = false)
     // Nop out excess bytes
     if (instrLen > 5)
         Nop((location + 5), instrLen - 5);
+}
+
+template <typename Func>
+Func Trampoline(DWORD location, Func hookFunc, UINT instrLen)
+{
+    // Allocate memory for gateway function.
+    PBYTE gatewayFunc = (PBYTE) VirtualAlloc(NULL, instrLen + 5, MEM_COMMIT | MEM_RESERVE, PAGE_EXECUTE_READWRITE);
+
+    // Copy the instruction(s) that will be overwritten by setting the hooks to the gateway code.
+    ReadWriteProtect(location, instrLen);
+    memcpy(gatewayFunc, (PVOID) location, instrLen);
+
+    // Jmp from location to hook function.
+    Hook(location, hookFunc, 5, true);
+    // Jmp from gateway to original function.
+    Hook((DWORD) (gatewayFunc + instrLen), GetFuncDef<Func>(location + instrLen), 5, true);
+
+    // Nop out excess bytes.
+    if (instrLen > 5)
+        Nop((location + 5), instrLen - 5);
+
+    // Return handle for calling the gateway function which in turn calls the original function.
+    return GetFuncDef<Func>((DWORD) gatewayFunc);
+}
+
+template <typename Func>
+void CleanupTrampoline(Func trampolineFunc)
+{
+    VirtualFree((LPVOID) *((PDWORD) &trampolineFunc), 0, MEM_RELEASE);
 }
 
 template <typename Func>

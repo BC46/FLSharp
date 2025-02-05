@@ -146,6 +146,8 @@ bool NN_Preferences::SetResolution_Selected_Hook(UINT width, DWORD unk)
     return (this->*setResFunc)(width, unk, this->selectedHeight);
 }
 
+void (NN_Preferences::*TestResolutions_Original)(DWORD unk);
+
 // Hook that ensures the resolutions are tested only when necessary (optimization)
 void NN_Preferences::TestResolutions_Hook(DWORD unk)
 {
@@ -163,8 +165,7 @@ void NN_Preferences::TestResolutions_Hook(DWORD unk)
     {
         // If the monitor settings have changed or the resolutions haven't been tested yet,
         // test the resolutions
-        TestResolutions testResFunc = GetFuncDef<TestResolutions>(TEST_RESOLUTIONS_ADDR);
-        (this->*testResFunc)(unk);
+        (this->*TestResolutions_Original)(unk);
 
         // Save the supported resolution info for later use
         memcpy(lastResSupportedArr, this->resSupportedArr, resolutions.size() * 5); // 5 = sizeof(int) + sizeof(BYTE), for the indices in menu and supported array entry
@@ -278,8 +279,7 @@ void InitBetterResolutions()
     Hook(0x4B2781, &NN_Preferences::SetResolution_Active_Hook, 5);
 
     // Hook test resolutions functions so that we only test the resolutions when it's actually necessary (optimization)
-    Hook(0x4A98E7, &NN_Preferences::TestResolutions_Hook, 5);
-    Hook(0x4AE761, &NN_Preferences::TestResolutions_Hook, 5);
+    TestResolutions_Original = Trampoline(0x4B2440, &NN_Preferences::TestResolutions_Hook, 8);
 
     // Places that determine the width of the "default" resolution
     Hook(0x4ACEAB, DefaultResSet1, 5, true);
@@ -293,4 +293,5 @@ void InitBetterResolutions()
 void CleanupBetterResolutions()
 {
     delete[] lastResSupportedArr;
+    CleanupTrampoline(TestResolutions_Original);
 }

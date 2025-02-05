@@ -77,5 +77,4 @@ struct NN_Preferences
 private:
     typedef bool (NN_Preferences::*InitElements)(DWORD unk1, DWORD unk2);
     typedef bool (NN_Preferences::*SetResolution)(UINT width, DWORD unk, UINT height);
-    typedef void (NN_Preferences::*TestResolutions)(DWORD unk);
 };
