@@ -8,12 +8,19 @@
 // Now for all animations with the different slide-out speeds I just hide the text when the slide-out animation is active;
 // by default this already happens in the slide-in animation.
 // Now the animations feel a lot more seamless and smooth.
-int UITextMsgButton::SlideAnimation_Hook(BYTE unk1, const float* newXPos, BYTE unk2)
+int UITextMsgButton::UpdatePosition_Hook(BYTE unk1, const Vector* newPosOffset, BYTE unk2)
 {
-    this->textInfo = NULL;
+    if (this->textImage)
+    {
+        // If the textImage is NULLed prematurely, then FL will no longer destroy it when it's not needed anymore.
+        // Hence it's destroyed here.
+        this->textImage->Destroy();
+        this->textImage = NULL;
+    }
+
     this->disableHovering = true;
 
-    return SlideAnimation(unk1, newXPos, unk2);
+    return UpdatePosition(unk1, newPosOffset, unk2);
 }
 
 void InitSlideUiAnimFix()
@@ -25,5 +32,5 @@ void InitSlideUiAnimFix()
     };
 
     for (int i = 0; i < sizeof(slideAnimationCalls) / sizeof(DWORD); ++i)
-        Hook(slideAnimationCalls[i], &UITextMsgButton::SlideAnimation_Hook, 6);
+        Hook(slideAnimationCalls[i], &UITextMsgButton::UpdatePosition_Hook, 6);
 }

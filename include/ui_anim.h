@@ -1,11 +1,19 @@
 #define WIN32_LEAN_AND_MEAN
 #include <windows.h>
 #include "vftable.h"
+#include "Common.h"
+
+struct BigImage
+{
+    virtual void Vftable_x00();
+    virtual void Vftable_x04();
+    virtual DWORD __stdcall Destroy();
+};
 
 struct UITextMsgButton
 {
 public:
-    int SlideAnimation_Hook(BYTE unk1, const float* newXPos, BYTE unk2);
+    int UpdatePosition_Hook(BYTE unk1, const Vector* newPosOffset, BYTE unk2);
 
 private:
     FILL_VFTABLE(0)
@@ -20,10 +28,10 @@ private:
     FILL_VFTABLE(9)
     virtual void Vftable_xC0();
     virtual void Vftable_xC4();
-    virtual int SlideAnimation(BYTE unk1, const float* newXPos, BYTE unk2);
+    virtual int UpdatePosition(BYTE unk1, const Vector* newPosOffset, BYTE unk2);
 
     BYTE x04[0x3E8];
-    PVOID textInfo; // 0x3EC. textInfo = NULL will prevent the text from rendering
+    BigImage* textImage; // 0x3EC. textImage = NULL will prevent the text from rendering
     BYTE x3F0[0x81];
     bool disableHovering; // 0x471
 };
