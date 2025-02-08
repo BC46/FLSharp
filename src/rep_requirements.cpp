@@ -3,11 +3,16 @@
 
 #define NAKED __declspec(naked)
 
+#define FMT_VAL_IS_ZERO_CHECK 0x47FE86
+
 void NN_Dealer::PrintFmtStrPurchaseInfo_Hook(UINT idsPurchaseInfo, DealerStack* stack)
 {
     // Call the original function with the rep percentage.
     PrintFmtStrPurchaseInfo ogFunc = GetFuncDef<PrintFmtStrPurchaseInfo>(0x47FD50);
+
+    *((PBYTE) FMT_VAL_IS_ZERO_CHECK) = 0xEB; // allow the rep percentage to be printed if it's 0
     (this->*ogFunc)(idsPurchaseInfo, GetRepPercentage(stack->repRequired));
+    *((PBYTE) FMT_VAL_IS_ZERO_CHECK) = 0x75; // restore the original value to prevent other 0's from being unintentionally printed
 }
 
 NAKED void GetShipRepRequirement_Hook()
@@ -58,4 +63,6 @@ void InitPrintRepRequirements()
     *(PUINT) NN_SHIPTRADER_OBJ_SIZE_ADDR += sizeof(int[SHIP_TRADER_SHIP_AMOUNT]);
 
     Hook(GET_SHIP_REQUIREMENT_ADDR, GetShipRepRequirement_Hook, 7, true);
+
+    ReadWriteProtect(FMT_VAL_IS_ZERO_CHECK, sizeof(BYTE));
 }
