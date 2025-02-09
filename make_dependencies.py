@@ -41,6 +41,7 @@ def run():
         #f.write((" " * 4) + cpp_file + " \\\n")
         for dep in deps:
             f.write((" " * 4) + os.path.relpath(dep) + " \\\n")
+        f.write((" " * 4) + "makefile.deps \\\n")
         f.write((" " * 4) + "makefile\n\n")
 
     f.close()
