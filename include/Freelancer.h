@@ -15,6 +15,19 @@
 #define TEST_RESOLUTIONS_ADDR 0x4B2440
 #define NAV_MAP_GET_HIGHLIGHTED_OBJ_ADDR 0x496D40
 
+#define FL_BUFFER_1 ((LPWSTR) 0x66DC60)
+#define FL_BUFFER_2 ((LPWSTR) 0x66FC60)
+#define FL_BUFFER_LEN *((PUINT) 0x6119F8)
+#define FL_RESOURCES_HANDLE *((PDWORD) 0x67ECA8)
+
+inline UINT GetFlString(UINT ids, LPWSTR buffer, UINT bufferLen)
+{
+    #define GET_FL_STRING_ADDR (0x4347E0)
+
+    typedef UINT GetFlStringFunc(DWORD, UINT, PWCHAR, UINT);
+    return ((GetFlStringFunc*) GET_FL_STRING_ADDR)(FL_RESOURCES_HANDLE, ids, buffer, bufferLen);
+}
+
 struct WaypointInfo
 {
     Vector pos;

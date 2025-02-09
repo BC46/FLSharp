@@ -21,10 +21,13 @@ private:
 
 struct NN_ShipTrader
 {
-    BYTE x00[0x448];
-    int shipRepPercentages[SHIP_TRADER_SHIP_AMOUNT];
+    BYTE x00[0x3D0];
+    int selectedShipIndex; // 0x3D0
+    BYTE x3D4[0x74];
+    int shipRepPercentages[SHIP_TRADER_SHIP_AMOUNT]; // 0x448
 
-    void StoreShipLevelRequirement(PBYTE shipListPtr, float repRequirement);
+    void StoreShipRepRequirement(PBYTE shipListPtr, float repRequirement);
+    LPWSTR NN_ShipTrader::PrintFmtShipRepRequirement();
 };
 
 inline int GetRepPercentage(float repValue)
