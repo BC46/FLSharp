@@ -35,7 +35,7 @@ void inline ReadWriteProtect(DWORD location, DWORD size)
 }
 
 template <typename Func>
-DWORD SetRelPointer(DWORD location, Func hookFunc)
+Func SetRelPointer(DWORD location, Func hookFunc)
 {
     DWORD originalPointer;
 
@@ -46,7 +46,7 @@ DWORD SetRelPointer(DWORD location, Func hookFunc)
     DWORD hookFuncLocation = *((PDWORD) &hookFunc);
     *(PDWORD) location = hookFuncLocation - (location + 4);
 
-    return originalPointer;
+    return GetFuncDef<Func>(originalPointer);
 }
 
 template <typename Func>
