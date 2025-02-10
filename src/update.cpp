@@ -3,6 +3,8 @@
 #include "utils.h"
 #include <cmath>
 
+#define M_PI 3.14159265358979323846f
+
 const double minSyncIntervalMs = 40.0;
 const double minSyncIntervalTlrMs = 750.0;
 const double maxSyncIntervalMs = 2000.0;
@@ -79,7 +81,7 @@ void PostInitDealloc_Hook(PVOID obj)
     // However, the angular drag factor is kind of an unused feature in FL and not many mods use it
     float avgDrag = (shipArch->angularDrag.x + shipArch->angularDrag.y) / 2;
     float avgTorque = (shipArch->steeringTorque.x + shipArch->steeringTorque.y) / 2;
-    float maxTurnSpeed = (avgTorque / avgDrag) * 57.29578f;
+    float maxTurnSpeed = (avgTorque / avgDrag) * (180.0f / M_PI);
 
     shipTurnThreshold = min(30.0f, 15 * sqrtf(maxTurnSpeed) / sqrtf(ship->get_radius()));
 }

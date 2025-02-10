@@ -3,6 +3,8 @@
 #include <cmath>
 #include "fl_math.h"
 
+#define M_PI 3.14159265358979323846f
+
 Quaternion MatrixToQuaternion(const Matrix& m)
 {
     Quaternion result;
@@ -26,7 +28,7 @@ float QuaternionDotProduct(const Quaternion &left, const Quaternion &right)
 float QuaternionAngleDifference(const Quaternion &left, const Quaternion &right)
 {
     float dot = QuaternionDotProduct(left, right);
-    return acosf(fabsf(dot)) * 2 * 57.29578f;
+    return acosf(fabsf(dot)) * 2 * (180.0f / M_PI);
 }
 
 float GetRotationDelta(const Quaternion& quat, const Matrix& rot)
