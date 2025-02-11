@@ -28,6 +28,15 @@ obj\fl_math.obj: \
     makefile.deps \
     makefile
 
+obj\Freelancer.obj: \
+    include\Freelancer.h \
+    include\Common.h \
+    include\fl_math.h \
+    include\vftable.h \
+    include\fl_func.h \
+    makefile.deps \
+    makefile
+
 obj\main.obj: \
     include\update.h \
     include\Common.h \

@@ -47,22 +47,6 @@ struct SoundHandle
     virtual bool IsPaused();
 };
 
-inline void StopSound(BYTE soundId)
-{
-    #define STOP_SOUND_ADDR 0x5646E0
-
-    typedef void StopSound(BYTE soundId);
-    ((StopSound*) STOP_SOUND_ADDR)(soundId);
-}
-
-inline void StartSound(BYTE soundId)
-{
-    #define START_SOUND_ADDR 0x564650
-
-    typedef void StartSound(BYTE soundId);
-    ((StartSound*) START_SOUND_ADDR)(soundId);
-}
-
 bool GetBackgroundMusicHandle_Hook(SoundHandle **handle);
 
 void StopMusicTestSound_Hook(BYTE soundId);
