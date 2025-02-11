@@ -1,6 +1,7 @@
 #include "resolutions.h"
 #include "resolutions_asm.h"
 #include "utils.h"
+#include "fl_func.h"
 #include <set>
 
 #define DEFAULT_RES_WIDTH_PTR_1 0x56223F
@@ -126,8 +127,7 @@ bool NN_Preferences::InitElements_Hook(DWORD unk1, DWORD unk2)
         Patch_INT(resIndicesRefs[i], resIndicesOffset);
 
     // Call original function
-    InitElements initElementsFunc = GetFuncDef<InitElements>(INIT_NN_ELEMENTS_ADDR);
-    return (this->*initElementsFunc)(unk1, unk2);
+    return InitElements(unk1, unk2);
 }
 
 // Dirty hack which adds an additional parameter to the game's internal SetResolution function
@@ -136,14 +136,12 @@ bool NN_Preferences::InitElements_Hook(DWORD unk1, DWORD unk2)
 
 bool NN_Preferences::SetResolution_Active_Hook(UINT width, DWORD unk)
 {
-    SetResolution setResFunc = GetFuncDef<SetResolution>(SET_RESOLUTION_ADDR);
-    return (this->*setResFunc)(width, unk, this->activeHeight);
+    return SetResolution(width, unk, this->activeHeight);
 }
 
 bool NN_Preferences::SetResolution_Selected_Hook(UINT width, DWORD unk)
 {
-    SetResolution setResFunc = GetFuncDef<SetResolution>(SET_RESOLUTION_ADDR);
-    return (this->*setResFunc)(width, unk, this->selectedHeight);
+    return SetResolution(width, unk, this->selectedHeight);
 }
 
 void (NN_Preferences::*TestResolutions_Original)(DWORD unk);
@@ -186,10 +184,10 @@ void DiscardLowestResolutions(size_t newSize)
     }
 }
 
-bool ResolutionInit(DWORD unk1, ResolutionInitInfo* info, DWORD unk2)
-{
-    #define ResolutionInit_ADDR 0x424DD0
+FL_FUNC(bool ResolutionInit(DWORD unk1, ResolutionInitInfo* info, DWORD unk2), 0x424DD0)
 
+bool ResolutionInit_Hook(DWORD unk1, ResolutionInitInfo* info, DWORD unk2)
+{
     // If a resolution has been set in the ini file which is beyond the display's capabilities, the game may still run with it, but it'll make everything look strange.
     if (info->resolutionInfo.height > mainMonitorRes.height || info->resolutionInfo.width > mainMonitorRes.width)
     {
@@ -197,8 +195,7 @@ bool ResolutionInit(DWORD unk1, ResolutionInitInfo* info, DWORD unk2)
         info->resolutionInfo.width = 0;
     }
 
-    typedef bool ResolutionInit(DWORD unk1, ResolutionInitInfo* info, DWORD unk2);
-    return ((ResolutionInit*) ResolutionInit_ADDR)(unk1, info, unk2);
+    return ResolutionInit(unk1, info, unk2);
 }
 
 // Expands the hard-coded resolutions array of size 10 used in the options menu to allow for up to 127 resolutions instead.
@@ -217,7 +214,7 @@ void InitBetterResolutions()
     AddWindowRectResolutions();
     AddMainMonitorResolutions();
     // Hook the resolution call address to allow for an additional resolution check.
-    Hook(0x5B17AE, ResolutionInit, 5);
+    Hook(0x5B17AE, ResolutionInit_Hook, 5);
 
     int resolutionAmount = resolutions.size();
 

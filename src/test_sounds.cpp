@@ -1,6 +1,7 @@
 #include "test_sounds.h"
 #include "utils.h"
 #include "Freelancer.h"
+#include "fl_func.h"
 
 #define INTERFACE_VOLUME_SOUND_ID   0x21
 #define AMBIENCE_VOLUME_SOUND_ID    0x22
@@ -67,21 +68,8 @@ void SetTestSoundAvailability(bool &interfaceSounds, bool &ambienceSounds)
     reader.close();
 }
 
-bool inline GetBackgroundMusicHandle(SoundHandle **pHandle)
-{
-    #define GET_BGM_INSTANCE_ADDR 0x428BA0
-
-    typedef bool GetBackgroundMusicHandle(SoundHandle **pHandle);
-    return ((GetBackgroundMusicHandle*) GET_BGM_INSTANCE_ADDR)(pHandle);
-}
-
-bool inline GetBackgroundAmbienceHandle(SoundHandle **pHandle)
-{
-    #define GET_BGA_INSTANCE_ADDR 0x428BC0
-
-    typedef bool GetBackgroundAmbienceHandle(SoundHandle **pHandle);
-    return ((GetBackgroundAmbienceHandle*) GET_BGA_INSTANCE_ADDR)(pHandle);
-}
+FL_FUNC(bool GetBackgroundMusicHandle(SoundHandle **pHandle), 0x428BA0);
+FL_FUNC(bool GetBackgroundAmbienceHandle(SoundHandle **pHandle), 0x428BC0);
 
 // There exists a bug in the game where if for example you are docked at a planet and its music has stopped playing,
 // you will not hear any test music while adjusting the music volume in the options menu.

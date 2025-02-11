@@ -47,6 +47,9 @@ struct SoundHandle
     virtual bool IsPaused();
 };
 
+bool GetBackgroundMusicHandle(SoundHandle **pHandle);
+bool GetBackgroundAmbienceHandle(SoundHandle **pHandle);
+
 bool GetBackgroundMusicHandle_Hook(SoundHandle **handle);
 
 void StopMusicTestSound_Hook(BYTE soundId);

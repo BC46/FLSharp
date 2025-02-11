@@ -1,6 +1,7 @@
 #include "flash_particles.h"
 #include "Common.h"
 #include "utils.h"
+#include "fl_func.h"
 
 #define NAKED __declspec(naked)
 
@@ -109,9 +110,13 @@ void LauncherHandler::CleanFlashParticlesEngine_Hook()
 
 void LauncherHandler::CleanFlashParticlesMemory_Hook()
 {
-    CleanFlashParticlesArr(&EffectInstance::FreeHeapMemory);
+    CleanFlashParticlesArr(&EffectInstance::DoFreeHeapMemory);
     this->flashParticlesArr = NULL;
 }
+
+FL_FUNC(void EffectInstance::FreeAleEffect(), 0x4F8110)
+FL_FUNC(int EffectInstance::FreeHeapMemory(), 0x4F7A90)
+FL_FUNC(void EffectInstance::SetBaseWatcher(int unk1, int unk2, WatcherInfo* watcherInfo), 0x4F7D20)
 
 // In vanilla Freelancer, if you fire any launcher with a flash particle, the game explicitly plays the particle on barrel index 0 only.
 // For most launchers this isn't an issue, but if you have a multi-barrel launcher, the flash effect will only play on the first barrel.

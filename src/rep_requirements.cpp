@@ -1,6 +1,7 @@
 #include "rep_requirements.h"
 #include "utils.h"
 #include "Freelancer.h"
+#include "fl_func.h"
 #include <stdio.h>
 
 #define NAKED __declspec(naked)
@@ -10,13 +11,13 @@
 
 UINT insufficientRepIds = 1564;
 
+FL_FUNC(void NN_Dealer::PrintFmtStrPurchaseInfo(UINT idsPurchaseInfo, int fmtValue), 0x47FD50)
+
 void NN_Dealer::PrintFmtStrPurchaseInfo_Hook(UINT idsPurchaseInfo, DealerStack* stack)
 {
     // Call the original function with the rep percentage.
-    PrintFmtStrPurchaseInfo ogFunc = GetFuncDef<PrintFmtStrPurchaseInfo>(0x47FD50);
-
     *((PBYTE) FMT_VAL_IS_ZERO_CHECK) = 0xEB; // allow the rep percentage to be printed if it's 0
-    (this->*ogFunc)(idsPurchaseInfo, GetRepPercentage(stack->repRequired));
+    PrintFmtStrPurchaseInfo(idsPurchaseInfo, GetRepPercentage(stack->repRequired));
     *((PBYTE) FMT_VAL_IS_ZERO_CHECK) = 0x75; // restore the original value to prevent other 0's from being unintentionally printed
 }
 

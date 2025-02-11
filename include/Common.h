@@ -155,7 +155,7 @@ public:
     bool CheckForSync_Hook(Vector const &unk1, Vector const &unk2, Quaternion const &unk3);
 };
 
-struct IObjInspectImpl
+struct IObjRW
 {
     BYTE data[0x10];
     CShip* ship;

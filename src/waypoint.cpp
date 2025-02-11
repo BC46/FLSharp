@@ -9,8 +9,7 @@
 // Hook that prevents waypoints from being cleared when the player is in a different system
 WaypointInfo* WaypointCheck_Hook(UINT index)
 {
-    typedef WaypointInfo* WaypointCheck(UINT index);
-    WaypointInfo* waypointInfo = ((WaypointCheck*) WAYPOINT_CHECK_ADDR)(index);
+    WaypointInfo* waypointInfo = WaypointCheck(index);
 
     if (!waypointInfo)
         return NULL;
@@ -24,8 +23,7 @@ WaypointInfo* WaypointCheck_Hook(UINT index)
 // Hook that prevents waypoints from being set at the player ship's location
 NavMapObj* NeuroNetNavMap::GetHighlightedObject_Hook(DWORD unk1, DWORD unk2)
 {
-    GetHighlightedObject getHighlightedObjFunc = GetFuncDef<GetHighlightedObject>(NAV_MAP_GET_HIGHLIGHTED_OBJ_ADDR);
-    NavMapObj* result = (this->*getHighlightedObjFunc)(unk1, unk2);
+    NavMapObj* result = GetHighlightedObject(unk1, unk2);
 
     if (!result)
         return NULL;

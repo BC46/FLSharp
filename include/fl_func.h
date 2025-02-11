@@ -1,6 +1,3 @@
-#ifndef FL_FUNC_H
-#define FL_FUNC_H
-
 #define NAKED __declspec(naked)
 #define NOINLINE __declspec(noinline)
 
@@ -10,5 +7,3 @@
         __asm mov eax, addr \
         __asm jmp eax \
     }
-
-#endif //FL_FUNC_H

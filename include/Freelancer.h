@@ -2,31 +2,18 @@
 
 #include "Common.h"
 
-#define WAYPOINT_CHECK_ADDR 0x4C46A0
 #define PLAYER_SYSTEM_ADDR 0x673354
 #define CHECK_FOR_SYNC_CALL_ADDR 0x541602
 #define POST_INIT_DEALLOC_CALL_ADDR 0x54B8B9
 #define OBJ_UPDATE_CALL_ADDR 0x54167C
-#define GET_PLAYERIOBJINSPECTIMPL_ADDR 0x54BAF0
 #define WAYPOINT_CHECK_CALL_ADDR 0x4F4141
 #define INIT_NN_ELEMENTS_CALL_ADDR 0x5D4A80
-#define INIT_NN_ELEMENTS_ADDR 0x4A9790
-#define SET_RESOLUTION_ADDR 0x4B1C00
 #define TEST_RESOLUTIONS_ADDR 0x4B2440
-#define NAV_MAP_GET_HIGHLIGHTED_OBJ_ADDR 0x496D40
 
 #define FL_BUFFER_1 ((LPWSTR) 0x66DC60)
 #define FL_BUFFER_2 ((LPWSTR) 0x66FC60)
 #define FL_BUFFER_LEN *((PUINT) 0x6119F8)
 #define FL_RESOURCES_HANDLE *((PDWORD) 0x67ECA8)
-
-inline UINT GetFlString(UINT ids, LPWSTR buffer, UINT bufferLen)
-{
-    #define GET_FL_STRING_ADDR (0x4347E0)
-
-    typedef UINT GetFlStringFunc(DWORD, UINT, PWCHAR, UINT);
-    return ((GetFlStringFunc*) GET_FL_STRING_ADDR)(FL_RESOURCES_HANDLE, ids, buffer, bufferLen);
-}
 
 struct WaypointInfo
 {
@@ -42,9 +29,7 @@ struct NavMapObj
 struct NeuroNetNavMap
 {
     NavMapObj* GetHighlightedObject_Hook(DWORD unk1, DWORD unk2);
-
-private:
-    typedef NavMapObj* (NeuroNetNavMap::*GetHighlightedObject)(DWORD unk1, DWORD unk2);
+    NavMapObj* GetHighlightedObject(DWORD unk1, DWORD unk2);
 };
 
 #define NN_PREFERENCES_NEW_DATA 0x98C
@@ -87,10 +72,20 @@ struct NN_Preferences
     void TestResolutions_Hook(DWORD unk);
     void VolumeSliderAdjustEnd_Hook(PVOID scrollElement);
 
-private:
-    typedef bool (NN_Preferences::*InitElements)(DWORD unk1, DWORD unk2);
-    typedef bool (NN_Preferences::*SetResolution)(UINT width, DWORD unk, UINT height);
+    bool InitElements(DWORD unk1, DWORD unk2);
+    bool SetResolution(UINT width, DWORD unk, UINT height);
 };
 
 void StopSound(BYTE soundId);
 void StartSound(BYTE soundId);
+
+UINT GetFlStringFromResources(DWORD resourcesHandle, UINT ids, LPWSTR buffer, UINT bufferLen);
+
+WaypointInfo* WaypointCheck(UINT index);
+
+IObjRW* GetPlayerIObjRW();
+
+inline UINT GetFlString(UINT ids, LPWSTR buffer, UINT bufferLen)
+{
+    return GetFlStringFromResources(FL_RESOURCES_HANDLE, ids, buffer, bufferLen);
+}

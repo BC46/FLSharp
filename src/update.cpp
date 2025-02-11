@@ -22,12 +22,10 @@ void SetTimeSinceLastUpdate()
     timeSinceLastUpdate = clock();
 }
 
-CShip* GetShip()
+CShip* GetPlayerShip()
 {
-    typedef IObjInspectImpl* GetPlayerIObjInspectImpl();
-    IObjInspectImpl* playerIObjInspect = ((GetPlayerIObjInspectImpl*) GET_PLAYERIOBJINSPECTIMPL_ADDR)();
-
-    return !playerIObjInspect ? NULL : playerIObjInspect->ship;
+    IObjRW* playerIObjRW = GetPlayerIObjRW();
+    return !playerIObjRW ? NULL : playerIObjRW->ship;
 }
 
 bool IsEkToggled(CShip* ship)
@@ -69,7 +67,7 @@ void PostInitDealloc_Hook(PVOID obj)
 
     sendUpdateAsap = true;
 
-    CShip* ship = GetShip();
+    CShip* ship = GetPlayerShip();
 
     if (!ship)
         return;
@@ -109,7 +107,7 @@ inline double GetShipMinSyncInterval(CShip* ship)
 bool CRemotePhysicsSimulation::CheckForSync_Hook(Vector const &unk1, Vector const &unk2, Quaternion const &unk3)
 {
     double timeElapsed = getTimeElapsed(timeSinceLastUpdate); // Time elapsed since the last update
-    CShip* ship = GetShip();
+    CShip* ship = GetPlayerShip();
 
     if (timeElapsed < GetShipMinSyncInterval(ship))
     {
@@ -137,7 +135,7 @@ bool CRemotePhysicsSimulation::CheckForSync_Hook(Vector const &unk1, Vector cons
 // Hook for function that sends an update to the server
 void IServerImpl::SPObjUpdate_Hook(SSPObjUpdateInfo &updateInfo, UINT client)
 {
-    CShip* ship = GetShip();
+    CShip* ship = GetPlayerShip();
 
     if (ship)
     {
