@@ -18,13 +18,12 @@ UINT CELauncher::GetProjectilesPerFire_Hook() const
     return result;
 }
 
-typedef UINT (CELauncher::*GetProjectilesPerFireFunc)() const;
-GetProjectilesPerFireFunc getProjectilesPerFireFunc = &CELauncher::GetProjectilesPerFire;
-GetProjectilesPerFireFunc getProjectilesPerFireHookFunc = &CELauncher::GetProjectilesPerFire_Hook;
-
 void InitProjectilesSoundFix()
 {
-    SetPointer(PROJECTILES_PER_FIRE_CALL_ADDR, &getProjectilesPerFireHookFunc);
+    #define PROJECTILES_PER_FIRE_CALL_ADDR 0x534D0D
+
+    Patch_WORD(PROJECTILES_PER_FIRE_CALL_ADDR, 0xBB90);
+    SetPointer(PROJECTILES_PER_FIRE_CALL_ADDR + 0x2, &CELauncher::GetProjectilesPerFire_Hook);
 }
 
 DWORD playerLauncherFireRet;
@@ -37,7 +36,7 @@ NAKED void HandlePlayerLauncherFire_Hook()
         push 0x3F800000                     // overwritten instruction
         xchg ecx, edi                       // preserve ecx, while also setting the fired CELauncher as the thisptr
         mov esi, edx                        // preserve edx
-        call [getProjectilesPerFireFunc]
+        call dword ptr [CELauncher::GetProjectilesPerFire]
         mov ecx, edi                        // restore ecx
         mov edx, esi                        // restore edx
         push eax                            // push projectiles per fire
