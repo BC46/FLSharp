@@ -1,7 +1,10 @@
 #include "weapon_anim.h"
 #include "utils.h"
+#include "fl_func.h"
 
 DWORD setModelCallAddr = 0;
+
+FL_FUNC(bool EngAnimation::SetModel(PDWORD unk, ModelBinary* model), setModelCallAddr);
 
 // There exist many animations for the weapon models in Freelancer (e.g. barrels rotating or moving back and forth while shooting).
 // However, despite all weapon animations already being defined correctly in the ini files, there is a bug in engbase.dll that prevents these animations from playing properly.
@@ -24,8 +27,7 @@ bool EngAnimation::SetModel_Hook(PDWORD unk, ModelBinary* model)
     }
 
     // Call original function.
-    SetModel setModelFunc = GetFuncDef<SetModel>(setModelCallAddr);
-    return (this->*setModelFunc)(unk, model);
+    return SetModel(unk, model);
 }
 
 // This hook allows for e.g. the Cruiser forward gun animation to work without having to modify the model.
