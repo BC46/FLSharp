@@ -15,6 +15,7 @@ DEPS_FILE = makefile.deps
 RES_FILE = $(OBJ_DIR)\main.RES
 OBJ_FILES = $(OBJ_DIR)\fl_math.obj \
 $(OBJ_DIR)\main.obj \
+$(OBJ_DIR)\feature_config.obj \
 $(OBJ_DIR)\Freelancer.obj \
 $(OBJ_DIR)\update.obj \
 $(OBJ_DIR)\utils.obj \
@@ -37,7 +38,7 @@ EXTERNAL_LIBS = User32.lib Gdi32.lib
 
 OUTPUT_FILE = $(BIN_DIR)\FLSharp.dll
 
-CPP_FLAGS = /c /O2 /nologo /W3 /WX /LD /MD /EHsc /D_CRT_SECURE_NO_WARNINGS /D_CRT_NON_CONFORMING_SWPRINTFS
+CPP_FLAGS = /c /O2 /nologo /W3 /WX /LD /MD /EHsc /D_CRT_SECURE_NO_WARNINGS /D_CRT_NON_CONFORMING_SWPRINTFS /D_CRT_NONSTDC_NO_DEPRECATE
 LD_FLAGS = /DLL /NOLOGO /RELEASE
 LIB_FLAGS = /NOLOGO /MACHINE:IX86
 
