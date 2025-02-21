@@ -22,6 +22,8 @@ public:
     bool read_value();
     bool is_value(LPCSTR name);
     LPCSTR get_value_string(UINT index = 0);
+    bool get_value_bool(UINT index = 0);
+    LPCSTR get_name_ptr();
     void close();
 
 private:

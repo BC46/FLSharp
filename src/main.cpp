@@ -1,4 +1,5 @@
 #include "feature_config.h"
+#include "config_reader.h"
 #include "update.h"
 #include "waypoint.h"
 #include "projectiles.h"
@@ -19,6 +20,7 @@ void Init()
     manager.RegisterFeature("better_updates",           InitBetterUpdates,          NULL,                       ApplyOnlyOnClient);
     manager.RegisterFeature("waypoint_fixes",           InitWaypointFixes,          NULL,                       ApplyOnlyOnClient);
     manager.RegisterFeature("projectiles_sound_fix",    InitProjectilesSoundFix,    NULL,                       ApplyOnlyOnClient);
+    manager.RegisterFeature("projectiles_server_fix",   InitProjectilesServerFix,   NULL,                       ApplyAlways);
     manager.RegisterFeature("better_resolutions",       InitBetterResolutions,      CleanupBetterResolutions,   ApplyOnlyOnClient);
     manager.RegisterFeature("more_test_sounds",         InitTestSounds,             NULL,                       ApplyOnlyOnClient);
     manager.RegisterFeature("trade_lane_lights_fix",    InitTradeLaneLightsFix,     NULL,                       ApplyOnlyOnClient);
@@ -28,7 +30,8 @@ void Init()
     manager.RegisterFeature("flash_particle_fix",       InitFlashParticlesFix,      NULL,                       ApplyOnlyOnClient);
     manager.RegisterFeature("print_rep_requirements",   InitPrintRepRequirements,   NULL,                       ApplyOnlyOnClient);
     manager.RegisterFeature("post_game_deadlock_fix",   InitPostGameDeadlockFix,    NULL,                       ApplyOnlyOnClient);
-    manager.RegisterFeature("projectiles_server_fix",   InitProjectilesServerFix,   NULL,                       ApplyAlways);
+
+    ReadConfig("FLSharp.ini", manager);
 
     manager.InitFeatures();
 }

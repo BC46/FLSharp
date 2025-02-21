@@ -7,6 +7,8 @@ EXPORTS
 ?read_value@INI_Reader@@QAE_NXZ
 ?is_value@INI_Reader@@QAE_NPBD@Z
 ?get_value_string@INI_Reader@@QAEPBDI@Z
+?get_value_bool@INI_Reader@@QAE_NI@Z
+?get_name_ptr@INI_Reader@@QAEPBDXZ
 ?close@INI_Reader@@QAEXXZ
 
 ?FindFirst@CEquipManager@@QBEPBVCEquip@@I@Z

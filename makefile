@@ -16,6 +16,7 @@ RES_FILE = $(OBJ_DIR)\main.RES
 OBJ_FILES = $(OBJ_DIR)\fl_math.obj \
 $(OBJ_DIR)\main.obj \
 $(OBJ_DIR)\feature_config.obj \
+$(OBJ_DIR)\config_reader.obj \
 $(OBJ_DIR)\Freelancer.obj \
 $(OBJ_DIR)\update.obj \
 $(OBJ_DIR)\utils.obj \

@@ -5,6 +5,16 @@ obj\cgun_wrapper.obj: \
     makefile.deps \
     makefile
 
+obj\config_reader.obj: \
+    include\config_reader.h \
+    include\feature_config.h \
+    include\Common.h \
+    include\fl_math.h \
+    include\vftable.h \
+    include\feature_config.h \
+    makefile.deps \
+    makefile
+
 obj\copy_paste.obj: \
     include\copy_paste.h \
     include\vftable.h \

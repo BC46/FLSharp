@@ -34,7 +34,11 @@ These include:
 More fixes and improvements may be added in the future.
 
 ## Installation instructions
-Download the latest `FLSharp.dll` from [Releases](https://github.com/BC46/FLSharp/releases). Extract the `dll` to the `EXE` folder of your Freelancer installation. Next, open both the `dacom.ini` and `dacomsrv.ini` files and append `FLSharp.dll` to the `[Libraries]` sections.
+Download the latest `FLSharp.zip` from [Releases](https://github.com/BC46/FLSharp/releases). Extract zip's contents to the `EXE` folder of your Freelancer installation. Next, open both the `dacom.ini` and `dacomsrv.ini` files and append `FLSharp.dll` to the `[Libraries]` sections.
+
+In the `FLSharp.ini` file, you can specify for every feature whether or not it should be enabled. To disable a feature, change its value from `true` to `false`. In almost all cases, having every feature enabled is ideal since these are all quality of life improvements. However, you may want to disable one or more features if you do not like them for whatever reason or if they introduce compatibilities with other plugins.
+
+If the `FLSharp.ini` file is missing or if it can't be opened, then all features are enabled by default. When an entry in `FLSharp.ini` is missing, then that particular feature will also be enabled by default. In other words, every feature is by default enabled unless stated otherwise.
 
 ## Build instructions
 Build the project using the `NMAKE` tool from Microsoft Visual C++ 7.0 (VC7) + the VC6 runtime libraries.
