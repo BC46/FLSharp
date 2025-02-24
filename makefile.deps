@@ -77,6 +77,7 @@ obj\main.obj: \
     include\utils.h \
     include\rep_requirements.h \
     include\cgun_wrapper.h \
+    include\zone_messages.h \
     makefile.deps \
     makefile
 
@@ -177,6 +178,13 @@ obj\weapon_anim.obj: \
     include\Common.h \
     include\fl_math.h \
     include\vftable.h \
+    include\utils.h \
+    include\fl_func.h \
+    makefile.deps \
+    makefile
+
+obj\zone_messages.obj: \
+    include\zone_messages.h \
     include\utils.h \
     include\fl_func.h \
     makefile.deps \
