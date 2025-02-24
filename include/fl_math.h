@@ -29,5 +29,5 @@ float inline copysign(float x, float y)
 {
     return (x < 0 && y > 0) || (x > 0 && y < 0) ? -x : x;
 }
-# endif
+#endif
 #endif

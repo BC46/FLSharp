@@ -44,8 +44,6 @@ If the `FLSharp.ini` file is missing or if it can't be opened, then all features
 Build the project using the `NMAKE` tool from Microsoft Visual C++ 7.0 (VC7) + the VC6 runtime libraries.
 This will output the `FLSharp.dll` file in the `bin` folder.
 Building the project using other compilers may require the code to be modified.
-Last time I checked, the build succeeded out of the box with VS2022.
-However, if FL#'s code references anything from the VC6 standard library within Freelancer itself, then that code won't work as intended.
 
 ## Credits
 - [Aingar](https://github.com/Aingar)

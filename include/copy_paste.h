@@ -1,8 +1,13 @@
 #define WIN32_LEAN_AND_MEAN
 #include <windows.h>
-#include <vector>
 #include "vftable.h"
 #include "Common.h"
+
+#ifdef USE_ST6
+#include "st6.h"
+#else
+#include <vector>
+#endif
 
 struct InputChar
 {
@@ -29,7 +34,14 @@ struct InputBoxWindow
     BYTE x04[0x498];
     int pos; // 0x49C
     BYTE x4A0[0x24];
-    std::vector<InputChar> chars; // 0x4C4
+
+    #ifdef USE_ST6
+    st6
+    #else
+    std
+    #endif
+    ::vector<InputChar> chars; // 0x4C4
+
     BYTE x4E4[0x3C];
     int maxCharsLength; // 0x510
     BYTE x514[0x18];
