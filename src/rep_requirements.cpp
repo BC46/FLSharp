@@ -44,7 +44,7 @@ void NN_ShipTrader::StoreShipRepRequirement(PBYTE shipListPtr, float repRequirem
     #define SHIP_LIST_PTR_START 0x3FC
     int shipIndex = (shipListPtr - (PBYTE) this - SHIP_LIST_PTR_START) / sizeof(int);
 
-    if (shipIndex >= 0 && shipIndex < SHIP_TRADER_SHIP_AMOUNT)
+    if (IsShipIndexValid(shipIndex))
         this->shipRepPercentages[shipIndex] = GetRepPercentage(repRequirement);
 }
 
@@ -52,7 +52,7 @@ LPWSTR NN_ShipTrader::PrintFmtShipRepRequirement()
 {
     GetFlString(insufficientRepIds, FL_BUFFER_1, FL_BUFFER_LEN);
 
-    if (selectedShipIndex >= 0 && selectedShipIndex < SHIP_TRADER_SHIP_AMOUNT)
+    if (IsShipIndexValid(selectedShipIndex))
         swprintf(FL_BUFFER_2, FL_BUFFER_1, shipRepPercentages[selectedShipIndex]);
     else
         wcscpy(FL_BUFFER_2, FL_BUFFER_1);
@@ -85,16 +85,13 @@ NAKED void PrintShipRepRequirement_Hook()
 void InitPrintRepRequirements()
 {
     #define REP_REQUIREMENTS_NOT_MET_ADDR 0x480739
-    #define NN_SHIPTRADER_OBJ_SIZE_ADDR 0x4B9739
     #define GET_SHIP_REQUIREMENT_ADDR 0x4B9462
     #define PRINT_SHIP_REQUIREMENT_ADDR 0x4B9010
 
     Hook(REP_REQUIREMENTS_NOT_MET_ADDR + 0x9, &NN_Dealer::PrintFmtStrPurchaseInfo_Hook, 5);
     Patch_WORD(REP_REQUIREMENTS_NOT_MET_ADDR, 0x9054); // push esp followed by nop (replaces param 0 with a stack pointer)
 
-    // Expand the size of the NN_ShipTrader object.
-    ReadWriteProtect(NN_SHIPTRADER_OBJ_SIZE_ADDR, sizeof(UINT));
-    *(PUINT) NN_SHIPTRADER_OBJ_SIZE_ADDR += sizeof(int[SHIP_TRADER_SHIP_AMOUNT]);
+    ExpandNNShipTraderObjMemory();
 
     Hook(GET_SHIP_REQUIREMENT_ADDR, GetShipRepRequirement_Hook, 7, true);
 

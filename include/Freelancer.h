@@ -89,3 +89,26 @@ inline UINT GetFlString(UINT ids, LPWSTR buffer, UINT bufferLen)
 {
     return GetFlStringFromResources(FL_RESOURCES_HANDLE, ids, buffer, bufferLen);
 }
+
+#define SHIP_TRADER_SHIP_AMOUNT 3
+#define SHIP_TRADER_PLAYER_SHIP_INDEX -2
+
+// 0x370 = ShipTrader3DShip*
+// TODO: add generic check to see if index is in valid range between 0 and SHIP_TRADER_SHIP_AMOUNT
+struct NN_ShipTrader
+{
+    BYTE x00[0x3D0];
+    int selectedShipIndex; // 0x3D0
+    BYTE x3D4[0x74];
+    int shipRepPercentages[SHIP_TRADER_SHIP_AMOUNT]; // 0x448
+
+    void StoreShipRepRequirement(PBYTE shipListPtr, float repRequirement);
+    LPWSTR NN_ShipTrader::PrintFmtShipRepRequirement();
+};
+
+void ExpandNNShipTraderObjMemory();
+
+inline bool IsShipIndexValid(int index)
+{
+    return index >= 0 && index < SHIP_TRADER_SHIP_AMOUNT;
+}
