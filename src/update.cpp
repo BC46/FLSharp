@@ -53,34 +53,37 @@ bool HasOrientationChanged(CShip* ship, double timeElapsed)
     return rotationDelta > shipTurnThreshold;
 }
 
-void (*PostInitDealloc_Original)(PVOID obj);
-
-// Hook for dealloc function that gets called right after initializing the player's ship (undock or load game in space)
-// This is where we want to calculate the ship's turn threshold
-void PostInitDealloc_Hook(PVOID obj)
+namespace Update
 {
-    // Call original function
-    PostInitDealloc_Original(obj);
+    void (*PostInitDealloc_Original)(PVOID obj);
 
-    if (SinglePlayer()) // No need to calculate the turn threshold in SP
-        return;
+    // Hook for dealloc function that gets called right after initializing the player's ship (undock or load game in space)
+    // This is where we want to calculate the ship's turn threshold
+    void PostInitDealloc_Hook(PVOID obj)
+    {
+        // Call original function
+        PostInitDealloc_Original(obj);
 
-    sendUpdateAsap = true;
+        if (SinglePlayer()) // No need to calculate the turn threshold in SP
+            return;
 
-    CShip* ship = GetPlayerShip();
+        sendUpdateAsap = true;
 
-    if (!ship)
-        return;
+        CShip* ship = GetPlayerShip();
 
-    Archetype::Ship const * shipArch = ship->shiparch();
+        if (!ship)
+            return;
 
-    // TODO: The angular drag is meant to be calculated dynamically using the CShip::get_angular_drag() function
-    // However, the angular drag factor is kind of an unused feature in FL and not many mods use it
-    float avgDrag = (shipArch->angularDrag.x + shipArch->angularDrag.y) / 2;
-    float avgTorque = (shipArch->steeringTorque.x + shipArch->steeringTorque.y) / 2;
-    float maxTurnSpeed = (avgTorque / avgDrag) * (180.0f / M_PI);
+        Archetype::Ship const * shipArch = ship->shiparch();
 
-    shipTurnThreshold = min(30.0f, 15 * sqrtf(maxTurnSpeed) / sqrtf(ship->get_radius()));
+        // TODO: The angular drag is meant to be calculated dynamically using the CShip::get_angular_drag() function
+        // However, the angular drag factor is kind of an unused feature in FL and not many mods use it
+        float avgDrag = (shipArch->angularDrag.x + shipArch->angularDrag.y) / 2;
+        float avgTorque = (shipArch->steeringTorque.x + shipArch->steeringTorque.y) / 2;
+        float maxTurnSpeed = (avgTorque / avgDrag) * (180.0f / M_PI);
+
+        shipTurnThreshold = min(30.0f, 15 * sqrtf(maxTurnSpeed) / sqrtf(ship->get_radius()));
+    }
 }
 
 bool ShouldSendUpdate(CShip* ship, double timeElapsed)
@@ -159,7 +162,7 @@ void InitBetterUpdates()
 {
     SetTimeSinceLastUpdate();
 
-    PostInitDealloc_Original = SetRelPointer(POST_INIT_DEALLOC_CALL_ADDR + 1, PostInitDealloc_Hook);
+    Update::PostInitDealloc_Original = SetRelPointer(POST_INIT_DEALLOC_CALL_ADDR + 1, Update::PostInitDealloc_Hook);
     Hook(CHECK_FOR_SYNC_CALL_ADDR, &CRemotePhysicsSimulation::CheckForSync_Hook, 5);
     Hook(OBJ_UPDATE_CALL_ADDR, &IServerImpl::SPObjUpdate_Hook, 6);
 }
