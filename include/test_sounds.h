@@ -40,7 +40,7 @@ struct SoundHandle
     FILL_VFTABLE(3)
     FILL_VFTABLE(4)
     FILL_VFTABLE(5)
-    virtual void Vftable_x60();
+    virtual void Stop();
     virtual void Vftable_x64();
     virtual void Pause();
     virtual void Resume();

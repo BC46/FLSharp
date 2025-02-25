@@ -87,6 +87,15 @@ Func Trampoline(DWORD location, Func hookFunc, UINT instrLen)
 }
 
 template <typename Func>
+void FixRelAddressInGateway(Func gateway, DWORD offset, DWORD hookLocation)
+{
+    PBYTE gatewayLocation = (PBYTE) *((PDWORD) &gateway);
+    PDWORD relAddress = (PDWORD) (gatewayLocation + offset);
+
+    *relAddress -= (DWORD) gatewayLocation - hookLocation;
+}
+
+template <typename Func>
 void CleanupTrampoline(Func trampolineFunc)
 {
     VirtualFree((LPVOID) *((PDWORD) &trampolineFunc), 0, MEM_RELEASE);

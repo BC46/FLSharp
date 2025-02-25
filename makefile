@@ -31,7 +31,8 @@ $(OBJ_DIR)\ui_anim.obj \
 $(OBJ_DIR)\weapon_anim.obj \
 $(OBJ_DIR)\flash_particles.obj \
 $(OBJ_DIR)\rep_requirements.obj \
-$(OBJ_DIR)\cgun_wrapper.obj
+$(OBJ_DIR)\cgun_wrapper.obj \
+$(OBJ_DIR)\sound_ref_leaks.obj
 
 COMMON_LIB = $(OBJ_DIR)\Common.lib
 DALIB_LIB = $(OBJ_DIR)\DALib.lib

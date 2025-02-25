@@ -12,6 +12,7 @@
 #include "flash_particles.h"
 #include "rep_requirements.h"
 #include "cgun_wrapper.h"
+#include "sound_ref_leaks.h"
 
 FeatureManager manager;
 
@@ -30,6 +31,7 @@ void Init()
     manager.RegisterFeature("flash_particle_fix",       InitFlashParticlesFix,      NULL,                       ApplyOnlyOnClient);
     manager.RegisterFeature("print_rep_requirements",   InitPrintRepRequirements,   NULL,                       ApplyOnlyOnClient);
     manager.RegisterFeature("post_game_deadlock_fix",   InitPostGameDeadlockFix,    NULL,                       ApplyOnlyOnClient);
+    manager.RegisterFeature("sound_ref_leaks_fix",      InitSoundRefLeaksFix,       CleanupSoundRefLeaksFix,    ApplyOnlyOnClient);
 
     ReadConfig("FLSharp.ini", manager);
 

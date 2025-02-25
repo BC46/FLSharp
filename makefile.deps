@@ -77,6 +77,7 @@ obj\main.obj: \
     include\utils.h \
     include\rep_requirements.h \
     include\cgun_wrapper.h \
+    include\sound_ref_leaks.h \
     makefile.deps \
     makefile
 
@@ -114,6 +115,13 @@ obj\resolutions.obj: \
 
 obj\resolutions_asm.obj: \
     include\resolutions_asm.h \
+    makefile.deps \
+    makefile
+
+obj\sound_ref_leaks.obj: \
+    include\sound_ref_leaks.h \
+    include\fl_func.h \
+    include\utils.h \
     makefile.deps \
     makefile
 
