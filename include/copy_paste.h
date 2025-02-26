@@ -44,7 +44,7 @@ struct InputBoxWindow
 
     BYTE x4E4[0x3C];
     int maxCharsLength; // 0x510
-    BYTE x514[0x18];
+    BYTE x514[0x14];
     WCHAR forbiddenChar; // 0x528
     bool noForbiddenChar; // 0x52A
     PDWORD ime; // 0x52C
