@@ -3,12 +3,18 @@
 
 void FeatureManager::RegisterFeature(LPCSTR name, void (*initFunc)(), void (*cleanupFunc)(), bool (*applyPredicate)())
 {
-    features[name] = FlSharpFeature{ initFunc, cleanupFunc, applyPredicate, true };
+    FlSharpFeature feature;
+    feature.initFunc = initFunc;
+    feature.cleanupFunc = cleanupFunc;
+    feature.applyPredicate = applyPredicate;
+
+    features.insert(
+        std::map<LPCSTR, FlSharpFeature, CmpStr>::value_type(name, feature));
 }
 
 void FeatureManager::SetFeatureEnabled(LPCSTR name, bool enabled)
 {
-    std::map<LPCSTR, FlSharpFeature>::iterator it = features.find(name);
+    std::map<LPCSTR, FlSharpFeature, CmpStr>::iterator it = features.find(name);
 
     if (it != features.end())
     {
@@ -18,7 +24,7 @@ void FeatureManager::SetFeatureEnabled(LPCSTR name, bool enabled)
 
 void FeatureManager::InitFeatures()
 {
-    std::map<LPCSTR, FlSharpFeature>::iterator it;
+    std::map<LPCSTR, FlSharpFeature, CmpStr>::iterator it;
 
     for (it = features.begin(); it != features.end(); ++it)
     {
@@ -31,7 +37,7 @@ void FeatureManager::InitFeatures()
 
 void FeatureManager::CleanupFeatures()
 {
-    std::map<LPCSTR, FlSharpFeature>::iterator it;
+    std::map<LPCSTR, FlSharpFeature, CmpStr>::iterator it;
 
     for (it = features.begin(); it != features.end(); ++it)
     {

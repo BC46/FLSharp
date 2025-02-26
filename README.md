@@ -46,6 +46,8 @@ Build the project using the `NMAKE` tool from Microsoft Visual C++ 7.0 (VC7) + t
 This will output the `FLSharp.dll` file in the `bin` folder.
 Building the project using other compilers may require the code to be modified.
 
+Note that if the project is compiled without linking with the VC6 runtime libraries, then that code may not work as intended if it references any VC6 container internally from Freelancer. To mitigate this, you may define `USE_ST6` to use `st6.h` instead.
+
 ## Credits
 - [Aingar](https://github.com/Aingar)
   - Identification of the client-to-server communication bugs/improvements and implementations within DiscoveryGC's client hook

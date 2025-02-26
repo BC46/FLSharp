@@ -3,7 +3,7 @@
 
 // In many of the MP-related menus there is an animation for all the buttons where they slide out as you close the menu.
 // I noticed that often the button texts slide out about nine times faster than their respective button background.
-// Ideally I wanted to make it so that the slide out speeds match, but my attempts proved to be unsuccesful.
+// Ideally I wanted to make it so that the slide out speeds match, but my attempts proved to be unsuccessful.
 // Turns out that the buttons that do have matching slide speeds (e.g. in the main menu), use completely different code to achieve this.
 // Now for all animations with the different slide-out speeds I just hide the text when the slide-out animation is active;
 // by default this already happens in the slide-in animation.

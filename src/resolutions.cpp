@@ -276,7 +276,7 @@ void InitBetterResolutions()
     Hook(0x4B2781, &NN_Preferences::SetResolution_Active_Hook, 5);
 
     // Hook test resolutions functions so that we only test the resolutions when it's actually necessary (optimization)
-    TestResolutions_Original = Trampoline(0x4B2440, &NN_Preferences::TestResolutions_Hook, 8);
+    TestResolutions_Original = Trampoline(TEST_RESOLUTIONS_ADDR, &NN_Preferences::TestResolutions_Hook, 8);
 
     // Places that determine the width of the "default" resolution
     Hook(0x4ACEAB, DefaultResSet1, 5, true);
