@@ -30,7 +30,7 @@ These include:
 - Improved the slide-out animation for some UI buttons in the multiplayer menus.
 - When the "You must be on friendlier terms to purchase this." message is displayed in the Dealer menus, allow the exact reputation requirement to be printed too. Include `%d` in the IDS (S 1564, `resources.dll`) to make it work.
 - Fixed a bug that caused the Freelancer process to not always terminate after closing the game.
-- Automatically enable rotation lock and auto leveling when launching to space to prevent Freelancer from being confused about whether or not these controls are enabled.
+- Automatically enable rotation lock and auto leveling when launching to space to prevent control-related issues from occurring (e.g. mouse flight not working).
 
 More fixes and improvements may be added in the future.
 
