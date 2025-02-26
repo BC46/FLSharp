@@ -94,7 +94,6 @@ inline UINT GetFlString(UINT ids, LPWSTR buffer, UINT bufferLen)
 #define SHIP_TRADER_PLAYER_SHIP_INDEX -2
 
 // 0x370 = ShipTrader3DShip*
-// TODO: add generic check to see if index is in valid range between 0 and SHIP_TRADER_SHIP_AMOUNT
 struct NN_ShipTrader
 {
     BYTE x00[0x3D0];

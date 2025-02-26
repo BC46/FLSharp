@@ -16,6 +16,9 @@ namespace TempFixes
         // Call original function.
         PostInitDealloc_Original(obj);
 
+        // TODO: Is this volatile?
+        // The user could've applied a hex edit to always have rotation lock and auto level off by default.
+        // Wouldn't it be be better to set those default values instead of assuming true and then make the in-game behavior manager aware of this?
         ROTATION_LOCK = AUTO_LEVEL = true;
     }
 }
