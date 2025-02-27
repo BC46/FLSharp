@@ -2,6 +2,11 @@
 #include "DALib.h"
 #include "utils.h"
 #include "stdlib.h"
+#include "fl_func.h"
+
+DWORD exitCallAddress = NULL;
+
+FL_FUNC(void exit_Original(int const status), exitCallAddress)
 
 void exit_Hook(int const status)
 {
@@ -9,7 +14,7 @@ void exit_Hook(int const status)
     CGunWrapper::Shutdown();
 
     // Call the original exit function.
-    exit(status);
+    exit_Original(status);
 }
 
 // In Freelancer, when you close the server list menu (provided that there were servers listed),
@@ -29,5 +34,6 @@ void InitPostGameDeadlockFix()
     #define FL_EXE_EXIT_CALL_ADDR 0x5B81C6
 
     Nop(CGUNWRAPPER_SHUTDOWN_CALL_ADDR, 5); // nop out the post-game CGunWrapper::Shutdown() call; call it in the exit hook instead
+    exitCallAddress = *((PDWORD) 0x5C713C);
     Hook(FL_EXE_EXIT_CALL_ADDR, exit_Hook, 6);
 }
