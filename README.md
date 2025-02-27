@@ -42,11 +42,9 @@ Optionally, you can download the [FLSharp.ini](https://github.com/BC46/FLSharp/b
 If the `FLSharp.ini` file is missing or if it can't be opened, then all features are enabled by default. When an entry in `FLSharp.ini` is missing, then that particular feature will also be enabled by default. In other words, every feature is by default enabled unless stated otherwise.
 
 ## Build instructions
-Build the project using the `NMAKE` tool from Microsoft Visual C++ 7.0 (VC7) + the VC6 runtime libraries.
+Build the project using the `nmake` tool from Visual Studio 2022.
 This will output the `FLSharp.dll` file in the `bin` folder.
 Building the project using other compilers may require the code to be modified.
-
-Note that if the project is compiled without linking with the VC6 runtime libraries, then that code may not work as intended if it references any VC6 container internally from Freelancer. To mitigate this, you may define `USE_ST6` to use `st6.h` instead.
 
 ## Credits
 - [Aingar](https://github.com/Aingar)
