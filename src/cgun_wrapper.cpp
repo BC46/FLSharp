@@ -1,12 +1,9 @@
 #include "cgun_wrapper.h"
 #include "DALib.h"
 #include "utils.h"
-#include "stdlib.h"
 #include "fl_func.h"
 
-DWORD exitCallAddress = NULL;
-
-FL_FUNC(void exit_Original(int const status), exitCallAddress)
+FL_FUNC(void exit_Original(int const status), dword ptr ds:[0x5C713C])
 
 void exit_Hook(int const status)
 {
@@ -34,6 +31,5 @@ void InitPostGameDeadlockFix()
     #define FL_EXE_EXIT_CALL_ADDR 0x5B81C6
 
     Nop(CGUNWRAPPER_SHUTDOWN_CALL_ADDR, 5); // nop out the post-game CGunWrapper::Shutdown() call; call it in the exit hook instead
-    exitCallAddress = *((PDWORD) 0x5C713C);
     Hook(FL_EXE_EXIT_CALL_ADDR, exit_Hook, 6);
 }
