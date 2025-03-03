@@ -40,7 +40,7 @@ EXTERNAL_LIBS = User32.lib Gdi32.lib
 
 OUTPUT_FILE = $(BIN_DIR)\FLSharp.dll
 
-CPP_FLAGS = /c /O2 /nologo /W3 /WX /LD /MT /EHsc /DNDEBUG /D_CRT_SECURE_NO_WARNINGS /D_CRT_NON_CONFORMING_SWPRINTFS /D_CRT_NONSTDC_NO_DEPRECATE /DUSE_ST6
+CPP_FLAGS = /c /O2 /nologo /W3 /WX /LD /MT /EHsc /Zc:threadSafeInit- /DNDEBUG /D_CRT_SECURE_NO_WARNINGS /D_CRT_NON_CONFORMING_SWPRINTFS /D_CRT_NONSTDC_NO_DEPRECATE /DUSE_ST6
 LD_FLAGS = /DLL /NOLOGO /RELEASE /DEBUG
 LIB_FLAGS = /NOLOGO /MACHINE:IX86
 
@@ -51,7 +51,7 @@ $(OUTPUT_FILE): $(OBJ_FILES) $(RES_FILE) $(COMMON_LIB) $(DALIB_LIB) $(BIN_DIR)
     $(CPP) $(CPP_FLAGS) $< -I$(INCLUDE_DIR) /Fo./$(OBJ_DIR)/
 
 $(RES_FILE): $(RC_FILE) $(OBJ_DIR) makefile
-    rc /fo $(RES_FILE) $(RC_FILE)
+    rc /nologo /fo $(RES_FILE) $(RC_FILE)
 
 $(COMMON_LIB): $(COMMON_DEF) makefile
     lib $(LIB_FLAGS) /def:$(COMMON_DEF) /name:COMMON /out:$(COMMON_LIB)
@@ -66,6 +66,6 @@ $(BIN_DIR):
     if not exist $(BIN_DIR) mkdir $(BIN_DIR)
 
 clean:
-    del $(BIN_DIR)\*.dll $(OBJ_DIR)\*.obj $(OBJ_DIR)\*.RES $(OBJ_DIR)\*.lib $(OBJ_DIR)\*.pdb
+    del $(BIN_DIR)\*.dll $(BIN_DIR)\*.pdb $(OBJ_DIR)\*.obj $(OBJ_DIR)\*.RES $(OBJ_DIR)\*.lib $(OBJ_DIR)\*.pdb
 
 !INCLUDE $(DEPS_FILE)
