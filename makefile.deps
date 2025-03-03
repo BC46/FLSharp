@@ -2,6 +2,7 @@ obj\cgun_wrapper.obj: \
     include\cgun_wrapper.h \
     include\DALib.h \
     include\utils.h \
+    include\fl_func.h \
     makefile.deps \
     makefile
 
