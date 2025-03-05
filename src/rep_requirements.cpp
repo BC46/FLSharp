@@ -52,11 +52,10 @@ LPWSTR NN_ShipTrader::PrintFmtShipRepRequirement()
 {
     GetFlString(insufficientRepIds, FL_BUFFER_1, FL_BUFFER_LEN);
 
-    if (IsShipIndexValid(selectedShipIndex))
-        swprintf(FL_BUFFER_2, FL_BUFFER_1, shipRepPercentages[selectedShipIndex]);
-    else
-        wcscpy(FL_BUFFER_2, FL_BUFFER_1);
+    if (!IsShipIndexValid(selectedShipIndex))
+        return FL_BUFFER_1;
 
+    swprintf(FL_BUFFER_2, FL_BUFFER_1, shipRepPercentages[selectedShipIndex]);
     return FL_BUFFER_2;
 }
 
@@ -67,7 +66,7 @@ NAKED void PrintShipRepRequirement_Hook()
     __asm {
         mov ecx, esi                                    // NN_ShipTrader
         call NN_ShipTrader::PrintFmtShipRepRequirement
-        push eax                                        // FL_BUFFER_2
+        push eax                                        // buffer
         push 0x1D                                       // 0x1D means print from buffer, 0x1E means print from IDS
         mov eax, PRINT_SHIP_REP_REQUIREMENT_RET_ADDR
         jmp eax
