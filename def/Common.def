@@ -28,3 +28,5 @@ EXPORTS
 ??0CEquipTraverser@@QAE@H@Z
 ?Traverse@CEquipManager@@QAEPAVCEquip@@AAVCEquipTraverser@@@Z
 ?cast@CELightEquip@@SAPAV1@PAVCEquip@@@Z
+
+?GetBehaviorManager@@YAPAVIBehaviorManager@@PAUIObjRW@@@Z

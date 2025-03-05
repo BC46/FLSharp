@@ -48,7 +48,7 @@ public:
 class CELauncher
 {
 public:
-    UINT IMPORT GetProjectilesPerFire() const;
+    IMPORT UINT GetProjectilesPerFire() const;
     UINT GetProjectilesPerFire_Hook() const;
 };
 
@@ -153,18 +153,29 @@ public:
 class CRemotePhysicsSimulation
 {
 public:
-    bool IMPORT CheckForSync(Vector const &unk1, Vector const &unk2, Quaternion const &unk3);
+    IMPORT bool CheckForSync(Vector const &unk1, Vector const &unk2, Quaternion const &unk3);
     bool CheckForSync_Hook(Vector const &unk1, Vector const &unk2, Quaternion const &unk3);
 };
 
 struct IObjRW
 {
     BYTE data[0x10];
-    CShip* ship;
+    CShip* ship; // actually a CObject* but make it CShip* for convenience
 };
+
+class IBehaviorManager
+{
+public:
+    BYTE x00[0x2F];
+    bool autoLevel; // 0x2F
+    BYTE x30[0xC9];
+    bool rotationLock; // 0xF9
+};
+
+IMPORT IBehaviorManager* GetBehaviorManager(IObjRW *iObjRw);
 
 struct ID_String
 {};
 
-bool IMPORT SinglePlayer();
-bool IMPORT IsMPServer();
+IMPORT bool SinglePlayer();
+IMPORT bool IsMPServer();

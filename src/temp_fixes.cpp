@@ -1,13 +1,13 @@
 #include "temp_fixes.h"
 #include "Freelancer.h"
+#include "Common.h"
 #include "utils.h"
-#include "fl_func.h"
 
 // These mostly keep track of what the current value is (state).
 #define ROTATION_LOCK *((bool*) (0x678E40 + 0x44))
 #define AUTO_LEVEL *((bool*) 0x612700)
 
-// These represent the actual underlying values of the flight behavior.
+// These represent the actual default values of the flight behavior.
 #define DEFAULT_ROTATION_LOCK_CMN_OFFSET (0x7249A)
 #define DEFAULT_AUTO_LEVEL_CMN_OFFSET (0x86542)
 
@@ -25,9 +25,20 @@ namespace TempFixes
         // Call original function.
         PostInitDealloc_Original(obj);
 
-        // Set rotation lock and auto level to their default value.
-        ROTATION_LOCK = defaultRotationLockValue;
-        AUTO_LEVEL = defaultAutoLevelValue;
+        IBehaviorManager* behaviorManager = GetBehaviorManager(GetPlayerIObjRW());
+
+        if (behaviorManager)
+        {
+            // Get the current default values from the behavior manager.
+            ROTATION_LOCK = behaviorManager->rotationLock;
+            AUTO_LEVEL = behaviorManager->autoLevel;
+        }
+        else
+        {
+            // If the behavior manager couldn't be retrieved, set rotation lock and auto level to their intended default value.
+            ROTATION_LOCK = defaultRotationLockValue;
+            AUTO_LEVEL = defaultAutoLevelValue;
+        }
     }
 }
 
@@ -45,6 +56,7 @@ void InitFlightControlsFix()
 {
     DWORD commonHandle = (DWORD) GetModuleHandleA("common.dll");
 
+    // Save the intended default values just in case.
     if (commonHandle)
     {
         defaultRotationLockValue = GetModuleBool(commonHandle, DEFAULT_ROTATION_LOCK_CMN_OFFSET);
