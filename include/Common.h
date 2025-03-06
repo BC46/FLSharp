@@ -163,12 +163,18 @@ struct IObjRW
     CShip* ship; // actually a CObject* but make it CShip* for convenience
 };
 
+struct PhysicsInfo
+{
+    BYTE x00[0x2F];
+    bool autoLevel; // 0x2F
+};
+
 class IBehaviorManager
 {
 public:
-    BYTE x00[0x2F];
-    bool autoLevel; // 0x2F
-    BYTE x30[0xC9];
+    BYTE x00[0x08];
+    PhysicsInfo* physicsInfo; // 0x08
+    BYTE x0C[0xED];
     bool rotationLock; // 0xF9
 };
 
