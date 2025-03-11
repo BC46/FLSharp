@@ -48,13 +48,13 @@ struct ResolutionInitInfo
     ResolutionInfo resolutionInfo;
 };
 
-bool inline IsResolutionAllowed(const DEVMODE &dm)
+inline bool IsResolutionAllowed(const DEVMODE &dm)
 {
     return dm.dmPelsWidth >= MIN_RES_WIDTH && dm.dmPelsHeight >= MIN_RES_HEIGHT && (dm.dmBitsPerPel == 16 || dm.dmBitsPerPel == 32);
 }
 
 // Returns true if the given resolution is narrower than 4:3.
-bool inline IsResolutionNarrow(UINT width, UINT height)
+inline bool IsResolutionNarrow(UINT width, UINT height)
 {
     #define MIN_4_BY_3_FACTOR (4.0f / 3.0f) - 0.02f
 

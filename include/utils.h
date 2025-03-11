@@ -6,29 +6,29 @@
 
 void Patch(DWORD vOffset, LPVOID mem, UINT len);
 
-void inline Patch_INT(DWORD vOffset, int value)
+inline void Patch_INT(DWORD vOffset, int value)
 {
     Patch(vOffset, &value, sizeof(int));
 }
 
-void inline Patch_CHAR(DWORD vOffset, char value)
+inline void Patch_CHAR(DWORD vOffset, char value)
 {
     Patch(vOffset, &value, sizeof(char));
 }
 
-void inline Patch_BYTE(DWORD vOffset, BYTE value)
+inline void Patch_BYTE(DWORD vOffset, BYTE value)
 {
     Patch(vOffset, &value, sizeof(BYTE));
 }
 
-void inline Patch_WORD(DWORD vOffset, WORD value)
+inline void Patch_WORD(DWORD vOffset, WORD value)
 {
     Patch(vOffset, &value, sizeof(WORD));
 }
 
 void Nop(DWORD vOffset, UINT len);
 
-void inline ReadWriteProtect(DWORD location, DWORD size)
+inline void ReadWriteProtect(DWORD location, DWORD size)
 {
     DWORD _;
     VirtualProtect((PVOID) location, size, PAGE_EXECUTE_READWRITE, &_);
@@ -99,8 +99,15 @@ void SetPointer(DWORD location, Func hookFunc)
     *(Func*) location = hookFunc;
 }
 
+template <typename Type>
+inline Type& GetValue(DWORD location)
+{
+    ReadWriteProtect(location, sizeof(Type));
+    return *(Type*) location;
+}
+
 template <class Func>
-Func inline GetFuncDef(DWORD funcAddr)
+inline Func GetFuncDef(DWORD funcAddr)
 {
     return *(Func*) &funcAddr;
 }

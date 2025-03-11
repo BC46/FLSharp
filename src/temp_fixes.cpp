@@ -48,8 +48,7 @@ namespace TempFixes
 bool GetModuleBool(DWORD moduleHandle, DWORD offset)
 {
     DWORD virtualAddr = moduleHandle + offset;
-    ReadWriteProtect(virtualAddr, sizeof(bool));
-    return *((bool*) virtualAddr);
+    return GetValue<bool>(virtualAddr);
 }
 
 // There is a bug in Freelancer where if you change the rotation lock or auto level from its default option, then load a game,

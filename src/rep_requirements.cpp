@@ -96,7 +96,6 @@ void InitPrintRepRequirements()
 
     ReadWriteProtect(FMT_VAL_IS_ZERO_CHECK, sizeof(BYTE));
 
-    ReadWriteProtect(INSUFFICIENT_REP_IDS_PTR, sizeof(UINT));
-    insufficientRepIds = *((PUINT) INSUFFICIENT_REP_IDS_PTR);
+    insufficientRepIds = GetValue<UINT>(INSUFFICIENT_REP_IDS_PTR);
     Hook(PRINT_SHIP_REQUIREMENT_ADDR, PrintShipRepRequirement_Hook, 7, true);
 }
