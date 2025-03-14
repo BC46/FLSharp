@@ -42,7 +42,7 @@ Optionally, you can download the [FLSharp.ini](https://github.com/BC46/FLSharp/b
 If the `FLSharp.ini` file is missing or if it can't be opened, then all features are enabled by default. When an entry in `FLSharp.ini` is missing, then that particular feature will also be enabled by default. In other words, every feature is by default enabled unless stated otherwise.
 
 ## Build instructions
-Build the project using the `nmake` tool from Visual Studio 2022.
+Build the project using the `nmake` tool from Visual Studio 2017.
 This will output the `FLSharp.dll` file in the `bin` folder.
 Building the project using other compilers may require the code to be modified.
 
