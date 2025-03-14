@@ -45,12 +45,6 @@ namespace TempFixes
     }
 }
 
-bool GetModuleBool(DWORD moduleHandle, DWORD offset)
-{
-    DWORD virtualAddr = moduleHandle + offset;
-    return GetValue<bool>(virtualAddr);
-}
-
 // There is a bug in Freelancer where if you change the rotation lock or auto level from its default option, then load a game,
 // the in-game behavior manager gets confused about whether or not these controls are turned on (the state differs from the underlying flight behavior value).
 // To fix this, these controls must be set to their default value when the player's ship is initialized.
@@ -61,8 +55,8 @@ void InitFlightControlsFix()
     // Save the intended default values just in case.
     if (commonHandle)
     {
-        defaultRotationLockValue = GetModuleBool(commonHandle, DEFAULT_ROTATION_LOCK_CMN_OFFSET);
-        defaultAutoLevelValue = GetModuleBool(commonHandle, DEFAULT_AUTO_LEVEL_CMN_OFFSET);
+        defaultRotationLockValue = GetValue<bool>(commonHandle + DEFAULT_ROTATION_LOCK_CMN_OFFSET);
+        defaultAutoLevelValue = GetValue<bool>(commonHandle + DEFAULT_AUTO_LEVEL_CMN_OFFSET);
     }
 
     TempFixes::PostInitDealloc_Original = SetRelPointer(POST_INIT_DEALLOC_CALL_ADDR + 1, TempFixes::PostInitDealloc_Hook);
