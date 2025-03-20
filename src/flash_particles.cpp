@@ -139,10 +139,10 @@ void InitFlashParticlesFix()
     Hook(LAUNCHER_HANDLER_RELEASE_MEMORY_ADDR + 0x3, &LauncherHandler::CleanFlashParticlesMemory_Hook, 5);
 
     const DWORD engineDeallocCalls[] = { 0x52CD0F, 0x52D68D, 0x52D836, 0x52DBC7 };
-    for (int i = 0; i < sizeof(engineDeallocCalls) / sizeof(DWORD); ++i)
+    for (const auto& call : engineDeallocCalls)
     {
-        Nop(engineDeallocCalls[i], 6);
-        Patch(engineDeallocCalls[i] + 0x6, ecxPatch, sizeof(ecxPatch) - 1); // mov ecx, esi
-        Hook(engineDeallocCalls[i] + 0x8, &LauncherHandler::CleanFlashParticlesEngine_Hook, 5);
+        Nop(call, 6);
+        Patch(call + 0x6, ecxPatch, sizeof(ecxPatch) - 1); // mov ecx, esi
+        Hook(call + 0x8, &LauncherHandler::CleanFlashParticlesEngine_Hook, 5);
     }
 }

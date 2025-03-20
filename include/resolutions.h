@@ -17,7 +17,7 @@ struct WidthHeight
 
     bool Equals(const WidthHeight &other)
     {
-        return memcmp(this, &other, sizeof(WidthHeight)) == 0;
+        return memcmp(this, &other, sizeof(other)) == 0;
     }
 };
 

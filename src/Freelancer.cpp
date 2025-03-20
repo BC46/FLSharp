@@ -24,7 +24,7 @@ void ExpandNNShipTraderObjMemory()
     if (!memoryExpanded)
     {
         // Expand the size of the NN_ShipTrader object if it hasn't been done yet.
-        GetValue<UINT>(NN_SHIPTRADER_OBJ_SIZE_ADDR) += sizeof(int[SHIP_TRADER_SHIP_AMOUNT]);
+        GetValue<UINT>(NN_SHIPTRADER_OBJ_SIZE_ADDR) += sizeof(NN_ShipTrader::shipRepPercentages);
         memoryExpanded = true;
     }
 }

@@ -81,7 +81,7 @@ void CleanupTrampoline(Func trampolineFunc)
 template <typename Func>
 void SetPointer(DWORD location, Func hookFunc)
 {
-    ReadWriteProtect(location, sizeof(DWORD));
+    ReadWriteProtect(location, sizeof(PDWORD));
     *(Func*) location = hookFunc;
 }
 

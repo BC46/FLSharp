@@ -10,6 +10,9 @@
 #define DEFAULT_RES_WIDTH_PTR_2 0x424E9D
 #define DEFAULT_RES_HEIGHT_PTR_2 (DEFAULT_RES_WIDTH_PTR_2 + 0x5)
 
+// sizeof(int) + sizeof(BYTE) = for the indices in menu and supported array entry
+#define INDEX_RES_AND_SUP_ARR_ENTRY_SIZE (sizeof(int) + sizeof(BYTE))
+
 std::set<ResolutionInfo> resolutions;
 UINT lastSupportedResAmount = 0;
 bool lastUnk_x97C = true;
@@ -155,7 +158,7 @@ void NN_Preferences::TestResolutions_Hook(DWORD unk)
     {
         // If the monitor settings haven't changed and we know the supported resolution info,
         // set the info without testing the resolutions
-        memcpy(this->resSupportedArr, lastResSupportedArr, resolutions.size() * 5); // 5 = sizeof(int) + sizeof(BYTE), for the indices in menu and supported array entry
+        memcpy(this->resSupportedArr, lastResSupportedArr, resolutions.size() * INDEX_RES_AND_SUP_ARR_ENTRY_SIZE);
         this->supportedResAmount = lastSupportedResAmount;
         this->unk_x97C = lastUnk_x97C;
     }
@@ -166,7 +169,7 @@ void NN_Preferences::TestResolutions_Hook(DWORD unk)
         (this->*TestResolutions_Original)(unk);
 
         // Save the supported resolution info for later use
-        memcpy(lastResSupportedArr, this->resSupportedArr, resolutions.size() * 5); // 5 = sizeof(int) + sizeof(BYTE), for the indices in menu and supported array entry
+        memcpy(lastResSupportedArr, this->resSupportedArr, resolutions.size() * INDEX_RES_AND_SUP_ARR_ENTRY_SIZE);
         lastSupportedResAmount = this->supportedResAmount;
         lastUnk_x97C = this->unk_x97C;
     }
@@ -218,7 +221,7 @@ void InitBetterResolutions()
 
     int resolutionAmount = resolutions.size();
 
-    lastResSupportedArr = new BYTE[resolutionAmount * 5]; // 5 = sizeof(int) + sizeof(BYTE), for the indices in menu and supported array entry
+    lastResSupportedArr = new BYTE[resolutionAmount * INDEX_RES_AND_SUP_ARR_ENTRY_SIZE];
 
     int additionalSize = NN_PREFERENCES_ALLOC_SIZE
         + resolutionAmount * sizeof(ResolutionInfo) // resolution info
