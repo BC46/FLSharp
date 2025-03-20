@@ -6,19 +6,17 @@
 
 #define NAKED __declspec(naked)
 
-#define FMT_VAL_IS_ZERO_CHECK 0x47FE86
-#define INSUFFICIENT_REP_IDS_PTR 0x4B9011
-
-UINT insufficientRepIds = 1564;
+BYTE& fmtValIsZeroCheck = GetValue<BYTE>(0x47FE86);
+UINT insufficientRepIds = GetValue<UINT>(0x4B9011); // 1564 by default
 
 FL_FUNC(void NN_Dealer::PrintFmtStrPurchaseInfo(UINT idsPurchaseInfo, int fmtValue), 0x47FD50)
 
 void NN_Dealer::PrintFmtStrPurchaseInfo_Hook(UINT idsPurchaseInfo, DealerStack* stack)
 {
     // Call the original function with the rep percentage.
-    *((PBYTE) FMT_VAL_IS_ZERO_CHECK) = 0xEB; // allow the rep percentage to be printed if it's 0
+    fmtValIsZeroCheck = 0xEB; // allow the rep percentage to be printed if it's 0
     PrintFmtStrPurchaseInfo(idsPurchaseInfo, GetRepPercentage(stack->repRequired));
-    *((PBYTE) FMT_VAL_IS_ZERO_CHECK) = 0x75; // restore the original value to prevent other 0's from being unintentionally printed
+    fmtValIsZeroCheck = 0x75; // restore the original value to prevent other 0's from being unintentionally printed
 }
 
 NAKED void GetShipRepRequirement_Hook()
@@ -55,7 +53,7 @@ LPWSTR NN_ShipTrader::PrintFmtShipRepRequirement()
     if (!IsShipIndexValid(selectedShipIndex))
         return FL_BUFFER_1;
 
-    swprintf(FL_BUFFER_2, FL_BUFFER_1, shipRepPercentages[selectedShipIndex]);
+    swprintf_s(FL_BUFFER_2, FL_BUFFER_LEN, FL_BUFFER_1, shipRepPercentages[selectedShipIndex]);
     return FL_BUFFER_2;
 }
 
@@ -81,6 +79,7 @@ NAKED void PrintShipRepRequirement_Hook()
 // This code replaces that 0 with the reputation required as a percentage from -100 to 100.
 // If the "friendlier terms" IDS is modified to have "%d" included, then that percentage will be printed too.
 // Printing this value for the ships is more involving as it requires the value to be format-printed manually.
+// Moreover, the required ship reputation values have to be saved somewhere as Freelancer's original code doesn't do this.
 void InitPrintRepRequirements()
 {
     #define REP_REQUIREMENTS_NOT_MET_ADDR 0x480739
@@ -93,9 +92,5 @@ void InitPrintRepRequirements()
     ExpandNNShipTraderObjMemory();
 
     Hook(GET_SHIP_REQUIREMENT_ADDR, GetShipRepRequirement_Hook, 7, true);
-
-    ReadWriteProtect(FMT_VAL_IS_ZERO_CHECK, sizeof(BYTE));
-
-    insufficientRepIds = GetValue<UINT>(INSUFFICIENT_REP_IDS_PTR);
     Hook(PRINT_SHIP_REQUIREMENT_ADDR, PrintShipRepRequirement_Hook, 7, true);
 }

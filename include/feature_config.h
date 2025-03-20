@@ -17,7 +17,7 @@ struct CmpStr
 {
     bool operator()(LPCSTR a, LPCSTR b) const
     {
-        return stricmp(a, b) < 0;
+        return _stricmp(a, b) < 0;
     }
 };
 

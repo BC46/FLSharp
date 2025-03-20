@@ -9,6 +9,9 @@
 bool interfaceTestSoundAvailable = false, ambienceTestSoundAvailable = false;
 bool shouldResumeBGM = false, shouldResumeBGA = false;
 
+BYTE& jmpNoPauseForBgm = GetValue<BYTE>(0x42A3A7);
+BYTE& jmpNoResumeForBgm = GetValue<BYTE>(0x42A3EB);
+
 void EnsureTestSoundsPlay()
 {
     #define INDEPENDENT_INTERFACE_VOLUME_VAL ((PBYTE) 0x4B1503)
@@ -221,6 +224,22 @@ void ResumeSound(bool &shouldResume, SoundHandle *handle, bool getHandleResult, 
     handle->FreeReference();
 }
 
+// The Resume and Pause functions have explicit checks that prevent the BGM from being paused and resumed.
+// However, our code is special, so we are allowed to pause and resume the BGM.
+void SoundHandle::ForcePause()
+{
+    jmpNoPauseForBgm = 0x00;
+    Pause();
+    jmpNoPauseForBgm = 0x2C;
+}
+
+void SoundHandle::ForceResume()
+{
+    jmpNoResumeForBgm = 0x00;
+    Resume();
+    jmpNoResumeForBgm = 0x25;
+}
+
 // Improves the way FL handles test sounds in the options menu.
 // For instance, provide better support for playing the interface and ambience test sounds.
 // Mute background music accordingly when adjusting the ambience volume.
@@ -250,8 +269,5 @@ void InitTestSounds()
     Hook(STOP_MUSIC_TEST_SOUND_3, StopMusicTestSound_Hook, 5);
     Hook(START_INTERFACE_TEST_SOUND, StartInterfaceTestSound_Hook, 5);
     Hook(START_AMBIENCE_TEST_SOUND, StartAmbienceTestSound_Hook, 5);
-
-    ReadWriteProtect((DWORD) JMP_NO_PAUSE_FOR_BGM, sizeof(BYTE));
-    ReadWriteProtect((DWORD) JMP_NO_RESUME_FOR_BGM, sizeof(BYTE));
 }
 

@@ -2,9 +2,6 @@
 #include <windows.h>
 #include "vftable.h"
 
-#define JMP_NO_PAUSE_FOR_BGM ((PBYTE) 0x42A3A7)
-#define JMP_NO_RESUME_FOR_BGM ((PBYTE) 0x42A3EB)
-
 struct SoundHandle
 {
     BYTE data_x04[0x2C];
@@ -15,21 +12,8 @@ struct SoundHandle
         return unkBytePtr == NULL || unkBytePtr == -1;
     }
 
-    // The Resume and Pause functions have explicit checks that prevent the BGM from being paused and resumed.
-    // However, our code is special, so we are allowed to pause and resume the BGM.
-    inline void ForcePause()
-    {
-        *JMP_NO_PAUSE_FOR_BGM = 0x00;
-        Pause();
-        *JMP_NO_PAUSE_FOR_BGM = 0x2C;
-    }
-
-    inline void ForceResume()
-    {
-        *JMP_NO_RESUME_FOR_BGM = 0x00;
-        Resume();
-        *JMP_NO_RESUME_FOR_BGM = 0x25;
-    }
+    void ForcePause();
+    void ForceResume();
 
     virtual void Vftable_x00();
     virtual void Vftable_x04();
