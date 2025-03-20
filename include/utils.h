@@ -9,7 +9,7 @@ void Patch(DWORD vOffset, LPVOID mem, UINT len);
 template <typename Type>
 inline void Patch(DWORD vOffset, Type value)
 {
-    Patch(vOffset, (LPVOID) &value, sizeof(Type));
+    Patch(vOffset, &value, sizeof(Type));
 }
 
 void Nop(DWORD vOffset, UINT len);
