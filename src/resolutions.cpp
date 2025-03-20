@@ -66,10 +66,10 @@ void AddMainMonitorResolutions()
     SetMainResWidth(mainMonitorRes.width);
     SetMainResHeight(mainMonitorRes.height);
 
-    Patch_INT(DEFAULT_RES_WIDTH_PTR_1, mainMonitorRes.width);
-    Patch_INT(DEFAULT_RES_WIDTH_PTR_2, mainMonitorRes.width);
-    Patch_INT(DEFAULT_RES_HEIGHT_PTR_1, mainMonitorRes.height);
-    Patch_INT(DEFAULT_RES_HEIGHT_PTR_2, mainMonitorRes.height);
+    Patch<int>(DEFAULT_RES_WIDTH_PTR_1, mainMonitorRes.width);
+    Patch<int>(DEFAULT_RES_WIDTH_PTR_2, mainMonitorRes.width);
+    Patch<int>(DEFAULT_RES_HEIGHT_PTR_1, mainMonitorRes.height);
+    Patch<int>(DEFAULT_RES_HEIGHT_PTR_2, mainMonitorRes.height);
 
     resolutions.insert(ResolutionInfo( mainMonitorRes.width, mainMonitorRes.height, 16 ));
     resolutions.insert(ResolutionInfo( mainMonitorRes.width, mainMonitorRes.height, 32 ));
@@ -116,15 +116,15 @@ bool NN_Preferences::InitElements_Hook(DWORD unk1, DWORD unk2)
     // +0x944
     const DWORD supportedInfoRefs[] = { 0x4B1005, 0x4B24B3, 0x4B1C73, 0x4B0773, 0x4ACEDA };
     for (const auto& ref : supportedInfoRefs)
-        Patch_INT(ref, resSupportedInfoOffset);
+        Patch<int>(ref, resSupportedInfoOffset);
 
     // weird negated value (note the minus sign)
-    Patch_INT(0x4B24A5, -resSupportedInfoOffset);
+    Patch<int>(0x4B24A5, -resSupportedInfoOffset);
 
     // +0x954
     const DWORD resIndicesRefs[] = { 0x4B249C, 0x4B17E0, 0x4B0FFA, 0x4ACEF9, 0x4B0764 };
     for (const auto& ref : resIndicesRefs)
-        Patch_INT(ref, resIndicesOffset);
+        Patch<int>(ref, resIndicesOffset);
 
     // Call original function
     return InitElements(unk1, unk2);
@@ -235,17 +235,17 @@ void InitBetterResolutions()
     const DWORD resAmountRefs[] = { 0x4B2521, 0x4B1086, 0x4B1CC1, 0x4B17F0, 0x4B07DA, 0x4ACEF1 };
     // We know resolutions.size() <= 127, so casting it directly to a byte is fine
     for (const auto& ref : resAmountRefs)
-        Patch_CHAR(ref, (BYTE) resolutions.size());
+        Patch<char>(ref, (BYTE) resolutions.size());
 
     // Patch references to the start of the resolution array such that it points to the new one (0x8CC)
     const DWORD resStartRefs[] = { 0x4B0FEB, 0x4B17FF, 0x4B1C5C };
     for (const auto& ref : resStartRefs)
-        Patch_INT(ref, NN_PREFERENCES_NEW_DATA);
+        Patch<int>(ref, NN_PREFERENCES_NEW_DATA);
 
     // Patch references to the first bpp in the resolution array (0x8D4)
     const DWORD firstBppRefs[] = { 0x4B24B9, 0x4ACED3, 0x4B076A };
     for (const auto& ref : firstBppRefs)
-        Patch_INT(ref, NN_PREFERENCES_NEW_DATA + 0x8);
+        Patch<int>(ref, NN_PREFERENCES_NEW_DATA + 0x8);
 
     // Set hook that copies the resolutions into the right location when called
     SetPointer(INIT_NN_ELEMENTS_CALL_ADDR, &NN_Preferences::InitElements_Hook);

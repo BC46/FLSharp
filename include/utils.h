@@ -6,24 +6,10 @@
 
 void Patch(DWORD vOffset, LPVOID mem, UINT len);
 
-inline void Patch_INT(DWORD vOffset, int value)
+template <typename Type>
+inline void Patch(DWORD vOffset, Type value)
 {
-    Patch(vOffset, &value, sizeof(int));
-}
-
-inline void Patch_CHAR(DWORD vOffset, char value)
-{
-    Patch(vOffset, &value, sizeof(char));
-}
-
-inline void Patch_BYTE(DWORD vOffset, BYTE value)
-{
-    Patch(vOffset, &value, sizeof(BYTE));
-}
-
-inline void Patch_WORD(DWORD vOffset, WORD value)
-{
-    Patch(vOffset, &value, sizeof(WORD));
+    Patch(vOffset, (LPVOID) &value, sizeof(Type));
 }
 
 void Nop(DWORD vOffset, UINT len);
@@ -53,7 +39,7 @@ template <typename Func>
 void Hook(DWORD location, Func hookFunc, UINT instrLen, bool jmp = false)
 {
     // Set the opcode for the call or jmp instruction
-    Patch_BYTE(location, jmp ? 0xE9 : 0xE8); // 0xE9 = jmp, 0xE8 = call
+    Patch<BYTE>(location, jmp ? 0xE9 : 0xE8); // 0xE9 = jmp, 0xE8 = call
 
     // Set the relative address
     SetRelPointer(location + 1, hookFunc);

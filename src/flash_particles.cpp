@@ -132,7 +132,7 @@ void InitFlashParticlesFix()
     BYTE ecxPatch[] = { 0x89, 0xF1, 0x90 }; // mov ecx, esi followed by nop
 
     Patch(LAUNCHER_HANDLER_POST_GAME_CLEANUP_ADDR, ecxPatch, sizeof(ecxPatch) - 1); // mov ecx, esi
-    Patch_WORD(LAUNCHER_HANDLER_POST_GAME_CLEANUP_ADDR + 0x2, 0x74EB); // jmp
+    Patch<WORD>(LAUNCHER_HANDLER_POST_GAME_CLEANUP_ADDR + 0x2, 0x74EB); // jmp
     Hook(LAUNCHER_HANDLER_POST_GAME_FREE_HEAP_CALL_ADDR, &LauncherHandler::CleanFlashParticlesPostGame_Hook, 5);
 
     Patch(LAUNCHER_HANDLER_RELEASE_MEMORY_ADDR, ecxPatch, sizeof(ecxPatch));

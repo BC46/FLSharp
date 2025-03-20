@@ -22,7 +22,7 @@ void InitProjectilesSoundFix()
 {
     #define PROJECTILES_PER_FIRE_CALL_ADDR 0x534D0D
 
-    Patch_WORD(PROJECTILES_PER_FIRE_CALL_ADDR, 0xBB90);
+    Patch<WORD>(PROJECTILES_PER_FIRE_CALL_ADDR, 0xBB90);
     SetPointer(PROJECTILES_PER_FIRE_CALL_ADDR + 0x2, &CELauncher::GetProjectilesPerFire_Hook);
 }
 

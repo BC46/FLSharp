@@ -23,14 +23,14 @@ void EnsureTestSoundsPlay()
 
     if (*INDEPENDENT_INTERFACE_VOLUME_VAL == 0x83)
     {
-        Patch_WORD(0x4B1533, 0x00FA);
-        Patch_BYTE(0x4B154E, 0xDF);
+        Patch<WORD>(0x4B1533, 0x00FA);
+        Patch<BYTE>(0x4B154E, 0xDF);
     }
 
     if (*INDEPENDENT_AMBIENCE_VOLUME_VAL == 0x84)
     {
-        Patch_BYTE(0x4B1584, 0xA9);
-        Patch_BYTE(0x4B159F, 0x8E);
+        Patch<BYTE>(0x4B1584, 0xA9);
+        Patch<BYTE>(0x4B159F, 0x8E);
     }
 }
 

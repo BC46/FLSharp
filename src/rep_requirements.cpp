@@ -87,7 +87,7 @@ void InitPrintRepRequirements()
     #define PRINT_SHIP_REQUIREMENT_ADDR 0x4B9010
 
     Hook(REP_REQUIREMENTS_NOT_MET_ADDR + 0x9, &NN_Dealer::PrintFmtStrPurchaseInfo_Hook, 5);
-    Patch_WORD(REP_REQUIREMENTS_NOT_MET_ADDR, 0x9054); // push esp followed by nop (replaces param 0 with a stack pointer)
+    Patch<WORD>(REP_REQUIREMENTS_NOT_MET_ADDR, 0x9054); // push esp followed by nop (replaces param 0 with a stack pointer)
 
     ExpandNNShipTraderObjMemory();
 
