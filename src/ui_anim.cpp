@@ -31,6 +31,6 @@ void InitSlideUiAnimFix()
         0x561A43, 0x561A5A                                  // "CREATE A NEW CHARACTER" menu
     };
 
-    for (int i = 0; i < sizeof(slideAnimationCalls) / sizeof(DWORD); ++i)
-        Hook(slideAnimationCalls[i], &UITextMsgButton::UpdatePosition_Hook, 6);
+    for (const auto& call : slideAnimationCalls)
+        Hook(call, &UITextMsgButton::UpdatePosition_Hook, 6);
 }

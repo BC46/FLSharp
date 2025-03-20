@@ -65,6 +65,6 @@ $(BIN_DIR):
     if not exist $(BIN_DIR) mkdir $(BIN_DIR)
 
 clean:
-    del $(BIN_DIR)\*.dll $(BIN_DIR)\*.pdb $(OBJ_DIR)\*.obj $(OBJ_DIR)\*.RES $(OBJ_DIR)\*.lib $(OBJ_DIR)\*.pdb
+    del $(BIN_DIR)\*.dll $(BIN_DIR)\*.pdb $(BIN_DIR)\*.ipdb $(BIN_DIR)\*.iobj $(OBJ_DIR)\*.obj $(OBJ_DIR)\*.RES $(OBJ_DIR)\*.lib $(OBJ_DIR)\*.pdb
 
 !INCLUDE $(DEPS_FILE)
