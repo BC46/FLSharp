@@ -1,3 +1,5 @@
+#pragma once
+
 #define NAKED __declspec(naked)
 #define NOINLINE __declspec(noinline)
 

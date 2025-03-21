@@ -1,3 +1,5 @@
+#pragma once
+
 void CurrentResInfoWrite1();
 void CurrentResInfoWrite2();
 void CurrentResInfoWrite3();
