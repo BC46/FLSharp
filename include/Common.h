@@ -10,6 +10,8 @@
 
 #define ENGINE_TYPE 0x20000
 
+IMPORT UINT CreateID(LPCSTR str);
+
 class IMPORT INI_Reader
 {
 public:
@@ -23,8 +25,19 @@ public:
     bool is_value(LPCSTR name);
     LPCSTR get_value_string(UINT index = 0);
     bool get_value_bool(UINT index = 0);
+    float get_value_float(UINT index = 0);
     LPCSTR get_name_ptr();
     void close();
+
+    inline UINT get_value_uint(UINT index = 0)
+    {
+        return static_cast<UINT>(get_value_float(index));
+    }
+
+    inline UINT get_value_id(UINT index = 0)
+    {
+        return CreateID(get_value_string(index));
+    }
 
 private:
     BYTE data[0x1565];

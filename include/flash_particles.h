@@ -46,7 +46,6 @@ private:
     int FreeHeapMemory();
     void SetBaseWatcher(int unk1, int unk2, WatcherInfo* watcherInfo);
 
-
     inline void ResetBaseWatcher()
     {
         WatcherInfo watcherInfo = { 0 };
