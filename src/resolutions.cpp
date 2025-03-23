@@ -48,8 +48,8 @@ void AddFlResolutions()
 
     for (const auto& defaultRes : defaultResolutions)
     {
-        resolutions.insert(ResolutionInfo( defaultRes.width, defaultRes.height, 16 ));
-        resolutions.insert(ResolutionInfo( defaultRes.width, defaultRes.height, 32 ));
+        resolutions.emplace(defaultRes.width, defaultRes.height, 16);
+        resolutions.emplace(defaultRes.width, defaultRes.height, 32);
     }
 }
 
@@ -59,8 +59,8 @@ void AddWindowRectResolutions()
 
     if (GetWindowRect(GetDesktopWindow(), &desktop))
     {
-        resolutions.insert(ResolutionInfo( desktop.right, desktop.bottom, 16 ));
-        resolutions.insert(ResolutionInfo( desktop.right, desktop.bottom, 32 ));
+        resolutions.emplace(desktop.right, desktop.bottom, 16);
+        resolutions.emplace(desktop.right, desktop.bottom, 32);
     }
 }
 
@@ -74,8 +74,8 @@ void AddMainMonitorResolutions()
     Patch<int>(DEFAULT_RES_HEIGHT_PTR_1, mainMonitorRes.height);
     Patch<int>(DEFAULT_RES_HEIGHT_PTR_2, mainMonitorRes.height);
 
-    resolutions.insert(ResolutionInfo( mainMonitorRes.width, mainMonitorRes.height, 16 ));
-    resolutions.insert(ResolutionInfo( mainMonitorRes.width, mainMonitorRes.height, 32 ));
+    resolutions.emplace(mainMonitorRes.width, mainMonitorRes.height, 16);
+    resolutions.emplace(mainMonitorRes.width, mainMonitorRes.height, 32);
 }
 
 void AddDisplaySettingsResolutions()
@@ -91,7 +91,7 @@ void AddDisplaySettingsResolutions()
         if (!IsResolutionAllowed(dm) || (!isMainResNarrow && IsResolutionNarrow(dm.dmPelsWidth, dm.dmPelsHeight)))
             continue;
 
-        resolutions.insert(ResolutionInfo( dm.dmPelsWidth, dm.dmPelsHeight, dm.dmBitsPerPel ));
+        resolutions.emplace(dm.dmPelsWidth, dm.dmPelsHeight, dm.dmBitsPerPel);
     }
 }
 
