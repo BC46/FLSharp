@@ -58,7 +58,7 @@ void LauncherHandler::PlayAllFlashParticles(ID_String* idString)
         if (this->flashParticlesArr[i])
         {
             this->flashParticlesArr[i]->GeneralDealloc();
-            this->flashParticlesArr[i] = NULL;
+            this->flashParticlesArr[i] = nullptr;
         }
 
         // The PlayFlashParticleForBarrel function stores the effect instance in the currentFlashParticle variable (provided creation was successful).

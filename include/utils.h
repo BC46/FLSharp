@@ -53,7 +53,7 @@ template <typename Func>
 Func Trampoline(DWORD location, Func hookFunc, UINT instrLen)
 {
     // Allocate memory for gateway function.
-    PBYTE gatewayFunc = (PBYTE) VirtualAlloc(NULL, instrLen + 5, MEM_COMMIT | MEM_RESERVE, PAGE_EXECUTE_READWRITE);
+    PBYTE gatewayFunc = (PBYTE) VirtualAlloc(nullptr, instrLen + 5, MEM_COMMIT | MEM_RESERVE, PAGE_EXECUTE_READWRITE);
 
     // Copy the instruction(s) that will be overwritten by setting the hooks to the gateway code.
     ReadWriteProtect(location, instrLen);

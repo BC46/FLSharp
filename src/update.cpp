@@ -25,7 +25,7 @@ void SetTimeSinceLastUpdate()
 CShip* GetPlayerShip()
 {
     IObjRW* playerIObjRW = GetPlayerIObjRW();
-    return !playerIObjRW ? NULL : playerIObjRW->ship;
+    return !playerIObjRW ? nullptr : playerIObjRW->ship;
 }
 
 bool IsEkToggled(CShip* ship)

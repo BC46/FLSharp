@@ -12,12 +12,12 @@ WaypointInfo* WaypointCheck_Hook(UINT index)
     WaypointInfo* waypointInfo = WaypointCheck(index);
 
     if (!waypointInfo)
-        return NULL;
+        return nullptr;
 
     UINT playerSystem = *(PUINT) PLAYER_SYSTEM_ADDR;
 
     // Only return the waypoint info if the player is in the same system as the waypoint
-    return playerSystem == waypointInfo->system ? waypointInfo : NULL;
+    return playerSystem == waypointInfo->system ? waypointInfo : nullptr;
 }
 
 // Hook that prevents waypoints from being set at the player ship's location
@@ -26,10 +26,10 @@ NavMapObj* NeuroNetNavMap::GetHighlightedObject_Hook(DWORD unk1, DWORD unk2)
     NavMapObj* result = GetHighlightedObject(unk1, unk2);
 
     if (!result)
-        return NULL;
+        return nullptr;
 
     // Only return the nav map obj if it isn't the player ship
-    return result->type == PLAYERSHIP_NAVMAP_OBJ_TYPE ? NULL : result;
+    return result->type == PLAYERSHIP_NAVMAP_OBJ_TYPE ? nullptr : result;
 }
 
 // Adds some minor waypoint-related fixes.

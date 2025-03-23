@@ -33,7 +33,7 @@ private:
     virtual int UpdatePosition(BYTE unk1, const Vector* newPosOffset, BYTE unk2);
 
     BYTE x04[0x3E8];
-    BigImage* textImage; // 0x3EC. textImage = NULL will prevent the text from rendering
+    BigImage* textImage; // 0x3EC. textImage = nullptr will prevent the text from rendering
     BYTE x3F0[0x81];
     bool disableHovering; // 0x471
 };

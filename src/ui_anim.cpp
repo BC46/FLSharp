@@ -12,10 +12,10 @@ int UITextMsgButton::UpdatePosition_Hook(BYTE unk1, const Vector* newPosOffset, 
 {
     if (this->textImage)
     {
-        // If the textImage is NULLed prematurely, then FL will no longer destroy it when it's not needed anymore.
+        // If the textImage is nulled prematurely, then FL will no longer destroy it when it's not needed anymore.
         // Hence it's destroyed here.
         this->textImage->Destroy();
-        this->textImage = NULL;
+        this->textImage = nullptr;
     }
 
     this->disableHovering = true;

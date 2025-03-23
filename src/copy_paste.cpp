@@ -19,7 +19,7 @@ NAKED void HandleDefaultInputKey_Hook()
 
 void InputBoxWindow::CopyFromClipboard()
 {
-    if (!OpenClipboard(NULL))
+    if (!OpenClipboard(nullptr))
         return;
 
     HANDLE clipboard = GetClipboardData(CF_UNICODETEXT);
@@ -60,7 +60,7 @@ void InputBoxWindow::CopyToClipboard()
 
     // If the chars vector is empty, there isn't anything to copy to the clipboard.
     // If the clipboard won't even open, there's no point in trying either.
-    if (inputLength == 0 || !OpenClipboard(NULL))
+    if (inputLength == 0 || !OpenClipboard(nullptr))
         return;
 
     if (!EmptyClipboard())
@@ -97,7 +97,7 @@ _closeClipboard:
 void InputBoxWindow::HandleCopyPaste(KeyMapInfo *kmi)
 {
     // I saw this check being made in many key handling function, but for this one I don't think it's necessary.
-    // if (this->ime == NULL)
+    // if (this->ime == nullptr)
     //     return;
 
     if (kmi->IsCtrlPressed())

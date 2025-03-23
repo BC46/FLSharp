@@ -93,11 +93,11 @@ bool GetBackgroundMusicHandle_Hook(SoundHandle **pBgm)
         }
 
         bgm->FreeReference();
-        bgm = NULL;
+        bgm = nullptr;
     }
 
     // Pause the background ambience.
-    SoundHandle *bga = NULL;
+    SoundHandle *bga = nullptr;
     PauseSound(shouldResumeBGA, bga, GetBackgroundAmbienceHandle(&bga));
 
     return false;
@@ -142,7 +142,7 @@ void NN_Preferences::VolumeSliderAdjustEnd_Hook(PVOID adjustedScrollElement)
         }
     }
 
-    SoundHandle *bgm = NULL, *bga = NULL;
+    SoundHandle *bgm = nullptr, *bga = nullptr;
     ResumeSound(shouldResumeBGM, bgm, GetBackgroundMusicHandle(&bgm), true);
     ResumeSound(shouldResumeBGA, bga, GetBackgroundAmbienceHandle(&bga));
 }
@@ -154,7 +154,7 @@ void StopMusicTestSound_Hook(BYTE soundId)
     StopSound(INTERFACE_VOLUME_SOUND_ID);
     StopSound(AMBIENCE_VOLUME_SOUND_ID);
 
-    SoundHandle *bgm = NULL, *bga = NULL;
+    SoundHandle *bgm = nullptr, *bga = nullptr;
     ResumeSound(shouldResumeBGM, bgm, GetBackgroundMusicHandle(&bgm), true);
     ResumeSound(shouldResumeBGA, bga, GetBackgroundAmbienceHandle(&bga));
 }
@@ -168,7 +168,7 @@ void StartInterfaceTestSound_Hook(BYTE soundId)
 
 void StartAmbienceTestSound_Hook(BYTE soundId) // soundId should always be 0x22 here
 {
-    SoundHandle *bga = NULL;
+    SoundHandle *bga = nullptr;
     if (GetBackgroundAmbienceHandle(&bga))
     {
         bool bgaPlaying = !(bga->FinishedPlaying() || bga->IsPaused());
@@ -185,7 +185,7 @@ void StartAmbienceTestSound_Hook(BYTE soundId) // soundId should always be 0x22 
     StartSound(soundId);
 
     // Pause the background music.
-    SoundHandle *bgm = NULL;
+    SoundHandle *bgm = nullptr;
     PauseSound(shouldResumeBGM, bgm, GetBackgroundMusicHandle(&bgm), true);
 }
 

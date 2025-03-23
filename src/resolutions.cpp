@@ -16,7 +16,7 @@
 std::set<ResolutionInfo> resolutions;
 UINT lastSupportedResAmount = 0;
 bool lastUnk_x97C = true;
-BYTE* lastResSupportedArr = NULL;
+BYTE* lastResSupportedArr = nullptr;
 
 WidthHeight mainMonitorRes;
 
@@ -24,7 +24,7 @@ WidthHeight GetMainMonitorResolution()
 {
     WidthHeight result;
 
-    HDC hdc = GetDC(NULL);
+    HDC hdc = GetDC(nullptr);
 
     if (hdc)
     {
@@ -37,7 +37,7 @@ WidthHeight GetMainMonitorResolution()
         result.height = 768;
     }
 
-    ReleaseDC(NULL, hdc);
+    ReleaseDC(nullptr, hdc);
     return result;
 }
 
@@ -84,7 +84,7 @@ void AddDisplaySettingsResolutions()
     DEVMODE dm = { 0 };
     dm.dmSize = sizeof(dm);
 
-    for (DWORD iModeNum = 0; EnumDisplaySettings(NULL, iModeNum, &dm) != FALSE; ++iModeNum)
+    for (DWORD iModeNum = 0; EnumDisplaySettings(nullptr, iModeNum, &dm) != FALSE; ++iModeNum)
     {
         // Discard resolutions that are not allowed.
         // Moreover, discard resolutions that are too narrow (e.g. 5:4) since FL doesn't run well with those.
