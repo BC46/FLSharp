@@ -57,7 +57,7 @@ private:
 
 EffectInstance** CreateFlashParticlesArray(UINT barrelAmount);
 
-struct LauncherHandler
+struct CliLauncher
 {
     DWORD vftable;
     CELauncher* launcher; // 0x04

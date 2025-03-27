@@ -12,9 +12,9 @@ NAKED void PlayFlashEffect_Hook()
     #define PLAY_FLASH_EFFECT_RET_ADDR 0x52D271
 
     __asm {
-        mov ecx, ebx // LauncherHandler
+        mov ecx, ebx // CliLauncher
         push esi // ID_String
-        call LauncherHandler::PlayAllFlashParticles
+        call CliLauncher::PlayAllFlashParticles
         mov eax, PLAY_FLASH_EFFECT_RET_ADDR
         jmp eax
     }
@@ -23,7 +23,7 @@ NAKED void PlayFlashEffect_Hook()
 // This function has some asm setup code which redirects us to FLs original code
 // to allow the flash particle to play on a given barrel index.
 // This is convenient because this way we are reusing FL's own code.
-NAKED void LauncherHandler::PlayFlashParticleForBarrel(ID_String* idString, UINT barrelIndex)
+NAKED void CliLauncher::PlayFlashParticleForBarrel(ID_String* idString, UINT barrelIndex)
 {
     #define GET_BARREL_INFO_FOR_FLASH_PROJ_CALL_ADDR 0x52D1DC
 
@@ -33,7 +33,7 @@ NAKED void LauncherHandler::PlayFlashParticleForBarrel(ID_String* idString, UINT
         push ebp
         push esi
         push edi
-        mov ebx, [esp+0x6C] // LauncherHandler
+        mov ebx, [esp+0x6C] // CliLauncher
         mov ecx, [ebx+0x4] // CELauncher
         mov esi, [esp+0x70] // ID_String
         push [esp+0x74] // barrel index
@@ -44,7 +44,7 @@ NAKED void LauncherHandler::PlayFlashParticleForBarrel(ID_String* idString, UINT
 
 // In this function we play the flash particle effect for every barrel, instead of only the first barrel.
 // We do this by keeping track of a custom heap-allocated array of size n (n = amount of barrels of the launcher).
-void LauncherHandler::PlayAllFlashParticles(ID_String* idString)
+void CliLauncher::PlayAllFlashParticles(ID_String* idString)
 {
     UINT barrelAmount = this->launcher->GetProjectilesPerFire();
 
@@ -80,7 +80,7 @@ EffectInstance** CreateFlashParticlesArray(UINT barrelAmount)
     return flashParticlesArr;
 }
 
-void LauncherHandler::CleanFlashParticlesArr(void (EffectInstance::*deallocFunc)())
+void CliLauncher::CleanFlashParticlesArr(void (EffectInstance::*deallocFunc)())
 {
     UINT barrelAmount = this->launcher->GetProjectilesPerFire();
 
@@ -98,17 +98,17 @@ void LauncherHandler::CleanFlashParticlesArr(void (EffectInstance::*deallocFunc)
 // The three hooks below are there to ensure that all flash particles stored in the new array are cleaned.
 // Hence we hook the instances where FL tries to clean up the individual object, and clean up the whole array instead.
 // There are three different versions of this hook because for each instance the game calls a different sequence of functions for the cleaning.
-void LauncherHandler::CleanFlashParticlesPostGame_Hook()
+void CliLauncher::CleanFlashParticlesPostGame_Hook()
 {
     CleanFlashParticlesArr(&EffectInstance::PostGameDealloc);
 }
 
-void LauncherHandler::CleanFlashParticlesEngine_Hook()
+void CliLauncher::CleanFlashParticlesEngine_Hook()
 {
     CleanFlashParticlesArr(&EffectInstance::EngineDealloc);
 }
 
-void LauncherHandler::CleanFlashParticlesMemory_Hook()
+void CliLauncher::CleanFlashParticlesMemory_Hook()
 {
     CleanFlashParticlesArr(&EffectInstance::DoFreeHeapMemory);
     this->flashParticlesArr = NULL;
@@ -123,26 +123,26 @@ FL_FUNC(void EffectInstance::SetBaseWatcher(int unk1, int unk2, WatcherInfo* wat
 void InitFlashParticlesFix()
 {
     #define PLAY_FLASH_EFFECT_ADDR 0x52D1B4
-    #define LAUNCHER_HANDLER_POST_GAME_CLEANUP_ADDR 0x52CAF3
-    #define LAUNCHER_HANDLER_POST_GAME_FREE_HEAP_CALL_ADDR 0x52CB6B
-    #define LAUNCHER_HANDLER_RELEASE_MEMORY_ADDR 0x52F6B2
+    #define CLI_LAUNCHER_POST_GAME_CLEANUP_ADDR 0x52CAF3
+    #define CLI_LAUNCHER_POST_GAME_FREE_HEAP_CALL_ADDR 0x52CB6B
+    #define CLI_LAUNCHER_RELEASE_MEMORY_ADDR 0x52F6B2
 
     Hook(PLAY_FLASH_EFFECT_ADDR, PlayFlashEffect_Hook, 5, true);
 
     BYTE ecxPatch[] = { 0x89, 0xF1, 0x90 }; // mov ecx, esi followed by nop
 
-    Patch(LAUNCHER_HANDLER_POST_GAME_CLEANUP_ADDR, ecxPatch, sizeof(ecxPatch) - 1); // mov ecx, esi
-    Patch<WORD>(LAUNCHER_HANDLER_POST_GAME_CLEANUP_ADDR + 0x2, 0x74EB); // jmp
-    Hook(LAUNCHER_HANDLER_POST_GAME_FREE_HEAP_CALL_ADDR, &LauncherHandler::CleanFlashParticlesPostGame_Hook, 5);
+    Patch(CLI_LAUNCHER_POST_GAME_CLEANUP_ADDR, ecxPatch, sizeof(ecxPatch) - 1); // mov ecx, esi
+    Patch<WORD>(CLI_LAUNCHER_POST_GAME_CLEANUP_ADDR + 0x2, 0x74EB); // jmp
+    Hook(CLI_LAUNCHER_POST_GAME_FREE_HEAP_CALL_ADDR, &CliLauncher::CleanFlashParticlesPostGame_Hook, 5);
 
-    Patch(LAUNCHER_HANDLER_RELEASE_MEMORY_ADDR, ecxPatch, sizeof(ecxPatch));
-    Hook(LAUNCHER_HANDLER_RELEASE_MEMORY_ADDR + 0x3, &LauncherHandler::CleanFlashParticlesMemory_Hook, 5);
+    Patch(CLI_LAUNCHER_RELEASE_MEMORY_ADDR, ecxPatch, sizeof(ecxPatch));
+    Hook(CLI_LAUNCHER_RELEASE_MEMORY_ADDR + 0x3, &CliLauncher::CleanFlashParticlesMemory_Hook, 5);
 
     const DWORD engineDeallocCalls[] = { 0x52CD0F, 0x52D68D, 0x52D836, 0x52DBC7 };
     for (const auto& call : engineDeallocCalls)
     {
         Nop(call, 6);
         Patch(call + 0x6, ecxPatch, sizeof(ecxPatch) - 1); // mov ecx, esi
-        Hook(call + 0x8, &LauncherHandler::CleanFlashParticlesEngine_Hook, 5);
+        Hook(call + 0x8, &CliLauncher::CleanFlashParticlesEngine_Hook, 5);
     }
 }
