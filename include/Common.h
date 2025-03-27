@@ -166,8 +166,8 @@ public:
 class CRemotePhysicsSimulation
 {
 public:
-    IMPORT bool CheckForSync(Vector const &unk1, Vector const &unk2, Quaternion const &unk3);
-    bool CheckForSync_Hook(Vector const &unk1, Vector const &unk2, Quaternion const &unk3);
+    IMPORT bool CheckForSync(Vector const &shipPos, Vector const &shipPos2, Quaternion const &unk);
+    bool CheckForSync_Hook(Vector const &shipPos, Vector const &shipPos2, Quaternion const &unk);
 };
 
 struct IObjRW

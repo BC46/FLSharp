@@ -10,11 +10,13 @@ const double minSyncIntervalTlrMs = 750.0;
 const double maxSyncIntervalMs = 2000.0;
 const double rotationCheckIntervalMs = 250.0;
 
-bool sendUpdateAsap = false;
-bool engineKillDisabledLastTime = false;
+bool sendUpdateAsap = true;
+bool engineKillEnabledLastTime = false;
+
+#define DEFAULT_SHIP_TURN_THRESHOLD 30.0f
+float shipTurnThreshold = DEFAULT_SHIP_TURN_THRESHOLD;
 
 Quaternion lastOrientation;
-float shipTurnThreshold = 30.0f;
 clock_t timeSinceLastUpdate;
 
 void SetTimeSinceLastUpdate()
@@ -28,18 +30,32 @@ CShip* GetPlayerShip()
     return !playerIObjRW ? nullptr : playerIObjRW->ship;
 }
 
-bool IsEkToggled(CShip* ship)
+// This seems to be a relatively fast operation; Freelancer calls it numerous times per frame.
+CEEngine const * GetEngine(CShip* ship)
 {
-    // TODO: Save the engine somewhere? What happens if you lose it while flying?
-    CEEngine const * engine = CEEngine::cast(ship->equipManager.FindFirst(ENGINE_TYPE));
+    if (!ship)
+        return nullptr;
 
-    if (!engine)
+    return CEEngine::cast(ship->equipManager.FindFirst(ENGINE_TYPE));
+}
+
+bool IsEkEnabled(CShip* ship)
+{
+    CEEngine const * shipEngine = GetEngine(ship);
+
+    if (!shipEngine)
         return false;
 
-    bool engineTriggered = engine->IsTriggered();
+    return !shipEngine->IsTriggered();
+}
 
-    bool result = engineKillDisabledLastTime != engineTriggered;
-    engineKillDisabledLastTime = engineTriggered;
+// Checks if engine kill has been toggled and update the last known value.
+bool IsEkToggled(CShip* ship)
+{
+    bool engineKillEnabled = IsEkEnabled(ship);
+
+    bool result = engineKillEnabledLastTime != engineKillEnabled;
+    engineKillEnabledLastTime = engineKillEnabled;
 
     return result;
 }
@@ -50,7 +66,23 @@ bool HasOrientationChanged(CShip* ship, double timeElapsed)
         return false;
 
     float rotationDelta = GetRotationDelta(lastOrientation, ship->get_orientation());
-    return rotationDelta > shipTurnThreshold;
+    return rotationDelta >= shipTurnThreshold;
+}
+
+float GetShipTurnThreshold(CShip *ship)
+{
+    if (!ship)
+        return DEFAULT_SHIP_TURN_THRESHOLD;
+
+    Archetype::Ship const * shipArch = ship->shiparch();
+
+    // TODO: The angular drag is meant to be calculated dynamically using the CShip::get_angular_drag() function
+    // However, the angular drag factor is kind of an unused feature in FL and not many mods use it
+    float avgDrag = (shipArch->angularDrag.x + shipArch->angularDrag.y) / 2;
+    float avgTorque = (shipArch->steeringTorque.x + shipArch->steeringTorque.y) / 2;
+    float maxTurnSpeed = (avgTorque / avgDrag) * (180.0f / M_PI);
+
+    return min(DEFAULT_SHIP_TURN_THRESHOLD, 15.0f * sqrtf(maxTurnSpeed) / sqrtf(ship->get_radius()));
 }
 
 namespace Update
@@ -58,7 +90,7 @@ namespace Update
     void (*PostInitDealloc_Original)(PVOID obj);
 
     // Hook for dealloc function that gets called right after initializing the player's ship (undock or load game in space)
-    // This is where we want to calculate the ship's turn threshold
+    // This is where we want to calculate the ship's turn threshold and set some default values
     void PostInitDealloc_Hook(PVOID obj)
     {
         // Call original function
@@ -67,22 +99,10 @@ namespace Update
         if (SinglePlayer()) // No need to calculate the turn threshold in SP
             return;
 
+        engineKillEnabledLastTime = false;
         sendUpdateAsap = true;
 
-        CShip* ship = GetPlayerShip();
-
-        if (!ship)
-            return;
-
-        Archetype::Ship const * shipArch = ship->shiparch();
-
-        // TODO: The angular drag is meant to be calculated dynamically using the CShip::get_angular_drag() function
-        // However, the angular drag factor is kind of an unused feature in FL and not many mods use it
-        float avgDrag = (shipArch->angularDrag.x + shipArch->angularDrag.y) / 2;
-        float avgTorque = (shipArch->steeringTorque.x + shipArch->steeringTorque.y) / 2;
-        float maxTurnSpeed = (avgTorque / avgDrag) * (180.0f / M_PI);
-
-        shipTurnThreshold = min(30.0f, 15 * sqrtf(maxTurnSpeed) / sqrtf(ship->get_radius()));
+        shipTurnThreshold = GetShipTurnThreshold(GetPlayerShip());
     }
 }
 
@@ -91,10 +111,9 @@ bool ShouldSendUpdate(CShip* ship, double timeElapsed)
     if (!ship)
         return false;
 
-    // Has engine kill been toggled?
     // Has it been a while since the last update?
     // Has the orientation been changed to some extent?
-    return IsEkToggled(ship) || (timeElapsed >= maxSyncIntervalMs) || HasOrientationChanged(ship, timeElapsed);
+    return (timeElapsed >= maxSyncIntervalMs) || HasOrientationChanged(ship, timeElapsed);
 }
 
 inline double GetShipMinSyncInterval(CShip* ship)
@@ -107,32 +126,33 @@ inline double GetShipMinSyncInterval(CShip* ship)
 }
 
 // Hook for function that determines whether an update should be sent to the server
-bool CRemotePhysicsSimulation::CheckForSync_Hook(Vector const &unk1, Vector const &unk2, Quaternion const &unk3)
+bool CRemotePhysicsSimulation::CheckForSync_Hook(Vector const &shipPos, Vector const &shipPos2, Quaternion const &unk)
 {
     double timeElapsed = getTimeElapsed(timeSinceLastUpdate); // Time elapsed since the last update
     CShip* ship = GetPlayerShip();
+    bool isEkToggled = IsEkToggled(ship);
 
     if (timeElapsed < GetShipMinSyncInterval(ship))
     {
         // Prevent the client from sending too many updates in a short amount of time
         // This resolves the jitter issue that occurs when playing on a high framerate
+
+        // TODO: If EK has been toggled twice before the min sync interval has passed, then an asap update should actually not be sent because of this.
+        // But then you'd also have to check if the asap update *should* be sent because CheckForSync or ShouldSendUpdate returned true. Eh, this sounds complicated.
         if (!sendUpdateAsap)
-            sendUpdateAsap = ShouldSendUpdate(ship, timeElapsed) || CheckForSync(unk1, unk2, unk3);
+            sendUpdateAsap = isEkToggled || CheckForSync(shipPos, shipPos2, unk) || ShouldSendUpdate(ship, timeElapsed);
 
         return false;
     }
     else if (sendUpdateAsap)
     {
-        // Call this function to update the engineKillDisabledLastTime value
-        if (ship)
-            IsEkToggled(ship);
-
         // If an update has been missed, send an update as soon as this becomes possible, but do it only once
         sendUpdateAsap = false;
         return true;
     }
 
-    return ShouldSendUpdate(ship, timeElapsed) || CheckForSync(unk1, unk2, unk3);
+    // I'll assume that CheckForSync is the more efficient update check.
+    return isEkToggled || CheckForSync(shipPos, shipPos2, unk) || ShouldSendUpdate(ship, timeElapsed);
 }
 
 // Hook for function that sends an update to the server
@@ -144,7 +164,7 @@ void IServerImpl::SPObjUpdate_Hook(SSPObjUpdateInfo &updateInfo, UINT client)
     {
         // Get throttle from the ship and set it in the update info if engine kill is currently disabled.
         // If it's enabled we want to set the throttle value to 0.
-        updateInfo.throttle = engineKillDisabledLastTime ? ship->get_throttle() : 0.0f;
+        updateInfo.throttle = engineKillEnabledLastTime ? 0.0f : ship->get_throttle();
 
         // Set the last orientation
         lastOrientation = MatrixToQuaternion(ship->get_orientation());
