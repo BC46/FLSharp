@@ -246,7 +246,7 @@ void InitTestSounds()
     #define START_AMBIENCE_TEST_SOUND 0x4B1949
 
     jmpNoPauseForBgmPtr = &GetValue<BYTE>(0x42A3A7);
-    jmpNoResumeForBgmPtr = &GetValue<BYTE>(0x42A3A7);
+    jmpNoResumeForBgmPtr = &GetValue<BYTE>(0x42A3EB);
 
     EnsureTestSoundsPlay();
     SetTestSoundAvailability(interfaceTestSoundAvailable, ambienceTestSoundAvailable);
