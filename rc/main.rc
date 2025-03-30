@@ -1,8 +1,8 @@
 #include <winver.h>
 
 VS_VERSION_INFO VERSIONINFO
-FILEVERSION     0,7,0,3
-PRODUCTVERSION  0,7,0,3
+FILEVERSION     0,7,0,4
+PRODUCTVERSION  0,7,0,4
 FILEOS          VOS__WINDOWS32
 FILETYPE        VFT_DLL
 {
@@ -12,12 +12,12 @@ FILETYPE        VFT_DLL
         {
             VALUE "CompanyName",      "BC46"
             VALUE "FileDescription",  "FLSharp"
-            VALUE "FileVersion",      "0.7.3"
+            VALUE "FileVersion",      "0.7.4"
             VALUE "InternalName",     "FLSharp"
             VALUE "LegalCopyright",   "Copyright 2025 BC46"
             VALUE "OriginalFilename", "FLSharp.dll"
             VALUE "ProductName",      "Freelancer"
-            VALUE "ProductVersion",   "0, 7, 0, 3"
+            VALUE "ProductVersion",   "0, 7, 0, 4"
         }
     }
 
