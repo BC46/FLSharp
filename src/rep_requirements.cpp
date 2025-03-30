@@ -6,17 +6,17 @@
 
 #define NAKED __declspec(naked)
 
-BYTE& fmtValIsZeroCheck = GetValue<BYTE>(0x47FE86);
-UINT insufficientRepIds = GetValue<UINT>(0x4B9011); // 1564 by default
+BYTE* fmtValIsZeroCheckPtr = nullptr;
+UINT insufficientRepIds = 1564;
 
 FL_FUNC(void NN_Dealer::PrintFmtStrPurchaseInfo(UINT idsPurchaseInfo, int fmtValue), 0x47FD50)
 
 void NN_Dealer::PrintFmtStrPurchaseInfo_Hook(UINT idsPurchaseInfo, DealerStack* stack)
 {
     // Call the original function with the rep percentage.
-    fmtValIsZeroCheck = 0xEB; // allow the rep percentage to be printed if it's 0
+    *fmtValIsZeroCheckPtr = 0xEB; // allow the rep percentage to be printed if it's 0
     PrintFmtStrPurchaseInfo(idsPurchaseInfo, GetRepPercentage(stack->repRequired));
-    fmtValIsZeroCheck = 0x75; // restore the original value to prevent other 0's from being unintentionally printed
+    *fmtValIsZeroCheckPtr = 0x75; // restore the original value to prevent other 0's from being unintentionally printed
 }
 
 NAKED void GetShipRepRequirement_Hook()
@@ -85,6 +85,9 @@ void InitPrintRepRequirements()
     #define REP_REQUIREMENTS_NOT_MET_ADDR 0x480739
     #define GET_SHIP_REQUIREMENT_ADDR 0x4B9462
     #define PRINT_SHIP_REQUIREMENT_ADDR 0x4B9010
+
+    fmtValIsZeroCheckPtr = &GetValue<BYTE>(0x47FE86);
+    insufficientRepIds = GetValue<UINT>(0x4B9011); // 1564 by default
 
     Hook(REP_REQUIREMENTS_NOT_MET_ADDR + 0x9, &NN_Dealer::PrintFmtStrPurchaseInfo_Hook, 5);
     Patch<WORD>(REP_REQUIREMENTS_NOT_MET_ADDR, 0x9054); // push esp followed by nop (replaces param 0 with a stack pointer)
