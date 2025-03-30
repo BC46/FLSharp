@@ -33,6 +33,12 @@ struct SoundHandle
     virtual bool IsPaused();
 };
 
+struct TestSound
+{
+    UINT idsName;
+    BYTE soundId;
+};
+
 bool GetBackgroundMusicHandle(SoundHandle **pHandle);
 bool GetBackgroundAmbienceHandle(SoundHandle **pHandle);
 

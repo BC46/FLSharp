@@ -76,8 +76,10 @@ float GetShipTurnThreshold(CShip *ship)
 
     Archetype::Ship const * shipArch = ship->shiparch();
 
-    // TODO: The angular drag is meant to be calculated dynamically using the CShip::get_angular_drag() function
-    // However, the angular drag factor is kind of an unused feature in FL and not many mods use it
+    // TODO: The angular drag is meant to be calculated dynamically using the CShip::get_angular_drag() function.
+    // However, the angular drag factor is kind of an unused feature in FL and not many mods use it.
+    // Though some do for instance to increase the weight of the ship based on the amount of cargo you have.
+    // This means the turn speed should be continuously recalculated instead of only once on launch.
     float avgDrag = (shipArch->angularDrag.x + shipArch->angularDrag.y) / 2;
     float avgTorque = (shipArch->steeringTorque.x + shipArch->steeringTorque.y) / 2;
     float maxTurnSpeed = (avgTorque / avgDrag) * (180.0f / M_PI);

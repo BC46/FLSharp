@@ -14,20 +14,20 @@ BYTE& jmpNoResumeForBgm = GetValue<BYTE>(0x42A3EB);
 
 void EnsureTestSoundsPlay()
 {
-    #define INDEPENDENT_INTERFACE_VOLUME_VAL ((PBYTE) 0x4B1503)
-    #define INDEPENDENT_AMBIENCE_VOLUME_VAL ((PBYTE) 0x4B1554)
+    #define INDEPENDENT_INTERFACE_VOLUME_VAL *((PBYTE) 0x4B1503)
+    #define INDEPENDENT_AMBIENCE_VOLUME_VAL *((PBYTE) 0x4B1554)
 
     // Test if the interface and ambience volume controls are independent from the sound effects and music, respectively.
     // If these custom edits are applied, then the respective test sounds will never play.
     // Hence patch Freelancer.exe to make the sounds actually play.
 
-    if (*INDEPENDENT_INTERFACE_VOLUME_VAL == 0x83)
+    if (INDEPENDENT_INTERFACE_VOLUME_VAL == 0x83)
     {
         Patch<WORD>(0x4B1533, 0x00FA);
         Patch<BYTE>(0x4B154E, 0xDF);
     }
 
-    if (*INDEPENDENT_AMBIENCE_VOLUME_VAL == 0x84)
+    if (INDEPENDENT_AMBIENCE_VOLUME_VAL == 0x84)
     {
         Patch<BYTE>(0x4B1584, 0xA9);
         Patch<BYTE>(0x4B159F, 0x8E);
@@ -108,37 +108,28 @@ bool GetBackgroundMusicHandle_Hook(SoundHandle **pBgm)
 // If you were to force new test sounds to play, then without adding respective StopSound entries below they would play indefinitely.
 void NN_Preferences::VolumeSliderAdjustEnd_Hook(PVOID adjustedScrollElement)
 {
-    #define DIALOGUE_VOLUME_IDS         1409
-    #define SFX_VOLUME_IDS              1336
-    #define MUSIC_VOLUME_IDS            1337
-    #define INTERFACE_VOLUME_IDS        1411
-    #define AMBIENCE_VOLUME_IDS         1412
-    #define DIALOGUE_VOLUME_SOUND_ID    0x1E
-    #define SFX_VOLUME_SOUND_ID         0x1F
-    #define MUSIC_VOLUME_SOUND_ID       0x20
+    // For every known test sound, store its IDS name and sound ID.
+    static const TestSound testSounds[] =
+    {
+        { 1409, 0x1E }, // dialogue
+        { 1336, 0x1F }, // sfx
+        { 1337, 0x20 }, // music
+        { 1411, INTERFACE_VOLUME_SOUND_ID }, // interface
+        { 1412, AMBIENCE_VOLUME_SOUND_ID } // ambience
+    };
 
-    for (int i = 0; i < 14; ++i)
+    for (int i = 0; i < sizeof(scrollElements) / sizeof(scrollElements[0]); ++i)
     {
         if (this->scrollElements[i] != adjustedScrollElement)
             continue;
 
-        switch (this->audioOptions[i].idsName)
+        for (const auto& testSound : testSounds)
         {
-            case DIALOGUE_VOLUME_IDS:
-                StopSound(DIALOGUE_VOLUME_SOUND_ID);
+            if (this->audioOptions[i].idsName == testSound.idsName)
+            {
+                StopSound(testSound.soundId);
                 break;
-            case SFX_VOLUME_IDS:
-                StopSound(SFX_VOLUME_SOUND_ID);
-                break;
-            case MUSIC_VOLUME_IDS:
-                StopSound(MUSIC_VOLUME_SOUND_ID);
-                break;
-            case INTERFACE_VOLUME_IDS:
-                StopSound(INTERFACE_VOLUME_SOUND_ID);
-                break;
-            case AMBIENCE_VOLUME_IDS:
-                StopSound(AMBIENCE_VOLUME_SOUND_ID);
-                break;
+            }
         }
     }
 

@@ -88,6 +88,7 @@ void AddDisplaySettingsResolutions()
     {
         // Discard resolutions that are not allowed.
         // Moreover, discard resolutions that are too narrow (e.g. 5:4) since FL doesn't run well with those.
+        // Though if the user's monitor resolution is narrow as well, do allow narrow resolutions because otherwise there won't be much left to choose from.
         if (!IsResolutionAllowed(dm) || (!isMainResNarrow && IsResolutionNarrow(dm.dmPelsWidth, dm.dmPelsHeight)))
             continue;
 

@@ -8,8 +8,8 @@
 #define AUTO_LEVEL *((bool*) 0x612700)
 
 // These represent the actual default values of the flight behavior.
-#define DEFAULT_ROTATION_LOCK_CMN_OFFSET (0x7249A)
-#define DEFAULT_AUTO_LEVEL_CMN_OFFSET (0x86542)
+#define DEFAULT_ROTATION_LOCK_CMN_OFFSET 0x7249A
+#define DEFAULT_AUTO_LEVEL_CMN_OFFSET 0x86542
 
 bool defaultRotationLockValue = true;
 bool defaultAutoLevelValue = true;

@@ -31,9 +31,9 @@ void InitTradeLaneLightsFix()
 
     Patch<BYTE>(IS_TLR_DISRUPTED_CHECK_ADDR, 0xEB); // Redirect trade lane disrupt calls to the hook below as well.
 
-    // FL has legacy code that deallocates all light objects when a tradelane is disrupted and when it is restored it attempts to re-create all the light objects.
-    // However, the latter doesn't work in the retail version of FL, resulting in the trade lanes remaining off permanently after one disruption.
+    // FL has legacy code that deallocates all light objects when a trade lane is disrupted and when it is restored it attempts to re-create all the light objects.
+    // However, the latter doesn't work in the retail version of FL, resulting in the trade lane lights remaining off permanently after one disruption.
     // The legacy code looked overly complicated for such a simple task and there seemed to be no easy way to just "fix" it.
-    // Hence new code has been written that simply activates/deactivates the lights based on whether or not the tradelane is disrupted.
+    // Hence new code has been written that simply activates/deactivates the lights based on whether or not the trade lane is disrupted.
     Hook(ENABLE_TLR_LIGHTS_CALL_ADDR, &TradeLaneEquipObj::SetLightsState_Hook, 5);
 }
