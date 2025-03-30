@@ -66,13 +66,25 @@ void AddWindowRectResolutions()
 
 void AddMainMonitorResolutions()
 {
-    SetMainResWidth(mainMonitorRes.width);
-    SetMainResHeight(mainMonitorRes.height);
+    // If JFLP isn't loaded, then modifying the default res may not be a good idea due to no widescreen support.
+    // TODO: instead of patching the DEFAULT_RES values on startup, maybe do it when the functions are called?
+    // If JFLP is loaded after FL#, then this check will fail.
+    // TODO: Check presence of HUDShift.dll as well?
+    if (GetModuleHandleA("jflp.dll"))
+    {
+        SetMainResWidth(mainMonitorRes.width);
+        SetMainResHeight(mainMonitorRes.height);
 
-    Patch<int>(DEFAULT_RES_WIDTH_PTR_1, mainMonitorRes.width);
-    Patch<int>(DEFAULT_RES_WIDTH_PTR_2, mainMonitorRes.width);
-    Patch<int>(DEFAULT_RES_HEIGHT_PTR_1, mainMonitorRes.height);
-    Patch<int>(DEFAULT_RES_HEIGHT_PTR_2, mainMonitorRes.height);
+        Patch<int>(DEFAULT_RES_WIDTH_PTR_1, mainMonitorRes.width);
+        Patch<int>(DEFAULT_RES_WIDTH_PTR_2, mainMonitorRes.width);
+        Patch<int>(DEFAULT_RES_HEIGHT_PTR_1, mainMonitorRes.height);
+        Patch<int>(DEFAULT_RES_HEIGHT_PTR_2, mainMonitorRes.height);
+    }
+    else
+    {
+        SetMainResWidth(GetValue<int>(DEFAULT_RES_WIDTH_PTR_1));
+        SetMainResHeight(GetValue<int>(DEFAULT_RES_HEIGHT_PTR_1));
+    }
 
     resolutions.emplace(mainMonitorRes.width, mainMonitorRes.height, 16);
     resolutions.emplace(mainMonitorRes.width, mainMonitorRes.height, 32);
