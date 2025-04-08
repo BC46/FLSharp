@@ -6,12 +6,11 @@
 #include "Common.h"
 #include "vftable.h"
 
-typedef enum ModelType
+enum ModelType : DWORD
 {
-    MODELTYPE_SHIPHULL = 0,
-    MODELTYPE_LAUNCHER = 2,
-    MODELTYPE_FORCEDWORD = 0xFFFFFFFF
-} ModelType;
+    ShipHull = 0,
+    Launcher = 2,
+};
 
 struct ModelBinary
 {

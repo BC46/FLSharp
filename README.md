@@ -1,5 +1,5 @@
 # FLSharp
-FLSharp (FL# for short) is a plugin for the game Freelancer (2003) that aims to apply game-related fixes and improvements to the game's code.
+FLSharp (FL# for short) is a plugin for the game Freelancer (2003) that aims to apply game-related fixes and improvements using client hooks.
 These include:
 - Fixed a bug that caused the lights of a trade lane to never turn back on after the trade lane gets disrupted.
 - Fixed a bug that caused waypoints to be cleared when the player reaches the coordinates in a different system.
@@ -47,9 +47,11 @@ This will output the `FLSharp.dll` file in the `bin` folder.
 Building the project using other compilers may require the code to be modified.
 
 ## Credits
+Thanks to the following people for helping make some of the features possible:
+
 - [Aingar](https://github.com/Aingar)
-  - Identification of the client-to-server communication bugs/improvements and implementations within DiscoveryGC's client hook
-- [BC46](https://github.com/BC46)
-  - Standalone implementations
+  - Identification of the client-to-server communication improvements and providing code from DiscoveryGC's client hook
+- [Schmackbolzen](https://github.com/Schmackbolzen)
+  - Provided assistance with troubleshooting the ship preview rendering bug
 - [Venemon](https://github.com/Venemon)
   - Original implementations of the multi-barrel launcher sound and [weapon animation fixes](https://www.moddb.com/mods/weapon-animations)

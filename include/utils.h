@@ -23,11 +23,9 @@ inline void ReadWriteProtect(DWORD location, DWORD size)
 template <typename Func>
 Func SetRelPointer(DWORD location, Func hookFunc)
 {
-    DWORD originalPointer;
-
     // Set and calculate the relative offset for the hook function
     ReadWriteProtect(location, sizeof(DWORD));
-    originalPointer = location + (*(PDWORD) location) + 4;
+    DWORD originalPointer = location + (*(PDWORD) location) + 4;
 
     DWORD hookFuncLocation = *((PDWORD) &hookFunc);
     *(PDWORD) location = hookFuncLocation - (location + 4);
@@ -79,10 +77,13 @@ void CleanupTrampoline(Func trampolineFunc)
 }
 
 template <typename Func>
-void SetPointer(DWORD location, Func hookFunc)
+Func SetPointer(DWORD location, Func hookFunc)
 {
     ReadWriteProtect(location, sizeof(PDWORD));
+    DWORD originalPointer = *((PDWORD) location);
     *(Func*) location = hookFunc;
+
+    return GetFuncDef<Func>(originalPointer);
 }
 
 template <typename Type>

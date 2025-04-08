@@ -24,7 +24,7 @@ void FeatureManager::InitFeatures()
     {
         const FlSharpFeature& feature = it.second;
 
-        if (feature.enabled && feature.applyPredicate() && feature.initFunc)
+        if (feature.enabled && feature.initFunc && feature.applyPredicate())
             feature.initFunc();
     }
 }
@@ -35,7 +35,7 @@ void FeatureManager::CleanupFeatures()
     {
         const FlSharpFeature& feature = it.second;
 
-        if (feature.enabled && feature.applyPredicate() && feature.cleanupFunc)
+        if (feature.enabled && feature.cleanupFunc && feature.applyPredicate())
             feature.cleanupFunc();
     }
 }

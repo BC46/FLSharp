@@ -18,7 +18,7 @@ bool EngAnimation::SetModel_Hook(PDWORD unk, ModelBinary* model)
     while (currentModel)
     {
         // If the parent has been found, ensure this is used as the model for the animation, but keep checking for greater parents.
-        if (currentModel->type == MODELTYPE_SHIPHULL)
+        if (currentModel->type == ModelType::ShipHull)
         {
             model = currentModel;
         }
