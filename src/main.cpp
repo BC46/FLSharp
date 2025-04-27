@@ -49,9 +49,14 @@ BOOL WINAPI DllMain(HINSTANCE hinstDLL, DWORD fdwReason, LPVOID lpReserved)
     UNREFERENCED_PARAMETER(lpReserved);
 
     if (fdwReason == DLL_PROCESS_ATTACH)
+    {
+        DisableThreadLibraryCalls(hinstDLL);
         Init();
+    }
     else if (fdwReason == DLL_PROCESS_DETACH)
+    {
         Cleanup();
+    }
 
     return TRUE;
 }
