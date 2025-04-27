@@ -49,13 +49,12 @@ void InitProjectilesServerFix()
 {
     DWORD serverHandle = (DWORD) GetModuleHandleA("server.dll");
 
-    // e.g. console.dll enforces the server library to load without causing any issues, so should be fine
+    // E.g. console.dll enforces the server library to load without causing any issues, so should be fine
     if (!serverHandle)
         serverHandle = (DWORD) LoadLibraryA("server.dll");
 
     if (serverHandle)
     {
-        // Add file offset and server handle to set the hook's return address
         playerLauncherFireRet = serverHandle + 0xD91A;
 
         Hook(serverHandle + 0xD913, HandlePlayerLauncherFire_Hook, 5, true);

@@ -40,7 +40,7 @@ OUTPUT_FILE = $(BIN_DIR)\FLSharp.dll
 
 CPP_FLAGS = /c /O2 /nologo /W3 /WX /GL /LD /MT /EHsc /Zc:threadSafeInit- /DNDEBUG /DUSE_ST6
 LD_FLAGS = /LTCG:incremental /DLL /NOLOGO /RELEASE /DEBUG
-LIB_FLAGS = /NOLOGO /MACHINE:IX86
+LIB_FLAGS = /NOLOGO /MACHINE:X86
 RC_FLAGS = /nologo
 
 $(OUTPUT_FILE): $(OBJ_FILES) $(RES_FILE) $(COMMON_LIB) $(DALIB_LIB) $(BIN_DIR)
@@ -52,10 +52,10 @@ $(OUTPUT_FILE): $(OBJ_FILES) $(RES_FILE) $(COMMON_LIB) $(DALIB_LIB) $(BIN_DIR)
 $(RES_FILE): $(RC_FILE) $(OBJ_DIR) makefile
     rc $(RC_FLAGS) /fo $(RES_FILE) $(RC_FILE)
 
-$(COMMON_LIB): $(COMMON_DEF) makefile
+$(COMMON_LIB): $(COMMON_DEF) $(INCLUDE_DIR)/Common.h makefile
     lib $(LIB_FLAGS) /def:$(COMMON_DEF) /name:COMMON /out:$(COMMON_LIB)
 
-$(DALIB_LIB): $(DALIB_DEF) makefile
+$(DALIB_LIB): $(DALIB_DEF) $(INCLUDE_DIR)/DALib.h makefile
     lib $(LIB_FLAGS) /def:$(DALIB_DEF) /name:DALIB /out:$(DALIB_LIB)
 
 $(OBJ_DIR):

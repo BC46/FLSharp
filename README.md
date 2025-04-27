@@ -7,8 +7,8 @@ These include:
 - Makes the weapon flash particle effect play on all barrels instead of only on the first barrel.
 - Fixed a bug for the `one_shot_sound` not playing when firing multi-barrel launchers.
 - Fixed a bug for the ammo count not decrementing correctly when firing multi-barrel launchers.
-- Fixed a bug that caused the `use_animation` entries in `weapon_equip.ini` to not work, i.e. enables weapon animations.
-- Allows a gun's `use_animation` entry to be played on the parent (e.g. ship) if the animation name has a leading underscore (`_`); this leading underscore should **not** be included in the cmp file's animation name.
+- Fixed a bug that caused the `use_animation` scripts defined in `weapon_equip.ini` to not work, i.e. enables weapon animations.
+- Allows a gun's `use_animation` script to be played on the parent (e.g. ship) if the animation name has a leading underscore (`_`); this leading underscore should **not** be included in the cmp file's animation name.
 - Fixed a bug that caused the client to not send the correct engine state of the player's ship to the server.
 - When playing on a server, ensure the client sends an update:
     - at least every 2 seconds;
@@ -22,8 +22,8 @@ These include:
 - Allows for up to 127 selectable resolutions in the general options menu; these are automatically determined based on the user's main monitor resolution.
 - Fixes the problem where the general options menu can't distinguish two different resolutions with the same width.
 - Makes the default resolution button in the general options menu select the user's main monitor resolution instead of 1024x768.
-- Prevent Freelancer from running with resolutions beyond the main display's capabilities in terms of horizontal and vertical resolution.
-- Sets the user's main monitor resolution as the default in-game resolution.
+- Prevent Freelancer from running with resolutions beyond the main display's capabilities in terms of resolution width and height.
+- Sets the user's main monitor resolution as the default in-game resolution (assumes widescreen support has already been added by JFLP and HUD Shift).
 - Instead of checking if the available resolutions are supported each time the option menu opens, do it only when needed (optimization).
 - Allows for the Ctrl + C hotkey to copy text from any Freelancer input box to the clipboard.
 - Allows for the Ctrl + V hotkey to paste text from the clipboard to any Freelancer input box.
