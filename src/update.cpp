@@ -27,7 +27,7 @@ void SetTimeSinceLastUpdate()
 CShip* GetPlayerShip()
 {
     IObjRW* playerIObjRW = GetPlayerIObjRW();
-    return !playerIObjRW ? nullptr : playerIObjRW->ship;
+    return !playerIObjRW ? nullptr : (CShip*) playerIObjRW->cobject;
 }
 
 // This seems to be a relatively fast operation; Freelancer calls it numerous times per frame.

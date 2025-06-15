@@ -74,8 +74,8 @@ void InitWeaponAnimFix()
     // Setup for IAnimation2::Open hook
     BYTE rootIndexPatch[] = { 0x51, 0x55, 0x90, 0x90, 0x90, 0x90 }; // Replace GetRootIndex call with push ecx + push ebx
     Patch(GET_ROOT_INDEX_CALL_ADDR, &rootIndexPatch, sizeof(rootIndexPatch));
-    Patch<WORD>(PUSH_ZERO_ADDR, 0x9090); // Nop out two zero pushes
-    Patch<BYTE>(ANIM_OPEN_CALL_ADDR, 0x90); // Nop another instruction
+    Nop(PUSH_ZERO_ADDR, 2); // Nop out two zero pushes
+    Nop(ANIM_OPEN_CALL_ADDR, 1); // Nop another instruction
 
     Hook(ANIM_OPEN_CALL_ADDR + 1, &IAnimation2::Open_Hook, 5);
 }

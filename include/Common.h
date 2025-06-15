@@ -26,13 +26,14 @@ public:
     IMPORT LPCSTR get_value_string(UINT index = 0);
     IMPORT bool get_value_bool(UINT index = 0);
     IMPORT float get_value_float(UINT index = 0);
+    IMPORT int get_value_int(UINT index = 0);
     IMPORT LPCSTR get_name_ptr();
     IMPORT void close();
 
-    inline UINT get_value_uint(UINT index = 0)
-    {
-        return static_cast<UINT>(get_value_float(index));
-    }
+    // inline UINT get_value_uint(UINT index = 0)
+    // {
+    //     return static_cast<UINT>(get_value_float(index));
+    // }
 
     inline UINT get_value_id(UINT index = 0)
     {
@@ -194,7 +195,7 @@ public:
 struct IObjRW
 {
     BYTE data[0x10];
-    CShip* ship; // actually a CObject* but make it CShip* for convenience
+    CObject* cobject;
 };
 
 struct PhysicsInfo

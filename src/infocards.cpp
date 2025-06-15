@@ -28,8 +28,7 @@ void ParseMsnCreatedSolars(LPCSTR iniPath)
             }
             else if (reader.is_value("ids_info"))
             {
-                // TODO: Maybe just use get_value_int? FL uses get_value_uint though.
-                idsInfo = reader.get_value_uint();
+                idsInfo = reader.get_value_int();
             }
         }
 
