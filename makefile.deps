@@ -57,6 +57,15 @@ obj\Freelancer.obj: \
     makefile.deps \
     makefile
 
+obj\infocards.obj: \
+    include\infocards.h \
+    include\Common.h \
+    include\fl_math.h \
+    include\vftable.h \
+    include\utils.h \
+    makefile.deps \
+    makefile
+
 obj\main.obj: \
     include\feature_config.h \
     include\config_reader.h \
@@ -79,6 +88,7 @@ obj\main.obj: \
     include\rep_requirements.h \
     include\cgun_wrapper.h \
     include\temp_fixes.h \
+    include\infocards.h \
     makefile.deps \
     makefile
 

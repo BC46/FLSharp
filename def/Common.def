@@ -20,6 +20,7 @@ EXPORTS
 ?get_orientation@EngineObject@@QBEABVMatrix@@XZ
 ?IsTriggered@FuseAction@@UBE_NXZ
 ?cast@CEEngine@@SAPBV1@PBVCEquip@@@Z
+?is_dynamic@CSolar@@QBE_NXZ
 ?CheckForSync@CRemotePhysicsSimulation@@QAE_NABVVector@@0ABVQuaternion@@@Z
 ?SinglePlayer@@YA_NXZ
 ?GetProjectilesPerFire@CELauncher@@QBEIXZ
@@ -33,3 +34,5 @@ EXPORTS
 ?GetBehaviorManager@@YAPAVIBehaviorManager@@PAUIObjRW@@@Z
 
 ?CreateID@@YAIPBD@Z
+
+?GetInfocard@Vibe@Reputation@@YAHABHAAI@Z

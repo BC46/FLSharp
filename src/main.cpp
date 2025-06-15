@@ -13,6 +13,7 @@
 #include "rep_requirements.h"
 #include "cgun_wrapper.h"
 #include "temp_fixes.h"
+#include "infocards.h"
 
 FeatureManager manager;
 
@@ -32,6 +33,7 @@ void Init()
     manager.RegisterFeature("print_rep_requirements",   InitPrintRepRequirements,   nullptr,                    ApplyOnlyOnClient);
     manager.RegisterFeature("post_game_deadlock_fix",   InitPostGameDeadlockFix,    nullptr,                    ApplyOnlyOnClient);
     manager.RegisterFeature("flight_controls_fix",      InitFlightControlsFix,      nullptr,                    ApplyOnlyOnClient);
+    manager.RegisterFeature("dynamic_solar_infocards",  InitDynamicSolarInfocards,  nullptr,                    ApplyOnlyOnClient);
 
     ReadConfig("FLSharp.ini", manager);
 

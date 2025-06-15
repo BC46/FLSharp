@@ -6,8 +6,8 @@
 
 struct SSPObjUpdateInfo
 {
-    BYTE data[40];
-    float throttle;
+    BYTE x00[40];
+    float throttle; // 0x28
 };
 
 class IServerImpl {
