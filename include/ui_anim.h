@@ -28,8 +28,8 @@ private:
     FILL_VFTABLE(7)
     FILL_VFTABLE(8)
     FILL_VFTABLE(9)
-    virtual void Vftable_xC0();
-    virtual void Vftable_xC4();
+    virtual void Vftable_xA0();
+    virtual void Vftable_xA4();
     virtual int UpdatePosition(BYTE unk1, const Vector* newPosOffset, BYTE unk2);
 
     BYTE x04[0x3E8];

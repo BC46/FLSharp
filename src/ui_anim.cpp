@@ -28,7 +28,8 @@ void InitSlideUiAnimFix()
     const DWORD slideAnimationCalls[] = {
         0x56FB13, 0x56FB2A, 0x56FB41, 0x56FB58,             // "FREELANCER SERVERS" menu
         0x56A86F, 0x56A885, 0x56A89B, 0x56A8B1, 0x56A8C7,   // "SELECT A CHARACTER" menu
-        0x561A43, 0x561A5A                                  // "CREATE A NEW CHARACTER" menu
+        0x561A43, 0x561A5A,                                 // "CREATE A NEW CHARACTER" menu
+        0x572F22, 0x572F39                                  // "Account ID" menu
     };
 
     for (const auto& call : slideAnimationCalls)
