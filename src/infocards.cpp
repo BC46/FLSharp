@@ -49,12 +49,11 @@ int GetInfocard_Hook(CObject* selectedObj, const int &id, UINT &idsInfo)
         {
             // Try to find the idsInfo in the map.
             const auto it = msnBaseIdsInfoMap.find(solar->baseId);
-
             if (it != msnBaseIdsInfoMap.end())
             {
                 // Found it!
                 idsInfo = it->second;
-                return 0; // 0 = OK
+                return S_OK;
             }
         }
     }

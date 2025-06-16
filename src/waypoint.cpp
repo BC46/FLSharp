@@ -14,10 +14,8 @@ WaypointInfo* WaypointCheck_Hook(UINT index)
     if (!waypointInfo)
         return nullptr;
 
-    UINT playerSystem = *(PUINT) PLAYER_SYSTEM_ADDR;
-
     // Only return the waypoint info if the player is in the same system as the waypoint
-    return playerSystem == waypointInfo->system ? waypointInfo : nullptr;
+    return PLAYER_SYSTEM == waypointInfo->system ? waypointInfo : nullptr;
 }
 
 // Hook that prevents waypoints from being set at the player ship's location

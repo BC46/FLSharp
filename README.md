@@ -31,7 +31,7 @@ These include:
 - When the "You must be on friendlier terms to purchase this." message is displayed in the Dealer menus, allow the exact reputation requirement to be printed too. Include `%d` in the IDS (S 1564, `resources.dll`) to make it work.
 - Fixed a bug that caused the Freelancer process to not always terminate after closing the game.
 - Automatically set rotation lock and auto leveling to the default value when launching to space to prevent control-related issues from occurring (e.g. mouse flight not working).
-- Allows infocards for dynamic solars to be displayed in the Current Information window.
+- Allows infocards for dynamic solars (based on `missioncreatedsolars.ini`) to be displayed in the Current Information window.
 
 More fixes and improvements may be added in the future.
 
