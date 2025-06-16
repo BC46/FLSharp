@@ -88,9 +88,10 @@ namespace Archetype
 {
     struct Root
     {
-        // TODO: use get_script_index()
         BYTE data[0x44];
         int scriptIndex; // 0x44
+
+        IMPORT int get_script_index() const;
     };
 
     struct Ship
@@ -144,6 +145,8 @@ private:
     BYTE x00[0xE4];
 public:
     CEquipManager equipManager; // 0xE4
+
+    bool is_base() const;
 };
 
 struct IMPORT CShip : public CEqObj
@@ -157,7 +160,6 @@ struct CSolar : public CEqObj
 {
     BYTE x104[0x5C];
     UINT baseId; // 0x160
-    // TODO: use this instead: bool is_base() const;
 
     IMPORT bool is_dynamic() const;
 

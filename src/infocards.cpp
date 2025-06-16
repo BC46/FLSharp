@@ -45,7 +45,7 @@ int GetInfocard_Hook(CObject* selectedObj, const int &id, UINT &idsInfo)
     if (CSolar* solar = CSolar::cast(selectedObj))
     {
         // Is the selected object a dynamic base?
-        if (solar->baseId && solar->is_dynamic())
+        if (solar->is_dynamic() && solar->is_base())
         {
             // Try to find the idsInfo in the map.
             const auto it = msnBaseIdsInfoMap.find(solar->baseId);
@@ -70,15 +70,13 @@ int GetInfocard_Hook(CObject* selectedObj, const int &id, UINT &idsInfo)
 // if so, return the stored ids_info.
 void InitDynamicSolarInfocards()
 {
-    // Get the relative path to MissionCreatedSolars.ini dynamically.
-    // TODO: Use GetFileSysPath(relIniPath, iniDataPath, nullptr);
-    char relIniPath[MAX_PATH];
-    strcpy_s(relIniPath, sizeof(relIniPath), "..\\DATA\\");
+    // Get the full path to MissionCreatedSolars.ini dynamically.
+    char fullIniPath[MAX_PATH];
+    strcpy_s(fullIniPath, sizeof(fullIniPath), "..\\DATA\\");
+    LPCSTR relIniPath = GetValue<LPCSTR>(0x476C7A); // Universe\\MissionCreatedSolars.ini
+    strcat_s(fullIniPath, sizeof(fullIniPath), relIniPath);
 
-    LPCSTR iniDataPath = GetValue<LPCSTR>(0x476C7A); // Universe\\MissionCreatedSolars.ini
-    strcat_s(relIniPath, sizeof(relIniPath), iniDataPath);
-
-    ParseMsnCreatedSolars(relIniPath);
+    ParseMsnCreatedSolars(fullIniPath);
 
     // Add a "push esi" instruction so we can check out the selected CObject in our hook.
     #define GET_INFOCARD_CURRENT_INFO_CALL_ADDR 0x475BD8

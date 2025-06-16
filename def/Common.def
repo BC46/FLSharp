@@ -21,10 +21,12 @@ EXPORTS
 ?get_orientation@EngineObject@@QBEABVMatrix@@XZ
 ?IsTriggered@FuseAction@@UBE_NXZ
 ?cast@CEEngine@@SAPBV1@PBVCEquip@@@Z
+?is_base@CEqObj@@QBE_NXZ
 ?is_dynamic@CSolar@@QBE_NXZ
 ?CheckForSync@CRemotePhysicsSimulation@@QAE_NABVVector@@0ABVQuaternion@@@Z
 ?SinglePlayer@@YA_NXZ
 ?GetProjectilesPerFire@CELauncher@@QBEIXZ
+?get_script_index@Root@Archetype@@QBEHXZ
 ?get_archetype@CObject@@QBEPAURoot@Archetype@@XZ
 ?IsMPServer@@YA_NXZ
 
