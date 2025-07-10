@@ -47,11 +47,8 @@ NAKED void HandlePlayerLauncherFire_Hook()
 // This function may be executed on both the client and server-side
 void InitProjectilesServerFix()
 {
-    DWORD serverHandle = (DWORD) GetModuleHandleA("server.dll");
-
     // E.g. console.dll enforces the server library to load without causing any issues, so should be fine
-    if (!serverHandle)
-        serverHandle = (DWORD) LoadLibraryA("server.dll");
+    DWORD serverHandle = GetUnloadedModuleHandle("server.dll");
 
     if (serverHandle)
     {

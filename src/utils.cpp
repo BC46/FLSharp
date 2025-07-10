@@ -43,3 +43,13 @@ double getTimeElapsed(const clock_t &lastUpdate)
 {
     return (double) (clock() - lastUpdate);
 }
+
+DWORD GetUnloadedModuleHandle(LPCSTR moduleName)
+{
+    DWORD handle = (DWORD) GetModuleHandleA(moduleName);
+
+    if (!handle)
+        handle = (DWORD) LoadLibraryA(moduleName);
+
+    return handle;
+}
