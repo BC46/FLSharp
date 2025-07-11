@@ -5,6 +5,7 @@
 
 #define WIN32_LEAN_AND_MEAN
 #include <windows.h>
+#include <list>
 
 #define IMPORT __declspec(dllimport)
 
@@ -84,6 +85,9 @@ private:
     BYTE x00[0x20];
 };
 
+struct CollisionGroupDesc
+{};
+
 namespace Archetype
 {
     struct Root
@@ -101,6 +105,12 @@ namespace Archetype
     public:
         Vector angularDrag;
         Vector steeringTorque;
+    };
+
+    struct EqObj
+    {
+        IMPORT bool get_undamaged_collision_group_list(std::list<CollisionGroupDesc>& colGroupList) const;
+        bool get_undamaged_collision_group_list_Hook(std::list<CollisionGroupDesc>& colGroupList) const;
     };
 }
 

@@ -89,6 +89,7 @@ obj\main.obj: \
     include\cgun_wrapper.h \
     include\temp_fixes.h \
     include\infocards.h \
+    include\save_crash.h \
     makefile.deps \
     makefile
 
@@ -126,6 +127,15 @@ obj\resolutions.obj: \
 
 obj\resolutions_asm.obj: \
     include\resolutions_asm.h \
+    makefile.deps \
+    makefile
+
+obj\save_crash.obj: \
+    include\save_crash.h \
+    include\utils.h \
+    include\Common.h \
+    include\fl_math.h \
+    include\vftable.h \
     makefile.deps \
     makefile
 

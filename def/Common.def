@@ -39,3 +39,5 @@ EXPORTS
 ?CreateID@@YAIPBD@Z
 
 ?GetInfocard@Vibe@Reputation@@YAHABHAAI@Z
+
+?get_undamaged_collision_group_list@EqObj@Archetype@@QBE_NAAV?$list@UCollisionGroupDesc@@V?$allocator@UCollisionGroupDesc@@@std@@@std@@@Z

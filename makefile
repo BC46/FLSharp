@@ -31,7 +31,8 @@ $(OBJ_DIR)\flash_particles.obj \
 $(OBJ_DIR)\rep_requirements.obj \
 $(OBJ_DIR)\cgun_wrapper.obj \
 $(OBJ_DIR)\infocards.obj \
-$(OBJ_DIR)\temp_fixes.obj
+$(OBJ_DIR)\temp_fixes.obj \
+$(OBJ_DIR)\save_crash.obj
 
 COMMON_LIB = $(OBJ_DIR)\Common.lib
 DALIB_LIB = $(OBJ_DIR)\DALib.lib

@@ -14,6 +14,7 @@
 #include "cgun_wrapper.h"
 #include "temp_fixes.h"
 #include "infocards.h"
+#include "save_crash.h"
 
 FeatureManager manager;
 
@@ -34,6 +35,7 @@ void Init()
     manager.RegisterFeature("post_game_deadlock_fix",   InitPostGameDeadlockFix,    nullptr,                    ApplyOnlyOnClient);
     manager.RegisterFeature("flight_controls_fix",      InitFlightControlsFix,      nullptr,                    ApplyOnlyOnClient);
     manager.RegisterFeature("dynamic_solar_infocards",  InitDynamicSolarInfocards,  nullptr,                    ApplyOnlyOnClient);
+    manager.RegisterFeature("save_crash_fix",           InitSaveCrashFix,           nullptr,                    ApplyAlways);
 
     ReadConfig("FLSharp.ini", manager);
 

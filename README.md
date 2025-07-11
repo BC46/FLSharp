@@ -32,6 +32,7 @@ These include:
 - Fixed a bug that caused the Freelancer process to not always terminate after closing the game.
 - Automatically set rotation lock and auto leveling to the default value when launching to space to prevent control-related issues from occurring (e.g. mouse flight not working).
 - Allows infocards for dynamic solars (based on `missioncreatedsolars.ini`) to be displayed in the Current Information window.
+- Fixed a startup crash that occurs when Freelancer tries to load a modded/malformed save file.
 
 More fixes and improvements may be added in the future.
 
