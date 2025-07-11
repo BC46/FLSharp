@@ -20,6 +20,8 @@ FeatureManager manager;
 
 void Init()
 {
+    // All registered features must be able to work independently of each other.
+    // They must not assume a certain load order or that another feature is active/inactive.
     manager.RegisterFeature("better_updates",           InitBetterUpdates,          nullptr,                    ApplyOnlyOnClient);
     manager.RegisterFeature("waypoint_fixes",           InitWaypointFixes,          nullptr,                    ApplyOnlyOnClient);
     manager.RegisterFeature("projectiles_sound_fix",    InitProjectilesSoundFix,    nullptr,                    ApplyOnlyOnClient);

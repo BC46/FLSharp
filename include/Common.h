@@ -155,6 +155,8 @@ private:
     BYTE x00[0xE4];
 public:
     CEquipManager equipManager; // 0xE4
+    BYTE x104[0x5C];
+    UINT baseId; // 0x160
 
     bool is_base() const;
 };
@@ -168,9 +170,6 @@ struct IMPORT CShip : public CEqObj
 
 struct CSolar : public CEqObj
 {
-    BYTE x104[0x5C];
-    UINT baseId; // 0x160
-
     IMPORT bool is_dynamic() const;
 
     static inline CSolar* cast(CObject *obj)
