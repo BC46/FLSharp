@@ -8,7 +8,7 @@ Alchemy* __fastcall GetFinishedAle(int maxIndex, Alchemy* aleArr, float maxProgr
 {
     int i = 0;
 
-    for (; i < maxIndex - 1; ++i) // original loop condition: i < maxIndex - 1
+    for (; i < maxIndex - 1; ++i) // original loop condition: "i < maxIndex"
     {
         if (maxProgress < aleArr[i + 1].progress)
             break;
