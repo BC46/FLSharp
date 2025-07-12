@@ -15,6 +15,7 @@
 #include "temp_fixes.h"
 #include "infocards.h"
 #include "save_crash.h"
+#include "alchemy_crash.h"
 
 FeatureManager manager;
 
@@ -38,6 +39,7 @@ void Init()
     manager.RegisterFeature("flight_controls_fix",      InitFlightControlsFix,      nullptr,                    ApplyOnlyOnClient);
     manager.RegisterFeature("dynamic_solar_infocards",  InitDynamicSolarInfocards,  nullptr,                    ApplyOnlyOnClient);
     manager.RegisterFeature("save_crash_fix",           InitSaveCrashFix,           nullptr,                    ApplyAlways);
+    manager.RegisterFeature("alchemy_crash_fix",        InitAlchemyCrashFix,        nullptr,                    ApplyOnlyOnClient);
 
     ReadConfig("FLSharp.ini", manager);
 

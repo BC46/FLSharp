@@ -1,3 +1,9 @@
+obj\alchemy_crash.obj: \
+    include\alchemy_crash.h \
+    include\utils.h \
+    makefile.deps \
+    makefile
+
 obj\cgun_wrapper.obj: \
     include\cgun_wrapper.h \
     include\DALib.h \
@@ -90,6 +96,7 @@ obj\main.obj: \
     include\temp_fixes.h \
     include\infocards.h \
     include\save_crash.h \
+    include\alchemy_crash.h \
     makefile.deps \
     makefile
 
