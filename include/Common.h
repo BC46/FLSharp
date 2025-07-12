@@ -124,9 +124,6 @@ struct IMPORT CObject
     DWORD classType; // 0x4C
 };
 
-struct CSimple : CObject
-{};
-
 class CAttachedEquip
 {
     FILL_VFTABLE(0);
@@ -171,6 +168,7 @@ struct IMPORT CShip : public CEqObj
     bool is_using_tradelane() const;
 };
 
+#define CSOLAR_CLASS_TYPE 0x303
 struct CSolar : public CEqObj
 {
     IMPORT bool is_dynamic() const;
@@ -178,12 +176,21 @@ struct CSolar : public CEqObj
 
     static inline CSolar* cast(CObject *obj)
     {
-        #define CSOLAR_CLASS_TYPE 0x303
-
         if ((obj->classType & CSOLAR_CLASS_TYPE) == CSOLAR_CLASS_TYPE)
             return (CSolar*) obj;
 
         return nullptr;
+    }
+};
+
+struct CSimple : CObject
+{
+    inline bool is_waypoint() const
+    {
+        if ((classType & CSOLAR_CLASS_TYPE) == CSOLAR_CLASS_TYPE)
+            return ((CSolar*) this)->is_waypoint();
+
+        return false;
     }
 };
 

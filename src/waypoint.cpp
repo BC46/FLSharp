@@ -43,8 +43,7 @@ bool IsSimpleUnvisited_Hook(const CSimple& simple)
         return false;
 
     // Treat waypoints as "visited".
-    // Also the cast is safe because is_waypoint only tests a CSimple value.
-    return !((const CSolar&) simple).is_waypoint();
+    return !simple.is_waypoint();
 }
 
 bool IsSimpleVisited_Hook(const CSimple& simple)
@@ -54,8 +53,7 @@ bool IsSimpleVisited_Hook(const CSimple& simple)
         return true;
 
     // Treat waypoints as "visited".
-    // Also the cast is safe because is_waypoint only tests a CSimple value.
-    return ((const CSolar&) simple).is_waypoint();
+    return simple.is_waypoint();
 }
 
 // Adds some minor waypoint-related fixes.
@@ -64,6 +62,6 @@ void InitWaypointFixes()
     Hook(WAYPOINT_CHECK_CALL_ADDR, WaypointCheck_Hook, 5);
     Hook(NAV_MAP_GET_HIGHLIGHTED_OBJ_WAYPOINT_CALL_ADDR, &NeuroNetNavMap::GetHighlightedObject_Hook, 5);
     Hook(NAV_MAP_GET_HIGHLIGHTED_OBJ_BESTPATH_CALL_ADDR, &NeuroNetNavMap::GetHighlightedObject_Hook, 5);
-    Hook(SIMPLE_UNVISITED_CHECK_FOR_TARGET_LIST_CALL_ADDR, IsSimpleUnvisited_Hook, 5);
-    Hook(SIMPLE_VISITED_CHECK_FOR_TARGET_LIST_CALL_ADDR, IsSimpleVisited_Hook, 5);
+    Hook(SIMPLE_UNVISITED_CHECK_FOR_TARGET_LIST_CALL_ADDR, IsSimpleUnvisited_Hook, 5); // Target selection
+    Hook(SIMPLE_VISITED_CHECK_FOR_TARGET_LIST_CALL_ADDR, IsSimpleVisited_Hook, 5); // Current Information window
 }
