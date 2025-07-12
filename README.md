@@ -34,7 +34,7 @@ These include:
 - Allows infocards for dynamic solars (based on `missioncreatedsolars.ini`) to be displayed in the Current Information window.
 - Fixed a startup crash that occurs when Freelancer tries to load a modded/malformed save file.
 - Fixed a very rare and inconsistent crash in alchemy.dll (crash offset `0x701b`).
-- Fixed waypoints being called "Unknown Object" in the target view.
+- Fixed waypoints being called "Unknown Object" in the target view and Current Information window.
 
 More fixes and improvements may be added in the future.
 

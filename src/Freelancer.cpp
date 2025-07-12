@@ -14,6 +14,7 @@ FL_FUNC(WaypointInfo* WaypointCheck(UINT index), 0x4C46A0)
 FL_FUNC(IObjRW* GetPlayerIObjRW(), 0x54BAF0);
 
 FL_FUNC(bool IsSimpleUnvisited(const CSimple& simple), 0x4D4C70);
+FL_FUNC(bool IsSimpleVisited(const CSimple& simple), 0x4D4D00);
 FL_FUNC(UINT GetIdsForUnvisitedSimple(const CSimple& simple), 0x4D4D50);
 
 FL_FUNC(bool NN_Preferences::InitElements(DWORD unk1, DWORD unk2), 0x4A9790)

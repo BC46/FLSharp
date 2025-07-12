@@ -89,6 +89,7 @@ WaypointInfo* WaypointCheck(UINT index);
 IObjRW* GetPlayerIObjRW();
 
 bool IsSimpleUnvisited(const CSimple& simple);
+bool IsSimpleVisited(const CSimple& simple);
 UINT GetIdsForUnvisitedSimple(const CSimple& simple);
 
 inline UINT GetFlString(UINT ids, LPWSTR buffer, UINT bufferLen)
