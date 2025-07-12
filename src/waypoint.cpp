@@ -5,7 +5,8 @@
 #define PLAYERSHIP_NAVMAP_OBJ_TYPE 2
 #define NAV_MAP_GET_HIGHLIGHTED_OBJ_WAYPOINT_CALL_ADDR 0x493A00
 #define NAV_MAP_GET_HIGHLIGHTED_OBJ_BESTPATH_CALL_ADDR 0x493B21
-#define GET_UNKNOWN_SOLAR_IDS_FOR_TARGET_LIST_CALL_ADDR 0x4E40AF
+#define SIMPLE_VISITED_CHECK_FOR_TARGET_LIST_CALL_ADDR 0x4E4094
+#define GET_UNKNOWN_SIMPLE_IDS_FOR_TARGET_LIST_CALL_ADDR 0x4E40AF
 
 // Hook that prevents waypoints from being cleared when the player is in a different system
 WaypointInfo* WaypointCheck_Hook(UINT index)
@@ -32,16 +33,17 @@ NavMapObj* NeuroNetNavMap::GetHighlightedObject_Hook(DWORD unk1, DWORD unk2)
 }
 
 // Fixes waypoints being called "Unknown Object" in the target view.
-// This hook ensures they're called "Waypoint".
-// Sadly it's not straightforward to distinguish between player waypoints and mission points.
-UINT GetUnknownSolarIds_Hook(const CSolar& solar)
+// This hook ensures that waypoints aren't treated as "unvisited".
+// Mission Waypoints will be called "Waypoint", too.
+bool IsSimpleUnvisited_Hook(const CSimple& simple)
 {
-    UINT result = GetUnknownSolarIds(solar);
+    // If the simple is visited, follow the normal routine.
+    if (!IsSimpleUnvisited(simple))
+        return false;
 
-    if (result == UNKNOWN_OBJECT_IDS && solar.is_waypoint())
-        return WAYPOINT_IDS;
-
-    return result;
+    // Treat waypoints as "visited".
+    // Also the cast is safe because is_waypoint only tests a CSimple value.
+    return !((const CSolar&) simple).is_waypoint();
 }
 
 // Adds some minor waypoint-related fixes.
@@ -50,5 +52,5 @@ void InitWaypointFixes()
     Hook(WAYPOINT_CHECK_CALL_ADDR, WaypointCheck_Hook, 5);
     Hook(NAV_MAP_GET_HIGHLIGHTED_OBJ_WAYPOINT_CALL_ADDR, &NeuroNetNavMap::GetHighlightedObject_Hook, 5);
     Hook(NAV_MAP_GET_HIGHLIGHTED_OBJ_BESTPATH_CALL_ADDR, &NeuroNetNavMap::GetHighlightedObject_Hook, 5);
-    Hook(GET_UNKNOWN_SOLAR_IDS_FOR_TARGET_LIST_CALL_ADDR, GetUnknownSolarIds_Hook, 5);
+    Hook(SIMPLE_VISITED_CHECK_FOR_TARGET_LIST_CALL_ADDR, IsSimpleUnvisited_Hook, 5);
 }

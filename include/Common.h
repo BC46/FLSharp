@@ -124,6 +124,9 @@ struct IMPORT CObject
     DWORD classType; // 0x4C
 };
 
+struct CSimple : CObject
+{};
+
 class CAttachedEquip
 {
     FILL_VFTABLE(0);

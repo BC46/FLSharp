@@ -88,7 +88,8 @@ WaypointInfo* WaypointCheck(UINT index);
 
 IObjRW* GetPlayerIObjRW();
 
-UINT GetUnknownSolarIds(const CSolar& solar);
+bool IsSimpleUnvisited(const CSimple& simple);
+UINT GetIdsForUnvisitedSimple(const CSimple& simple);
 
 inline UINT GetFlString(UINT ids, LPWSTR buffer, UINT bufferLen)
 {
