@@ -171,6 +171,7 @@ struct IMPORT CShip : public CEqObj
 struct CSolar : public CEqObj
 {
     IMPORT bool is_dynamic() const;
+    IMPORT bool is_waypoint() const;
 
     static inline CSolar* cast(CObject *obj)
     {

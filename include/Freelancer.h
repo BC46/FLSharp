@@ -15,6 +15,9 @@
 #define FL_BUFFER_LEN *((PUINT) 0x6119F8)
 #define FL_RESOURCES_HANDLE *((PDWORD) 0x67ECA8)
 
+#define UNKNOWN_OBJECT_IDS 1191
+#define WAYPOINT_IDS 1090
+
 struct WaypointInfo
 {
     Vector pos;
@@ -84,6 +87,8 @@ UINT GetFlStringFromResources(DWORD resourcesHandle, UINT ids, LPWSTR buffer, UI
 WaypointInfo* WaypointCheck(UINT index);
 
 IObjRW* GetPlayerIObjRW();
+
+UINT GetUnknownSolarIds(const CSolar& solar);
 
 inline UINT GetFlString(UINT ids, LPWSTR buffer, UINT bufferLen)
 {

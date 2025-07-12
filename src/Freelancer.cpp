@@ -13,6 +13,8 @@ FL_FUNC(WaypointInfo* WaypointCheck(UINT index), 0x4C46A0)
 
 FL_FUNC(IObjRW* GetPlayerIObjRW(), 0x54BAF0);
 
+FL_FUNC(UINT GetUnknownSolarIds(const CSolar& solar), 0x4D4D50);
+
 FL_FUNC(bool NN_Preferences::InitElements(DWORD unk1, DWORD unk2), 0x4A9790)
 FL_FUNC(bool NN_Preferences::SetResolution(UINT width, DWORD unk, UINT height), 0x4B1C00)
 

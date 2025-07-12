@@ -23,6 +23,7 @@ EXPORTS
 ?cast@CEEngine@@SAPBV1@PBVCEquip@@@Z
 ?is_base@CEqObj@@QBE_NXZ
 ?is_dynamic@CSolar@@QBE_NXZ
+?is_waypoint@CSolar@@QBE_NXZ
 ?CheckForSync@CRemotePhysicsSimulation@@QAE_NABVVector@@0ABVQuaternion@@@Z
 ?SinglePlayer@@YA_NXZ
 ?GetProjectilesPerFire@CELauncher@@QBEIXZ
