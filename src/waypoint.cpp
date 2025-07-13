@@ -33,9 +33,18 @@ NavMapObj* NeuroNetNavMap::GetHighlightedObject_Hook(DWORD unk1, DWORD unk2)
     return result->type == PLAYERSHIP_NAVMAP_OBJ_TYPE ? nullptr : result;
 }
 
+bool IsObjectAWaypoint(const CObject& cobject)
+{
+    const CSolar* solar = CSolar::cast(&cobject);
+
+    if (!solar)
+        return false;
+
+    return solar->is_waypoint();
+}
+
 // Fixes waypoints being called "Unknown Object" in the target view.
 // The two hooks below ensure that waypoints aren't treated as "unvisited".
-// Mission Waypoints will be called "Waypoint", too.
 bool IsSimpleUnvisited_Hook(const CSimple& simple)
 {
     // If the simple is visited, follow the normal routine.
@@ -43,7 +52,7 @@ bool IsSimpleUnvisited_Hook(const CSimple& simple)
         return false;
 
     // Treat waypoints as "visited".
-    return !simple.is_waypoint();
+    return !IsObjectAWaypoint(simple);
 }
 
 bool IsSimpleVisited_Hook(const CSimple& simple)
@@ -53,7 +62,7 @@ bool IsSimpleVisited_Hook(const CSimple& simple)
         return true;
 
     // Treat waypoints as "visited".
-    return simple.is_waypoint();
+    return IsObjectAWaypoint(simple);
 }
 
 // When you open the Current Information window while selecting a player waypoint,
@@ -71,12 +80,12 @@ int swprintf_Hook(int waypointIndex)
     return swprintf_s(FL_BUFFER_1, FL_BUFFER_LEN, L" %d\n", waypointNumber);
 }
 
-// TODO: document
+// Ensures player waypoints are called "Waypoint" and mission waypoints "Mission Waypoint".
 UINT GetCShipOrCEqObjName_Hook(const CEqObj &eqObj)
 {
     UINT result = GetCShipOrCEqObjName(eqObj);
 
-    if (result == WAYPOINT_IDS && ((CSimple*) &eqObj)->is_waypoint())
+    if (result == WAYPOINT_IDS && IsObjectAWaypoint(eqObj))
     {
         int waypointIndex;
         bool isPlayerWaypoint;
@@ -91,12 +100,17 @@ UINT GetCShipOrCEqObjName_Hook(const CEqObj &eqObj)
     return result;
 }
 
-// Adds some minor waypoint-related fixes.
+// Init some waypoint-related fixes.
 void InitWaypointFixes()
 {
+    // Prevent waypoints from being cleared when the player is in a different system
     Hook(WAYPOINT_CHECK_CALL_ADDR, GetWaypoint_Hook, 5);
+
+    // Prevent waypoints from being set at the player ship's location
     Hook(NAV_MAP_GET_HIGHLIGHTED_OBJ_WAYPOINT_CALL_ADDR, &NeuroNetNavMap::GetHighlightedObject_Hook, 5);
     Hook(NAV_MAP_GET_HIGHLIGHTED_OBJ_BESTPATH_CALL_ADDR, &NeuroNetNavMap::GetHighlightedObject_Hook, 5);
+
+    // Fix waypoints being called "Unknown Object" in the target view.
     Hook(SIMPLE_UNVISITED_CHECK_FOR_TARGET_LIST_CALL_ADDR, IsSimpleUnvisited_Hook, 5); // Target selection
     Hook(SIMPLE_VISITED_CHECK_FOR_TARGET_LIST_CALL_ADDR, IsSimpleVisited_Hook, 5); // Current Information window
 

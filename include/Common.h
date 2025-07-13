@@ -114,14 +114,27 @@ namespace Archetype
     };
 }
 
-struct IMPORT CObject
+class EngineObject
 {
-    Archetype::Root* get_archetype() const;
+public:
+    float const get_radius() const;
+    Matrix const & get_orientation() const;
 
     DWORD vftable; // 0x00
     long engineInstance; // 0x04
     BYTE x08[0x44];
+};
+
+struct IMPORT CObject : public EngineObject
+{
+    Archetype::Root* get_archetype() const;
+
     DWORD classType; // 0x4C
+};
+
+struct IMPORT CSimple : CObject
+{
+
 };
 
 class CAttachedEquip
@@ -142,17 +155,10 @@ public:
     CObject* parent; // x04
 };
 
-class EngineObject
-{
-public:
-    float const get_radius() const;
-    Matrix const & get_orientation() const;
-};
-
-struct IMPORT CEqObj : public EngineObject
+struct IMPORT CEqObj : public CSimple
 {
 private:
-    BYTE x00[0xE4];
+    BYTE x50[0x94];
 public:
     CEquipManager equipManager; // 0xE4
     BYTE x104[0x5C];
@@ -183,16 +189,6 @@ struct CSolar : public CEqObj
     }
 };
 
-struct CSimple : CObject
-{
-    inline bool is_waypoint() const
-    {
-        if ((classType & CSOLAR_CLASS_TYPE) == CSOLAR_CLASS_TYPE)
-            return ((CSolar*) this)->is_waypoint();
-
-        return false;
-    }
-};
 
 class IMPORT FuseAction
 {
