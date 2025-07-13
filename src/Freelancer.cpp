@@ -15,7 +15,7 @@ FL_FUNC(bool WaypointWatcher::GetCurrentWaypointInfo(bool& isPlayerWaypoint, int
 FL_FUNC(IObjRW* GetPlayerIObjRW(), 0x54BAF0);
 
 FL_FUNC(bool IsSimpleUnvisited(const CSimple& simple), 0x4D4C70);
-FL_FUNC(bool IsSimpleVisited(const CSimple& simple), 0x4D4D00);
+FL_FUNC(BYTE GetSimpleVisitedValue(const CSimple& simple), 0x4D4D00);
 FL_FUNC(UINT GetIdsForUnvisitedSimple(const CSimple& simple), 0x4D4D50);
 
 FL_FUNC(UINT GetCShipOrCEqObjName(const CEqObj &eqObj), 0x5472A0);

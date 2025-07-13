@@ -56,14 +56,16 @@ bool IsSimpleUnvisited_Hook(const CSimple& simple)
     return !IsObjectAWaypoint(simple);
 }
 
-bool IsSimpleVisited_Hook(const CSimple& simple)
+BYTE GetSimpleVisitedValue_Hook(const CSimple& simple)
 {
-    // If the simple is visited, follow the normal routine.
-    if (IsSimpleVisited(simple))
-        return true;
+    #define KNOWN_FLAG 1
+    BYTE result = GetSimpleVisitedValue(simple);
 
-    // Treat waypoints as "visited".
-    return IsObjectAWaypoint(simple);
+    // If the simple is unknown (unvisited) and it's a waypoint, set the known flag.
+    if ((result & KNOWN_FLAG) == 0 && IsObjectAWaypoint(simple))
+        result |= KNOWN_FLAG;
+
+    return result;
 }
 
 // When you open the Current Information window while selecting a player waypoint,
@@ -121,7 +123,7 @@ void InitWaypointFixes()
 
     // Fix waypoints being called "Unknown Object" in the target view.
     Hook(SIMPLE_UNVISITED_CHECK_FOR_TARGET_LIST_CALL_ADDR, IsSimpleUnvisited_Hook, 5); // Target selection
-    Hook(SIMPLE_VISITED_CHECK_FOR_CURRENT_INFO_LIST_CALL_ADDR, IsSimpleVisited_Hook, 5); // Current Information window
+    Hook(SIMPLE_VISITED_CHECK_FOR_CURRENT_INFO_LIST_CALL_ADDR, GetSimpleVisitedValue_Hook, 5); // Current Information window
 
     // Fix the player waypoint being printed incorrectly in the Current Information window.
     #define SWPRINTF_WAYPOINT_PARAMS_ADDR 0x475A6C

@@ -99,7 +99,7 @@ struct WaypointWatcher
 IObjRW* GetPlayerIObjRW();
 
 bool IsSimpleUnvisited(const CSimple& simple);
-bool IsSimpleVisited(const CSimple& simple);
+BYTE GetSimpleVisitedValue(const CSimple& simple);
 UINT GetIdsForUnvisitedSimple(const CSimple& simple);
 
 UINT GetCShipOrCEqObjName(const CEqObj &eqObj);
