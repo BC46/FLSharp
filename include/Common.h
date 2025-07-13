@@ -189,7 +189,6 @@ struct CSolar : public CEqObj
     }
 };
 
-
 class IMPORT FuseAction
 {
 public:

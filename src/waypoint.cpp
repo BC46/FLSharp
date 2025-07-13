@@ -44,7 +44,7 @@ bool IsObjectAWaypoint(const CObject& cobject)
     return solar->is_waypoint();
 }
 
-// Fixes waypoints being called "Unknown Object" in the target view.
+// Fixes waypoints being called "Unknown Object" in the target view and Current Information window.
 // The two hooks below ensure that waypoints aren't treated as "unvisited".
 bool IsSimpleUnvisited_Hook(const CSimple& simple)
 {
