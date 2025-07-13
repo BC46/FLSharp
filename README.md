@@ -35,6 +35,7 @@ These include:
 - Fixed a startup crash that occurs when Freelancer tries to load a modded/malformed save file.
 - Fixed a very rare and inconsistent crash in alchemy.dll (crash offset `0x701b`).
 - Fixed waypoints being called "Unknown Object" in the target view and Current Information window.
+- Fixed player waypoints being printed incorrectly in the Current Information window.
 
 More fixes and improvements may be added in the future.
 

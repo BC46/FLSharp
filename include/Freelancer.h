@@ -17,6 +17,7 @@
 
 #define UNKNOWN_OBJECT_IDS 1191
 #define WAYPOINT_IDS 1090
+#define MISSION_WAYPOINT_IDS 1091
 
 struct Waypoint
 {
@@ -88,11 +89,20 @@ UINT GetFlStringFromResources(DWORD resourcesHandle, UINT ids, LPWSTR buffer, UI
 
 Waypoint* GetWaypoint(int index);
 
+struct WaypointWatcher
+{
+    bool GetCurrentWaypointInfo(bool& isPlayerWaypoint, int& waypointIndex);
+};
+
+#define WAYPOINT_WATCHER (*((WaypointWatcher**) 0x674BC8))
+
 IObjRW* GetPlayerIObjRW();
 
 bool IsSimpleUnvisited(const CSimple& simple);
 bool IsSimpleVisited(const CSimple& simple);
 UINT GetIdsForUnvisitedSimple(const CSimple& simple);
+
+UINT GetCShipOrCEqObjName(const CEqObj &eqObj);
 
 inline UINT GetFlString(UINT ids, LPWSTR buffer, UINT bufferLen)
 {

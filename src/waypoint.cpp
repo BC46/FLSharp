@@ -71,6 +71,26 @@ int swprintf_Hook(int waypointIndex)
     return swprintf_s(FL_BUFFER_1, FL_BUFFER_LEN, L" %d\n", waypointNumber);
 }
 
+// TODO: document
+UINT GetCShipOrCEqObjName_Hook(const CEqObj &eqObj)
+{
+    UINT result = GetCShipOrCEqObjName(eqObj);
+
+    if (result == WAYPOINT_IDS && ((CSimple*) &eqObj)->is_waypoint())
+    {
+        int waypointIndex;
+        bool isPlayerWaypoint;
+
+        if (WAYPOINT_WATCHER && WAYPOINT_WATCHER->GetCurrentWaypointInfo(isPlayerWaypoint, waypointIndex))
+        {
+            if (!isPlayerWaypoint)
+                return MISSION_WAYPOINT_IDS;
+        }
+    }
+
+    return result;
+}
+
 // Adds some minor waypoint-related fixes.
 void InitWaypointFixes()
 {
@@ -80,8 +100,12 @@ void InitWaypointFixes()
     Hook(SIMPLE_UNVISITED_CHECK_FOR_TARGET_LIST_CALL_ADDR, IsSimpleUnvisited_Hook, 5); // Target selection
     Hook(SIMPLE_VISITED_CHECK_FOR_TARGET_LIST_CALL_ADDR, IsSimpleVisited_Hook, 5); // Current Information window
 
+    // TODO: document
     Patch<WORD>(0x475A6C, 0x74FF);
     Hook(0x475A70, swprintf_Hook, 5);
     Nop(0x475A75, 9);
     GetValue<BYTE>(0x475A8C) -= sizeof(DWORD) * 2;
+
+    Hook(0x475676, GetCShipOrCEqObjName_Hook, 5);
+    Hook(0x4E8131, GetCShipOrCEqObjName_Hook, 5);
 }

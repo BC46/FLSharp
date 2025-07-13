@@ -10,12 +10,15 @@ FL_FUNC(UINT GetFlStringFromResources(DWORD resourcesHandle, UINT ids, LPWSTR bu
 FL_FUNC(NavMapObj* NeuroNetNavMap::GetHighlightedObject(DWORD unk1, DWORD unk2), 0x496D40)
 
 FL_FUNC(Waypoint* GetWaypoint(int index), 0x4C46A0)
+FL_FUNC(bool WaypointWatcher::GetCurrentWaypointInfo(bool& isPlayerWaypoint, int& waypointIndex), 0x4F42A0);
 
 FL_FUNC(IObjRW* GetPlayerIObjRW(), 0x54BAF0);
 
 FL_FUNC(bool IsSimpleUnvisited(const CSimple& simple), 0x4D4C70);
 FL_FUNC(bool IsSimpleVisited(const CSimple& simple), 0x4D4D00);
 FL_FUNC(UINT GetIdsForUnvisitedSimple(const CSimple& simple), 0x4D4D50);
+
+FL_FUNC(UINT GetCShipOrCEqObjName(const CEqObj &eqObj), 0x5472A0);
 
 FL_FUNC(bool NN_Preferences::InitElements(DWORD unk1, DWORD unk2), 0x4A9790)
 FL_FUNC(bool NN_Preferences::SetResolution(UINT width, DWORD unk, UINT height), 0x4B1C00)
