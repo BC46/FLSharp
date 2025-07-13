@@ -18,10 +18,12 @@
 #define UNKNOWN_OBJECT_IDS 1191
 #define WAYPOINT_IDS 1090
 
-struct WaypointInfo
+struct Waypoint
 {
     Vector pos;
     UINT system;
+    DWORD unk;
+    int waypointNumber;
 };
 
 struct NavMapObj
@@ -84,7 +86,7 @@ void StartSound(BYTE soundId);
 
 UINT GetFlStringFromResources(DWORD resourcesHandle, UINT ids, LPWSTR buffer, UINT bufferLen);
 
-WaypointInfo* WaypointCheck(UINT index);
+Waypoint* GetWaypoint(int index);
 
 IObjRW* GetPlayerIObjRW();
 

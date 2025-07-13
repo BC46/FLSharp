@@ -9,7 +9,7 @@ FL_FUNC(UINT GetFlStringFromResources(DWORD resourcesHandle, UINT ids, LPWSTR bu
 
 FL_FUNC(NavMapObj* NeuroNetNavMap::GetHighlightedObject(DWORD unk1, DWORD unk2), 0x496D40)
 
-FL_FUNC(WaypointInfo* WaypointCheck(UINT index), 0x4C46A0)
+FL_FUNC(Waypoint* GetWaypoint(int index), 0x4C46A0)
 
 FL_FUNC(IObjRW* GetPlayerIObjRW(), 0x54BAF0);
 

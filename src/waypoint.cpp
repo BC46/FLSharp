@@ -10,15 +10,15 @@
 #define GET_UNKNOWN_SIMPLE_IDS_FOR_TARGET_LIST_CALL_ADDR 0x4E40AF
 
 // Hook that prevents waypoints from being cleared when the player is in a different system
-WaypointInfo* WaypointCheck_Hook(UINT index)
+Waypoint* GetWaypoint_Hook(int index)
 {
-    WaypointInfo* waypointInfo = WaypointCheck(index);
+    Waypoint* waypoint = GetWaypoint(index);
 
-    if (!waypointInfo)
+    if (!waypoint)
         return nullptr;
 
     // Only return the waypoint info if the player is in the same system as the waypoint
-    return PLAYER_SYSTEM == waypointInfo->system ? waypointInfo : nullptr;
+    return PLAYER_SYSTEM == waypoint->system ? waypoint : nullptr;
 }
 
 // Hook that prevents waypoints from being set at the player ship's location
@@ -56,12 +56,32 @@ bool IsSimpleVisited_Hook(const CSimple& simple)
     return simple.is_waypoint();
 }
 
+// When you open the Current Information window while selecting a player waypoint,
+// it always shows "PLAYER WAYPOINT1".
+// This hook adds a space and ensures the correct number is printed.
+int swprintf_Hook(int waypointIndex)
+{
+    int waypointNumber = waypointIndex + 1;
+
+    if (Waypoint* waypoint = GetWaypoint(waypointIndex))
+    {
+        waypointNumber = waypoint->waypointNumber;
+    }
+
+    return swprintf_s(FL_BUFFER_1, FL_BUFFER_LEN, L" %d\n", waypointNumber);
+}
+
 // Adds some minor waypoint-related fixes.
 void InitWaypointFixes()
 {
-    Hook(WAYPOINT_CHECK_CALL_ADDR, WaypointCheck_Hook, 5);
+    Hook(WAYPOINT_CHECK_CALL_ADDR, GetWaypoint_Hook, 5);
     Hook(NAV_MAP_GET_HIGHLIGHTED_OBJ_WAYPOINT_CALL_ADDR, &NeuroNetNavMap::GetHighlightedObject_Hook, 5);
     Hook(NAV_MAP_GET_HIGHLIGHTED_OBJ_BESTPATH_CALL_ADDR, &NeuroNetNavMap::GetHighlightedObject_Hook, 5);
     Hook(SIMPLE_UNVISITED_CHECK_FOR_TARGET_LIST_CALL_ADDR, IsSimpleUnvisited_Hook, 5); // Target selection
     Hook(SIMPLE_VISITED_CHECK_FOR_TARGET_LIST_CALL_ADDR, IsSimpleVisited_Hook, 5); // Current Information window
+
+    Patch<WORD>(0x475A6C, 0x74FF);
+    Hook(0x475A70, swprintf_Hook, 5);
+    Nop(0x475A75, 9);
+    GetValue<BYTE>(0x475A8C) -= sizeof(DWORD) * 2;
 }
