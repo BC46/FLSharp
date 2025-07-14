@@ -19,6 +19,12 @@
 #define WAYPOINT_IDS 1090
 #define MISSION_WAYPOINT_IDS 1091
 
+#define KNOW_VISIT_FLAG (1)
+#define LAND_VISIT_FLAG (1 << 1)
+#define COMMODITY_DEALER_VISIT_FLAG (1 << 2)
+#define EQUIPMENT_DEALER_VISIT_FLAG (1 << 3)
+#define SHIP_DEALER_VISIT_FLAG (1 << 4)
+
 struct Waypoint
 {
     Vector pos;

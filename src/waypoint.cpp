@@ -58,12 +58,11 @@ bool IsSimpleUnvisited_Hook(const CSimple& simple)
 
 BYTE GetSimpleVisitedValue_Hook(const CSimple& simple)
 {
-    #define KNOWN_FLAG 1
     BYTE result = GetSimpleVisitedValue(simple);
 
-    // If the simple is unknown (unvisited) and it's a waypoint, set the known flag.
-    if ((result & KNOWN_FLAG) == 0 && IsObjectAWaypoint(simple))
-        result |= KNOWN_FLAG;
+    // If the simple is unknown and it's a waypoint, set the know visit flag.
+    if ((result & KNOW_VISIT_FLAG) == 0 && IsObjectAWaypoint(simple))
+        result |= KNOW_VISIT_FLAG;
 
     return result;
 }

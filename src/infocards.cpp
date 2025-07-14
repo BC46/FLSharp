@@ -42,7 +42,7 @@ void ParseMsnCreatedSolars(LPCSTR iniPath)
 int GetInfocard_Hook(CObject* selectedObj, const int &id, UINT &idsInfo)
 {
     // Is the selected object a solar?
-    if (CSolar* solar = CSolar::cast(selectedObj))
+    if (const CSolar* solar = CSolar::cast(selectedObj))
     {
         // Is the selected object a dynamic base?
         if (solar->is_dynamic() && solar->is_base())

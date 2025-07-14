@@ -180,7 +180,7 @@ struct CSolar : public CEqObj
     IMPORT bool is_dynamic() const;
     IMPORT bool is_waypoint() const;
 
-    static inline CSolar* cast(const CObject *obj)
+    static inline const CSolar* cast(const CObject *obj)
     {
         if ((obj->classType & CSOLAR_CLASS_TYPE) == CSOLAR_CLASS_TYPE)
             return (CSolar*) obj;
