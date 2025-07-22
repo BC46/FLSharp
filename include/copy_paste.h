@@ -25,7 +25,7 @@ struct KeyMapInfo
     DWORD x0C;
     WCHAR enteredKey; // 0x10
 
-    inline bool IsCtrlPressed()
+    inline bool IsCtrlPressed() const
     {
         return (controlCharacterFlags & 4) == 4;
     }
@@ -65,9 +65,9 @@ struct InputBoxWindow
     FILL_VFTABLE(B)
     virtual void Vftable_xC0();
     virtual void Vftable_xC4();
-    virtual bool WriteTypedKey(const KeyMapInfo *kmi);
+    virtual bool WriteTypedKey(const KeyMapInfo& kmi);
 
-    void HandleCopyPaste(KeyMapInfo *kmi);
+    void HandleCopyPaste(const KeyMapInfo& kmi);
     void CopyToClipboard();
     void CopyFromClipboard();
     void WriteString(LPCWSTR str);

@@ -44,13 +44,13 @@ _closeClipboard:
 // So we just define a dummy KeyMapInfo object where we fill the character we want to enter in every loop iteration.
 void InputBoxWindow::WriteString(LPCWSTR str)
 {
-    KeyMapInfo temp;
+    KeyMapInfo kmi;
 
     // Stop when the end of the string has been reached, or if the buffer is full.
     for (size_t i = 0; str[i] != L'\0' && chars.size() < (size_t) maxCharsLength; ++i)
     {
-        temp.enteredKey = str[i];
-        this->WriteTypedKey(&temp);
+        kmi.enteredKey = str[i];
+        this->WriteTypedKey(kmi);
     }
 }
 
@@ -94,21 +94,21 @@ _closeClipboard:
     CloseClipboard();
 }
 
-void InputBoxWindow::HandleCopyPaste(KeyMapInfo *kmi)
+void InputBoxWindow::HandleCopyPaste(const KeyMapInfo& kmi)
 {
     // I saw this check being made in many key handling function, but for this one I don't think it's necessary.
     // if (this->ime == nullptr)
     //     return;
 
-    if (kmi->IsCtrlPressed())
+    if (kmi.IsCtrlPressed())
     {
         // Ctrl + V pressed?
-        if (toupper(kmi->enteredKey) == L'V')
+        if (toupper(kmi.enteredKey) == L'V')
         {
             CopyFromClipboard();
         }
         // Ctrl + C pressed?
-        else if (toupper(kmi->enteredKey) == L'C')
+        else if (toupper(kmi.enteredKey) == L'C')
         {
             CopyToClipboard();
         }
