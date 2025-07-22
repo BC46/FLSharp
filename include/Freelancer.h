@@ -29,7 +29,7 @@ struct Waypoint
 {
     Vector pos;
     UINT system;
-    DWORD unk;
+    UINT target;
     int waypointNumber;
 };
 
@@ -44,8 +44,6 @@ struct NeuroNetNavMap
     NavMapObj* GetHighlightedObject(DWORD unk1, DWORD unk2);
 };
 
-#define NN_PREFERENCES_NEW_DATA 0x98C
-
 struct AudioOption
 {
     UINT idsName;
@@ -53,6 +51,8 @@ struct AudioOption
     UINT defaultVolume;
     DWORD x10, x14, x18;
 };
+
+#define NN_PREFERENCES_NEW_DATA 0x98C
 
 // 0x330 = current selected width
 // 0x8b8 = current active width (int)
