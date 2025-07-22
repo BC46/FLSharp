@@ -109,6 +109,7 @@ namespace Archetype
 
     struct EqObj
     {
+        // st6::list
         IMPORT bool get_undamaged_collision_group_list(std::list<CollisionGroupDesc>& colGroupList) const;
         bool get_undamaged_collision_group_list_Hook(std::list<CollisionGroupDesc>& colGroupList) const;
     };

@@ -87,7 +87,7 @@ int swprintf_Hook(int waypointIndex)
     return swprintf_s(FL_BUFFER_1, FL_BUFFER_LEN, L" %d\n", waypointNumber);
 }
 
-// Ensures player waypoints are called "Waypoint" and mission waypoints "Mission Waypoint".
+// Ensures mission waypoints are called "Mission Waypoint" instead of "Waypoint".
 UINT GetCShipOrCEqObjName_Hook(const CEqObj &eqObj)
 {
     UINT result = GetCShipOrCEqObjName(eqObj);
