@@ -22,6 +22,7 @@ public:
     IMPORT bool open(LPCSTR path, bool throwExceptionOnFail = false);
     IMPORT bool read_header();
     IMPORT bool is_header(LPCSTR name);
+    IMPORT LPCSTR get_header_ptr();
     IMPORT bool read_value();
     IMPORT bool is_value(LPCSTR name);
     IMPORT LPCSTR get_value_string(UINT index = 0);
@@ -135,7 +136,8 @@ struct IMPORT CObject : public EngineObject
 
 struct IMPORT CSimple : CObject
 {
-
+    BYTE x50[0x60];
+    UINT nickname; // xB0
 };
 
 class CAttachedEquip
@@ -159,7 +161,7 @@ public:
 struct IMPORT CEqObj : public CSimple
 {
 private:
-    BYTE x50[0x94];
+    BYTE xB4[0x30];
 public:
     CEquipManager equipManager; // 0xE4
     BYTE x104[0x5C];

@@ -1,9 +1,37 @@
 #include "infocards.h"
 #include "Common.h"
 #include "utils.h"
-#include "map"
+#include "cmpstr.h"
 
 std::map<UINT, UINT> msnBaseIdsInfoMap;
+std::map<UINT, UINT> msnNicknameIdsInfoMap;
+
+void ParseEntries(std::map<UINT, UINT>& map, INI_Reader& reader, const std::map<LPCSTR, InfocardEntry, CmpStr>& entries)
+{
+    while (reader.read_header())
+    {
+        const auto it = entries.find(reader.get_header_ptr());
+
+        if (it == entries.end())
+            continue;
+
+        UINT key = 0, value = 0;
+
+        while (reader.read_value())
+        {
+            if (reader.is_value(it->second.key))
+            {
+                key = reader.get_value_id();
+            }
+            else if (reader.is_value(it->second.value))
+            {
+                value = reader.get_value_int();
+            }
+        }
+
+        it->second.map.insert({ key, value });
+    }
+}
 
 // Parses the MissionCreatedSolars.ini file and for every base stores its ids_info in a map.
 void ParseMsnCreatedSolars(LPCSTR iniPath)
@@ -13,29 +41,23 @@ void ParseMsnCreatedSolars(LPCSTR iniPath)
     if (!reader.open(iniPath))
         return;
 
-    while (reader.read_header())
-    {
-        if (!reader.is_header("MissionCreatedSolar"))
-            continue;
+    std::map<LPCSTR, InfocardEntry, CmpStr> entries = {
+        { "MissionCreatedSolar", { msnBaseIdsInfoMap, "base", "ids_info" } },
+        { "MissionCreatedNonDockableSolar", { msnNicknameIdsInfoMap, "nickname", "ids_info" } }
+    };
 
-        UINT baseId = 0, idsInfo = 0;
-
-        while (reader.read_value())
-        {
-            if (reader.is_value("base"))
-            {
-                baseId = reader.get_value_id();
-            }
-            else if (reader.is_value("ids_info"))
-            {
-                idsInfo = reader.get_value_int();
-            }
-        }
-
-        msnBaseIdsInfoMap.insert({ baseId, idsInfo });
-    }
-
+    ParseEntries(msnBaseIdsInfoMap, reader, entries);
     reader.close();
+}
+
+bool FindInMap(std::map<UINT, UINT>& map, UINT key, UINT& foundValue)
+{
+    auto it = map.find(key);
+    if (it == map.end())
+        return false;
+
+    foundValue = it->second;
+    return true;
 }
 
 // Function which Freelancer calls to obtain the ids infocard of the selected object in the Current Info window.
@@ -44,21 +66,19 @@ int GetInfocard_Hook(CObject* selectedObj, const int &id, UINT &idsInfo)
     // Is the selected object a solar?
     if (const CSolar* solar = CSolar::cast(selectedObj))
     {
-        // Is the selected object a dynamic base?
-        if (solar->is_dynamic() && solar->is_base())
+        if (solar->is_dynamic())
         {
-            // Try to find the idsInfo in the map.
-            const auto it = msnBaseIdsInfoMap.find(solar->baseId);
-            if (it != msnBaseIdsInfoMap.end())
-            {
-                // Found it!
-                idsInfo = it->second;
+            // Try to find the idsInfo in the base map.
+            if (solar->is_base() && FindInMap(msnBaseIdsInfoMap, solar->baseId, idsInfo))
                 return S_OK;
-            }
+
+            // Otherwise try the nickname map.
+            if (FindInMap(msnNicknameIdsInfoMap, solar->nickname, idsInfo))
+                return S_OK;
         }
     }
 
-    // If one of the above conditions are not met, get the infocard by calling the original function.
+    // If the above approaches failed, get the infocard by calling the original function.
     return Reputation::Vibe::GetInfocard(id, idsInfo);
 }
 

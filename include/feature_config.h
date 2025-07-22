@@ -4,6 +4,7 @@
 #include <windows.h>
 #include <string.h>
 #include <map>
+#include "cmpstr.h"
 
 struct FlSharpFeature
 {
@@ -11,14 +12,6 @@ struct FlSharpFeature
     void (*cleanupFunc)();      // feature's cleanup function
     bool (*applyPredicate)();   // function that determines whether the feature must be applied from a technical perspective
     bool enabled;               // value determined by the user so they can choose whether they want it to be applied
-};
-
-struct CmpStr
-{
-    bool operator()(LPCSTR a, LPCSTR b) const
-    {
-        return _stricmp(a, b) < 0;
-    }
 };
 
 class FeatureManager
