@@ -110,9 +110,17 @@ namespace Archetype
 
     struct EqObj
     {
+        BYTE x00[0x14];
+        UINT idsName;
+        UINT idsInfo;
+
         // st6::list
         IMPORT bool get_undamaged_collision_group_list(std::list<CollisionGroupDesc>& colGroupList) const;
         bool get_undamaged_collision_group_list_Hook(std::list<CollisionGroupDesc>& colGroupList) const;
+    };
+
+    struct Solar : public EqObj
+    {
     };
 }
 
@@ -182,6 +190,7 @@ struct CSolar : public CEqObj
 {
     IMPORT bool is_dynamic() const;
     IMPORT bool is_waypoint() const;
+    IMPORT Archetype::Solar const * solararch() const;
 
     static inline const CSolar* cast(const CObject *obj)
     {

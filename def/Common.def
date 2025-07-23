@@ -25,6 +25,7 @@ EXPORTS
 ?is_base@CEqObj@@QBE_NXZ
 ?is_dynamic@CSolar@@QBE_NXZ
 ?is_waypoint@CSolar@@QBE_NXZ
+?solararch@CSolar@@QBEPBUSolar@Archetype@@XZ
 ?CheckForSync@CRemotePhysicsSimulation@@QAE_NABVVector@@0ABVQuaternion@@@Z
 ?SinglePlayer@@YA_NXZ
 ?GetProjectilesPerFire@CELauncher@@QBEIXZ

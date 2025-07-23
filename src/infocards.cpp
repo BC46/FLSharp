@@ -33,7 +33,7 @@ void ParseEntries(std::map<UINT, UINT>& map, INI_Reader& reader, const std::map<
     }
 }
 
-// Parses the MissionCreatedSolars.ini file and for every base stores its ids_info in a map.
+// Parses the MissionCreatedSolars.ini file and for every solar stores its ids_info in a map.
 void ParseMsnCreatedSolars(LPCSTR iniPath)
 {
     INI_Reader reader;
@@ -42,7 +42,7 @@ void ParseMsnCreatedSolars(LPCSTR iniPath)
         return;
 
     std::map<LPCSTR, InfocardEntry, CmpStr> entries = {
-        { "MissionCreatedSolar", { msnBaseIdsInfoMap, "base", "ids_info" } },
+        { "MissionCreatedSolar",            { msnBaseIdsInfoMap, "base", "ids_info" } },
         { "MissionCreatedNonDockableSolar", { msnNicknameIdsInfoMap, "nickname", "ids_info" } }
     };
 
@@ -50,14 +50,27 @@ void ParseMsnCreatedSolars(LPCSTR iniPath)
     reader.close();
 }
 
-bool FindInMap(std::map<UINT, UINT>& map, UINT key, UINT& foundValue)
+bool FindValueInMap(std::map<UINT, UINT>& map, UINT key, UINT& foundValue)
 {
     auto it = map.find(key);
-    if (it == map.end())
-        return false;
+    if (it != map.end())
+    {
+        foundValue = it->second;
+        return true;
+    }
 
-    foundValue = it->second;
-    return true;
+    return false;
+}
+
+bool GetSolarIdsInfo(const CSolar* solar, UINT &idsInfo)
+{
+    if (UINT solarArchIdsInfo = solar->solararch()->idsInfo)
+    {
+        idsInfo = solarArchIdsInfo;
+        return true;
+    }
+
+    return false;
 }
 
 // Function which Freelancer calls to obtain the ids infocard of the selected object in the Current Info window.
@@ -69,16 +82,37 @@ int GetInfocard_Hook(CObject* selectedObj, const int &id, UINT &idsInfo)
         if (solar->is_dynamic())
         {
             // Try to find the idsInfo in the base map.
-            if (solar->is_base() && FindInMap(msnBaseIdsInfoMap, solar->baseId, idsInfo))
+            if (solar->is_base() && FindValueInMap(msnBaseIdsInfoMap, solar->baseId, idsInfo))
                 return S_OK;
 
             // Otherwise try the nickname map.
-            if (FindInMap(msnNicknameIdsInfoMap, solar->nickname, idsInfo))
+            if (FindValueInMap(msnNicknameIdsInfoMap, solar->nickname, idsInfo))
                 return S_OK;
+
+            // Check the solar arch.
+            if (GetSolarIdsInfo(solar, idsInfo))
+                return S_OK;
+
+            idsInfo = solar->solararch()->idsName;
+            return S_OK;
         }
+
+        int result = Reputation::Vibe::GetInfocard(id, idsInfo);
+        if (!idsInfo || result != S_OK)
+        {
+            // Check the solar arch for normal solars in case the infocard couldn't be obtained.
+            if (!GetSolarIdsInfo(solar, idsInfo))
+            {
+                // If there is no ids_info, just use the ids_name.
+                idsInfo = solar->solararch()->idsName;
+                return S_OK;
+            }
+        }
+
+        return result;
     }
 
-    // If the above approaches failed, get the infocard by calling the original function.
+    // If the selected object isn't a solar, get the infocard by calling the original function.
     return Reputation::Vibe::GetInfocard(id, idsInfo);
 }
 
