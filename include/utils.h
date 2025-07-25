@@ -58,13 +58,9 @@ Func Trampoline(DWORD location, Func hookFunc, UINT instrLen)
     memcpy(gatewayFunc, (PVOID) location, instrLen);
 
     // Jmp from location to hook function.
-    Hook(location, hookFunc, 5, true);
+    Hook(location, hookFunc, instrLen, true);
     // Jmp from gateway to original function.
     Hook((DWORD) (gatewayFunc + instrLen), GetFuncDef<Func>(location + instrLen), 5, true);
-
-    // Nop out excess bytes.
-    if (instrLen > 5)
-        Nop((location + 5), instrLen - 5);
 
     // Return handle for calling the gateway function which in turn calls the original function.
     return GetFuncDef<Func>((DWORD) gatewayFunc);
