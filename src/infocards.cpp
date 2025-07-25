@@ -62,15 +62,17 @@ bool FindValueInMap(std::map<UINT, UINT>& map, UINT key, UINT& foundValue)
     return false;
 }
 
-bool GetSolarIdsInfo(const CSolar* solar, UINT &idsInfo)
+void GetAltSolarIdsInfo(const CSolar* solar, UINT &idsInfo)
 {
-    if (UINT solarArchIdsInfo = solar->solararch()->idsInfo)
-    {
-        idsInfo = solarArchIdsInfo;
-        return true;
-    }
+    const Archetype::Solar* solarArch = solar->solararch();
 
-    return false;
+    if (solarArch->idsInfo)
+        idsInfo = solarArch->idsInfo;
+    // Showing the solar's own name as the infocard doesn't really add any value.
+    // else if (UINT solarIdsName = solar->get_name())
+    //     idsInfo = solarIdsName;
+    else
+        idsInfo = solarArch->idsName;
 }
 
 // Function which Freelancer calls to obtain the ids infocard of the selected object in the Current Info window.
@@ -89,25 +91,17 @@ int GetInfocard_Hook(CObject* selectedObj, const int &id, UINT &idsInfo)
             if (FindValueInMap(msnNicknameIdsInfoMap, solar->nickname, idsInfo))
                 return S_OK;
 
-            // Check the solar arch.
-            if (GetSolarIdsInfo(solar, idsInfo))
-                return S_OK;
-
             // GetInfocard will never return a correct infocard for dynamic solars, so don't bother calling it.
-            idsInfo = solar->solararch()->idsName;
+            // Try the alternatives as a last resort.
+            GetAltSolarIdsInfo(solar, idsInfo);
             return S_OK;
         }
 
         int result = Reputation::Vibe::GetInfocard(id, idsInfo);
         if (!idsInfo || result != S_OK)
         {
-            // Check the solar arch for normal solars in case the infocard couldn't be obtained.
-            if (!GetSolarIdsInfo(solar, idsInfo))
-            {
-                // If there is no ids_info, just use the ids_name.
-                idsInfo = solar->solararch()->idsName;
-            }
-
+            // If a non-dynamic solar doesn't have an infocard, use one of the alternatives.
+            GetAltSolarIdsInfo(solar, idsInfo);
             return S_OK;
         }
 

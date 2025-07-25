@@ -124,15 +124,20 @@ namespace Archetype
     };
 }
 
-class EngineObject
+class IMPORT EngineObject
 {
 public:
     float const get_radius() const;
     Matrix const & get_orientation() const;
 
-    DWORD vftable; // 0x00
     long engineInstance; // 0x04
     BYTE x08[0x44];
+
+private:
+    FILL_VFTABLE(0);
+    FILL_VFTABLE(1);
+    FILL_VFTABLE(2);
+    FILL_VFTABLE(3);
 };
 
 struct IMPORT CObject : public EngineObject
@@ -169,12 +174,20 @@ public:
 struct IMPORT CEqObj : public CSimple
 {
 private:
+    FILL_VFTABLE(4);
+    FILL_VFTABLE(5);
+    FILL_VFTABLE(6);
+    FILL_VFTABLE(7);
+    virtual void Vftable_x80();
+    virtual void Vftable_x84();
+
     BYTE xB4[0x30];
 public:
     CEquipManager equipManager; // 0xE4
     BYTE x104[0x5C];
     UINT baseId; // 0x160
 
+    virtual UINT get_name() const; // 0x88
     bool is_base() const;
 };
 
