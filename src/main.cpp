@@ -2,6 +2,7 @@
 #include "config_reader.h"
 #include "update.h"
 #include "waypoint.h"
+#include "waypoint_names.h"
 #include "projectiles.h"
 #include "resolutions.h"
 #include "test_sounds.h"
@@ -25,6 +26,7 @@ void Init()
     // They must not assume a certain load order or that another feature is active/inactive.
     manager.RegisterFeature("better_updates",           InitBetterUpdates,          nullptr,                    ApplyOnlyOnClient);
     manager.RegisterFeature("waypoint_fixes",           InitWaypointFixes,          nullptr,                    ApplyOnlyOnClient);
+    manager.RegisterFeature("waypoint_name_fixes",      InitWaypointNameFixes,      nullptr,                    ApplyOnlyOnClient);
     manager.RegisterFeature("projectiles_sound_fix",    InitProjectilesSoundFix,    nullptr,                    ApplyOnlyOnClient);
     manager.RegisterFeature("projectiles_server_fix",   InitProjectilesServerFix,   nullptr,                    ApplyAlways);
     manager.RegisterFeature("better_resolutions",       InitBetterResolutions,      CleanupBetterResolutions,   ApplyOnlyOnClient);

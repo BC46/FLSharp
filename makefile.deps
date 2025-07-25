@@ -85,9 +85,10 @@ obj\main.obj: \
     include\vftable.h \
     include\RemoteServer.h \
     include\waypoint.h \
-    include\Freelancer.h \
+    include\waypoint_names.h \
     include\projectiles.h \
     include\resolutions.h \
+    include\Freelancer.h \
     include\test_sounds.h \
     include\trade_lane_lights.h \
     include\copy_paste.h \
@@ -207,6 +208,16 @@ obj\utils.obj: \
 
 obj\waypoint.obj: \
     include\waypoint.h \
+    include\utils.h \
+    include\Freelancer.h \
+    include\Common.h \
+    include\fl_math.h \
+    include\vftable.h \
+    makefile.deps \
+    makefile
+
+obj\waypoint_names.obj: \
+    include\waypoint_names.h \
     include\Freelancer.h \
     include\Common.h \
     include\fl_math.h \

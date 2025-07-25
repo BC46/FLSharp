@@ -19,6 +19,7 @@ $(OBJ_DIR)\Freelancer.obj \
 $(OBJ_DIR)\update.obj \
 $(OBJ_DIR)\utils.obj \
 $(OBJ_DIR)\waypoint.obj \
+$(OBJ_DIR)\waypoint_names.obj \
 $(OBJ_DIR)\projectiles.obj \
 $(OBJ_DIR)\resolutions.obj \
 $(OBJ_DIR)\resolutions_asm.obj \

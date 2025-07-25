@@ -201,6 +201,16 @@ struct CSolar : public CEqObj
     }
 };
 
+inline bool IsObjectAWaypoint(const CObject& cobject)
+{
+    const CSolar* solar = CSolar::cast(&cobject);
+
+    if (!solar)
+        return false;
+
+    return solar->is_waypoint();
+}
+
 class IMPORT FuseAction
 {
 public:
