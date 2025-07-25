@@ -93,6 +93,7 @@ int GetInfocard_Hook(CObject* selectedObj, const int &id, UINT &idsInfo)
             if (GetSolarIdsInfo(solar, idsInfo))
                 return S_OK;
 
+            // GetInfocard will never return a correct infocard for dynamic solars, so don't bother calling it.
             idsInfo = solar->solararch()->idsName;
             return S_OK;
         }
@@ -105,8 +106,9 @@ int GetInfocard_Hook(CObject* selectedObj, const int &id, UINT &idsInfo)
             {
                 // If there is no ids_info, just use the ids_name.
                 idsInfo = solar->solararch()->idsName;
-                return S_OK;
             }
+
+            return S_OK;
         }
 
         return result;
