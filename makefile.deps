@@ -4,6 +4,14 @@ obj\alchemy_crash.obj: \
     makefile.deps \
     makefile
 
+obj\blank_faction.obj: \
+    include\Common.h \
+    include\fl_math.h \
+    include\vftable.h \
+    include\utils.h \
+    makefile.deps \
+    makefile
+
 obj\cgun_wrapper.obj: \
     include\cgun_wrapper.h \
     include\DALib.h \
@@ -102,6 +110,7 @@ obj\main.obj: \
     include\infocards.h \
     include\save_crash.h \
     include\alchemy_crash.h \
+    include\blank_faction.h \
     makefile.deps \
     makefile
 

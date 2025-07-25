@@ -17,6 +17,7 @@
 #include "infocards.h"
 #include "save_crash.h"
 #include "alchemy_crash.h"
+#include "blank_faction.h"
 
 FeatureManager manager;
 
@@ -42,6 +43,7 @@ void Init()
     manager.RegisterFeature("dynamic_solar_infocards",  InitDynamicSolarInfocards,  nullptr,                    ApplyOnlyOnClient);
     manager.RegisterFeature("save_crash_fix",           InitSaveCrashFix,           nullptr,                    ApplyAlways);
     manager.RegisterFeature("alchemy_crash_fix",        InitAlchemyCrashFix,        nullptr,                    ApplyOnlyOnClient);
+    manager.RegisterFeature("blank_faction_fix",        InitBlankFactionNameFix,    nullptr,                    ApplyOnlyOnClient);
 
     ReadConfig("FLSharp.ini", manager);
 

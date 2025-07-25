@@ -178,11 +178,14 @@ public:
     bool is_base() const;
 };
 
-struct IMPORT CShip : public CEqObj
+struct CShip : public CEqObj
 {
-    float get_throttle() const;
-    Archetype::Ship const * shiparch() const;
-    bool is_using_tradelane() const;
+    IMPORT float get_throttle() const;
+    IMPORT Archetype::Ship const * shiparch() const;
+    IMPORT bool is_using_tradelane() const;
+    IMPORT UINT get_group_name() const;
+
+    UINT get_group_name_Hook() const;
 };
 
 #define CSOLAR_CLASS_TYPE 0x303
