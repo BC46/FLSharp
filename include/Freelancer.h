@@ -136,3 +136,16 @@ inline bool IsShipIndexValid(int index)
 {
     return index >= 0 && index < SHIP_TRADER_SHIP_AMOUNT;
 }
+
+struct FLCursor
+{
+    float xPos, yPos, distFromZero;
+};
+
+struct ServerFilterDialog
+{
+    bool OnFrameUpdate(const FLCursor &cursor);
+    bool OnFrameUpdate_Hook(const FLCursor &cursor);
+};
+
+void UpdateDeltaTime();

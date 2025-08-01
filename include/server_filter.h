@@ -1,1 +1,2 @@
 void InitServerFilterCrashFix();
+void InitServerFilterSpeedFix();

@@ -35,3 +35,7 @@ void ExpandNNShipTraderObjMemory()
         memoryExpanded = true;
     }
 }
+
+FL_FUNC(void UpdateDeltaTime(), 0x42D770)
+
+FL_FUNC(bool ServerFilterDialog::OnFrameUpdate(const FLCursor &cursor), 0x5A0340)

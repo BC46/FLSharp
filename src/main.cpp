@@ -46,6 +46,7 @@ void Init()
     manager.RegisterFeature("alchemy_crash_fix",        InitAlchemyCrashFix,        nullptr,                    ApplyOnlyOnClient);
     manager.RegisterFeature("blank_faction_fix",        InitBlankFactionNameFix,    nullptr,                    ApplyOnlyOnClient);
     manager.RegisterFeature("server_filter_crash_fix",  InitServerFilterCrashFix,   nullptr,                    ApplyOnlyOnClient);
+    manager.RegisterFeature("server_filter_speed_fix",  InitServerFilterSpeedFix,   nullptr,                    ApplyOnlyOnClient);
 
     ReadConfig("FLSharp.ini", manager);
 
