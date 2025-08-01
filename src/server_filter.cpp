@@ -9,11 +9,11 @@
 NAKED void ServerFilterClose_Hook()
 {
     __asm {
-        mov eax, DISABLE_SERVER_FILTER_HOVERING_SKIP_ADDR
         mov ecx, [esi+0xC4] // overwritten instruction
-        jecxz done
-        sub eax, DISABLE_SERVER_FILTER_HOVERING_SKIP_ADDR - DISABLE_SERVER_FILTER_HOVERING_ADDR - 6
-    done:
+        test ecx, ecx
+        mov eax, DISABLE_SERVER_FILTER_HOVERING_ADDR + 6
+        mov edx, DISABLE_SERVER_FILTER_HOVERING_SKIP_ADDR
+        cmove eax, edx
         jmp eax
     }
 }
