@@ -18,6 +18,7 @@
 #include "save_crash.h"
 #include "alchemy_crash.h"
 #include "blank_faction.h"
+#include "server_filter.h"
 
 FeatureManager manager;
 
@@ -44,6 +45,7 @@ void Init()
     manager.RegisterFeature("save_crash_fix",           InitSaveCrashFix,           nullptr,                    ApplyAlways);
     manager.RegisterFeature("alchemy_crash_fix",        InitAlchemyCrashFix,        nullptr,                    ApplyOnlyOnClient);
     manager.RegisterFeature("blank_faction_fix",        InitBlankFactionNameFix,    nullptr,                    ApplyOnlyOnClient);
+    manager.RegisterFeature("server_filter_crash_fix",  InitServerFilterCrashFix,   nullptr,                    ApplyOnlyOnClient);
 
     ReadConfig("FLSharp.ini", manager);
 

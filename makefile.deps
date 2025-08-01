@@ -111,6 +111,7 @@ obj\main.obj: \
     include\save_crash.h \
     include\alchemy_crash.h \
     include\blank_faction.h \
+    include\server_filter.h \
     makefile.deps \
     makefile
 
@@ -157,6 +158,11 @@ obj\save_crash.obj: \
     include\Common.h \
     include\fl_math.h \
     include\vftable.h \
+    makefile.deps \
+    makefile
+
+obj\server_filter.obj: \
+    include\utils.h \
     makefile.deps \
     makefile
 
