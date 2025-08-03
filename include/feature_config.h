@@ -4,7 +4,6 @@
 #include <windows.h>
 #include <string.h>
 #include <map>
-#include "cmpstr.h"
 
 struct FlSharpFeature
 {
@@ -23,7 +22,7 @@ public:
     void CleanupFeatures();
 
 private:
-    std::map<LPCSTR, FlSharpFeature, CmpStr> features;
+    std::map<UINT, FlSharpFeature> features;
 };
 
 bool ApplyAlways();

@@ -1,16 +1,15 @@
 #include "infocards.h"
 #include "Common.h"
 #include "utils.h"
-#include "cmpstr.h"
 
 std::map<UINT, UINT> msnBaseIdsInfoMap;
 std::map<UINT, UINT> msnNicknameIdsInfoMap;
 
-void ParseEntries(std::map<UINT, UINT>& map, INI_Reader& reader, const std::map<LPCSTR, InfocardEntry, CmpStr>& entries)
+void ParseEntries(std::map<UINT, UINT>& map, INI_Reader& reader, const std::map<UINT, InfocardEntry>& entries)
 {
     while (reader.read_header())
     {
-        const auto it = entries.find(reader.get_header_ptr());
+        const auto it = entries.find(CreateID(reader.get_header_ptr()));
 
         if (it == entries.end())
             continue;
@@ -41,9 +40,9 @@ void ParseMsnCreatedSolars(LPCSTR iniPath)
     if (!reader.open(iniPath))
         return;
 
-    std::map<LPCSTR, InfocardEntry, CmpStr> entries = {
-        { "MissionCreatedSolar",            { msnBaseIdsInfoMap, "base", "ids_info" } },
-        { "MissionCreatedNonDockableSolar", { msnNicknameIdsInfoMap, "nickname", "ids_info" } }
+    std::map<UINT, InfocardEntry> entries = {
+        { CreateID("MissionCreatedSolar"),            { msnBaseIdsInfoMap, "base", "ids_info" } },
+        { CreateID("MissionCreatedNonDockableSolar"), { msnNicknameIdsInfoMap, "nickname", "ids_info" } }
     };
 
     ParseEntries(msnBaseIdsInfoMap, reader, entries);

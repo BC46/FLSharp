@@ -5,12 +5,12 @@ void FeatureManager::RegisterFeature(LPCSTR name, void (*initFunc)(), void (*cle
 {
     // Enable the feature by default.
     FlSharpFeature feature { initFunc, cleanupFunc, applyPredicate, true };
-    features.insert({ name, feature });
+    features.insert({ CreateID(name), feature });
 }
 
 void FeatureManager::SetFeatureEnabled(LPCSTR name, bool enabled)
 {
-    const auto it = features.find(name);
+    const auto it = features.find(CreateID(name));
 
     if (it != features.end())
     {

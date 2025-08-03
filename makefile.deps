@@ -23,7 +23,6 @@ obj\cgun_wrapper.obj: \
 obj\config_reader.obj: \
     include\config_reader.h \
     include\feature_config.h \
-    include\cmpstr.h \
     include\Common.h \
     include\fl_math.h \
     include\vftable.h \
@@ -41,7 +40,6 @@ obj\copy_paste.obj: \
 
 obj\feature_config.obj: \
     include\feature_config.h \
-    include\cmpstr.h \
     include\Common.h \
     include\fl_math.h \
     include\vftable.h \
@@ -79,13 +77,11 @@ obj\infocards.obj: \
     include\fl_math.h \
     include\vftable.h \
     include\utils.h \
-    include\cmpstr.h \
     makefile.deps \
     makefile
 
 obj\main.obj: \
     include\feature_config.h \
-    include\cmpstr.h \
     include\config_reader.h \
     include\update.h \
     include\Common.h \
@@ -163,6 +159,10 @@ obj\save_crash.obj: \
 
 obj\server_filter.obj: \
     include\utils.h \
+    include\Freelancer.h \
+    include\Common.h \
+    include\fl_math.h \
+    include\vftable.h \
     makefile.deps \
     makefile
 
