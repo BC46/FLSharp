@@ -4,6 +4,7 @@ OBJ_DIR = obj
 RC_DIR = rc
 SRC_DIR = src
 DEF_DIR = def
+TEST_DIR = test
 
 RC_FILE = $(RC_DIR)\main.rc
 COMMON_DEF = $(DEF_DIR)\Common.def
@@ -70,7 +71,27 @@ $(OBJ_DIR):
 $(BIN_DIR):
     if not exist $(BIN_DIR) mkdir $(BIN_DIR)
 
+CATCH_SRC_FILE = $(TEST_DIR)\catch_amalgamated.cpp
+CATCH_H_FILE = $(TEST_DIR)\catch_amalgamated.hpp
+TEST_FILE = $(TEST_DIR)\test.cpp
+
+CATCH_OBJ_FILE = $(OBJ_DIR)\catch_amalgamated.obj
+TEST_OBJ_FILE = $(OBJ_DIR)\test.obj
+TEST_OUTPUT_FILE = $(BIN_DIR)\test.exe
+
+TEST_CPP_FLAGS = /c /O2 /nologo /W3 /WX /EHsc /DNDEBUG
+TEST_LD_FLAGS = /NOLOGO /RELEASE
+
+test: $(TEST_OUTPUT_FILE)
+    $(TEST_OUTPUT_FILE)
+
+$(TEST_OUTPUT_FILE): $(TEST_OBJ_FILE) $(CATCH_OBJ_FILE)
+    link $(TEST_OBJ_FILE) $(CATCH_OBJ_FILE) /OUT:$(TEST_OUTPUT_FILE)
+
+{$(TEST_DIR)}.cpp{$(OBJ_DIR)}.obj::
+    $(CPP) $(TEST_CPP_FLAGS) $< -I$(INCLUDE_DIR) /Fo./$(OBJ_DIR)/
+
 clean:
-    del $(BIN_DIR)\*.dll $(BIN_DIR)\*.pdb $(BIN_DIR)\*.ipdb $(BIN_DIR)\*.iobj $(OBJ_DIR)\*.obj $(OBJ_DIR)\*.RES $(OBJ_DIR)\*.lib $(OBJ_DIR)\*.pdb
+    del $(BIN_DIR)\*.dll $(BIN_DIR)\*.exe $(BIN_DIR)\*.pdb $(BIN_DIR)\*.ipdb $(BIN_DIR)\*.iobj $(OBJ_DIR)\*.obj $(OBJ_DIR)\*.RES $(OBJ_DIR)\*.lib $(OBJ_DIR)\*.pdb $(OBJ_DIR)\*.exp
 
 !INCLUDE $(DEPS_FILE)
