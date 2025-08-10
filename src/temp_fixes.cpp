@@ -50,7 +50,7 @@ namespace TempFixes
 // To fix this, these controls must be set to their default value when the player's ship is initialized.
 void InitFlightControlsFix()
 {
-    DWORD commonHandle = (DWORD) GetModuleHandleA("common.dll");
+    DWORD commonHandle = (DWORD) GetModuleHandle("common.dll");
 
     // Save the intended default values just in case.
     if (commonHandle)

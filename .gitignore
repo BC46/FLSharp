@@ -45,9 +45,6 @@ bin/*
 # CLion
 .idea
 
-# VSCode
-.vscode
-
 # Catch2
 test/catch_amalgamated.cpp
 test/catch_amalgamated.hpp

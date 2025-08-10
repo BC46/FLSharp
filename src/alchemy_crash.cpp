@@ -30,7 +30,7 @@ void InitAlchemyCrashFix()
 {
     #define GET_FINISHED_ALE_START_FILE_OFFSET_ALCHEMY 0x6FDD
     #define GET_FINISHED_ALE_END_FILE_OFFSET_ALCHEMY 0x6FE8
-    DWORD alchemyHandle = (DWORD) GetModuleHandleA("alchemy.dll");
+    DWORD alchemyHandle = (DWORD) GetModuleHandle("alchemy.dll");
 
     if (alchemyHandle)
     {

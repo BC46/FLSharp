@@ -97,7 +97,7 @@ inline Func GetFuncDef(DWORD funcAddr)
 
 double getTimeElapsed(const clock_t &lastUpdate);
 
-DWORD GetUnloadedModuleHandle(LPCSTR moduleName);
+DWORD GetUnloadedModuleHandle(LPCTSTR moduleName);
 
 struct NopStr
 {

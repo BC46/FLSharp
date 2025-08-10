@@ -38,12 +38,12 @@ double getTimeElapsed(const clock_t &lastUpdate)
     return (double) (clock() - lastUpdate);
 }
 
-DWORD GetUnloadedModuleHandle(LPCSTR moduleName)
+DWORD GetUnloadedModuleHandle(LPCTSTR moduleName)
 {
-    DWORD handle = (DWORD) GetModuleHandleA(moduleName);
+    DWORD handle = (DWORD) GetModuleHandle(moduleName);
 
     if (!handle)
-        handle = (DWORD) LoadLibraryA(moduleName);
+        handle = (DWORD) LoadLibrary(moduleName);
 
     return handle;
 }

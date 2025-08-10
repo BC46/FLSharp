@@ -63,7 +63,7 @@ void InitWeaponAnimFix()
     #define PUSH_ZERO_ADDR 0x52C8BF
     #define ANIM_OPEN_CALL_ADDR 0x52C8C2
 
-    DWORD engbaseHandle = (DWORD) GetModuleHandleA("engbase.dll");
+    DWORD engbaseHandle = (DWORD) GetModuleHandle("engbase.dll");
 
     if (engbaseHandle)
     {
