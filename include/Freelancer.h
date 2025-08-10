@@ -84,7 +84,6 @@ struct NN_Preferences
     void TestResolutions_Hook(DWORD unk);
     void VolumeSliderAdjustEnd_Hook(PVOID scrollElement);
 
-    bool InitElements(DWORD unk1, DWORD unk2);
     bool SetResolution(UINT width, DWORD unk, UINT height);
 };
 
@@ -144,7 +143,6 @@ struct FLCursor
 
 struct ServerFilterDialog
 {
-    bool OnFrameUpdate(const FLCursor &cursor);
     bool OnFrameUpdate_Hook(const FLCursor &cursor);
 };
 

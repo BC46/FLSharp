@@ -20,7 +20,6 @@ FL_FUNC(UINT GetIdsForUnvisitedSimple(const CSimple& simple), 0x4D4D50);
 
 FL_FUNC(UINT GetCShipOrCEqObjName(const CEqObj &eqObj), 0x5472A0);
 
-FL_FUNC(bool NN_Preferences::InitElements(DWORD unk1, DWORD unk2), 0x4A9790)
 FL_FUNC(bool NN_Preferences::SetResolution(UINT width, DWORD unk, UINT height), 0x4B1C00)
 
 void ExpandNNShipTraderObjMemory()
@@ -37,5 +36,3 @@ void ExpandNNShipTraderObjMemory()
 }
 
 FL_FUNC(void UpdateDeltaTime(), 0x42D770)
-
-FL_FUNC(bool ServerFilterDialog::OnFrameUpdate(const FLCursor &cursor), 0x5A0340)

@@ -96,6 +96,8 @@ void AddDisplaySettingsResolutions()
     }
 }
 
+bool (NN_Preferences::*InitElements_Original)(DWORD unk1, DWORD unk2);
+
 bool NN_Preferences::InitElements_Hook(DWORD unk1, DWORD unk2)
 {
     ResolutionInfo* nextInfo;
@@ -131,7 +133,7 @@ bool NN_Preferences::InitElements_Hook(DWORD unk1, DWORD unk2)
         Patch<int>(ref, resIndicesOffset);
 
     // Call original function
-    return InitElements(unk1, unk2);
+    return (this->*InitElements_Original)(unk1, unk2);
 }
 
 // Dirty hack which adds an additional parameter to the game's internal SetResolution function
@@ -252,7 +254,7 @@ void InitBetterResolutions()
         Patch<int>(ref, NN_PREFERENCES_NEW_DATA + 0x8);
 
     // Set hook that copies the resolutions into the right location when called
-    SetPointer(INIT_NN_ELEMENTS_CALL_ADDR, &NN_Preferences::InitElements_Hook);
+    InitElements_Original = SetPointer(INIT_NN_ELEMENTS_CALL_ADDR, &NN_Preferences::InitElements_Hook);
 
     // Places where the current resolution info is written to (selected and/or active width)
     Hook(0x4A9AAB, CurrentResInfoWrite1, 6);

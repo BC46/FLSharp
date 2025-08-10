@@ -44,7 +44,7 @@ struct InputBoxWindow
     #endif
     ::vector<InputChar> chars; // 0x4C4
 
-    BYTE x4E4[0x3C];
+    BYTE x4D4[0x3C];
     int maxCharsLength; // 0x510
     BYTE x514[0x14];
     WCHAR forbiddenChar; // 0x528
