@@ -3,5 +3,5 @@
 
 void Logger::PrintModuleError(LPCSTR functionName, LPCSTR moduleName)
 {
-    FDUMP(DumpSeverity::SEV_ERROR, "FL# (%s): Could not get module handle %s.", moduleName);
+    FDUMP(DumpSeverity::SEV_ERROR, "FLSharp (%s): Could not get module handle %s.", functionName, moduleName);
 }

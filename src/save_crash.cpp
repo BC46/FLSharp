@@ -1,6 +1,7 @@
 #include "save_crash.h"
 #include "utils.h"
 #include "Common.h"
+#include "logger.h"
 
 bool Archetype::EqObj::get_undamaged_collision_group_list_Hook(std::list<CollisionGroupDesc>& colGroupList) const
 {
@@ -26,5 +27,9 @@ void InitSaveCrashFix()
     {
         Patch<WORD>(serverHandle + GET_UNDAMAGED_COL_GROUP_LIST_FILE_OFFSET_SERVER, 0xBF90);
         SetPointer(serverHandle + GET_UNDAMAGED_COL_GROUP_LIST_FILE_OFFSET_SERVER + 0x2, &Archetype::EqObj::get_undamaged_collision_group_list_Hook);
+    }
+    else
+    {
+        Logger::PrintModuleError("InitSaveCrashFix", "server.dll");
     }
 }

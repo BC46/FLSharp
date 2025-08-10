@@ -2,6 +2,7 @@
 #include "Freelancer.h"
 #include "Common.h"
 #include "utils.h"
+#include "logger.h"
 
 // These mostly keep track of what the current value is (state).
 #define ROTATION_LOCK *((bool*) (0x678E40 + 0x44))
@@ -57,6 +58,10 @@ void InitFlightControlsFix()
     {
         defaultRotationLockValue = GetValue<bool>(commonHandle + DEFAULT_ROTATION_LOCK_CMN_OFFSET);
         defaultAutoLevelValue = GetValue<bool>(commonHandle + DEFAULT_AUTO_LEVEL_CMN_OFFSET);
+    }
+    else
+    {
+        Logger::PrintModuleError("InitFlightControlsFix", "common.dll");
     }
 
     TempFixes::PostInitDealloc_Original = SetRelPointer(POST_INIT_DEALLOC_CALL_ADDR + 1, TempFixes::PostInitDealloc_Hook);

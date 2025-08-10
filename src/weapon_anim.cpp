@@ -1,6 +1,7 @@
 #include "weapon_anim.h"
 #include "utils.h"
 #include "fl_func.h"
+#include "logger.h"
 
 DWORD setModelCallAddr = 0;
 
@@ -69,6 +70,10 @@ void InitWeaponAnimFix()
     {
         setModelCallAddr = engbaseHandle + SET_MODEL_FUNC_FILE_OFFSET_ENGBASE;
         Hook(engbaseHandle + SET_MODEL_CALL_FILE_OFFSET_ENGBASE, &EngAnimation::SetModel_Hook, 5);
+    }
+    else
+    {
+        Logger::PrintModuleError("InitWeaponAnimFix", "engbase.dll");
     }
 
     // Setup for IAnimation2::Open hook

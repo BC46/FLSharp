@@ -1,6 +1,7 @@
 obj\alchemy_crash.obj: \
     include\alchemy_crash.h \
     include\utils.h \
+    include\logger.h \
     makefile.deps \
     makefile
 
@@ -80,6 +81,12 @@ obj\infocards.obj: \
     makefile.deps \
     makefile
 
+obj\logger.obj: \
+    include\logger.h \
+    include\Dacom.h \
+    makefile.deps \
+    makefile
+
 obj\main.obj: \
     include\feature_config.h \
     include\config_reader.h \
@@ -117,6 +124,7 @@ obj\projectiles.obj: \
     include\fl_math.h \
     include\vftable.h \
     include\utils.h \
+    include\logger.h \
     makefile.deps \
     makefile
 
@@ -154,6 +162,7 @@ obj\save_crash.obj: \
     include\Common.h \
     include\fl_math.h \
     include\vftable.h \
+    include\logger.h \
     makefile.deps \
     makefile
 
@@ -173,6 +182,7 @@ obj\temp_fixes.obj: \
     include\fl_math.h \
     include\vftable.h \
     include\utils.h \
+    include\logger.h \
     makefile.deps \
     makefile
 
@@ -248,6 +258,7 @@ obj\weapon_anim.obj: \
     include\vftable.h \
     include\utils.h \
     include\fl_func.h \
+    include\logger.h \
     makefile.deps \
     makefile
 

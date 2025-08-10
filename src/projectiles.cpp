@@ -1,5 +1,6 @@
 #include "projectiles.h"
 #include "utils.h"
+#include "logger.h"
 
 #define NAKED __declspec(naked)
 
@@ -55,5 +56,9 @@ void InitProjectilesServerFix()
         playerLauncherFireRet = serverHandle + 0xD91A;
 
         Hook(serverHandle + 0xD913, HandlePlayerLauncherFire_Hook, 5, true);
+    }
+    else
+    {
+        Logger::PrintModuleError("InitProjectilesServerFix", "server.dll");
     }
 }

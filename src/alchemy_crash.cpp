@@ -1,5 +1,6 @@
 #include "alchemy_crash.h"
 #include "utils.h"
+#include "logger.h"
 
 // This rewrites the original loop present in alchemy.dll.
 // In principle it would have been possible to just patch one asm instruction to fix the bug,
@@ -42,5 +43,9 @@ void InitAlchemyCrashFix()
         // mov esi, eax followed by a jmp (set the return value so that the rest of the alchemy code can use it)
         BYTE endPatch[] = { 0x89, 0xC6, 0xEB, 0x0D };
         Patch(alchemyHandle + GET_FINISHED_ALE_END_FILE_OFFSET_ALCHEMY, endPatch, sizeof(endPatch));
+    }
+    else
+    {
+        Logger::PrintModuleError("InitAlchemyCrashFix", "alchemy.dll");
     }
 }
