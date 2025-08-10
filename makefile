@@ -9,6 +9,7 @@ TEST_DIR = test
 RC_FILE = $(RC_DIR)\main.rc
 COMMON_DEF = $(DEF_DIR)\Common.def
 DALIB_DEF = $(DEF_DIR)\DALib.def
+DACOM_DEF = $(DEF_DIR)\Dacom.def
 DEPS_FILE = makefile.deps
 
 RES_FILE = $(OBJ_DIR)\main.RES
@@ -19,6 +20,7 @@ $(OBJ_DIR)\config_reader.obj \
 $(OBJ_DIR)\Freelancer.obj \
 $(OBJ_DIR)\update.obj \
 $(OBJ_DIR)\utils.obj \
+$(OBJ_DIR)\logger.obj \
 $(OBJ_DIR)\waypoint.obj \
 $(OBJ_DIR)\waypoint_names.obj \
 $(OBJ_DIR)\projectiles.obj \
@@ -41,6 +43,7 @@ $(OBJ_DIR)\server_filter.obj
 
 COMMON_LIB = $(OBJ_DIR)\Common.lib
 DALIB_LIB = $(OBJ_DIR)\DALib.lib
+DACOM_LIB = $(OBJ_DIR)\DACOM.lib
 EXTERNAL_LIBS = User32.lib Gdi32.lib
 
 OUTPUT_FILE = $(BIN_DIR)\FLSharp.dll
@@ -50,8 +53,8 @@ LD_FLAGS = /LTCG:incremental /DLL /NOLOGO /RELEASE /DEBUG
 LIB_FLAGS = /NOLOGO /MACHINE:X86
 RC_FLAGS = /nologo
 
-$(OUTPUT_FILE): $(OBJ_FILES) $(RES_FILE) $(COMMON_LIB) $(DALIB_LIB) $(BIN_DIR)
-    link $(OBJ_FILES) $(EXTERNAL_LIBS) $(COMMON_LIB) $(DALIB_LIB) $(RES_FILE) $(LD_FLAGS) /OUT:$(OUTPUT_FILE)
+$(OUTPUT_FILE): $(OBJ_FILES) $(RES_FILE) $(COMMON_LIB) $(DALIB_LIB) $(DACOM_LIB) $(BIN_DIR)
+    link $(OBJ_FILES) $(EXTERNAL_LIBS) $(COMMON_LIB) $(DALIB_LIB) $(DACOM_LIB) $(RES_FILE) $(LD_FLAGS) /OUT:$(OUTPUT_FILE)
 
 {$(SRC_DIR)}.cpp{$(OBJ_DIR)}.obj::
     $(CPP) $(CPP_FLAGS) $< -I$(INCLUDE_DIR) /Fo./$(OBJ_DIR)/
@@ -64,6 +67,9 @@ $(COMMON_LIB): $(COMMON_DEF) $(INCLUDE_DIR)/Common.h makefile
 
 $(DALIB_LIB): $(DALIB_DEF) $(INCLUDE_DIR)/DALib.h makefile
     lib $(LIB_FLAGS) /def:$(DALIB_DEF) /name:DALIB /out:$(DALIB_LIB)
+
+$(DACOM_LIB): $(DACOM_DEF) $(INCLUDE_DIR)/Dacom.h makefile
+    lib $(LIB_FLAGS) /def:$(DACOM_DEF) /name:DACOM /out:$(DACOM_LIB)
 
 $(OBJ_DIR):
     if not exist $(OBJ_DIR) mkdir $(OBJ_DIR)
