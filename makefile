@@ -80,7 +80,8 @@ $(BIN_DIR):
 
 CATCH_SRC_FILE = $(TEST_DIR)\catch_amalgamated.cpp
 CATCH_H_FILE = $(TEST_DIR)\catch_amalgamated.hpp
-TEST_FILE = $(TEST_DIR)\test.cpp
+TEST_SRC_FILE = $(TEST_DIR)\test.cpp
+TEST_H_FILE = $(TEST_DIR)\test.h
 
 CATCH_OBJ_FILE = $(OBJ_DIR)\catch_amalgamated.obj
 TEST_OBJ_FILE = $(OBJ_DIR)\test.obj
@@ -100,5 +101,7 @@ $(TEST_OUTPUT_FILE): $(TEST_OBJ_FILE) $(CATCH_OBJ_FILE)
 
 clean:
     del $(BIN_DIR)\*.dll $(BIN_DIR)\*.exe $(BIN_DIR)\*.pdb $(BIN_DIR)\*.ipdb $(BIN_DIR)\*.iobj $(OBJ_DIR)\*.obj $(OBJ_DIR)\*.RES $(OBJ_DIR)\*.lib $(OBJ_DIR)\*.pdb $(OBJ_DIR)\*.exp
+
+$(TEST_SRC_FILE): $(TEST_H_FILE) $(CATCH_H_FILE) makefile
 
 !INCLUDE $(DEPS_FILE)
