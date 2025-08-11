@@ -8,7 +8,7 @@
 UINT32 GetDllProductBuildVersion(LPCSTR dllName)
 {
     if (!GetUnloadedModuleHandle(dllName))
-        return NULL;
+        return 0;
 
     // Hack the DACOM_GetDllVersion function such that it returns the value we're after as the "major".
     // Basically instead of returning the high word of dwProductVersionMS, return the high word of dwProductVersionLS.
@@ -18,7 +18,10 @@ UINT32 GetDllProductBuildVersion(LPCSTR dllName)
     dacomVersionMs += sizeof(UINT32);
 
     UINT32 productBuild = 0, minor, build;
-    DACOM_GetDllVersion(dllName, productBuild, minor, build);
+    if (DACOM_GetDllVersion(dllName, productBuild, minor, build) != S_OK)
+    {
+        productBuild = 0;
+    }
 
     // Restore the patch.
     dacomVersionMs -= sizeof(UINT32);
