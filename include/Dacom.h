@@ -17,4 +17,5 @@ typedef int (*FDUMP_HANDLER)(DumpSeverity severity, LPCSTR fmt, ...);
 extern "C"
 {
     IMPORT FDUMP_HANDLER FDUMP;
+    IMPORT int DACOM_GetDllVersion(LPCSTR dllName, UINT32& major, UINT32& minor, UINT32& build);
 }

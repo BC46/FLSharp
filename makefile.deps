@@ -90,6 +90,8 @@ obj\logger.obj: \
 obj\main.obj: \
     include\feature_config.h \
     include\config_reader.h \
+    include\version_check.h \
+    include\dacom.h \
     include\update.h \
     include\Common.h \
     include\fl_math.h \
@@ -227,6 +229,13 @@ obj\update.obj: \
     makefile
 
 obj\utils.obj: \
+    include\utils.h \
+    makefile.deps \
+    makefile
+
+obj\version_check.obj: \
+    include\version_check.h \
+    include\Dacom.h \
     include\utils.h \
     makefile.deps \
     makefile

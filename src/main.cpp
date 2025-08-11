@@ -1,5 +1,7 @@
 #include "feature_config.h"
 #include "config_reader.h"
+#include "version_check.h"
+#include "dacom.h"
 #include "update.h"
 #include "waypoint.h"
 #include "waypoint_names.h"
@@ -21,6 +23,24 @@
 #include "server_filter.h"
 
 FeatureManager manager;
+
+void CheckDllVersions()
+{
+    std::pair<LPCSTR, UINT32> dlls[] =
+    {
+        { "common.dll", 1223 },
+        { "server.dll", 1223 },
+    };
+
+    for (const auto &dll : dlls)
+    {
+        if (GetDllProductBuildVersion(dll.first) <= dll.second)
+        {
+            FDUMP(DumpSeverity::SEV_WARNING, "FLSharp: %s may be v1.0 while v1.1 is assumed. "
+                "Please install the official 1.1 patch, or proceed at your own risk.", dll.first);
+        }
+    }
+}
 
 void Init()
 {
@@ -66,6 +86,7 @@ BOOL WINAPI DllMain(HINSTANCE hinstDLL, DWORD fdwReason, LPVOID lpReserved)
     if (fdwReason == DLL_PROCESS_ATTACH)
     {
         DisableThreadLibraryCalls(hinstDLL);
+        CheckDllVersions();
         Init();
     }
     else if (fdwReason == DLL_PROCESS_DETACH)

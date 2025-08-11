@@ -1,2 +1,3 @@
 EXPORTS
+DACOM_GetDllVersion
 FDUMP
