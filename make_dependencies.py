@@ -1,7 +1,6 @@
 import os
 import subprocess
 from pathlib import Path
-from itertools import chain
 
 def get_file_dependencies(file_path):
     result = []
@@ -28,7 +27,7 @@ def write_file_dependencies(deps_file, src_dirs, obj_dir):
     f = open(deps_file, "w")
 
     for src_dir in src_dirs:
-        for file_name in chain(os.listdir(src_dir)):
+        for file_name in os.listdir(src_dir):
             if os.path.splitext(file_name)[1] != ".cpp":
                 continue
 
