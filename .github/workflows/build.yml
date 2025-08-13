@@ -9,7 +9,6 @@ jobs:
       - uses: ilammy/msvc-dev-cmd@v1
         with:
           arch: win32
-          toolset: 14.16.27023
       - name: Build project
         run: |
           nmake /nologo
