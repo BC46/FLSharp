@@ -9,5 +9,5 @@ TEST_CASE("value offsets are correct", "[archetype::root]")
 
 TEST_CASE("vftable offsets are correct", "[cattachedequip]")
 {
-    REQUIRE(GetVftableOffset<CAttachedEquip>(&CAttachedEquip::GetRootIndex) == 0x80);
+    REQUIRE(GetVftableOffset<CAttachedEquip>(&CAttachedEquip::GetRootIndex) == 0x84);
 }
