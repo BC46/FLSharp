@@ -12,6 +12,20 @@ jobs:
       - name: Build project
         run: |
           nmake /nologo
+      - name: Download Catch2 test src file
+        uses: robinraju/release-downloader@v1
+        with:
+          repository: 'catchorg/Catch2'
+          tag: 'v3.9.1'
+          fileName: 'catch_amalgamated.cpp'
+          out-file-path: 'test'
+      - name: Download Catch2 test header file
+        uses: robinraju/release-downloader@v1
+        with:
+          repository: 'catchorg/Catch2'
+          tag: 'v3.9.1'
+          fileName: 'catch_amalgamated.hpp'
+          out-file-path: 'test'
       - name: Run tests
         run: |
           nmake /nologo test
