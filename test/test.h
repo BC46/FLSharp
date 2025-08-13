@@ -3,17 +3,38 @@
 #define WIN32_LEAN_AND_MEAN
 #include <windows.h>
 
-// Verifies that a value lies at the correct offset within the struct/class.
-// Every value is tested individually and all bits not representing that value are expecting to be 0s,
-// whereas the bits that do represent that values must be 1.
-// TODO: calculate offset difference instead, much easier approach.
-// TODO: Add way to verify function vftable offsets
 template <typename ObjType, typename ValType>
-void VerifyValueOffset(ObjType& obj, ValType& value, DWORD valueOffset)
+DWORD GetValueOffset(ObjType& obj, ValType& value)
 {
-    // Just to be sure that the given value actually fits within the object.
-    REQUIRE(valueOffset + sizeof(value) <= sizeof(obj));
+    return ((DWORD) &value) - ((DWORD) &obj);
+}
 
-    // Check the offset.
-    REQUIRE(((DWORD) &value) - ((DWORD) &obj) == valueOffset);
+#define FILL_COUNTER_VFTABLE(tensPlace) \
+    virtual DWORD Vftable_x ##tensPlace## 0() { return 0x ##tensPlace## 0;} \
+    virtual DWORD Vftable_x ##tensPlace## 4() { return 0x ##tensPlace## 4;} \
+    virtual DWORD Vftable_x ##tensPlace## 8() { return 0x ##tensPlace## 8;} \
+    virtual DWORD Vftable_x ##tensPlace## C() { return 0x ##tensPlace## C;}
+
+template <class ObjType, typename Func>
+DWORD GetVftableOffset(Func func)
+{
+    struct CounterVftable
+    {
+        FILL_COUNTER_VFTABLE(0)
+        FILL_COUNTER_VFTABLE(1)
+        FILL_COUNTER_VFTABLE(2)
+        FILL_COUNTER_VFTABLE(3)
+        FILL_COUNTER_VFTABLE(4)
+        FILL_COUNTER_VFTABLE(5)
+        FILL_COUNTER_VFTABLE(6)
+        FILL_COUNTER_VFTABLE(7)
+        FILL_COUNTER_VFTABLE(8)
+        FILL_COUNTER_VFTABLE(9)
+    } vftable;
+
+    ObjType* obj = (ObjType*) &vftable;
+
+    typedef DWORD (ObjType::*GetIndex)();
+    GetIndex getIndexFunc = (GetIndex) func;
+    return (obj->*getIndexFunc)();
 }
