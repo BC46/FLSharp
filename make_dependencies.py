@@ -1,6 +1,7 @@
 import os
 import subprocess
 from pathlib import Path
+from itertools import chain
 
 def get_file_dependencies(file_path):
     result = []
@@ -23,29 +24,31 @@ def get_file_dependencies(file_path):
 
     return result
 
-def run():
-    deps_file = 'makefile.deps'
-    src_dir = 'src'
-    obj_dir = 'obj'
-
+def write_file_dependencies(deps_file, src_dirs, obj_dir):
     f = open(deps_file, "w")
 
-    for file_name in os.listdir(src_dir):
-        deps = get_file_dependencies(os.path.join(src_dir, file_name))
+    for src_dir in src_dirs:
+        for file_name in chain(os.listdir(src_dir)):
+            if os.path.splitext(file_name)[1] != ".cpp":
+                continue
 
-        obj_file = os.path.join(obj_dir, Path(file_name).stem + ".obj")
-        cpp_file = os.path.join(src_dir, file_name)
+            deps = get_file_dependencies(os.path.join(src_dir, file_name))
 
-        f.write(obj_file + ": \\\n")
+            obj_file = os.path.join(obj_dir, Path(file_name).stem + ".obj")
+            cpp_file = os.path.join(src_dir, file_name)
 
-        #f.write((" " * 4) + cpp_file + " \\\n")
-        for dep in deps:
-            f.write((" " * 4) + os.path.relpath(dep) + " \\\n")
-        f.write((" " * 4) + "makefile.deps \\\n")
-        f.write((" " * 4) + "makefile\n\n")
+            f.write(obj_file + ": \\\n")
+
+            #f.write((" " * 4) + cpp_file + " \\\n")
+            for dep in deps:
+                f.write((" " * 4) + os.path.relpath(dep) + " \\\n")
+            f.write((" " * 4) + deps_file + " \\\n")
+            f.write((" " * 4) + "makefile\n\n")
 
     f.close()
 
+def run():
+    write_file_dependencies(deps_file='makefile.deps', src_dirs=['src', 'test'], obj_dir='obj')
 
 if __name__ == "__main__":
     run()

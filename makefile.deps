@@ -271,3 +271,17 @@ obj\weapon_anim.obj: \
     makefile.deps \
     makefile
 
+obj\catch_amalgamated.obj: \
+    test\catch_amalgamated.hpp \
+    makefile.deps \
+    makefile
+
+obj\test.obj: \
+    test\test.h \
+    test\catch_amalgamated.hpp \
+    include\Common.h \
+    include\fl_math.h \
+    include\vftable.h \
+    makefile.deps \
+    makefile
+
