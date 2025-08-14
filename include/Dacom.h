@@ -5,7 +5,7 @@
 
 #define IMPORT __declspec(dllimport)
 
-enum DumpSeverity
+enum DumpSeverity : DWORD
 {
     SEV_ERROR   = 0x100001,
     SEV_WARNING = 0x100002,

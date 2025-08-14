@@ -12,11 +12,13 @@ jobs:
       - name: Build project
         run: |
           nmake /nologo
-      - name: Upload built binary as artifact
+      - name: Upload release build as artifact
         uses: actions/upload-artifact@v4
         with:
-          name: FLSharp
-          path: bin/FLSharp.dll
+          name: FLSharp release build
+          path: |
+            bin/FLSharp.dll
+            bin/FLSharp.pdb
       - name: Download Catch2 test src file
         uses: robinraju/release-downloader@v1
         with:
