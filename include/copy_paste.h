@@ -9,6 +9,7 @@
 #include "st6.h"
 #else
 #include <vector>
+namespace st6 = std;
 #endif
 
 struct InputChar
@@ -36,13 +37,7 @@ struct InputBoxWindow
     BYTE x04[0x498];
     int pos; // 0x49C
     BYTE x4A0[0x24];
-
-    #ifdef USE_ST6
-    st6
-    #else
-    std
-    #endif
-    ::vector<InputChar> chars; // 0x4C4
+    st6::vector<InputChar> chars; // 0x4C4
 
     BYTE x4D4[0x3C];
     int maxCharsLength; // 0x510
