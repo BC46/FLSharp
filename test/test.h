@@ -4,13 +4,13 @@
 #include <windows.h>
 
 #define FILL_COUNTER_VFTABLE(tensPlace) \
-    virtual DWORD Vftable_x ##tensPlace## 0() { return 0x ##tensPlace## 0;} \
-    virtual DWORD Vftable_x ##tensPlace## 4() { return 0x ##tensPlace## 4;} \
-    virtual DWORD Vftable_x ##tensPlace## 8() { return 0x ##tensPlace## 8;} \
-    virtual DWORD Vftable_x ##tensPlace## C() { return 0x ##tensPlace## C;}
+    virtual int Vftable_x ##tensPlace## 0() { return 0x ##tensPlace## 0;} \
+    virtual int Vftable_x ##tensPlace## 4() { return 0x ##tensPlace## 4;} \
+    virtual int Vftable_x ##tensPlace## 8() { return 0x ##tensPlace## 8;} \
+    virtual int Vftable_x ##tensPlace## C() { return 0x ##tensPlace## C;}
 
 template <class ObjType, typename Func>
-DWORD GetVftableOffset(Func func)
+int GetVftableOffset(Func func)
 {
     struct CounterVftable
     {
@@ -28,7 +28,7 @@ DWORD GetVftableOffset(Func func)
 
     ObjType* obj = (ObjType*) &vftable;
 
-    typedef DWORD (ObjType::*GetIndex)();
+    typedef int (ObjType::*GetIndex)();
     GetIndex getIndexFunc = (GetIndex) func;
     return (obj->*getIndexFunc)();
 }
