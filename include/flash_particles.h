@@ -44,14 +44,14 @@ private:
 
     void FreeAleEffect();
     int FreeHeapMemory();
-    void SetBaseWatcher(int unk1, int unk2, WatcherInfo* watcherInfo);
+    void SetBaseWatcher(int unk1, int unk2, const WatcherInfo& watcherInfo);
 
     inline void ResetBaseWatcher()
     {
         WatcherInfo watcherInfo = { 0 };
         watcherInfo.data[0] = watcherInfo.data[4] = watcherInfo.data[8] = 1.0f;
 
-        SetBaseWatcher(0, -1, &watcherInfo);
+        SetBaseWatcher(0, -1, watcherInfo);
     }
 };
 
