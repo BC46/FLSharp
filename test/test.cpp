@@ -1,9 +1,11 @@
 #include "test.h"
 #include "Common.h"
-#include "iostream"
+#include "copy_paste.h"
+#include "flash_particles.h"
+#include "Freelancer.h"
+#include "RemoteServer.h"
 
 // Common.h
-
 TEST_CASE("vftable offsets are correct", "[cequip]")
 {
     REQUIRE(GetVftableOffset<CEquip>(&CEquip::Activate) == 0x30);
@@ -92,4 +94,75 @@ TEST_CASE("value offsets are correct", "[ibehaviormanager]")
 {
     REQUIRE(offsetof(IBehaviorManager, physicsInfo) == 0x08);
     REQUIRE(offsetof(IBehaviorManager, rotationLock) == 0xF9);
+}
+
+// copy_paste.h
+TEST_CASE("value offsets are correct", "[keymapinfo]")
+{
+    REQUIRE(offsetof(KeyMapInfo, controlCharacterFlags) == 0x8);
+    REQUIRE(offsetof(KeyMapInfo, enteredKey) == 0x10);
+}
+
+TEST_CASE("value offsets are correct", "[inputboxwindow]")
+{
+
+    REQUIRE(offsetof(InputBoxWindow, pos) == 0x49C);
+    REQUIRE(offsetof(InputBoxWindow, chars) == 0x4C4);
+    REQUIRE(offsetof(InputBoxWindow, maxCharsLength) == 0x510);
+    REQUIRE(offsetof(InputBoxWindow, forbiddenChar) == 0x528);
+    REQUIRE(offsetof(InputBoxWindow, noForbiddenChar) == 0x52A);
+    REQUIRE(offsetof(InputBoxWindow, ime) == 0x52C);
+}
+
+TEST_CASE("vftable offsets are correct", "[inputboxwindow]")
+{
+    REQUIRE(GetVftableOffset<InputBoxWindow>(&InputBoxWindow::WriteTypedKey) == 0xC8);
+}
+
+// flash_particles.h
+TEST_CASE("vftable offsets are correct", "[effectinstance]")
+{
+    REQUIRE(GetVftableOffset<EffectInstance>(&EffectInstance::FreeEngineEffect) == 0x4);
+}
+
+TEST_CASE("value offsets are correct", "[clilauncher]")
+{
+    REQUIRE(offsetof(CliLauncher, vftable) == 0x0);
+    REQUIRE(offsetof(CliLauncher, launcher) == 0x04);
+    REQUIRE(offsetof(CliLauncher, currentFlashParticle) == 0x28);
+    REQUIRE(offsetof(CliLauncher, flashParticlesArr) == 0x28);
+}
+
+// Freelancer.h
+TEST_CASE("value offsets are correct", "[waypoint]")
+{
+    REQUIRE(offsetof(Waypoint, pos) == 0x0);
+    REQUIRE(offsetof(Waypoint, system) == 0xC);
+    REQUIRE(offsetof(Waypoint, target) == 0x10);
+    REQUIRE(offsetof(Waypoint, waypointNumber) == 0x14);
+}
+
+TEST_CASE("value offsets are correct", "[audiooption]")
+{
+    REQUIRE(offsetof(AudioOption, idsName) == 0x0);
+    REQUIRE(offsetof(AudioOption, idsTooltip) == 0x4);
+    REQUIRE(offsetof(AudioOption, defaultVolume) == 0x8);
+}
+
+TEST_CASE("value offsets are correct", "[nn_preferences]")
+{
+    REQUIRE(offsetof(NN_Preferences, audioOptions) == 0x528);
+    REQUIRE(offsetof(NN_Preferences, scrollElements) == 0x654);
+    REQUIRE(offsetof(NN_Preferences, supportedResAmount) == 0x950);
+    REQUIRE(offsetof(NN_Preferences, unk_x97C) == 0x97C);
+    REQUIRE(offsetof(NN_Preferences, selectedHeight) == 0x980);
+    REQUIRE(offsetof(NN_Preferences, activeHeight) == 0x984);
+    REQUIRE(offsetof(NN_Preferences, resSupportedArr) == 0x988);
+    REQUIRE(offsetof(NN_Preferences, newData) == NN_PREFERENCES_NEW_DATA);
+}
+
+// RemoteServer.h
+TEST_CASE("vftable offsets are correct", "[iserverimpl]")
+{
+    REQUIRE(GetVftableOffset<IServerImpl>(&IServerImpl::SPObjUpdate) == 0xD0);
 }

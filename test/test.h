@@ -24,6 +24,12 @@ int GetVftableOffset(Func func)
         FILL_COUNTER_VFTABLE(7)
         FILL_COUNTER_VFTABLE(8)
         FILL_COUNTER_VFTABLE(9)
+        FILL_COUNTER_VFTABLE(A)
+        FILL_COUNTER_VFTABLE(B)
+        FILL_COUNTER_VFTABLE(C)
+        FILL_COUNTER_VFTABLE(D)
+        FILL_COUNTER_VFTABLE(E)
+        FILL_COUNTER_VFTABLE(F)
     } vftable;
 
     ObjType* obj = (ObjType*) &vftable;

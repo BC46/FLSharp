@@ -87,7 +87,7 @@ CATCH_OBJ_FILE = $(OBJ_DIR)\catch_amalgamated.obj
 TEST_OBJ_FILE = $(OBJ_DIR)\test.obj
 TEST_OUTPUT_FILE = $(BIN_DIR)\test.exe
 
-TEST_CPP_FLAGS = /c /nologo /W3 /WX /EHsc /DNDEBUG
+TEST_CPP_FLAGS = /c /nologo /W3 /WX /EHsc /DNDEBUG /DUSE_ST6
 TEST_LD_FLAGS = /NOLOGO /RELEASE
 
 test: $(TEST_OUTPUT_FILE)

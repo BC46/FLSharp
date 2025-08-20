@@ -282,6 +282,11 @@ obj\test.obj: \
     include\Common.h \
     include\fl_math.h \
     include\vftable.h \
+    include\copy_paste.h \
+    include\flash_particles.h \
+    include\utils.h \
+    include\Freelancer.h \
+    include\RemoteServer.h \
     makefile.deps \
     makefile
 
