@@ -3,12 +3,6 @@
 #define WIN32_LEAN_AND_MEAN
 #include <windows.h>
 
-template <typename ObjType, typename ValType>
-DWORD GetValueOffset(ObjType& obj, ValType& value)
-{
-    return ((DWORD) &value) - ((DWORD) &obj);
-}
-
 #define FILL_COUNTER_VFTABLE(tensPlace) \
     virtual DWORD Vftable_x ##tensPlace## 0() { return 0x ##tensPlace## 0;} \
     virtual DWORD Vftable_x ##tensPlace## 4() { return 0x ##tensPlace## 4;} \
