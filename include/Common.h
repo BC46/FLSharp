@@ -49,9 +49,9 @@ private:
 class IMPORT CEquip
 {
 public:
+    FILL_VFTABLE(0);
     FILL_VFTABLE(1);
     FILL_VFTABLE(2);
-    FILL_VFTABLE(3);
     virtual bool Activate(bool value);
 };
 
