@@ -4,6 +4,12 @@
 #include "flash_particles.h"
 #include "Freelancer.h"
 #include "RemoteServer.h"
+#include "rep_requirements.h"
+#include "resolutions.h"
+#include "test_sounds.h"
+#include "trade_lane_lights.h"
+#include "ui_anim.h"
+#include "weapon_anim.h"
 
 // Common.h
 TEST_CASE("vftable offsets are correct", "[cequip]")
@@ -162,7 +168,81 @@ TEST_CASE("value offsets are correct", "[nn_preferences]")
 }
 
 // RemoteServer.h
+TEST_CASE("value offsets are correct", "[sspobjupdateinfo]")
+{
+    REQUIRE(offsetof(SSPObjUpdateInfo, throttle) == 0x28);
+}
+
 TEST_CASE("vftable offsets are correct", "[iserverimpl]")
 {
     REQUIRE(GetVftableOffset<IServerImpl>(&IServerImpl::SPObjUpdate) == 0xD0);
+}
+
+// rep_requirements.h
+TEST_CASE("value offsets are correct", "[dealerstack]")
+{
+    REQUIRE(offsetof(DealerStack, repRequired) == 0x24);
+}
+
+// resolutions.h
+TEST_CASE("value offsets are correct", "[resolutioninitinfo]")
+{
+    REQUIRE(offsetof(ResolutionInitInfo, resolutionInfo) == 0x8);
+}
+
+// test_sounds.h
+TEST_CASE("value offsets are correct", "[soundhandle]")
+{
+    REQUIRE(offsetof(SoundHandle, unkBytePtr) == 0x30);
+}
+
+TEST_CASE("vftable offsets are correct", "[soundhandle]")
+{
+    REQUIRE(GetVftableOffset<SoundHandle>(&SoundHandle::FreeReference, true) == 0x08);
+    REQUIRE(GetVftableOffset<SoundHandle>(&SoundHandle::Pause) == 0x68);
+    REQUIRE(GetVftableOffset<SoundHandle>(&SoundHandle::Resume) == 0x6C);
+    REQUIRE(GetVftableOffset<SoundHandle>(&SoundHandle::IsPaused) == 0x70);
+}
+
+// trade_lane_lights.h
+TEST_CASE("value offsets are correct", "[cetradelaneequip]")
+{
+    REQUIRE(offsetof(CETradeLaneEquip, vftable) == 0x0);
+    REQUIRE(offsetof(CETradeLaneEquip, solar) == 0x4);
+}
+
+TEST_CASE("value offsets are correct", "[tradelaneequipobj]")
+{
+    REQUIRE(offsetof(TradeLaneEquipObj, vftable) == 0x0);
+    REQUIRE(offsetof(TradeLaneEquipObj, tradeLaneEquip) == 0x4);
+    REQUIRE(offsetof(TradeLaneEquipObj, isDisrupted) == 0x30);
+}
+
+// ui_anim.h
+TEST_CASE("vftable offsets are correct", "[bigimage]")
+{
+    REQUIRE(GetVftableOffset<BigImage>(&BigImage::Destroy, true) == 0x08);
+}
+
+TEST_CASE("value offsets are correct", "[uitextmsgbutton]")
+{
+    REQUIRE(offsetof(UITextMsgButton, textImage) == 0x3EC);
+    REQUIRE(offsetof(UITextMsgButton, disableHovering) == 0x471);
+}
+
+TEST_CASE("vftable offsets are correct", "[uitextmsgbutton]")
+{
+    REQUIRE(GetVftableOffset<UITextMsgButton>(&UITextMsgButton::UpdatePosition) == 0xA8);
+}
+
+// weapon_anim.h
+TEST_CASE("value offsets are correct", "[modelbinary]")
+{
+    REQUIRE(offsetof(ModelBinary, type) == 0x00);
+    REQUIRE(offsetof(ModelBinary, parent) == 0x10);
+}
+
+TEST_CASE("vftable offsets are correct", "[ianimation2]")
+{
+    REQUIRE(GetVftableOffset<IAnimation2>(&IAnimation2::Open, true) == 0x24);
 }

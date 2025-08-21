@@ -17,7 +17,6 @@ struct UITextMsgButton
 public:
     int UpdatePosition_Hook(BYTE unk1, const Vector* newPosOffset, BYTE unk2);
 
-private:
     FILL_VFTABLE(0)
     FILL_VFTABLE(1)
     FILL_VFTABLE(2)

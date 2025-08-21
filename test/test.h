@@ -3,38 +3,53 @@
 #define WIN32_LEAN_AND_MEAN
 #include <windows.h>
 
-#define FILL_COUNTER_VFTABLE(tensPlace) \
-    virtual int Vftable_x ##tensPlace## 0() { return 0x ##tensPlace## 0;} \
-    virtual int Vftable_x ##tensPlace## 4() { return 0x ##tensPlace## 4;} \
-    virtual int Vftable_x ##tensPlace## 8() { return 0x ##tensPlace## 8;} \
-    virtual int Vftable_x ##tensPlace## C() { return 0x ##tensPlace## C;}
+#define FILL_COUNTER_VFTABLE(callingConvention, tensPlace) \
+    virtual int callingConvention Vftable_x ##tensPlace## 0() { return 0x ##tensPlace## 0;} \
+    virtual int callingConvention Vftable_x ##tensPlace## 4() { return 0x ##tensPlace## 4;} \
+    virtual int callingConvention Vftable_x ##tensPlace## 8() { return 0x ##tensPlace## 8;} \
+    virtual int callingConvention Vftable_x ##tensPlace## C() { return 0x ##tensPlace## C;}
+
+#define DEFINE_COUNTER_VFTABLE(callingConvention) \
+    FILL_COUNTER_VFTABLE(callingConvention, 0) \
+    FILL_COUNTER_VFTABLE(callingConvention, 1) \
+    FILL_COUNTER_VFTABLE(callingConvention, 2) \
+    FILL_COUNTER_VFTABLE(callingConvention, 3) \
+    FILL_COUNTER_VFTABLE(callingConvention, 4) \
+    FILL_COUNTER_VFTABLE(callingConvention, 5) \
+    FILL_COUNTER_VFTABLE(callingConvention, 6) \
+    FILL_COUNTER_VFTABLE(callingConvention, 7) \
+    FILL_COUNTER_VFTABLE(callingConvention, 8) \
+    FILL_COUNTER_VFTABLE(callingConvention, 9) \
+    FILL_COUNTER_VFTABLE(callingConvention, A) \
+    FILL_COUNTER_VFTABLE(callingConvention, B) \
+    FILL_COUNTER_VFTABLE(callingConvention, C) \
+    FILL_COUNTER_VFTABLE(callingConvention, D) \
+    FILL_COUNTER_VFTABLE(callingConvention, E) \
+    FILL_COUNTER_VFTABLE(callingConvention, F)
 
 template <class ObjType, typename Func>
-int GetVftableOffset(Func func)
+int GetVftableOffset(Func func, bool stdcall = false)
 {
-    struct CounterVftable
+    struct CdeclCounterVftable
     {
-        FILL_COUNTER_VFTABLE(0)
-        FILL_COUNTER_VFTABLE(1)
-        FILL_COUNTER_VFTABLE(2)
-        FILL_COUNTER_VFTABLE(3)
-        FILL_COUNTER_VFTABLE(4)
-        FILL_COUNTER_VFTABLE(5)
-        FILL_COUNTER_VFTABLE(6)
-        FILL_COUNTER_VFTABLE(7)
-        FILL_COUNTER_VFTABLE(8)
-        FILL_COUNTER_VFTABLE(9)
-        FILL_COUNTER_VFTABLE(A)
-        FILL_COUNTER_VFTABLE(B)
-        FILL_COUNTER_VFTABLE(C)
-        FILL_COUNTER_VFTABLE(D)
-        FILL_COUNTER_VFTABLE(E)
-        FILL_COUNTER_VFTABLE(F)
-    } vftable;
+        DEFINE_COUNTER_VFTABLE(__thiscall)
+    } cdeclVftable;
 
-    ObjType* obj = (ObjType*) &vftable;
+    struct StdcallCounterVftable
+    {
+        DEFINE_COUNTER_VFTABLE(__stdcall)
+    } stdcallVftable;
 
-    typedef int (ObjType::*GetIndex)();
-    GetIndex getIndexFunc = (GetIndex) func;
+    ObjType* obj = stdcall ? (ObjType*) &stdcallVftable : (ObjType*) &cdeclVftable;
+
+    if (stdcall)
+    {
+        typedef int (__stdcall ObjType::*GetIndexStdcall)();
+        GetIndexStdcall getIndexFunc = (GetIndexStdcall) func;
+        return (obj->*getIndexFunc)();
+    }
+
+    typedef int (__thiscall ObjType::*GetIndexCdecl)();
+    GetIndexCdecl getIndexFunc = (GetIndexCdecl) func;
     return (obj->*getIndexFunc)();
 }
