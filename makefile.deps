@@ -279,6 +279,7 @@ obj\catch_amalgamated.obj: \
 obj\test.obj: \
     test\test.h \
     test\catch_amalgamated.hpp \
+    include\alchemy_crash.h \
     include\Common.h \
     include\fl_math.h \
     include\vftable.h \

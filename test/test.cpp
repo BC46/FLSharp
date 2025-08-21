@@ -1,4 +1,5 @@
 #include "test.h"
+#include "alchemy_crash.h"
 #include "Common.h"
 #include "copy_paste.h"
 #include "flash_particles.h"
@@ -10,6 +11,13 @@
 #include "trade_lane_lights.h"
 #include "ui_anim.h"
 #include "weapon_anim.h"
+
+// alchemy_crash.h
+TEST_CASE("value offsets are correct", "[alchemy]")
+{
+    REQUIRE(offsetof(Alchemy, progress) == 0x0);
+    REQUIRE(offsetof(Alchemy, effect) == 0x4);
+}
 
 // Common.h
 TEST_CASE("vftable offsets are correct", "[cequip]")
@@ -37,6 +45,12 @@ TEST_CASE("value offsets are correct", "[archetype::eqobj]")
 {
     REQUIRE(offsetof(Archetype::EqObj, idsName) == 0x14);
     REQUIRE(offsetof(Archetype::EqObj, idsInfo) == 0x18);
+}
+
+TEST_CASE("value offsets are correct", "[archetype::solar]")
+{
+    REQUIRE(offsetof(Archetype::Solar, idsName) == 0x14);
+    REQUIRE(offsetof(Archetype::Solar, idsInfo) == 0x18);
 }
 
 TEST_CASE("value offsets are correct", "[engineobject]")
@@ -81,9 +95,42 @@ TEST_CASE("vftable offsets are correct", "[ceqobj]")
     REQUIRE(GetVftableOffset<CEqObj>(&CEqObj::get_name) == 0x88);
 }
 
+TEST_CASE("value offsets are correct", "[cship]")
+{
+    REQUIRE(offsetof(CShip, engineInstance) == 0x04);
+    REQUIRE(offsetof(CShip, classType) == 0x4C);
+    REQUIRE(offsetof(CShip, nickname) == 0xB0);
+    REQUIRE(offsetof(CShip, equipManager) == 0xE4);
+    REQUIRE(offsetof(CShip, baseId) == 0x160);
+}
+
+TEST_CASE("vftable offsets are correct", "[cship]")
+{
+    REQUIRE(GetVftableOffset<CShip>(&CShip::get_name) == 0x88);
+}
+
+TEST_CASE("value offsets are correct", "[csolar]")
+{
+    REQUIRE(offsetof(CSolar, engineInstance) == 0x04);
+    REQUIRE(offsetof(CSolar, classType) == 0x4C);
+    REQUIRE(offsetof(CSolar, nickname) == 0xB0);
+    REQUIRE(offsetof(CSolar, equipManager) == 0xE4);
+    REQUIRE(offsetof(CSolar, baseId) == 0x160);
+}
+
+TEST_CASE("vftable offsets are correct", "[csolar]")
+{
+    REQUIRE(GetVftableOffset<CSolar>(&CSolar::get_name) == 0x88);
+}
+
 TEST_CASE("vftable offsets are correct", "[fuseaction]")
 {
     REQUIRE(GetVftableOffset<FuseAction>(&FuseAction::IsTriggered) == 0x4);
+}
+
+TEST_CASE("vftable offsets are correct", "[ceengine]")
+{
+    REQUIRE(GetVftableOffset<FuseAction>(&CEEngine::IsTriggered) == 0x4);
 }
 
 TEST_CASE("value offsets are correct", "[iobjrw]")
@@ -103,6 +150,13 @@ TEST_CASE("value offsets are correct", "[ibehaviormanager]")
 }
 
 // copy_paste.h
+TEST_CASE("value offsets are correct", "[inputchar]")
+{
+    REQUIRE(offsetof(InputChar, c) == 0x0);
+    REQUIRE(offsetof(InputChar, flags) == 0x4);
+    REQUIRE(offsetof(InputChar, unk) == 0x8);
+}
+
 TEST_CASE("value offsets are correct", "[keymapinfo]")
 {
     REQUIRE(offsetof(KeyMapInfo, controlCharacterFlags) == 0x8);
@@ -111,7 +165,6 @@ TEST_CASE("value offsets are correct", "[keymapinfo]")
 
 TEST_CASE("value offsets are correct", "[inputboxwindow]")
 {
-
     REQUIRE(offsetof(InputBoxWindow, pos) == 0x49C);
     REQUIRE(offsetof(InputBoxWindow, chars) == 0x4C4);
     REQUIRE(offsetof(InputBoxWindow, maxCharsLength) == 0x510);
@@ -148,6 +201,11 @@ TEST_CASE("value offsets are correct", "[waypoint]")
     REQUIRE(offsetof(Waypoint, waypointNumber) == 0x14);
 }
 
+TEST_CASE("value offsets are correct", "[navmapobj]")
+{
+    REQUIRE(offsetof(NavMapObj, type) == 0x0);
+}
+
 TEST_CASE("value offsets are correct", "[audiooption]")
 {
     REQUIRE(offsetof(AudioOption, idsName) == 0x0);
@@ -165,6 +223,19 @@ TEST_CASE("value offsets are correct", "[nn_preferences]")
     REQUIRE(offsetof(NN_Preferences, activeHeight) == 0x984);
     REQUIRE(offsetof(NN_Preferences, resSupportedArr) == 0x988);
     REQUIRE(offsetof(NN_Preferences, newData) == NN_PREFERENCES_NEW_DATA);
+}
+
+TEST_CASE("value offsets are correct", "[nn_shiptrader]")
+{
+    REQUIRE(offsetof(NN_ShipTrader, selectedShipIndex) == 0x3D0);
+    REQUIRE(offsetof(NN_ShipTrader, shipRepPercentages) == 0x448);
+}
+
+TEST_CASE("value offsets are correct", "[flcursor]")
+{
+    REQUIRE(offsetof(FLCursor, xPos) == 0x0);
+    REQUIRE(offsetof(FLCursor, yPos) == 0x4);
+    REQUIRE(offsetof(FLCursor, distFromZero) == 0x8);
 }
 
 // RemoteServer.h
