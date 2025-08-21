@@ -5,7 +5,7 @@
 std::map<UINT, UINT> msnBaseIdsInfoMap;
 std::map<UINT, UINT> msnNicknameIdsInfoMap;
 
-void ParseEntries(std::map<UINT, UINT>& map, INI_Reader& reader, const std::map<UINT, InfocardEntry>& entries)
+void ParseEntries(INI_Reader& reader, const std::map<UINT, InfocardEntry>& entries)
 {
     while (reader.read_header())
     {
@@ -45,7 +45,7 @@ void ParseMsnCreatedSolars(LPCSTR iniPath)
         { CreateID("MissionCreatedNonDockableSolar"), { msnNicknameIdsInfoMap, "nickname", "ids_info" } }
     };
 
-    ParseEntries(msnBaseIdsInfoMap, reader, entries);
+    ParseEntries(reader, entries);
     reader.close();
 }
 
