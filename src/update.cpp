@@ -2,13 +2,15 @@
 #include "update.h"
 #include "utils.h"
 #include <cmath>
+#include <chrono>
+
+using namespace std::chrono;
 
 #define M_PI 3.14159265358979323846f
-
-const double minSyncIntervalMs = 40.0;
-const double minSyncIntervalTlrMs = 750.0;
-const double maxSyncIntervalMs = 2000.0;
-const double rotationCheckIntervalMs = 250.0;
+#define MIN_SYNC_INTERVAL_MS 40ms
+#define MIN_SYNC_INTERVAL_TLR_MS 750ms
+#define MAX_SYNC_INTERVAL_MS 2000ms
+#define ROTATION_CHECK_INTERVAL_MS 250ms
 
 bool sendUpdateAsap = true;
 bool engineKillEnabledLastTime = false;
@@ -17,11 +19,16 @@ bool engineKillEnabledLastTime = false;
 float shipTurnThreshold = DEFAULT_SHIP_TURN_THRESHOLD;
 
 Quaternion lastOrientation;
-clock_t timeSinceLastUpdate;
+steady_clock::time_point timeSinceLastUpdate;
 
 void SetTimeSinceLastUpdate()
 {
-    timeSinceLastUpdate = clock();
+    timeSinceLastUpdate = steady_clock::now();
+}
+
+milliseconds GetMsElapsed()
+{
+    return duration_cast<milliseconds>(steady_clock::now() - timeSinceLastUpdate);
 }
 
 CShip* GetPlayerShip()
@@ -60,9 +67,9 @@ bool IsEkToggled(CShip* ship)
     return result;
 }
 
-bool HasOrientationChanged(CShip* ship, double timeElapsed)
+bool HasOrientationChanged(CShip* ship, milliseconds msElapsed)
 {
-    if (timeElapsed < rotationCheckIntervalMs)
+    if (msElapsed < ROTATION_CHECK_INTERVAL_MS)
         return false;
 
     float rotationDelta = GetRotationDelta(lastOrientation, ship->get_orientation());
@@ -108,33 +115,33 @@ namespace Update
     }
 }
 
-bool ShouldSendUpdate(CShip* ship, double timeElapsed)
+bool ShouldSendUpdate(CShip* ship, milliseconds msElapsed)
 {
     if (!ship)
         return false;
 
     // Has it been a while since the last update?
     // Has the orientation been changed to some extent?
-    return (timeElapsed >= maxSyncIntervalMs) || HasOrientationChanged(ship, timeElapsed);
+    return (msElapsed >= MAX_SYNC_INTERVAL_MS) || HasOrientationChanged(ship, msElapsed);
 }
 
-inline double GetShipMinSyncInterval(CShip* ship)
+inline milliseconds GetShipMinSyncInterval(CShip* ship)
 {
     if (!ship)
-        return minSyncIntervalMs;
+        return MIN_SYNC_INTERVAL_MS;
 
     // Ensure updates are sent less frequently when the player ship is taking a tradelane to prevent jitter
-    return ship->is_using_tradelane() ? minSyncIntervalTlrMs : minSyncIntervalMs;
+    return ship->is_using_tradelane() ? MIN_SYNC_INTERVAL_TLR_MS : MIN_SYNC_INTERVAL_MS;
 }
 
 // Hook for function that determines whether an update should be sent to the server
 bool CRemotePhysicsSimulation::CheckForSync_Hook(Vector const &shipPos, Vector const &shipPos2, Quaternion const &unk)
 {
-    double timeElapsed = getTimeElapsed(timeSinceLastUpdate); // Time elapsed since the last update
+    milliseconds msElapsed = GetMsElapsed(); // Time elapsed since the last update
     CShip* ship = GetPlayerShip();
     bool isEkToggled = IsEkToggled(ship);
 
-    if (timeElapsed < GetShipMinSyncInterval(ship))
+    if (msElapsed < GetShipMinSyncInterval(ship))
     {
         // Prevent the client from sending too many updates in a short amount of time
         // This resolves the jitter issue that occurs when playing on a high framerate
@@ -142,7 +149,7 @@ bool CRemotePhysicsSimulation::CheckForSync_Hook(Vector const &shipPos, Vector c
         // TODO: If EK has been toggled twice before the min sync interval has passed, then an asap update should actually not be sent because of this.
         // But then you'd also have to check if the asap update *should* be sent because CheckForSync or ShouldSendUpdate returned true. Eh, this sounds complicated.
         if (!sendUpdateAsap)
-            sendUpdateAsap = isEkToggled || CheckForSync(shipPos, shipPos2, unk) || ShouldSendUpdate(ship, timeElapsed);
+            sendUpdateAsap = isEkToggled || CheckForSync(shipPos, shipPos2, unk) || ShouldSendUpdate(ship, msElapsed);
 
         return false;
     }
@@ -154,7 +161,7 @@ bool CRemotePhysicsSimulation::CheckForSync_Hook(Vector const &shipPos, Vector c
     }
 
     // I'll assume that CheckForSync is the more efficient update check.
-    return isEkToggled || CheckForSync(shipPos, shipPos2, unk) || ShouldSendUpdate(ship, timeElapsed);
+    return isEkToggled || CheckForSync(shipPos, shipPos2, unk) || ShouldSendUpdate(ship, msElapsed);
 }
 
 // Hook for function that sends an update to the server

@@ -2,7 +2,6 @@
 
 #define WIN32_LEAN_AND_MEAN
 #include <windows.h>
-#include <time.h>
 
 void Patch(DWORD vOffset, LPVOID mem, UINT len);
 
@@ -94,8 +93,6 @@ inline Func GetFuncDef(DWORD funcAddr)
 {
     return *(Func*) &funcAddr;
 }
-
-double getTimeElapsed(const clock_t &lastUpdate);
 
 DWORD GetUnloadedModuleHandle(LPCTSTR moduleName);
 

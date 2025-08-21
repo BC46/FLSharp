@@ -33,11 +33,6 @@ void Nop(DWORD vOffset, UINT len)
     }
 }
 
-double getTimeElapsed(const clock_t &lastUpdate)
-{
-    return (double) (clock() - lastUpdate);
-}
-
 DWORD GetUnloadedModuleHandle(LPCTSTR moduleName)
 {
     DWORD handle = (DWORD) GetModuleHandle(moduleName);
