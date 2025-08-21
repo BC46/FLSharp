@@ -6,4 +6,5 @@
 namespace Logger
 {
     void PrintModuleError(LPCSTR functionName, LPCSTR moduleName);
+    void PrintV10Warning(LPCSTR moduleName);
 }

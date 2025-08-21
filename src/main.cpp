@@ -21,6 +21,7 @@
 #include "alchemy_crash.h"
 #include "blank_faction.h"
 #include "server_filter.h"
+#include "logger.h"
 
 FeatureManager manager;
 
@@ -36,8 +37,7 @@ void CheckDllVersions()
     {
         if (GetDllProductBuildVersion(dll.first) <= dll.second)
         {
-            FDUMP(DumpSeverity::SEV_WARNING, "FLSharp: %s may be v1.0 while v1.1 is assumed. "
-                "Please install the official 1.1 patch, or proceed at your own risk.", dll.first);
+            Logger::PrintV10Warning(dll.first);
         }
     }
 }

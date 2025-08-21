@@ -117,6 +117,7 @@ obj\main.obj: \
     include\alchemy_crash.h \
     include\blank_faction.h \
     include\server_filter.h \
+    include\logger.h \
     makefile.deps \
     makefile
 
