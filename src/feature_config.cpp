@@ -5,7 +5,7 @@ void FeatureManager::RegisterFeature(LPCSTR name, void (*initFunc)(), void (*cle
 {
     // Enable the feature by default.
     FlSharpFeature feature { initFunc, cleanupFunc, applyPredicate, true };
-    features.insert({ CreateID(name), feature });
+    features.emplace(CreateID(name), feature);
 }
 
 void FeatureManager::SetFeatureEnabled(LPCSTR name, bool enabled)

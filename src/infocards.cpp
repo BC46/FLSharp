@@ -28,7 +28,7 @@ void ParseEntries(INI_Reader& reader, const std::map<UINT, InfocardEntry>& entri
             }
         }
 
-        it->second.map.insert({ key, value });
+        it->second.map.emplace(key, value);
     }
 }
 
