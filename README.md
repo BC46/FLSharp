@@ -36,6 +36,7 @@ These include:
 - Fixed a very rare and inconsistent crash in alchemy.dll (crash offset `0x701b`).
 - Fixed waypoints being called "Unknown Object" in the target view and Current Information window.
 - Fixed player waypoints being printed incorrectly in the Current Information window.
+- Fixes Freelancer and FLServer crashing if a non-existing DLL is loaded via freelancer.ini.
 
 More fixes and improvements may be added in the future.
 

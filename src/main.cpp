@@ -21,6 +21,7 @@
 #include "alchemy_crash.h"
 #include "blank_faction.h"
 #include "server_filter.h"
+#include "dll_crash.h"
 #include "logger.h"
 
 FeatureManager manager;
@@ -67,6 +68,7 @@ void Init()
     manager.RegisterFeature("blank_faction_fix",        InitBlankFactionNameFix,    nullptr,                    ApplyOnlyOnClient);
     manager.RegisterFeature("server_filter_crash_fix",  InitServerFilterCrashFix,   nullptr,                    ApplyOnlyOnClient);
     manager.RegisterFeature("server_filter_speed_fix",  InitServerFilterSpeedFix,   nullptr,                    ApplyOnlyOnClient);
+    manager.RegisterFeature("freelancer_dll_crash_fix", InitMissingDllCrashFix,     nullptr,                    ApplyAlways);
 
     ReadConfig("FLSharp.ini", manager);
 

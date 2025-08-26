@@ -39,6 +39,13 @@ obj\copy_paste.obj: \
     makefile.deps \
     makefile
 
+obj\dll_crash.obj: \
+    include\dll_crash.h \
+    include\utils.h \
+    include\logger.h \
+    makefile.deps \
+    makefile
+
 obj\feature_config.obj: \
     include\feature_config.h \
     include\Common.h \
@@ -117,6 +124,7 @@ obj\main.obj: \
     include\alchemy_crash.h \
     include\blank_faction.h \
     include\server_filter.h \
+    include\dll_crash.h \
     include\logger.h \
     makefile.deps \
     makefile
