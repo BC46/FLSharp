@@ -36,7 +36,7 @@ These include:
 - Fixed a very rare and inconsistent crash in alchemy.dll (crash offset `0x701b`).
 - Fixed waypoints being called "Unknown Object" in the target view and Current Information window.
 - Fixed player waypoints being printed incorrectly in the Current Information window.
-- Fixes Freelancer and FLServer crashing if a non-existing DLL is loaded via freelancer.ini.
+- Fixed Freelancer and FLServer crashing if a non-existing DLL is loaded via freelancer.ini.
 
 More fixes and improvements may be added in the future.
 
@@ -59,5 +59,5 @@ Thanks to the following people for helping make some of the features possible:
   - Identification of the client-to-server communication improvements and providing code from DiscoveryGC's client hook
 - [Schmackbolzen](https://github.com/Schmackbolzen)
   - Provided assistance with troubleshooting the ship preview rendering bug
-- [Venemon](https://github.com/Venemon)
+- [Venemon](https://www.moddb.com/members/venemon)
   - Original implementations of the multi-barrel launcher sound and [weapon animation fixes](https://www.moddb.com/mods/weapon-animations)

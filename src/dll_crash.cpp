@@ -29,7 +29,7 @@ void InitMissingDllCrashFix()
 
     if (!serverHandle)
     {
-        Logger::PrintModuleError("InitFreelancerDllCrashFix", "server.dll");
+        Logger::PrintModuleError("InitMissingDllCrashFix", "server.dll");
         return;
     }
 
