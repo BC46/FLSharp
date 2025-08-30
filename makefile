@@ -101,7 +101,7 @@ $(TEST_OUTPUT_FILE): $(TEST_OBJ_FILE) $(CATCH_OBJ_FILE)
     $(CPP) $(TEST_CPP_FLAGS) $< -I$(INCLUDE_DIR) /Fo./$(OBJ_DIR)/
 
 clean:
-    del $(BIN_DIR)\*.dll $(BIN_DIR)\*.exe $(BIN_DIR)\*.pdb $(BIN_DIR)\*.ipdb $(BIN_DIR)\*.iobj $(OBJ_DIR)\*.obj $(OBJ_DIR)\*.RES $(OBJ_DIR)\*.lib $(OBJ_DIR)\*.pdb $(OBJ_DIR)\*.exp
+    del $(BIN_DIR)\*.dll $(BIN_DIR)\*.exe $(BIN_DIR)\*.pdb $(BIN_DIR)\*.ipdb $(BIN_DIR)\*.iobj $(BIN_DIR)\*.ilk $(OBJ_DIR)\*.obj $(OBJ_DIR)\*.RES $(OBJ_DIR)\*.lib $(OBJ_DIR)\*.pdb $(OBJ_DIR)\*.exp
 
 $(TEST_SRC_FILE): $(TEST_H_FILE) $(CATCH_H_FILE) makefile
 
