@@ -150,24 +150,17 @@ bool CRemotePhysicsSimulation::CheckForSync_Hook(Vector const &shipPos, const CS
 }
 
 // Hook for function that sends an update to the server
-void IServerImpl::SPObjUpdate_Hook(SSPObjUpdateInfo &updateInfo, UINT client)
+void IServerImpl::SPObjUpdate_Hook(const CShip& ship, SSPObjUpdateInfo &updateInfo, UINT client)
 {
-    CShip* ship = GetPlayerShip();
-
-    if (ship)
-    {
-        // Get throttle from the ship and set it in the update info if engine kill is currently disabled.
-        // If it's enabled we want to set the throttle value to 0.
-        updateInfo.throttle = engineKillEnabledLastTime ? 0.0f : ship->get_throttle();
-
-        // Set the last orientation
-        lastOrientation = MatrixToQuaternion(ship->get_orientation());
-    }
+    // Get throttle from the ship and set it in the update info if engine kill is currently disabled.
+    // If it's enabled we want to set the throttle value to 0.
+    updateInfo.throttle = engineKillEnabledLastTime ? 0.0f : ship.get_throttle();
 
     // Send update to the server
     SPObjUpdate(updateInfo, client);
 
     SetTimeSinceLastUpdate();
+    lastOrientation = MatrixToQuaternion(ship.get_orientation());
 }
 
 // This allows for extra checks to prevent jitters and allow smoother updates from the client to the server.
@@ -177,7 +170,10 @@ void InitBetterUpdates()
     SetTimeSinceLastUpdate();
 
     Update::PostInitDealloc_Original = SetRelPointer(POST_INIT_DEALLOC_CALL_ADDR + 1, Update::PostInitDealloc_Hook);
+
     Hook(CHECK_FOR_SYNC_CALL_ADDR, &CRemotePhysicsSimulation::CheckForSync_Hook, 5);
-    Patch<BYTE>(PUSH_SHIP_POS_SYNC_CHECK_ADDR, 0x57); // push eax -> push edi (provide the CShip& to our hook)
-    Hook(OBJ_UPDATE_CALL_ADDR, &IServerImpl::SPObjUpdate_Hook, 6);
+    Patch<BYTE>(PUSH_SHIP_POS_SYNC_CHECK_ADDR, 0x57); // push eax -> push edi (provide the CShip& to the CheckForSync hook)
+
+    Patch<BYTE>(OBJ_UPDATE_CALL_ADDR, 0x57); // push edi (provide the CShip& to the SPObjUpdate hook)
+    Hook(OBJ_UPDATE_CALL_ADDR + 1, &IServerImpl::SPObjUpdate_Hook, 5);
 }

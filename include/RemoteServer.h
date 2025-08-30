@@ -27,5 +27,5 @@ public:
     FILL_VFTABLE(C)
     virtual void SPObjUpdate(SSPObjUpdateInfo &updateInfo, UINT client);
 
-    void SPObjUpdate_Hook(SSPObjUpdateInfo &updateInfo, UINT client);
+    void SPObjUpdate_Hook(const CShip& ship, SSPObjUpdateInfo &updateInfo, UINT client);
 };
