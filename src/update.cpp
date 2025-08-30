@@ -37,27 +37,19 @@ CShip* GetPlayerShip()
     return !playerIObjRW ? nullptr : (CShip*) playerIObjRW->cobject;
 }
 
-// This seems to be a relatively fast operation; Freelancer calls it numerous times per frame.
-CEEngine const * GetEngine(CShip* ship)
+bool IsEkEnabled(const CShip& ship)
 {
-    if (!ship)
-        return nullptr;
+    // This seems to be a relatively fast operation; Freelancer calls it numerous times per frame.
+    CEEngine const * engine = CEEngine::cast(ship.equipManager.FindFirst(ENGINE_TYPE));
 
-    return CEEngine::cast(ship->equipManager.FindFirst(ENGINE_TYPE));
-}
-
-bool IsEkEnabled(CShip* ship)
-{
-    CEEngine const * shipEngine = GetEngine(ship);
-
-    if (!shipEngine)
+    if (!engine)
         return false;
 
-    return !shipEngine->IsTriggered();
+    return !engine->IsTriggered();
 }
 
 // Checks if engine kill has been toggled and update the last known value.
-bool IsEkToggled(CShip* ship)
+bool IsEkToggled(const CShip& ship)
 {
     bool engineKillEnabled = IsEkEnabled(ship);
 
@@ -67,21 +59,18 @@ bool IsEkToggled(CShip* ship)
     return result;
 }
 
-bool HasOrientationChanged(CShip* ship, milliseconds msElapsed)
+bool HasOrientationChanged(const CShip& ship, milliseconds msElapsed)
 {
     if (msElapsed < ROTATION_CHECK_INTERVAL_MS)
         return false;
 
-    float rotationDelta = GetRotationDelta(lastOrientation, ship->get_orientation());
+    float rotationDelta = GetRotationDelta(lastOrientation, ship.get_orientation());
     return rotationDelta >= shipTurnThreshold;
 }
 
-float GetShipTurnThreshold(CShip *ship)
+float GetShipTurnThreshold(const CShip& ship)
 {
-    if (!ship)
-        return DEFAULT_SHIP_TURN_THRESHOLD;
-
-    Archetype::Ship const * shipArch = ship->shiparch();
+    Archetype::Ship const * shipArch = ship.shiparch();
 
     // TODO: The angular drag is meant to be calculated dynamically using the CShip::get_angular_drag() function.
     // However, the angular drag factor is kind of an unused feature in FL and not many mods use it.
@@ -91,7 +80,7 @@ float GetShipTurnThreshold(CShip *ship)
     float avgTorque = (shipArch->steeringTorque.x + shipArch->steeringTorque.y) / 2;
     float maxTurnSpeed = (avgTorque / avgDrag) * (180.0f / M_PI);
 
-    return min(DEFAULT_SHIP_TURN_THRESHOLD, 15.0f * sqrtf(maxTurnSpeed) / sqrtf(ship->get_radius()));
+    return min(DEFAULT_SHIP_TURN_THRESHOLD, 15.0f * sqrtf(maxTurnSpeed) / sqrtf(ship.get_radius()));
 }
 
 namespace Update
@@ -111,34 +100,30 @@ namespace Update
         engineKillEnabledLastTime = false;
         sendUpdateAsap = true;
 
-        shipTurnThreshold = GetShipTurnThreshold(GetPlayerShip());
+        if (CShip* ship = GetPlayerShip())
+            shipTurnThreshold = GetShipTurnThreshold(*ship);
+        else
+            shipTurnThreshold = DEFAULT_SHIP_TURN_THRESHOLD;
     }
 }
 
-bool ShouldSendUpdate(CShip* ship, milliseconds msElapsed)
+bool ShouldSendUpdate(const CShip& ship, milliseconds msElapsed)
 {
-    if (!ship)
-        return false;
-
     // Has it been a while since the last update?
     // Has the orientation been changed to some extent?
     return (msElapsed >= MAX_SYNC_INTERVAL_MS) || HasOrientationChanged(ship, msElapsed);
 }
 
-inline milliseconds GetShipMinSyncInterval(CShip* ship)
+inline milliseconds GetShipMinSyncInterval(const CShip& ship)
 {
-    if (!ship)
-        return MIN_SYNC_INTERVAL_MS;
-
     // Ensure updates are sent less frequently when the player ship is taking a tradelane to prevent jitter
-    return ship->is_using_tradelane() ? MIN_SYNC_INTERVAL_TLR_MS : MIN_SYNC_INTERVAL_MS;
+    return ship.is_using_tradelane() ? MIN_SYNC_INTERVAL_TLR_MS : MIN_SYNC_INTERVAL_MS;
 }
 
 // Hook for function that determines whether an update should be sent to the server
-bool CRemotePhysicsSimulation::CheckForSync_Hook(Vector const &shipPos, Vector const &shipPos2, Quaternion const &unk)
+bool CRemotePhysicsSimulation::CheckForSync_Hook(Vector const &shipPos, const CShip& ship, Quaternion const &unk)
 {
     milliseconds msElapsed = GetMsElapsed(); // Time elapsed since the last update
-    CShip* ship = GetPlayerShip();
     bool isEkToggled = IsEkToggled(ship);
 
     if (msElapsed < GetShipMinSyncInterval(ship))
@@ -149,7 +134,7 @@ bool CRemotePhysicsSimulation::CheckForSync_Hook(Vector const &shipPos, Vector c
         // TODO: If EK has been toggled twice before the min sync interval has passed, then an asap update should actually not be sent because of this.
         // But then you'd also have to check if the asap update *should* be sent because CheckForSync or ShouldSendUpdate returned true. Eh, this sounds complicated.
         if (!sendUpdateAsap)
-            sendUpdateAsap = isEkToggled || CheckForSync(shipPos, shipPos2, unk) || ShouldSendUpdate(ship, msElapsed);
+            sendUpdateAsap = isEkToggled || CheckForSync(shipPos, shipPos, unk) || ShouldSendUpdate(ship, msElapsed);
 
         return false;
     }
@@ -161,7 +146,7 @@ bool CRemotePhysicsSimulation::CheckForSync_Hook(Vector const &shipPos, Vector c
     }
 
     // I'll assume that CheckForSync is the more efficient update check.
-    return isEkToggled || CheckForSync(shipPos, shipPos2, unk) || ShouldSendUpdate(ship, msElapsed);
+    return isEkToggled || CheckForSync(shipPos, shipPos, unk) || ShouldSendUpdate(ship, msElapsed);
 }
 
 // Hook for function that sends an update to the server
@@ -193,5 +178,6 @@ void InitBetterUpdates()
 
     Update::PostInitDealloc_Original = SetRelPointer(POST_INIT_DEALLOC_CALL_ADDR + 1, Update::PostInitDealloc_Hook);
     Hook(CHECK_FOR_SYNC_CALL_ADDR, &CRemotePhysicsSimulation::CheckForSync_Hook, 5);
+    Patch<BYTE>(PUSH_SHIP_POS_SYNC_CHECK_ADDR, 0x57); // push eax -> push edi (provide the CShip& to our hook)
     Hook(OBJ_UPDATE_CALL_ADDR, &IServerImpl::SPObjUpdate_Hook, 6);
 }

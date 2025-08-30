@@ -244,7 +244,7 @@ class CRemotePhysicsSimulation
 {
 public:
     IMPORT bool CheckForSync(Vector const &shipPos, Vector const &shipPos2, Quaternion const &unk);
-    bool CheckForSync_Hook(Vector const &shipPos, Vector const &shipPos2, Quaternion const &unk);
+    bool CheckForSync_Hook(Vector const &shipPos, const CShip& ship, Quaternion const &unk);
 };
 
 struct IObjRW
