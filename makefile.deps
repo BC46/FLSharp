@@ -27,6 +27,7 @@ obj\config_reader.obj: \
     include\Common.h \
     include\fl_math.h \
     include\vftable.h \
+    include\logger.h \
     makefile.deps \
     makefile
 
@@ -85,6 +86,7 @@ obj\infocards.obj: \
     include\fl_math.h \
     include\vftable.h \
     include\utils.h \
+    include\logger.h \
     makefile.deps \
     makefile
 

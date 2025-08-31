@@ -17,7 +17,7 @@ class FeatureManager
 {
 public:
     void RegisterFeature(LPCSTR name, void (*initFunc)(), void (*cleanupFunc)(), bool (*applyPredicate)());
-    void SetFeatureEnabled(LPCSTR name, bool enabled);
+    bool SetFeatureEnabled(LPCSTR name, bool enabled);
     void InitFeatures();
     void CleanupFeatures();
 

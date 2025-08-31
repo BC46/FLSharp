@@ -12,6 +12,7 @@ EXPORTS
 ?get_value_float@INI_Reader@@QAEMI@Z
 ?get_value_int@INI_Reader@@QAEHI@Z
 ?get_name_ptr@INI_Reader@@QAEPBDXZ
+?get_file_name@INI_Reader@@QBEPBDXZ
 ?close@INI_Reader@@QAEXXZ
 
 ?FindFirst@CEquipManager@@QBEPBVCEquip@@I@Z

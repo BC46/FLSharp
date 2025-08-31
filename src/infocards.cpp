@@ -1,6 +1,7 @@
 #include "infocards.h"
 #include "Common.h"
 #include "utils.h"
+#include "logger.h"
 
 std::map<UINT, UINT> msnBaseIdsInfoMap;
 std::map<UINT, UINT> msnNicknameIdsInfoMap;
@@ -12,7 +13,10 @@ void ParseEntries(INI_Reader& reader, const std::map<UINT, InfocardEntry>& entri
         const auto it = entries.find(CreateID(reader.get_header_ptr()));
 
         if (it == entries.end())
+        {
+            Logger::PrintInvalidHeaderWarning("ParseEntries", reader.get_header_ptr(), reader.get_file_name());
             continue;
+        }
 
         UINT key = 0, value = 0;
 
@@ -38,7 +42,10 @@ void ParseMsnCreatedSolars(LPCSTR iniPath)
     INI_Reader reader;
 
     if (!reader.open(iniPath))
+    {
+        Logger::PrintFileOpenError("ParseMsnCreatedSolars", iniPath);
         return;
+    }
 
     std::map<UINT, InfocardEntry> entries = {
         { CreateID("MissionCreatedSolar"),            { msnBaseIdsInfoMap, "base", "ids_info" } },

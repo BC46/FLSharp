@@ -1,6 +1,7 @@
 #include "config_reader.h"
 #include "Common.h"
 #include "feature_config.h"
+#include "logger.h"
 
 void ReadConfig(LPCSTR path, FeatureManager &manager)
 {
@@ -13,7 +14,10 @@ void ReadConfig(LPCSTR path, FeatureManager &manager)
     {
         while (reader.read_value())
         {
-            manager.SetFeatureEnabled(reader.get_name_ptr(), reader.get_value_bool());
+            if (!manager.SetFeatureEnabled(reader.get_name_ptr(), reader.get_value_bool()))
+            {
+                Logger::PrintInvalidFeatureWarning("ReadConfig", reader.get_name_ptr(), reader.get_file_name());
+            }
         }
     }
 

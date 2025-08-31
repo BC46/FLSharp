@@ -30,6 +30,7 @@ public:
     IMPORT float get_value_float(UINT index = 0);
     IMPORT int get_value_int(UINT index = 0);
     IMPORT LPCSTR get_name_ptr();
+    IMPORT LPCSTR get_file_name() const;
     IMPORT void close();
 
     // inline UINT get_value_uint(UINT index = 0)

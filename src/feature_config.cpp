@@ -8,14 +8,15 @@ void FeatureManager::RegisterFeature(LPCSTR name, void (*initFunc)(), void (*cle
     features.emplace(CreateID(name), feature);
 }
 
-void FeatureManager::SetFeatureEnabled(LPCSTR name, bool enabled)
+bool FeatureManager::SetFeatureEnabled(LPCSTR name, bool enabled)
 {
     const auto it = features.find(CreateID(name));
 
-    if (it != features.end())
-    {
-        it->second.enabled = enabled;
-    }
+    if (it == features.end())
+        return false;
+
+    it->second.enabled = enabled;
+    return true;
 }
 
 void FeatureManager::InitFeatures()
