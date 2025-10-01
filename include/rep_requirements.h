@@ -13,7 +13,7 @@ struct DealerStack
 
 struct NN_Dealer
 {
-    void PrintFmtStrPurchaseInfo_Hook(UINT idsPurchaseInfo, DealerStack* stack);
+    void PrintFmtStrPurchaseInfo_Hook(UINT idsPurchaseInfo, const DealerStack& stack);
     void PrintFmtStrPurchaseInfo(UINT idsPurchaseInfo, int fmtValue);
 };
 

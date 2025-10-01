@@ -36,7 +36,7 @@ bool EngAnimation::SetModel_Hook(PDWORD unk, ModelBinary* model)
 // However, the cruiser gun model is part of the Cruiser ship model itself, and thus the animation is also in the ship model.
 // In vanilla FL it's not possible to call ship animations when firing a gun.
 // This hook allows an animation to be played on the parent of the gun if there is a leading underscore in the animation name (_).
-int IAnimation2::Open_Hook(LPCSTR animationScript, int scriptIndex, CAttachedEquip *equip)
+int IAnimation2::Open_Hook(LPCSTR animationScript, int scriptIndex, const CAttachedEquip &equip)
 {
     // If the animation script has a leading underscore, open the animation on the parent of the equipment.
     if (animationScript && animationScript[0] == '_')
@@ -44,7 +44,7 @@ int IAnimation2::Open_Hook(LPCSTR animationScript, int scriptIndex, CAttachedEqu
         // Remove the leading underscore.
         ++animationScript;
 
-        if (CObject* parent = equip->parent)
+        if (CObject* parent = equip.parent)
         {
             // Open the animation on the parent.
             return Open(parent->get_archetype()->scriptIndex, parent->engineInstance, animationScript);
@@ -52,7 +52,7 @@ int IAnimation2::Open_Hook(LPCSTR animationScript, int scriptIndex, CAttachedEqu
     }
 
     // Open the animation on the attached equipment (normal routine).
-    return Open(scriptIndex, equip->GetRootIndex(), animationScript);
+    return Open(scriptIndex, equip.GetRootIndex(), animationScript);
 }
 
 // Fixes the weapon animations and allows weapons to play ship animations (e.g. wings).

@@ -33,7 +33,7 @@ struct IAnimation2
     virtual void Vftable_x20();
     virtual int	__stdcall Open(int scriptIndex, long engineInstance, LPCSTR animationScript, int unk1 = 0, int unk2 = 0);
 
-    int Open_Hook(LPCSTR animationScript, int scriptIndex, CAttachedEquip* equip);
+    int Open_Hook(LPCSTR animationScript, int scriptIndex, const CAttachedEquip& equip);
 };
 
 void InitWeaponAnimFix();

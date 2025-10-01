@@ -11,11 +11,11 @@ UINT insufficientRepIds = 1564;
 
 FL_FUNC(void NN_Dealer::PrintFmtStrPurchaseInfo(UINT idsPurchaseInfo, int fmtValue), 0x47FD50)
 
-void NN_Dealer::PrintFmtStrPurchaseInfo_Hook(UINT idsPurchaseInfo, DealerStack* stack)
+void NN_Dealer::PrintFmtStrPurchaseInfo_Hook(UINT idsPurchaseInfo, const DealerStack& stack)
 {
     // Call the original function with the rep percentage.
     *fmtValIsZeroCheckPtr = 0xEB; // allow the rep percentage to be printed if it's 0
-    PrintFmtStrPurchaseInfo(idsPurchaseInfo, GetRepPercentage(stack->repRequired));
+    PrintFmtStrPurchaseInfo(idsPurchaseInfo, GetRepPercentage(stack.repRequired));
     *fmtValIsZeroCheckPtr = 0x75; // restore the original value to prevent other 0's from being unintentionally printed
 }
 
