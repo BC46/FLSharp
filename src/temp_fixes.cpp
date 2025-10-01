@@ -31,11 +31,7 @@ namespace TempFixes
         if (behaviorManager)
         {
             ROTATION_LOCK = behaviorManager->rotationLock;
-
-            if (behaviorManager->physicsInfo)
-                AUTO_LEVEL = behaviorManager->physicsInfo->autoLevel;
-            else
-                AUTO_LEVEL = defaultAutoLevelValue;
+            AUTO_LEVEL = behaviorManager->physicsInfo->autoLevel;
         }
         else
         {
