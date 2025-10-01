@@ -82,7 +82,6 @@ void Cleanup()
 
 BOOL WINAPI DllMain(HINSTANCE hinstDLL, DWORD fdwReason, LPVOID lpReserved)
 {
-    UNREFERENCED_PARAMETER(hinstDLL);
     UNREFERENCED_PARAMETER(lpReserved);
 
     if (fdwReason == DLL_PROCESS_ATTACH)

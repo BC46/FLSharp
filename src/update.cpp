@@ -135,7 +135,7 @@ bool CRemotePhysicsSimulation::CheckForSync_Hook(const CShip& ship, Vector const
         // TODO: If EK has been toggled twice before the min sync interval has passed, then an asap update should actually not be sent because of this.
         // But then you'd also have to check if the asap update *should* be sent because CheckForSync or ShouldSendUpdate returned true. Eh, this sounds complicated.
         if (!sendUpdateAsap)
-            sendUpdateAsap = isEkToggled || syncResult || ShouldSendUpdate(ship, msElapsed);
+            sendUpdateAsap = syncResult || isEkToggled || ShouldSendUpdate(ship, msElapsed);
 
         return false;
     }
@@ -146,7 +146,7 @@ bool CRemotePhysicsSimulation::CheckForSync_Hook(const CShip& ship, Vector const
         return true;
     }
 
-    return isEkToggled || syncResult || ShouldSendUpdate(ship, msElapsed);
+    return syncResult || isEkToggled || ShouldSendUpdate(ship, msElapsed);
 }
 
 // Hook for function that sends an update to the server
