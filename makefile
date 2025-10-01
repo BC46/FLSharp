@@ -50,7 +50,7 @@ EXTERNAL_LIBS = User32.lib Gdi32.lib
 
 OUTPUT_FILE = $(BIN_DIR)\FLSharp.dll
 
-CPP_FLAGS = /c /O2 /nologo /W3 /WX /GL /LD /MT /EHsc /Zc:threadSafeInit- /DNDEBUG /DUSE_ST6
+CPP_FLAGS = /c /O2 /Oi /nologo /W3 /WX /GL /LD /MT /EHsc /Zc:threadSafeInit- /DNDEBUG /DUSE_ST6
 LD_FLAGS = /LTCG:incremental /DLL /NOLOGO /RELEASE /DEBUG
 LIB_FLAGS = /NOLOGO /MACHINE:X86
 RC_FLAGS = /nologo
