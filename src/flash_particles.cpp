@@ -12,8 +12,8 @@ NAKED void PlayFlashEffect_Hook()
     #define PLAY_FLASH_EFFECT_RET_ADDR 0x52D271
 
     __asm {
-        mov ecx, ebx // CliLauncher
-        push esi // ID_String
+        mov ecx, ebx // CliLauncher*
+        push esi // ID_String&
         call CliLauncher::PlayAllFlashParticles
         mov eax, PLAY_FLASH_EFFECT_RET_ADDR
         jmp eax
@@ -33,9 +33,9 @@ NAKED void CliLauncher::PlayFlashParticleForBarrel(const ID_String& idString, UI
         push ebp
         push esi
         push edi
-        mov ebx, [esp+0x6C] // CliLauncher
-        mov ecx, [ebx+0x4] // CELauncher
-        mov esi, [esp+0x70] // ID_String
+        mov ebx, [esp+0x6C] // CliLauncher*
+        mov ecx, [ebx+0x4] // CELauncher*
+        mov esi, [esp+0x70] // ID_String&
         push [esp+0x74] // barrel index
         mov eax, GET_BARREL_INFO_FOR_FLASH_PROJ_CALL_ADDR
         jmp eax

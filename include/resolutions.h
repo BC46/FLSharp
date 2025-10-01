@@ -64,7 +64,7 @@ inline bool IsResolutionNarrow(UINT width, UINT height)
     return ((float) width / (float) height) < MIN_4_BY_3_FACTOR;
 }
 
-bool ResolutionInit(DWORD unk1, ResolutionInitInfo* info, DWORD unk2);
+bool ResolutionInit(HWND windowHandle, ResolutionInitInfo& info, DWORD windowFlags);
 
 void InitBetterResolutions();
 void CleanupBetterResolutions();

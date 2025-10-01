@@ -190,18 +190,18 @@ void DiscardLowestResolutions(size_t newSize)
     }
 }
 
-FL_FUNC(bool ResolutionInit(DWORD unk1, ResolutionInitInfo* info, DWORD unk2), 0x424DD0)
+FL_FUNC(bool ResolutionInit(HWND windowHandle, ResolutionInitInfo& info, DWORD windowFlags), 0x424DD0)
 
-bool ResolutionInit_Hook(DWORD unk1, ResolutionInitInfo* info, DWORD unk2)
+bool ResolutionInit_Hook(HWND windowHandle, ResolutionInitInfo& info, DWORD windowFlags)
 {
     // If a resolution has been set in the ini file which is beyond the display's capabilities, the game may still run with it, but it'll make everything look strange.
-    if (info->resolutionInfo.height > mainMonitorRes.height || info->resolutionInfo.width > mainMonitorRes.width)
+    if (info.resolutionInfo.height > mainMonitorRes.height || info.resolutionInfo.width > mainMonitorRes.width)
     {
         // Zero the resolution's width, causing FL to use a default resolution.
-        info->resolutionInfo.width = 0;
+        info.resolutionInfo.width = 0;
     }
 
-    return ResolutionInit(unk1, info, unk2);
+    return ResolutionInit(windowHandle, info, windowFlags);
 }
 
 // Expands the hard-coded resolutions array of size 10 used in the options menu to allow for up to 127 resolutions instead.

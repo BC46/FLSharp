@@ -41,7 +41,7 @@ bool ServerFilterDialog::OnFrameUpdate_Hook(const FLCursor &cursor)
 // While the server filter window is opened (MP list menu), the delta time value is not updated for some reason.
 // If you open the window while the game is stuttering, the delta value remains very high until the window is closed,
 // causing the game speed to suddenly become extremely fast.
-// This bug is fixed by hooking hte on-frame update function and updating the delta time manually.
+// This bug is fixed by hooking the on-frame update function and updating the delta time manually.
 void InitServerFilterSpeedFix()
 {
     OnFrameUpdate_Original = SetPointer(SERVER_FILTER_ON_FRAME_UPDATE_VFTABLE_ADDR, &ServerFilterDialog::OnFrameUpdate_Hook);
