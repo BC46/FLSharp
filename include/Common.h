@@ -272,7 +272,9 @@ public:
 IMPORT IBehaviorManager* GetBehaviorManager(IObjRW *iObjRw);
 
 struct ID_String
-{};
+{
+    UINT ids;
+};
 
 IMPORT bool SinglePlayer();
 IMPORT bool IsMPServer();

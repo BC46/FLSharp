@@ -16,7 +16,7 @@ These include:
     - if after every 0.25 seconds the ship's orientation has been changed to some extent.
 - Sets the minimum time between client-server updates to 40 milliseconds (or 750 ms while in a trade lane) such that jitter is prevented when playing with a high or inconsistent framerate.
 - Allow `ui_music_test` to play when the current background music has finished playing.
-- Added support for playing the `ui_interface_test` and `ui_ambiance_test` sounds when adjusting the respective sliders in the options menu; these sounds should be defined in `interface_sounds.ini`.
+- Added support for playing the `ui_interface_test` and `ui_ambiance_test` sounds when adjusting the respective sliders in the options menu.
 - Automatically prevent crashes while adjusting the interface and ambience volume sliders in the event that the test sounds are not defined.
 - While adjusting the ambience and music volume, mute other background sounds accordingly so that the volume can be fine-tuned more easily.
 - Allows for up to 127 selectable resolutions in the general options menu; these are automatically determined based on the user's main monitor resolution.
@@ -55,6 +55,8 @@ Building the project using other compilers may require the code to be modified.
 ## Credits
 Thanks to the following people for helping make some of the features possible:
 
+- [adoxa](https://github.com/adoxa)
+  - Provided source code of many Freelancer plugins
 - [Aingar](https://github.com/Aingar)
   - Identification of the client-to-server communication improvements and providing code from DiscoveryGC's client hook
 - [Schmackbolzen](https://github.com/Schmackbolzen)

@@ -3,6 +3,7 @@
 #define WIN32_LEAN_AND_MEAN
 #include <windows.h>
 #include "vftable.h"
+#include "Common.h"
 
 struct SoundHandle
 {
@@ -38,6 +39,18 @@ struct TestSound
     UINT idsName;
     BYTE soundId;
 };
+
+struct FlSound
+{
+    DWORD vftable;
+    UINT id;
+    LPCSTR filePath;
+    int unk_x0C;
+    float unk_x10;
+    float unk_x14;
+};
+
+FlSound* GetSound(const ID_String& ids);
 
 bool GetBackgroundMusicHandle(SoundHandle **pHandle);
 bool GetBackgroundAmbienceHandle(SoundHandle **pHandle);

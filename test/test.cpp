@@ -149,6 +149,11 @@ TEST_CASE("value offsets are correct", "[ibehaviormanager]")
     REQUIRE(offsetof(IBehaviorManager, rotationLock) == 0xF9);
 }
 
+TEST_CASE("value offsets are correct", "[id_string]")
+{
+    REQUIRE(offsetof(ID_String, ids) == 0x0);
+}
+
 // copy_paste.h
 TEST_CASE("value offsets are correct", "[inputchar]")
 {
@@ -273,6 +278,16 @@ TEST_CASE("vftable offsets are correct", "[soundhandle]")
     REQUIRE(GetVftableOffset<SoundHandle>(&SoundHandle::Pause) == 0x68);
     REQUIRE(GetVftableOffset<SoundHandle>(&SoundHandle::Resume) == 0x6C);
     REQUIRE(GetVftableOffset<SoundHandle>(&SoundHandle::IsPaused) == 0x70);
+}
+
+TEST_CASE("value offsets are correct", "[flsound]")
+{
+    REQUIRE(offsetof(FlSound, vftable) == 0x0);
+    REQUIRE(offsetof(FlSound, id) == 0x04);
+    REQUIRE(offsetof(FlSound, filePath) == 0x08);
+    REQUIRE(offsetof(FlSound, unk_x0C) == 0x0C);
+    REQUIRE(offsetof(FlSound, unk_x10) == 0x10);
+    REQUIRE(offsetof(FlSound, unk_x14) == 0x14);
 }
 
 // trade_lane_lights.h

@@ -6,11 +6,40 @@
 #define INTERFACE_VOLUME_SOUND_ID   0x21
 #define AMBIENCE_VOLUME_SOUND_ID    0x22
 
-bool interfaceTestSoundAvailable = false, ambienceTestSoundAvailable = false;
 bool shouldResumeBGM = false, shouldResumeBGA = false;
 
 BYTE* jmpNoPauseForBgmPtr = nullptr;
 BYTE* jmpNoResumeForBgmPtr = nullptr;
+
+FL_FUNC(FlSound* GetSound(const ID_String& ids), 0x42AE40)
+
+// Checks whether test sound entries exist for the interface and ambience sounds.
+// This is important, because if these do not exist, then the game should not attempt to play these.
+// A crash will occur if otherwise.
+bool IsTestSoundAvailable(LPCSTR nickname)
+{
+    #define FL_SOUND_NOT_FOUND_JMP_ADDR 0x42AEE5
+    BYTE& notFoundTest = GetValue<BYTE>(FL_SOUND_NOT_FOUND_JMP_ADDR);
+    BYTE notFoundTestOriginal = notFoundTest;
+
+    notFoundTest = 0xF7; // prevent FL from generating a Spew warning if the sound doesn't exist
+    FlSound* sound = GetSound(ID_String{ CreateID(nickname) });
+    notFoundTest = notFoundTestOriginal; // restore the original value
+
+    return sound != nullptr;
+}
+
+bool IsInterfaceTestSoundAvailable()
+{
+    static bool result = IsTestSoundAvailable("ui_interface_test");
+    return result;
+}
+
+bool IsAmbienceTestSoundAvailable()
+{
+    static bool result = IsTestSoundAvailable("ui_ambiance_test");
+    return result;
+}
 
 void EnsureTestSoundsPlay()
 {
@@ -32,43 +61,6 @@ void EnsureTestSoundsPlay()
         Patch<BYTE>(0x4B1584, 0xA9);
         Patch<BYTE>(0x4B159F, 0x8E);
     }
-}
-
-// Checks whether test sound entries exist for the interface and ambience sounds.
-// This is important, because if these do not exist, then the game should not attempt to play these.
-// A crash will occur if otherwise.
-void SetTestSoundAvailability(bool &interfaceSounds, bool &ambienceSounds)
-{
-    INI_Reader reader;
-    // The actual path is defined in Freelancer.ini, but looking it up is a bit cumbersome, hence it's assumed.
-    if (!reader.open("..\\DATA\\AUDIO\\interface_sounds.ini"))
-    {
-        interfaceSounds = false;
-        ambienceSounds = false;
-        return;
-    }
-
-    while (reader.read_header())
-    {
-        if (!reader.is_header("Sound"))
-            continue;
-
-        while (reader.read_value())
-        {
-            if (reader.is_value("nickname"))
-            {
-                if (_stricmp(reader.get_value_string(), "ui_interface_test") == 0)
-                    interfaceSounds = true;
-                else if (_stricmp(reader.get_value_string(), "ui_ambiance_test") == 0)
-                    ambienceSounds = true;
-            }
-
-            if (interfaceSounds && ambienceSounds)
-                break;
-        }
-    }
-
-    reader.close();
 }
 
 FL_FUNC(bool GetBackgroundMusicHandle(SoundHandle **pHandle), 0x428BA0);
@@ -153,7 +145,7 @@ void StopMusicTestSound_Hook(BYTE soundId)
 // Prevent the interface test sound from starting if it isn't available (prevent crashes)
 void StartInterfaceTestSound_Hook(BYTE soundId)
 {
-    if (interfaceTestSoundAvailable)
+    if (IsInterfaceTestSoundAvailable())
         StartSound(soundId); // soundId should always be 0x21 here
 }
 
@@ -170,7 +162,7 @@ void StartAmbienceTestSound_Hook(BYTE soundId) // soundId should always be 0x22 
             return;
     }
 
-    if (!ambienceTestSoundAvailable)
+    if (!IsAmbienceTestSoundAvailable())
         return;
 
     StartSound(soundId);
@@ -249,7 +241,6 @@ void InitTestSounds()
     jmpNoResumeForBgmPtr = &GetValue<BYTE>(0x42A3EB);
 
     EnsureTestSoundsPlay();
-    SetTestSoundAvailability(interfaceTestSoundAvailable, ambienceTestSoundAvailable);
 
     // Boilerplate code for setting the volume slider adjust end hook.
     BYTE patches[] = { 0xEB, 0x70, 0x51, 0x89, 0xE9 };

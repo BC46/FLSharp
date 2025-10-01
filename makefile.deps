@@ -202,10 +202,10 @@ obj\temp_fixes.obj: \
 obj\test_sounds.obj: \
     include\test_sounds.h \
     include\vftable.h \
-    include\utils.h \
-    include\Freelancer.h \
     include\Common.h \
     include\fl_math.h \
+    include\utils.h \
+    include\Freelancer.h \
     include\fl_func.h \
     makefile.deps \
     makefile
