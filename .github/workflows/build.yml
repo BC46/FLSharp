@@ -19,6 +19,7 @@ jobs:
           path: |
             bin/FLSharp.dll
             bin/FLSharp.pdb
+            LICENSE
       - name: Download Catch2 test src file
         uses: robinraju/release-downloader@v1
         with:
