@@ -121,10 +121,11 @@ inline milliseconds GetShipMinSyncInterval(const CShip& ship)
 }
 
 // Hook for function that determines whether an update should be sent to the server
-bool CRemotePhysicsSimulation::CheckForSync_Hook(Vector const &shipPos, const CShip& ship, Quaternion const &unk)
+bool CRemotePhysicsSimulation::CheckForSync_Hook(const CShip& ship, Vector const &shipPos, Quaternion const &unk)
 {
     milliseconds msElapsed = GetMsElapsed(); // Time elapsed since the last update
     bool isEkToggled = IsEkToggled(ship);
+    bool syncResult = CheckForSync(shipPos, shipPos, unk);
 
     if (msElapsed < GetShipMinSyncInterval(ship))
     {
@@ -134,7 +135,7 @@ bool CRemotePhysicsSimulation::CheckForSync_Hook(Vector const &shipPos, const CS
         // TODO: If EK has been toggled twice before the min sync interval has passed, then an asap update should actually not be sent because of this.
         // But then you'd also have to check if the asap update *should* be sent because CheckForSync or ShouldSendUpdate returned true. Eh, this sounds complicated.
         if (!sendUpdateAsap)
-            sendUpdateAsap = isEkToggled || CheckForSync(shipPos, shipPos, unk) || ShouldSendUpdate(ship, msElapsed);
+            sendUpdateAsap = isEkToggled || syncResult || ShouldSendUpdate(ship, msElapsed);
 
         return false;
     }
@@ -145,8 +146,7 @@ bool CRemotePhysicsSimulation::CheckForSync_Hook(Vector const &shipPos, const CS
         return true;
     }
 
-    // I'll assume that CheckForSync is the more efficient update check.
-    return isEkToggled || CheckForSync(shipPos, shipPos, unk) || ShouldSendUpdate(ship, msElapsed);
+    return isEkToggled || syncResult || ShouldSendUpdate(ship, msElapsed);
 }
 
 // Hook for function that sends an update to the server
