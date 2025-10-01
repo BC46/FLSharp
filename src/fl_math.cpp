@@ -35,11 +35,3 @@ float GetRotationDelta(const Quaternion& quat, const Matrix& rot)
 {
     return QuaternionAngleDifference(quat, MatrixToQuaternion(rot));
 }
-
-Quaternion::Quaternion()
-{
-    w = 1;
-    x = 0;
-    y = 0;
-    z = 0;
-}

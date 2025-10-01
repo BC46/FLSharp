@@ -10,7 +10,6 @@ class Quaternion
 {
 public:
     float w, x, y, z;
-    Quaternion();
 };
 
 class Matrix
