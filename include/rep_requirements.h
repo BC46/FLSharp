@@ -16,8 +16,3 @@ struct NN_Dealer
     void PrintFmtStrPurchaseInfo_Hook(UINT idsPurchaseInfo, const DealerStack& stack);
     void PrintFmtStrPurchaseInfo(UINT idsPurchaseInfo, int fmtValue);
 };
-
-inline int GetRepPercentage(float repValue)
-{
-    return static_cast<int>(repValue * 100.0f);
-}

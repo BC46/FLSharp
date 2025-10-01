@@ -6,17 +6,23 @@
 
 #define NAKED __declspec(naked)
 
-BYTE* fmtValIsZeroCheckPtr = nullptr;
 UINT insufficientRepIds = 1564;
 
 FL_FUNC(void NN_Dealer::PrintFmtStrPurchaseInfo(UINT idsPurchaseInfo, int fmtValue), 0x47FD50)
 
+// Converts the reputation value to a percentage.
+int GetRepPercentage(float repValue)
+{
+    return static_cast<int>(repValue * 100.0f);
+}
+
 void NN_Dealer::PrintFmtStrPurchaseInfo_Hook(UINT idsPurchaseInfo, const DealerStack& stack)
 {
-    // Call the original function with the rep percentage.
-    *fmtValIsZeroCheckPtr = 0xEB; // allow the rep percentage to be printed if it's 0
+    static BYTE& fmtValIsZeroCheck = GetValue<BYTE>(0x47FE86);
+    BYTE originalCheckValue = fmtValIsZeroCheck;
+    fmtValIsZeroCheck = 0xEB; // allow the rep percentage to be printed if it's 0
     PrintFmtStrPurchaseInfo(idsPurchaseInfo, GetRepPercentage(stack.repRequired));
-    *fmtValIsZeroCheckPtr = 0x75; // restore the original value to prevent other 0's from being unintentionally printed
+    fmtValIsZeroCheck = originalCheckValue; // restore the original value to prevent other 0's from being unintentionally printed
 }
 
 NAKED void GetShipRepRequirement_Hook()
@@ -86,7 +92,6 @@ void InitPrintRepRequirements()
     #define GET_SHIP_REQUIREMENT_ADDR 0x4B9462
     #define PRINT_SHIP_REQUIREMENT_ADDR 0x4B9010
 
-    fmtValIsZeroCheckPtr = &GetValue<BYTE>(0x47FE86);
     insufficientRepIds = GetValue<UINT>(0x4B9011); // 1564 by default
 
     Hook(REP_REQUIREMENTS_NOT_MET_ADDR + 0x9, &NN_Dealer::PrintFmtStrPurchaseInfo_Hook, 5);
