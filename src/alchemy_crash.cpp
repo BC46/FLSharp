@@ -26,7 +26,7 @@ Alchemy* __fastcall GetFinishedAle(int maxIndex, Alchemy* aleArr, float maxProgr
 // but one day you start the game and it crashes within 15 minutes. The reason why suddenly no ALE meets this condition is unclear;
 // the fact that it's so inconsistent and rare makes it impossible to bisect.
 // This hook code rewrites the loop such that it never loops beyond maxIndex - 1.
-// It is not clear what kind of behavior this produces if the original problem were to occur, though at least it certainly fixes the crash.
+// If the original problem were to occur, then one or more ALE effects may become invisible, though at least it certainly fixes the crash.
 void InitAlchemyCrashFix()
 {
     #define GET_FINISHED_ALE_START_FILE_OFFSET_ALCHEMY 0x6FDD

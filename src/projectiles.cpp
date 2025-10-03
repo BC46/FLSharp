@@ -31,6 +31,7 @@ DWORD playerLauncherFireRet;
 
 // Hook function that replaces the hard-coded "1" when decrementing ammo with a GetProjectilesPerFire call.
 // This fixes a bug that makes the server decrement the wrong amount of ammo when a player fires a multi-barrel launcher.
+// TODO: Can be rewritten to a non-asm hook.
 NAKED void HandlePlayerLauncherFire_Hook()
 {
     __asm {

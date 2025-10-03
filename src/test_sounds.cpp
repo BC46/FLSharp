@@ -10,8 +10,8 @@ bool shouldResumeBGM = false, shouldResumeBGA = false;
 
 FL_FUNC(FlSound* GetSound(const ID_String& ids), 0x42AE40)
 
-// Checks whether test sound entries exist for the interface and ambience sounds.
-// This is important, because if these do not exist, then the game should not attempt to play these.
+// Checks whether a test sound exists.
+// This is important, because if it does not exist, then the game should not attempt to play it.
 // A crash will occur if otherwise.
 bool IsTestSoundAvailable(LPCSTR nickname)
 {
