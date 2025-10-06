@@ -61,5 +61,7 @@ void StopMusicTestSound_Hook(BYTE soundId);
 
 void InitTestSounds();
 
-void PauseSound(bool &shouldResume, SoundHandle *handle, bool getHandleResult, bool force = false);
-void ResumeSound(bool &shouldResume, SoundHandle *handle, bool getHandleResult, bool force = false);
+typedef bool (*GetSoundHandleFunc)(SoundHandle **pHandle);
+
+void PauseSound(bool &shouldResume, GetSoundHandleFunc getHandle, bool force = false);
+void ResumeSound(bool &shouldResume, GetSoundHandleFunc getHandle, bool force = false);

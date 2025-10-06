@@ -16,7 +16,7 @@ FL_FUNC(FlSound* GetSound(const ID_String& ids), 0x42AE40)
 bool IsTestSoundAvailable(LPCSTR nickname)
 {
     #define FL_SOUND_NOT_FOUND_JMP_ADDR 0x42AEE5
-    BYTE& notFoundTest = GetValue<BYTE>(FL_SOUND_NOT_FOUND_JMP_ADDR);
+    static BYTE& notFoundTest = GetValue<BYTE>(FL_SOUND_NOT_FOUND_JMP_ADDR);
     BYTE notFoundTestOriginal = notFoundTest;
 
     notFoundTest = 0xF7; // prevent FL from generating a Spew warning if the sound doesn't exist
@@ -40,20 +40,19 @@ bool IsAmbienceTestSoundAvailable()
 
 void EnsureTestSoundsPlay()
 {
-    #define INDEPENDENT_INTERFACE_VOLUME_VAL *((PBYTE) 0x4B1503)
-    #define INDEPENDENT_AMBIENCE_VOLUME_VAL *((PBYTE) 0x4B1554)
+    #define INDEPENDENT_INTERFACE_VOLUME_VAL_ADDR 0x4B1503
+    #define INDEPENDENT_AMBIENCE_VOLUME_VAL_ADDR 0x4B1554
 
     // Test if the interface and ambience volume controls are independent from the sound effects and music, respectively.
     // If these custom edits are applied, then the respective test sounds will never play.
     // Hence patch Freelancer.exe to make the sounds actually play.
-
-    if (INDEPENDENT_INTERFACE_VOLUME_VAL == 0x83)
+    if (GetValue<BYTE>(INDEPENDENT_INTERFACE_VOLUME_VAL_ADDR) == 0x83)
     {
         Patch<WORD>(0x4B1533, 0x00FA);
         Patch<BYTE>(0x4B154E, 0xDF);
     }
 
-    if (INDEPENDENT_AMBIENCE_VOLUME_VAL == 0x84)
+    if (GetValue<BYTE>(INDEPENDENT_AMBIENCE_VOLUME_VAL_ADDR) == 0x84)
     {
         Patch<BYTE>(0x4B1584, 0xA9);
         Patch<BYTE>(0x4B159F, 0x8E);
@@ -86,8 +85,7 @@ bool GetBackgroundMusicHandle_Hook(SoundHandle **pBgm)
     }
 
     // Pause the background ambience.
-    SoundHandle *bga = nullptr;
-    PauseSound(shouldResumeBGA, bga, GetBackgroundAmbienceHandle(&bga));
+    PauseSound(shouldResumeBGA, GetBackgroundAmbienceHandle);
 
     return false;
 }
@@ -122,9 +120,8 @@ void NN_Preferences::VolumeSliderAdjustEnd_Hook(PVOID adjustedScrollElement)
         }
     }
 
-    SoundHandle *bgm = nullptr, *bga = nullptr;
-    ResumeSound(shouldResumeBGM, bgm, GetBackgroundMusicHandle(&bgm), true);
-    ResumeSound(shouldResumeBGA, bga, GetBackgroundAmbienceHandle(&bga));
+    ResumeSound(shouldResumeBGM, GetBackgroundMusicHandle, true);
+    ResumeSound(shouldResumeBGA, GetBackgroundAmbienceHandle);
 }
 
 // Make sure to stop the new test sounds too.
@@ -134,9 +131,8 @@ void StopMusicTestSound_Hook(BYTE soundId)
     StopSound(INTERFACE_VOLUME_SOUND_ID);
     StopSound(AMBIENCE_VOLUME_SOUND_ID);
 
-    SoundHandle *bgm = nullptr, *bga = nullptr;
-    ResumeSound(shouldResumeBGM, bgm, GetBackgroundMusicHandle(&bgm), true);
-    ResumeSound(shouldResumeBGA, bga, GetBackgroundAmbienceHandle(&bga));
+    ResumeSound(shouldResumeBGM, GetBackgroundMusicHandle, true);
+    ResumeSound(shouldResumeBGA, GetBackgroundAmbienceHandle);
 }
 
 // Prevent the interface test sound from starting if it isn't available (prevent crashes)
@@ -165,13 +161,13 @@ void StartAmbienceTestSound_Hook(BYTE soundId) // soundId should always be 0x22 
     StartSound(soundId);
 
     // Pause the background music.
-    SoundHandle *bgm = nullptr;
-    PauseSound(shouldResumeBGM, bgm, GetBackgroundMusicHandle(&bgm), true);
+    PauseSound(shouldResumeBGM, GetBackgroundMusicHandle, true);
 }
 
-void PauseSound(bool &shouldResume, SoundHandle *handle, bool getHandleResult, bool force)
+void PauseSound(bool &shouldResume, GetSoundHandleFunc getHandle, bool force)
 {
-    if (!getHandleResult)
+    SoundHandle *handle = nullptr;
+    if (!getHandle(&handle))
         return;
 
     if (!handle->IsPaused())
@@ -187,9 +183,10 @@ void PauseSound(bool &shouldResume, SoundHandle *handle, bool getHandleResult, b
     handle->FreeReference();
 }
 
-void ResumeSound(bool &shouldResume, SoundHandle *handle, bool getHandleResult, bool force)
+void ResumeSound(bool &shouldResume, GetSoundHandleFunc getHandle, bool force)
 {
-    if (!getHandleResult)
+    SoundHandle *handle = nullptr;
+    if (!getHandle(&handle))
         return;
 
     if (shouldResume && handle->IsPaused())
@@ -253,4 +250,3 @@ void InitTestSounds()
     Hook(START_INTERFACE_TEST_SOUND, StartInterfaceTestSound_Hook, 5);
     Hook(START_AMBIENCE_TEST_SOUND, StartAmbienceTestSound_Hook, 5);
 }
-
