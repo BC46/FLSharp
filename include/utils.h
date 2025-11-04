@@ -23,8 +23,7 @@ template <typename Func>
 Func SetRelPointer(DWORD location, Func hookFunc)
 {
     // Set and calculate the relative offset for the hook function
-    ReadWriteProtect(location, sizeof(DWORD));
-    DWORD originalPointer = location + (*(PDWORD) location) + 4;
+    DWORD originalPointer = location + GetValue<DWORD>(location) + 4;
 
     DWORD hookFuncLocation = *((PDWORD) &hookFunc);
     *(PDWORD) location = hookFuncLocation - (location + 4);
@@ -43,7 +42,7 @@ void Hook(DWORD location, Func hookFunc, UINT instrLen, bool jmp = false)
 
     // Nop out excess bytes
     if (instrLen > 5)
-        Nop((location + 5), instrLen - 5);
+        Nop(location + 5, instrLen - 5);
 }
 
 template <typename Func>
@@ -74,8 +73,7 @@ void CleanupTrampoline(Func trampolineFunc)
 template <typename Func>
 Func SetPointer(DWORD location, Func hookFunc)
 {
-    ReadWriteProtect(location, sizeof(PDWORD));
-    DWORD originalPointer = *((PDWORD) location);
+    DWORD originalPointer = GetValue<DWORD>(location);
     *(Func*) location = hookFunc;
 
     return GetFuncDef<Func>(originalPointer);

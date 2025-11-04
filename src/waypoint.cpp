@@ -14,7 +14,7 @@ Waypoint* GetWaypoint_Hook(int index)
     if (!waypoint)
         return nullptr;
 
-    // Only return the waypoint info if the player is in the same system as the waypoint
+    // Only return the waypoint if the player is in the same system as the waypoint
     return PLAYER_SYSTEM == waypoint->system ? waypoint : nullptr;
 }
 

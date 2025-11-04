@@ -50,7 +50,7 @@ void CliLauncher::PlayAllFlashParticles(const ID_String& idString)
 
     // Create the flash particles array if it doesn't exist yet.
     if (!this->flashParticlesArr)
-        this->flashParticlesArr = CreateFlashParticlesArray(barrelAmount);
+        this->flashParticlesArr = new EffectInstance*[barrelAmount]();
 
     for (UINT i = 0; i < barrelAmount; ++i)
     {
@@ -70,14 +70,6 @@ void CliLauncher::PlayAllFlashParticles(const ID_String& idString)
         ogFlashParticlesArr[i] = this->currentFlashParticle;
         this->flashParticlesArr = ogFlashParticlesArr;
     }
-}
-
-// Creates an array with a size equal to the barrel amount of the launcher.
-EffectInstance** CreateFlashParticlesArray(UINT barrelAmount)
-{
-    EffectInstance** flashParticlesArr = new EffectInstance*[barrelAmount];
-    ZeroMemory(flashParticlesArr, barrelAmount * sizeof(EffectInstance*));
-    return flashParticlesArr;
 }
 
 void CliLauncher::CleanFlashParticlesArr(void (EffectInstance::*deallocFunc)())

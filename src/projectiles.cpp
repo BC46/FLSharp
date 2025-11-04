@@ -1,6 +1,7 @@
 #include "projectiles.h"
 #include "utils.h"
 #include "logger.h"
+#include <algorithm>
 
 #define NAKED __declspec(naked)
 
@@ -11,12 +12,7 @@
 // It is not recommended to modify the GetProjectilesPerFire function directly because it gets called in other instances as well.
 UINT CELauncher::GetProjectilesPerFire_Hook() const
 {
-    UINT result = this->GetProjectilesPerFire();
-
-    if (result > 1)
-        result = 1;
-
-    return result;
+    return std::min<UINT>(this->GetProjectilesPerFire(), 1);
 }
 
 void InitProjectilesSoundFix()
