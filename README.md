@@ -31,11 +31,15 @@ These include:
 - When the "You must be on friendlier terms to purchase this." message is displayed in the Dealer menus, allow the exact reputation requirement to be printed too. Include `%d` in the IDS (S 1564, `resources.dll`) to make it work.
 - Fixed a bug that caused the Freelancer process to not always terminate after closing the game.
 - Automatically set rotation lock and auto leveling to the default value when launching to space to prevent control-related issues from occurring (e.g. mouse flight not working).
-- Allows infocards for dynamic solars (based on `missioncreatedsolars.ini`) to be displayed in the Current Information window.
+- Allows infocards for dynamic solars (based on `missioncreatedsolars.ini`) to be displayed in the Current Information window; see [these entries](https://github.com/FLHDE/freelancer-hd-edition/blob/b1c99db03f37d389aac12048b5b8b28e110cf37c/DATA/UNIVERSE/missioncreatedsolars.ini#L46-L54) for an example on how to make infocards work for non-dockable dynamic solars.
+- Show a fallback infocard based on the solar's archetype in the Current Information window if the solar itself has no infocard.
 - Fixed a startup crash that occurs when Freelancer tries to load a modded/malformed save file.
 - Fixed a very rare and inconsistent crash in alchemy.dll (crash offset `0x701b`).
 - Fixed waypoints being called "Unknown Object" in the target view and Current Information window.
-- Fixed player waypoints being printed incorrectly in the Current Information window.
+- Fixed information about player waypoints being printed incorrectly in the Current Information window.
+- Fixed ships part of the `fc_uk_grp` faction having a blank faction in the Current Information window.
+- Fixed a crash that sometimes happens when closing the Server Filter dialog.
+- Fixed a bug that causes the game speed to sometimes suddenly increase when opening the Server Filter dialog.
 - Fixed Freelancer and FLServer crashing if a non-existing DLL is loaded via freelancer.ini.
 
 More fixes and improvements may be added in the future.
@@ -56,10 +60,10 @@ Building the project using other compilers may require the code to be modified.
 Thanks to the following people for helping make some of the features possible:
 
 - [adoxa](https://github.com/adoxa)
-  - Provided source code of many Freelancer plugins
+  - Provided source code of many Freelancer plugins.
 - [Aingar](https://github.com/Aingar)
-  - Identification of the client-to-server communication improvements and providing code from DiscoveryGC's client hook
+  - Identification of the client-to-server communication improvements and providing code from DiscoveryGC's client hook.
 - [Schmackbolzen](https://github.com/Schmackbolzen)
-  - Provided assistance with troubleshooting the ship preview rendering bug
+  - Provided assistance with troubleshooting the ship preview rendering bug.
 - [Venemon](https://www.moddb.com/members/venemon)
-  - Original implementations of the multi-barrel launcher sound and [weapon animation fixes](https://www.moddb.com/mods/weapon-animations)
+  - Original implementations of the multi-barrel launcher sound and [weapon animation fixes](https://www.moddb.com/mods/weapon-animations).
