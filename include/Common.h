@@ -100,25 +100,25 @@ namespace Archetype
         IMPORT int get_script_index() const;
     };
 
-    struct Ship
-    {
-    private:
-        BYTE data[0x108];
-    public:
-        Vector angularDrag;
-        Vector steeringTorque;
-    };
-
     struct EqObj
     {
         BYTE x00[0x14];
-        UINT idsName;
-        UINT idsInfo;
+        UINT idsName; // 0x14
+        UINT idsInfo; // 0x18
 
         // st6::list
         IMPORT bool get_undamaged_collision_group_list(std::list<CollisionGroupDesc>& colGroupList) const;
         bool get_undamaged_collision_group_list_Hook(std::list<CollisionGroupDesc>& colGroupList) const;
     };
+
+    struct Ship : public EqObj
+    {
+        BYTE x1C[0xEC];
+        Vector angularDrag; // 0x108
+        Vector steeringTorque; // 0x114
+    };
+
+    IMPORT Ship* GetShip(UINT shipId);
 
     struct Solar : public EqObj
     {

@@ -37,6 +37,8 @@ TEST_CASE("value offsets are correct", "[archetype::root]")
 
 TEST_CASE("value offsets are correct", "[archetype::ship]")
 {
+    REQUIRE(offsetof(Archetype::Ship, idsName) == 0x14);
+    REQUIRE(offsetof(Archetype::Ship, idsInfo) == 0x18);
     REQUIRE(offsetof(Archetype::Ship, angularDrag) == 0x108);
     REQUIRE(offsetof(Archetype::Ship, steeringTorque) == 0x114);
 }

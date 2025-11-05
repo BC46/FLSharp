@@ -34,6 +34,7 @@ These include:
 - Allows infocards for dynamic solars (based on `missioncreatedsolars.ini`) to be displayed in the Current Information window; see [these entries](https://github.com/FLHDE/freelancer-hd-edition/blob/b1c99db03f37d389aac12048b5b8b28e110cf37c/DATA/UNIVERSE/missioncreatedsolars.ini#L46-L54) for an example on how to make infocards work for non-dockable dynamic solars.
 - Show a fallback infocard based on the solar's archetype in the Current Information window if the solar itself has no infocard.
 - Fixed a startup crash that occurs when Freelancer tries to load a modded/malformed save file.
+- Fixed a crash when selecting a modded/malformed save file in the F1 Load Game menu
 - Fixed a very rare and inconsistent crash in alchemy.dll (crash offset `0x701b`).
 - Fixed waypoints being called "Unknown Object" in the target view and Current Information window.
 - Fixed information about player waypoints being printed incorrectly in the Current Information window.
