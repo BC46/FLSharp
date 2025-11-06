@@ -8,7 +8,7 @@
 #define DISABLE_SERVER_FILTER_HOVERING_ADDR 0x571592
 #define DISABLE_SERVER_FILTER_HOVERING_SKIP_ADDR 0x571600
 
-#define SERVER_FILTER_ON_FRAME_UPDATE_VFTABLE_ADDR 0x5E20FC
+#define SERVER_FILTER_ON_FRAME_UPDATE_VFTABLE_ADDR 0x5E2120
 
 NAKED void ServerFilterClose_Hook()
 {
@@ -30,12 +30,12 @@ void InitServerFilterCrashFix()
     Hook(DISABLE_SERVER_FILTER_HOVERING_ADDR, ServerFilterClose_Hook, 6, true);
 }
 
-bool (ServerFilterDialog::*OnFrameUpdate_Original)(const FLCursor &cursor);
+bool (ServerFilterDialog::*OnFrameUpdate_Original)();
 
-bool ServerFilterDialog::OnFrameUpdate_Hook(const FLCursor &cursor)
+bool ServerFilterDialog::OnFrameUpdate_Hook()
 {
     UpdateDeltaTime();
-    return (this->*OnFrameUpdate_Original)(cursor);
+    return (this->*OnFrameUpdate_Original)();
 }
 
 // While the server filter window is opened (MP list menu), the delta time value is not updated for some reason.

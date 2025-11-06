@@ -144,7 +144,7 @@ struct FLCursor
 
 struct ServerFilterDialog
 {
-    bool OnFrameUpdate_Hook(const FLCursor &cursor);
+    bool OnFrameUpdate_Hook();
 };
 
 void UpdateDeltaTime();
