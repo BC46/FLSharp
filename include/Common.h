@@ -123,6 +123,14 @@ namespace Archetype
     struct Solar : public EqObj
     {
     };
+
+    struct ShieldGenerator
+    {
+        BYTE x00[0x94];
+        float maxCapacity; // 0x94
+        BYTE x98[0x8];
+        float offlineThreshold; // 0xA0
+    };
 }
 
 class IMPORT EngineObject

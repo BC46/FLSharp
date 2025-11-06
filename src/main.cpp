@@ -1,6 +1,7 @@
 #include "feature_config.h"
 #include "config_reader.h"
 #include "version_check.h"
+#include "logger.h"
 #include "dacom.h"
 #include "update.h"
 #include "waypoint.h"
@@ -22,7 +23,7 @@
 #include "blank_faction.h"
 #include "server_filter.h"
 #include "dll_crash.h"
-#include "logger.h"
+#include "shield_capacity.h"
 
 FeatureManager manager;
 
@@ -69,6 +70,7 @@ void Init()
     manager.RegisterFeature("server_filter_crash_fix",  InitServerFilterCrashFix,   nullptr,                    ApplyOnlyOnClient);
     manager.RegisterFeature("server_filter_speed_fix",  InitServerFilterSpeedFix,   nullptr,                    ApplyOnlyOnClient);
     manager.RegisterFeature("freelancer_dll_crash_fix", InitMissingDllCrashFix,     nullptr,                    ApplyAlways);
+    manager.RegisterFeature("shield_capacity_fix",      InitShieldCapacityFix,      nullptr,                    ApplyOnlyOnClient);
 
     ReadConfig("FLSharp.ini", manager);
 

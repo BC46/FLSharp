@@ -55,6 +55,12 @@ TEST_CASE("value offsets are correct", "[archetype::solar]")
     REQUIRE(offsetof(Archetype::Solar, idsInfo) == 0x18);
 }
 
+TEST_CASE("value offsets are correct", "[archetype::shieldgenerator]")
+{
+    REQUIRE(offsetof(Archetype::ShieldGenerator, maxCapacity) == 0x94);
+    REQUIRE(offsetof(Archetype::ShieldGenerator, offlineThreshold) == 0xA0);
+}
+
 TEST_CASE("value offsets are correct", "[engineobject]")
 {
     REQUIRE(offsetof(EngineObject, engineInstance) == 0x04);

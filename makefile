@@ -41,7 +41,8 @@ $(OBJ_DIR)\save_crash.obj \
 $(OBJ_DIR)\alchemy_crash.obj \
 $(OBJ_DIR)\blank_faction.obj \
 $(OBJ_DIR)\server_filter.obj \
-$(OBJ_DIR)\dll_crash.obj
+$(OBJ_DIR)\dll_crash.obj \
+$(OBJ_DIR)\shield_capacity.obj
 
 COMMON_LIB = $(OBJ_DIR)\Common.lib
 DALIB_LIB = $(OBJ_DIR)\DALib.lib
