@@ -44,5 +44,9 @@ void InitSaveCrashFix()
         Logger::PrintModuleError("InitSaveCrashFix", "server.dll");
     }
 
-    Hook(GET_SHIP_IDS_NAME_CALL_ADDR, GetShipIdsName_Hook, 9);
+    // Client-only.
+    if (!IsMPServer())
+    {
+        Hook(GET_SHIP_IDS_NAME_CALL_ADDR, GetShipIdsName_Hook, 9);
+    }
 }
