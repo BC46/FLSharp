@@ -17,6 +17,7 @@ long __fastcall GetShieldCapcity_Hook(const Archetype::ShieldGenerator &shield, 
 // In Freelancer, the actual online shield capacity is reduced by the offline_threshold value.
 // However, the shield infocards simply show the max_capacity as the shield capacity.
 // This code ensures the offline_threshold is taken into account when the value is printed.
+// It's calculated as follows: shield_capacity = max_capacity - offline_threshold * max_capacity
 void InitShieldCapacityFix()
 {
     #define GET_MAX_SHIELD_CAPACITY_ADDR 0x485055

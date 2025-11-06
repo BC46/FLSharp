@@ -43,6 +43,7 @@ These include:
 - Fixed a bug that causes the game speed to sometimes suddenly increase when opening the Server Filter dialog.
 - Fixed Freelancer and FLServer crashing if a non-existing DLL is loaded via freelancer.ini.
 - Shows the actual shield capacity value in the shield infocards (reduced by the offline_threshold value).
+- Fixed the equipment and commodity dealer menus not opening when clicking the dealer twice.
 
 More fixes and improvements may be added in the future.
 

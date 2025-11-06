@@ -40,6 +40,13 @@ obj\copy_paste.obj: \
     makefile.deps \
     makefile
 
+obj\dealer_fixes.obj: \
+    include\dealer_fixes.h \
+    include\utils.h \
+    include\fl_func.h \
+    makefile.deps \
+    makefile
+
 obj\dll_crash.obj: \
     include\dll_crash.h \
     include\utils.h \
@@ -100,6 +107,7 @@ obj\main.obj: \
     include\feature_config.h \
     include\config_reader.h \
     include\version_check.h \
+    include\logger.h \
     include\dacom.h \
     include\update.h \
     include\Common.h \
@@ -127,7 +135,8 @@ obj\main.obj: \
     include\blank_faction.h \
     include\server_filter.h \
     include\dll_crash.h \
-    include\logger.h \
+    include\shield_capacity.h \
+    include\dealer_fixes.h \
     makefile.deps \
     makefile
 
@@ -185,6 +194,15 @@ obj\server_filter.obj: \
     include\Common.h \
     include\fl_math.h \
     include\vftable.h \
+    makefile.deps \
+    makefile
+
+obj\shield_capacity.obj: \
+    include\shield_capacity.h \
+    include\Common.h \
+    include\fl_math.h \
+    include\vftable.h \
+    include\utils.h \
     makefile.deps \
     makefile
 
@@ -305,6 +323,7 @@ obj\test.obj: \
     include\trade_lane_lights.h \
     include\ui_anim.h \
     include\weapon_anim.h \
+    include\dealer_fixes.h \
     makefile.deps \
     makefile
 

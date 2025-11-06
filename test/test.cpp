@@ -11,6 +11,7 @@
 #include "trade_lane_lights.h"
 #include "ui_anim.h"
 #include "weapon_anim.h"
+#include "dealer_fixes.h"
 
 // alchemy_crash.h
 TEST_CASE("value offsets are correct", "[alchemy]")
@@ -339,4 +340,10 @@ TEST_CASE("value offsets are correct", "[modelbinary]")
 TEST_CASE("vftable offsets are correct", "[ianimation2]")
 {
     REQUIRE(GetVftableOffset<IAnimation2>(&IAnimation2::Open, true) == 0x24);
+}
+
+// dealer_fixes.h
+TEST_CASE("value offsets are correct", "[dealeropencamera]")
+{
+    REQUIRE(offsetof(DealerOpenCamera, animationInProgress) == 0x1338);
 }

@@ -24,6 +24,7 @@
 #include "server_filter.h"
 #include "dll_crash.h"
 #include "shield_capacity.h"
+#include "dealer_fixes.h"
 
 FeatureManager manager;
 
@@ -35,6 +36,7 @@ void CheckDllVersions()
         { "server.dll", 1223 },
     };
 
+    // Checks if any of the DLLs are v1.0 instead of v1.1.
     for (const auto &dll : dlls)
     {
         if (GetDllProductBuildVersion(dll.first) <= dll.second)
@@ -71,6 +73,7 @@ void Init()
     manager.RegisterFeature("server_filter_speed_fix",  InitServerFilterSpeedFix,   nullptr,                    ApplyOnlyOnClient);
     manager.RegisterFeature("freelancer_dll_crash_fix", InitMissingDllCrashFix,     nullptr,                    ApplyAlways);
     manager.RegisterFeature("shield_capacity_fix",      InitShieldCapacityFix,      nullptr,                    ApplyOnlyOnClient);
+    manager.RegisterFeature("dealer_menu_open_fix",     InitDealerOpenFix,          nullptr,                    ApplyOnlyOnClient);
 
     ReadConfig("FLSharp.ini", manager);
 
