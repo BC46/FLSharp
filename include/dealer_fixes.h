@@ -16,6 +16,8 @@ struct NavBar
     BYTE x3DC[0x4];
     PVOID unkUiElement; // 0x3E0
     bool shipDealerMenuOpened; // 0x3E4
+
+    void SetHotspot_Hook(PVOID hotspot);
 };
 
 struct DealerOpenCamera

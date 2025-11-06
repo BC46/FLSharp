@@ -23,6 +23,32 @@ void __fastcall SetShipDealerMenuOpened_Hook(PVOID unkUiElement, NavBar& navBar)
     navBar.shipDealerMenuOpened = roomTransitionFinished;
 }
 
+NAKED void GetRoomHotspot_Hook()
+{
+    __asm {
+        mov ebp, eax            // overwritten instruction #1
+        test esi, esi
+        je null
+        mov eax, [esi + 0x1C]   // overwritten instruction #2
+        ret
+    null:
+        xor eax, eax
+        ret
+    }
+}
+
+void (NavBar::*SetHotspot_Original)(PVOID hotspot);
+
+void NavBar::SetHotspot_Hook(PVOID hotspot)
+{
+    // Yeah, let's not do that.
+    if (hotspot)
+    {
+        (this->*SetHotspot_Original)(hotspot);
+    }
+}
+
+
 // In Freelancer there is an infamous bug where if you click the equipment or commodity dealer twice very quickly, the camera goes up but the dealer menu never appears.
 // Once the bug has been triggered the dealer menus will continue to not show up until you undock and redock, or reload your save file.
 void InitDealerOpenFix()
@@ -39,9 +65,15 @@ void InitDealerOpenFix()
 void InitDealerCrashFix()
 {
     #define SET_SHIP_DEALER_MENU_OPENED_ADDR 0x441D28
+    #define GET_ROOM_HOTSPOT_ADDR 0x43FFB6
+    #define SET_HOTSPOT_CALL_ADDR 0x43E9CA
 
     // Fixes a crash when clicking on the ship dealer before the room transition has finished.
     Patch<DWORD>(SET_SHIP_DEALER_MENU_OPENED_ADDR, 0xC589DA89); // mov edx, ebx + mov ebp, eax
     Hook(SET_SHIP_DEALER_MENU_OPENED_ADDR + sizeof(DWORD), SetShipDealerMenuOpened_Hook, 5);
     Patch<DWORD>(SET_SHIP_DEALER_MENU_OPENED_ADDR + sizeof(DWORD) + 5, 0x9066E889); // mov eax, ebp + nop
+
+    // Fixes a very rare crash that occurs when randomly clicking on various dealers at a base.
+    Hook(GET_ROOM_HOTSPOT_ADDR, GetRoomHotspot_Hook, 5);
+    SetHotspot_Original = SetRelPointer(SET_HOTSPOT_CALL_ADDR + 1, &NavBar::SetHotspot_Hook);
 }
