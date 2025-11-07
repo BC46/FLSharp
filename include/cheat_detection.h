@@ -18,8 +18,15 @@ struct BaseGood
     BaseGood* test;
     BYTE x00[0xC];
     UINT goodId; // 0x10
-    BYTE x14[0xC];
-    DWORD goodType; // 0x20
+    float price; // 0x14
+    int minQuantity; // 0x18
+    int maxQuantity; // 0x1C
+    DWORD unk_x20; // 0x20
+
+    inline bool IsShipCandidate()
+    {
+        return unk_x20 == 0 || unk_x20 == 2;
+    }
 };
 
 struct BaseGoodIt

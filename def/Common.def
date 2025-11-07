@@ -47,3 +47,5 @@ EXPORTS
 
 ?get_undamaged_collision_group_list@EqObj@Archetype@@QBE_NAAV?$list@UCollisionGroupDesc@@V?$allocator@UCollisionGroupDesc@@@std@@@std@@@Z
 ?GetShip@Archetype@@YAPAUShip@1@I@Z
+
+?find_by_id@GoodList@@YAPBUGoodInfo@@I@Z

@@ -2,6 +2,7 @@
 #include "logger.h"
 #include "fl_func.h"
 #include "utils.h"
+#include "Common.h"
 
 #define NAKED __declspec(naked)
 
@@ -40,6 +41,14 @@ MarketGood* FASTCALL GetGoodSoldByBaseOrPartOfShip(const BaseMarket &baseMarket,
     for (BaseGoodEndIt it = *goodEndIt; it.startIt != (BaseGood*) goodEndIt; it.GetNextBaseGood())
     {
         BaseGood* good = it.startIt;
+
+        if (!good->IsShipCandidate())
+            continue;
+
+        GoodInfo const *goodInfo = GoodList::find_by_id(good->goodId);
+
+        if (!goodInfo || goodInfo->type != GoodType::Ship)
+            continue;
     }
 
     return nullptr;

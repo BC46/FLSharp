@@ -294,3 +294,31 @@ namespace Reputation
         IMPORT int GetInfocard(int const& id, unsigned int& idsInfo);
     }
 }
+
+class EquipDescList
+{
+public:
+    DWORD list; // TODO: st6::list<EquipDesc> // 0x0
+};
+
+enum GoodType : DWORD
+{
+    Commodity = 0,
+    Hull = 2,
+    Ship = 3
+};
+
+struct GoodInfo
+{
+    BYTE x00[0x4C];
+    GoodType type; // 0x4C
+    BYTE x50[0x44];
+    EquipDescList equipDescLists[3]; // 0x94
+};
+
+namespace GoodList
+{
+    IMPORT GoodInfo const * find_by_id(UINT id);
+};
+
+
