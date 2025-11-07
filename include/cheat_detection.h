@@ -64,9 +64,9 @@ struct BaseMarket
     UINT baseName; // 0x0
     BaseGoodCollection* baseGoods; // 0x4
 
-    MarketGood* GetSoldGood(UINT goodId) const;
+    const MarketGood* GetSoldGood(UINT goodId) const;
 };
 
-MarketGood* FASTCALL GetGoodSoldByBaseOrPartOfShip(const BaseMarket &baseMarket, const PlayerData &playerData, UINT goodId);
+const MarketGood* FASTCALL GetGoodSoldByBaseOrPartOfShip(const BaseMarket &baseMarket, const PlayerData &playerData, UINT goodId);
 
 void InitShipBuyKickFix();

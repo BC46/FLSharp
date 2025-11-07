@@ -6,6 +6,7 @@
 #define WIN32_LEAN_AND_MEAN
 #include <windows.h>
 #include <list>
+#include "st6.h"
 
 #define IMPORT __declspec(dllimport)
 
@@ -295,10 +296,20 @@ namespace Reputation
     }
 }
 
+struct EquipDesc
+{
+    DWORD x00;
+    UINT archId;
+};
+
 class EquipDescList
 {
 public:
-    DWORD list; // TODO: st6::list<EquipDesc> // 0x0
+    #ifdef USE_ST6
+    st6::list<EquipDesc> list; // x00
+    #else
+    std::list<EquipDesc> list; // x00
+    #endif
 };
 
 enum GoodType : DWORD

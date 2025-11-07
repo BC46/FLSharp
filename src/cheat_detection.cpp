@@ -10,7 +10,7 @@ DWORD getGoodSoldByBaseCallAddr = 0;
 DWORD getGoodSoldByBaseRetAddr = 0;
 DWORD getNextBaseGoodAddr = 0;
 
-FL_FUNC(MarketGood* BaseMarket::GetSoldGood(UINT goodId) const, getGoodSoldByBaseCallAddr)
+FL_FUNC(const MarketGood* BaseMarket::GetSoldGood(UINT goodId) const, getGoodSoldByBaseCallAddr)
 FL_FUNC(void BaseGoodEndIt::GetNextBaseGood(), getNextBaseGoodAddr)
 
 NAKED void GetGoodSoldByBase_Hook()
@@ -22,9 +22,9 @@ NAKED void GetGoodSoldByBase_Hook()
     }
 }
 
-MarketGood* FASTCALL GetGoodSoldByBaseOrPartOfShip(const BaseMarket &baseMarket, const PlayerData &playerData, UINT goodId)
+const MarketGood* FASTCALL GetGoodSoldByBaseOrPartOfShip(const BaseMarket &baseMarket, const PlayerData &playerData, UINT goodId)
 {
-    MarketGood* result = baseMarket.GetSoldGood(goodId);
+    const MarketGood* result = baseMarket.GetSoldGood(goodId);
 
     if (result)
         return result;
@@ -49,6 +49,16 @@ MarketGood* FASTCALL GetGoodSoldByBaseOrPartOfShip(const BaseMarket &baseMarket,
 
         if (!goodInfo || goodInfo->type != GoodType::Ship)
             continue;
+
+        for (const auto equipDescList : goodInfo->equipDescLists) {
+            for (auto it = equipDescList.list.begin(); it != equipDescList.list.end(); ++it) {
+                if (it->archId == goodId) {
+                    // Return a MarketGood such that the upcoming return value check passes.
+                    static const MarketGood validMarketGood = { 0 };
+                    return &validMarketGood;
+                }
+            }
+        }
     }
 
     return nullptr;

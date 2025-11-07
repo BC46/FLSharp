@@ -21,6 +21,17 @@ obj\cgun_wrapper.obj: \
     makefile.deps \
     makefile
 
+obj\cheat_detection.obj: \
+    include\cheat_detection.h \
+    include\logger.h \
+    include\fl_func.h \
+    include\utils.h \
+    include\Common.h \
+    include\fl_math.h \
+    include\vftable.h \
+    makefile.deps \
+    makefile
+
 obj\config_reader.obj: \
     include\config_reader.h \
     include\feature_config.h \
@@ -36,6 +47,7 @@ obj\copy_paste.obj: \
     include\vftable.h \
     include\Common.h \
     include\fl_math.h \
+    include\st6.h \
     include\utils.h \
     makefile.deps \
     makefile
@@ -122,6 +134,7 @@ obj\main.obj: \
     include\test_sounds.h \
     include\trade_lane_lights.h \
     include\copy_paste.h \
+    include\st6.h \
     include\ui_anim.h \
     include\weapon_anim.h \
     include\flash_particles.h \
@@ -137,6 +150,7 @@ obj\main.obj: \
     include\dll_crash.h \
     include\shield_capacity.h \
     include\dealer_fixes.h \
+    include\cheat_detection.h \
     makefile.deps \
     makefile
 
@@ -313,6 +327,7 @@ obj\test.obj: \
     include\fl_math.h \
     include\vftable.h \
     include\copy_paste.h \
+    include\st6.h \
     include\flash_particles.h \
     include\utils.h \
     include\Freelancer.h \
