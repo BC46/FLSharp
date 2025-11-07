@@ -2,6 +2,8 @@
 #include "utils.h"
 #include "fl_func.h"
 
+#define FASTCALL __fastcall
+
 FL_FUNC(bool DealerOpenCamera::StartAnimation(LPCSTR name, PVOID unk, NavBar* navBar, DWORD unk2), 0x44BA60)
 
 bool DealerOpenCamera::StartAnimation_Hook(LPCSTR name, PVOID unk, NavBar* navBar, DWORD unk2)
@@ -13,7 +15,7 @@ bool DealerOpenCamera::StartAnimation_Hook(LPCSTR name, PVOID unk, NavBar* navBa
     return StartAnimation(name, unk, navBar, unk2);
 }
 
-void __fastcall SetShipDealerMenuOpened_Hook(PVOID unkUiElement, NavBar& navBar)
+void FASTCALL SetShipDealerMenuOpened_Hook(PVOID unkUiElement, NavBar& navBar)
 {
     navBar.unkUiElement = unkUiElement; // overwritten instruction
 

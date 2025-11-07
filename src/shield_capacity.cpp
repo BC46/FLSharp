@@ -2,8 +2,10 @@
 #include "Common.h"
 #include "utils.h"
 
+#define FASTCALL __fastcall
+
 // Replaces the "ftol" function.
-long __fastcall GetShieldCapcity_Hook(const Archetype::ShieldGenerator &shield, float maxCapacity)
+long FASTCALL GetShieldCapcity_Hook(const Archetype::ShieldGenerator &shield, float maxCapacity)
 {
     // The calculation can be more efficient but to avoid possible differences in rounding, I'm using the same code as FL.
     float shieldCapacity = maxCapacity - (float) ((long) (shield.offlineThreshold * maxCapacity));
