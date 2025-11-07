@@ -25,6 +25,7 @@
 #include "dll_crash.h"
 #include "shield_capacity.h"
 #include "dealer_fixes.h"
+#include "cheat_detection.h"
 
 FeatureManager manager;
 
@@ -75,6 +76,7 @@ void Init()
     manager.RegisterFeature("shield_capacity_fix",      InitShieldCapacityFix,      nullptr,                    ApplyOnlyOnClient);
     manager.RegisterFeature("dealer_menu_open_fix",     InitDealerOpenFix,          nullptr,                    ApplyOnlyOnClient);
     manager.RegisterFeature("dealer_crash_fix",         InitDealerCrashFix,         nullptr,                    ApplyOnlyOnClient);
+    manager.RegisterFeature("ship_buy_kick_fix",        InitShipBuyKickFix,         nullptr,                    ApplyOnlyOnServer);
 
     ReadConfig("FLSharp.ini", manager);
 

@@ -27,3 +27,4 @@ private:
 
 bool ApplyAlways();
 bool ApplyOnlyOnClient();
+bool ApplyOnlyOnServer();

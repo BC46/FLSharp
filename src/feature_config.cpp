@@ -50,3 +50,8 @@ bool ApplyOnlyOnClient()
 {
     return !IsMPServer();
 }
+
+bool ApplyOnlyOnServer()
+{
+    return IsMPServer();
+}

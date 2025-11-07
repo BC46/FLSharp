@@ -45,6 +45,7 @@ These include:
 - Shows the actual shield capacity value in the shield infocards (reduced by the offline_threshold value).
 - Fixed the equipment and commodity dealer menus not opening when clicking the dealer twice.
 - Fixes some crashes that can occur when opening the dealer menus.
+- No longer kick players from the server for re-purchasing the same ship.
 
 More fixes and improvements may be added in the future.
 
