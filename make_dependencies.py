@@ -5,7 +5,7 @@ from pathlib import Path
 def get_file_dependencies(file_path):
     result = []
 
-    cmd = ['cl', '/nologo', '/Zs', '-Iinclude', '/showIncludes', file_path]
+    cmd = ['cl', '/nologo', '/Zs', '-Iinclude', '/showIncludes', '/DUSE_ST6', file_path]
     proc = subprocess.Popen(cmd, stdout=subprocess.PIPE, universal_newlines=True)
 
     for line in proc.stdout:
