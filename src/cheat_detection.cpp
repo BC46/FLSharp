@@ -12,7 +12,7 @@ DWORD getGoodSoldByBaseRetAddr = 0;
 DWORD getNextBaseGoodAddr = 0;
 
 FL_FUNC(const MarketGood* BaseMarket::GetSoldGood(UINT goodId) const, getGoodSoldByBaseCallAddr)
-FL_FUNC(void BaseGoodEndIt::GetNextBaseGood(), getNextBaseGoodAddr)
+FL_FUNC(void BaseGoodIt::GetNextBaseGood(), getNextBaseGoodAddr)
 
 NAKED void GetGoodSoldByBase_Hook()
 {
@@ -38,17 +38,13 @@ bool ShipPackageContainsGood(GoodInfo const &shipPackage, UINT goodId)
 
 bool BaseHasShipPackageWithGood(const BaseGoodCollection &baseGoods, UINT shipId, UINT goodId)
 {
-    BaseGoodEndIt* goodEndIt = baseGoods.endIt;
-
     // Iterate over all the base's sold goods and try to find the ship packages.
-    for (BaseGoodEndIt it = *goodEndIt; it.startIt != (BaseGood*) goodEndIt; it.GetNextBaseGood())
+    for (auto goodIt = baseGoods.goods.begin(); goodIt != baseGoods.goods.end(); ((BaseGoodIt*) &goodIt)->GetNextBaseGood())
     {
-        BaseGood* good = it.startIt;
-
-        if (!good->IsShipCandidate())
+        if (!goodIt->IsShipCandidate())
             continue;
 
-        GoodInfo const *goodInfo = GoodList::find_by_id(good->goodId);
+        GoodInfo const *goodInfo = GoodList::find_by_id(goodIt->goodId);
 
         // Is it a ship package?
         if (!goodInfo || goodInfo->type != GoodType::Ship)

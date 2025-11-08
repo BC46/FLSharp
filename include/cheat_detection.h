@@ -2,6 +2,7 @@
 
 #define WIN32_LEAN_AND_MEAN
 #include <windows.h>
+#include "st6.h"
 
 #define FASTCALL __fastcall
 
@@ -15,17 +16,16 @@ struct PlayerData
 
 struct BaseGood
 {
-    BaseGood* test;
-    BYTE x00[0xC];
-    UINT goodId; // 0x10
-    float price; // 0x14
-    int minQuantity; // 0x18
-    int maxQuantity; // 0x1C
-    DWORD unk_x20; // 0x20
+    BYTE x00[0x8];
+    UINT goodId; // 0x8
+    float price; // 0xC
+    int minQuantity; // 0x10
+    int maxQuantity; // 0x14
+    DWORD unk_x18; // 0x18
 
-    inline bool IsShipCandidate()
+    inline bool IsShipCandidate() const
     {
-        return unk_x20 == 0 || unk_x20 == 2;
+        return unk_x18 == 0 || unk_x18 == 2;
     }
 };
 
@@ -49,8 +49,8 @@ struct BaseGoodCollection
     UINT launchpadName; // 0x4
     DWORD unk_x08; // 0x8
     float unk_x0C; // 0xC
-    WORD unk_x10; // 0x10
-    BaseGoodEndIt* endIt; // 0x14
+
+    st6::list<BaseGood> goods; // 0x10
 };
 
 struct MarketGood
