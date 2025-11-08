@@ -31,14 +31,7 @@ struct BaseGood
 
 struct BaseGoodIt
 {
-    BaseGood* good;
-
-    void GetNextBaseGood();
-};
-
-struct BaseGoodEndIt
-{
-    BaseGood* startIt;
+    BaseGood* good; // 0x0
 
     void GetNextBaseGood();
 };
@@ -50,7 +43,12 @@ struct BaseGoodCollection
     DWORD unk_x08; // 0x8
     float unk_x0C; // 0xC
 
-    st6::list<BaseGood> goods; // 0x10
+    #ifdef USE_ST6
+    st6
+    #else
+    std
+    #endif
+    ::list<BaseGood> goods; // 0x10
 };
 
 struct MarketGood

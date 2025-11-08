@@ -24,13 +24,13 @@ obj\cgun_wrapper.obj: \
 
 obj\cheat_detection.obj: \
     include\cheat_detection.h \
+    include\st6.h \
     include\logger.h \
     include\fl_func.h \
     include\utils.h \
     include\Common.h \
     include\fl_math.h \
     include\vftable.h \
-    include\st6.h \
     makefile.deps \
     makefile
 
@@ -360,6 +360,7 @@ obj\test.obj: \
     include\ui_anim.h \
     include\weapon_anim.h \
     include\dealer_fixes.h \
+    include\cheat_detection.h \
     makefile.deps \
     makefile
 

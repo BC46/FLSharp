@@ -12,6 +12,7 @@
 #include "ui_anim.h"
 #include "weapon_anim.h"
 #include "dealer_fixes.h"
+#include "cheat_detection.h"
 
 // alchemy_crash.h
 TEST_CASE("value offsets are correct", "[alchemy]")
@@ -376,4 +377,45 @@ TEST_CASE("value offsets are correct", "[navbar]")
 TEST_CASE("value offsets are correct", "[dealeropencamera]")
 {
     REQUIRE(offsetof(DealerOpenCamera, animationInProgress) == 0x1338);
+}
+
+// cheat_detection.h
+TEST_CASE("value offsets are correct", "[playerdata]")
+{
+    REQUIRE(offsetof(PlayerData, currentShipId) == 0x264);
+    REQUIRE(offsetof(PlayerData, shipIdOnLand) == 0x324);
+}
+
+TEST_CASE("value offsets are correct", "[basegood]")
+{
+    REQUIRE(offsetof(BaseGood, goodId) == 0x8);
+    REQUIRE(offsetof(BaseGood, price) == 0xC);
+    REQUIRE(offsetof(BaseGood, minQuantity) == 0x10);
+    REQUIRE(offsetof(BaseGood, maxQuantity) == 0x14);
+    REQUIRE(offsetof(BaseGood, unk_x18) == 0x18);
+}
+
+TEST_CASE("value offsets are correct", "[basegoodit]")
+{
+    REQUIRE(offsetof(BaseGoodIt, good) == 0x0);
+}
+
+TEST_CASE("value offsets are correct", "[basegoodcollection]")
+{
+    REQUIRE(offsetof(BaseGoodCollection, baseName) == 0x0);
+    REQUIRE(offsetof(BaseGoodCollection, launchpadName) == 0x4);
+    REQUIRE(offsetof(BaseGoodCollection, unk_x08) == 0x8);
+    REQUIRE(offsetof(BaseGoodCollection, unk_x0C) == 0xC);
+    REQUIRE(offsetof(BaseGoodCollection, goods) == 0x10);
+}
+
+TEST_CASE("value offsets are correct", "[marketgood]")
+{
+    REQUIRE(offsetof(MarketGood, type) == 0x10);
+}
+
+TEST_CASE("value offsets are correct", "[basemarket]")
+{
+    REQUIRE(offsetof(BaseMarket, baseName) == 0x0);
+    REQUIRE(offsetof(BaseMarket, baseGoods) == 0x4);
 }
