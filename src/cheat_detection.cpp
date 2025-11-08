@@ -9,10 +9,10 @@
 
 DWORD getGoodSoldByBaseCallAddr = 0;
 DWORD getGoodSoldByBaseRetAddr = 0;
-DWORD getNextBaseGoodAddr = 0;
+DWORD baseGoodItAdvanceAddr = 0;
 
 FL_FUNC(const MarketGood* BaseMarket::GetSoldGood(UINT goodId) const, getGoodSoldByBaseCallAddr)
-FL_FUNC(void BaseGoodIt::GetNextBaseGood(), getNextBaseGoodAddr)
+FL_FUNC(void BaseGoodIt::Advance(), baseGoodItAdvanceAddr)
 
 NAKED void GetGoodSoldByBase_Hook()
 {
@@ -36,10 +36,10 @@ bool ShipPackageContainsGood(GoodInfo const &shipPackage, UINT goodId)
     return false;
 }
 
-bool BaseHasShipPackageWithGood(const BaseGoodCollection &baseGoods, UINT shipId, UINT goodId)
+bool BaseGoodCollection::HasShipPackageWithGood(UINT shipId, UINT goodId)
 {
     // Iterate over all the base's sold goods and try to find the ship packages.
-    for (auto goodIt = baseGoods.goods.begin(); goodIt != baseGoods.goods.end(); ((BaseGoodIt*) &goodIt)->GetNextBaseGood())
+    for (auto goodIt = goods.begin(); goodIt != goods.end(); ((BaseGoodIt*) &goodIt)->Advance())
     {
         if (!goodIt->IsShipCandidate())
             continue;
@@ -74,7 +74,7 @@ const MarketGood* FASTCALL GetGoodSoldByBaseOrPartOfShip(const BaseMarket &baseM
     // This should only be checked if the player's ship has remained the same while staying on the base.
     if (playerData.currentShipId
         && playerData.currentShipId == playerData.shipIdOnLand
-        && BaseHasShipPackageWithGood(*baseMarket.baseGoods, playerData.currentShipId, goodId))
+        && baseMarket.baseGoods->HasShipPackageWithGood(playerData.currentShipId, goodId))
     {
         // Return a MarketGood such that FL's return value check passes.
         static const MarketGood validMarketGood = { 0 };
@@ -106,7 +106,7 @@ void InitShipBuyKickFix()
 
     getGoodSoldByBaseCallAddr = serverHandle + 0x33000;
     getGoodSoldByBaseRetAddr = serverHandle + 0x6FEF0;
-    getNextBaseGoodAddr = serverHandle + 0x35DE0;
+    baseGoodItAdvanceAddr = serverHandle + 0x35DE0;
 
     Hook(serverHandle + GET_GOOD_SOLD_BY_BASE_CALL_OFFSET_SERVER, GetGoodSoldByBase_Hook, 5, true);
 }
