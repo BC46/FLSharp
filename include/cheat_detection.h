@@ -2,7 +2,13 @@
 
 #define WIN32_LEAN_AND_MEAN
 #include <windows.h>
+
+#ifdef USE_ST6
 #include "st6.h"
+#else
+#include <list>
+namespace st6 = std;
+#endif
 
 #define FASTCALL __fastcall
 
@@ -43,12 +49,7 @@ struct BaseGoodCollection
     DWORD unk_x08; // 0x8
     float unk_x0C; // 0xC
 
-    #ifdef USE_ST6
-    st6
-    #else
-    std
-    #endif
-    ::list<BaseGood> goods; // 0x10
+    st6::list<BaseGood> goods; // 0x10
 };
 
 struct MarketGood

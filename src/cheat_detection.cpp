@@ -71,13 +71,10 @@ const MarketGood* FASTCALL GetGoodSoldByBaseOrPartOfShip(const BaseMarket &baseM
         return result;
 
     // If the good is not sold by the base directly, maybe it's part of the purchased ship package.
-
     // This should only be checked if the player's ship has remained the same while staying on the base.
-    bool changedShip = !(playerData.currentShipId && playerData.currentShipId == playerData.shipIdOnLand);
-    if (changedShip)
-        return nullptr;
-
-    if (BaseHasShipPackageWithGood(*baseMarket.baseGoods, playerData.currentShipId, goodId))
+    if (playerData.currentShipId
+        && playerData.currentShipId == playerData.shipIdOnLand
+        && BaseHasShipPackageWithGood(*baseMarket.baseGoods, playerData.currentShipId, goodId))
     {
         // Return a MarketGood such that FL's return value check passes.
         static const MarketGood validMarketGood = { 0 };
