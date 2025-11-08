@@ -306,10 +306,11 @@ class EquipDescList
 {
 public:
     #ifdef USE_ST6
-    st6::list<EquipDesc> list; // x00
+    st6
     #else
-    std::list<EquipDesc> list; // x00
+    std
     #endif
+    ::list<EquipDesc> list; // x00
 };
 
 enum GoodType : DWORD
@@ -323,7 +324,10 @@ struct GoodInfo
 {
     BYTE x00[0x4C];
     GoodType type; // 0x4C
-    BYTE x50[0x44];
+    BYTE x50[0x4];
+    UINT shipId; // only if type = Ship, 0x54
+    BYTE x58[0x38];
+    UINT shipHullId; // only if type = Hull, 0x90
     EquipDescList equipDescLists[3]; // 0x94
 };
 

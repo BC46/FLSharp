@@ -50,10 +50,15 @@ const MarketGood* FASTCALL GetGoodSoldByBaseOrPartOfShip(const BaseMarket &baseM
         if (!goodInfo || goodInfo->type != GoodType::Ship)
             continue;
 
-        for (const auto equipDescList : goodInfo->equipDescLists) {
+        GoodInfo const *shipHullInfo = GoodList::find_by_id(goodInfo->shipHullId);
+
+        if (!shipHullInfo || shipHullInfo->type != GoodType::Hull || shipHullInfo->shipId != playerData.currentShipId)
+            continue;
+
+        for (const auto& equipDescList : goodInfo->equipDescLists) {
             for (auto it = equipDescList.list.begin(); it != equipDescList.list.end(); ++it) {
                 if (it->archId == goodId) {
-                    // Return a MarketGood such that the upcoming return value check passes.
+                    // Return a MarketGood such that FL's return value check passes.
                     static const MarketGood validMarketGood = { 0 };
                     return &validMarketGood;
                 }
