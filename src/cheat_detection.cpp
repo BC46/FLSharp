@@ -3,6 +3,7 @@
 #include "fl_func.h"
 #include "utils.h"
 #include "Common.h"
+#include <algorithm>
 
 #define NAKED __declspec(naked)
 
@@ -22,6 +23,50 @@ NAKED void GetGoodSoldByBase_Hook()
     }
 }
 
+bool ShipPackageContainsGood(GoodInfo const &shipPackage, UINT goodId)
+{
+    for (const auto& equipDescList : shipPackage.equipDescLists) {
+        bool containsGoodId = std::any_of(equipDescList.list.begin(), equipDescList.list.end(),
+            [goodId](const auto &equipDesc) { return equipDesc.archId == goodId; });
+
+        if (containsGoodId)
+            return true;
+    }
+
+    return false;
+}
+
+bool BaseHasShipPackageWithGood(const BaseGoodCollection &baseGoods, UINT shipId, UINT goodId)
+{
+    BaseGoodEndIt* goodEndIt = baseGoods.endIt;
+
+    // Iterate over all the base's sold goods and try to find the ship packages.
+    for (BaseGoodEndIt it = *goodEndIt; it.startIt != (BaseGood*) goodEndIt; it.GetNextBaseGood())
+    {
+        BaseGood* good = it.startIt;
+
+        if (!good->IsShipCandidate())
+            continue;
+
+        GoodInfo const *goodInfo = GoodList::find_by_id(good->goodId);
+
+        // Is it a ship package?
+        if (!goodInfo || goodInfo->type != GoodType::Ship)
+            continue;
+
+        GoodInfo const *shipHullInfo = GoodList::find_by_id(goodInfo->shipHullId);
+
+        // Does the ship package hull's archetype match the ship archetype in question?
+        if (shipHullInfo && shipHullInfo->type == GoodType::Hull && shipHullInfo->shipId == shipId)
+        {
+            if (ShipPackageContainsGood(*goodInfo, goodId))
+                return true;
+        }
+    }
+
+    return false;
+}
+
 const MarketGood* FASTCALL GetGoodSoldByBaseOrPartOfShip(const BaseMarket &baseMarket, const PlayerData &playerData, UINT goodId)
 {
     const MarketGood* result = baseMarket.GetSoldGood(goodId);
@@ -36,39 +81,24 @@ const MarketGood* FASTCALL GetGoodSoldByBaseOrPartOfShip(const BaseMarket &baseM
     if (changedShip)
         return nullptr;
 
-    BaseGoodEndIt* goodEndIt = baseMarket.baseGoods->endIt;
-
-    for (BaseGoodEndIt it = *goodEndIt; it.startIt != (BaseGood*) goodEndIt; it.GetNextBaseGood())
+    if (BaseHasShipPackageWithGood(*baseMarket.baseGoods, playerData.currentShipId, goodId))
     {
-        BaseGood* good = it.startIt;
-
-        if (!good->IsShipCandidate())
-            continue;
-
-        GoodInfo const *goodInfo = GoodList::find_by_id(good->goodId);
-
-        if (!goodInfo || goodInfo->type != GoodType::Ship)
-            continue;
-
-        GoodInfo const *shipHullInfo = GoodList::find_by_id(goodInfo->shipHullId);
-
-        if (!shipHullInfo || shipHullInfo->type != GoodType::Hull || shipHullInfo->shipId != playerData.currentShipId)
-            continue;
-
-        for (const auto& equipDescList : goodInfo->equipDescLists) {
-            for (auto it = equipDescList.list.begin(); it != equipDescList.list.end(); ++it) {
-                if (it->archId == goodId) {
-                    // Return a MarketGood such that FL's return value check passes.
-                    static const MarketGood validMarketGood = { 0 };
-                    return &validMarketGood;
-                }
-            }
-        }
+        // Return a MarketGood such that FL's return value check passes.
+        static const MarketGood validMarketGood = { 0 };
+        return &validMarketGood;
     }
 
     return nullptr;
 }
 
+// In Freelancer there is a bug where if you have a server with players on it
+// and a player purchases a ship which they already have and then undock, they get kicked from the server.
+// This is because on undock, FL's anticheat does a check to see if you obtained any equipment which is not sold by the base.
+// This check only proceeds if your ship hasn't changed since you landed on the base.
+// If you buy a ship, you usually get some additional equipment as part of the package (e.g. shield).
+// However, after re-buying the same ship and undocking, you still have the same ship as far as the game is concerned,
+// and you have a shield which is not sold by the base, and thus you get kicked.
+// This code fixes it by checking if the "cheated" equipment is part of any of the base's offered ship packages.
 void InitShipBuyKickFix()
 {
     #define GET_GOOD_SOLD_BY_BASE_CALL_OFFSET_SERVER 0x6FEEB

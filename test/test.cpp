@@ -163,6 +163,24 @@ TEST_CASE("value offsets are correct", "[id_string]")
     REQUIRE(offsetof(ID_String, ids) == 0x0);
 }
 
+TEST_CASE("value offsets are correct", "[equipdesc]")
+{
+    REQUIRE(offsetof(EquipDesc, archId) == 0x4);
+}
+
+TEST_CASE("value offsets are correct", "[equipdesclist]")
+{
+    REQUIRE(offsetof(EquipDescList, list) == 0x0);
+}
+
+TEST_CASE("value offsets are correct", "[goodinfo]")
+{
+    REQUIRE(offsetof(GoodInfo, type) == 0x4C);
+    REQUIRE(offsetof(GoodInfo, shipId) == 0x54);
+    REQUIRE(offsetof(GoodInfo, shipHullId) == 0x90);
+    REQUIRE(offsetof(GoodInfo, equipDescLists) == 0x94);
+}
+
 // copy_paste.h
 TEST_CASE("value offsets are correct", "[inputchar]")
 {

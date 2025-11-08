@@ -299,7 +299,7 @@ namespace Reputation
 struct EquipDesc
 {
     DWORD x00;
-    UINT archId;
+    UINT archId; // 0x4
 };
 
 class EquipDescList
@@ -310,7 +310,7 @@ public:
     #else
     std
     #endif
-    ::list<EquipDesc> list; // x00
+    ::list<EquipDesc> list; // 0x0
 };
 
 enum GoodType : DWORD
@@ -325,9 +325,9 @@ struct GoodInfo
     BYTE x00[0x4C];
     GoodType type; // 0x4C
     BYTE x50[0x4];
-    UINT shipId; // only if type = Ship, 0x54
+    UINT shipId; // only if type = Hull, 0x54
     BYTE x58[0x38];
-    UINT shipHullId; // only if type = Hull, 0x90
+    UINT shipHullId; // only if type = Ship, 0x90
     EquipDescList equipDescLists[3]; // 0x94
 };
 
