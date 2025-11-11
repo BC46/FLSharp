@@ -50,7 +50,7 @@ struct BaseGoodCollection
     float unk_x0C; // 0xC
     st6::list<BaseGood> goods; // 0x10
 
-    bool HasShipPackageWithGood(UINT shipId, UINT goodId);
+    bool HasShipPackageWithGood(UINT goodId);
 };
 
 struct MarketGood

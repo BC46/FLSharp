@@ -27,7 +27,7 @@ bool ShipPackageContainsGood(GoodInfo const &shipPackage, UINT goodId)
 {
     for (const auto& equipDescList : shipPackage.equipDescLists) {
         bool containsGoodId = std::any_of(equipDescList.list.begin(), equipDescList.list.end(),
-            [goodId](const auto &equipDesc) { return equipDesc.archId == goodId; });
+            [goodId](const EquipDesc &equipDesc) { return equipDesc.archId == goodId; });
 
         if (containsGoodId)
             return true;
@@ -36,7 +36,7 @@ bool ShipPackageContainsGood(GoodInfo const &shipPackage, UINT goodId)
     return false;
 }
 
-bool BaseGoodCollection::HasShipPackageWithGood(UINT shipId, UINT goodId)
+bool BaseGoodCollection::HasShipPackageWithGood(UINT goodId)
 {
     // Iterate over all the base's sold goods and try to find the ship packages.
     for (auto goodIt = goods.begin(); goodIt != goods.end(); ((BaseGoodIt*) &goodIt)->Advance())
@@ -47,13 +47,7 @@ bool BaseGoodCollection::HasShipPackageWithGood(UINT shipId, UINT goodId)
         GoodInfo const *goodInfo = GoodList::find_by_id(goodIt->goodId);
 
         // Is it a ship package?
-        if (!goodInfo || goodInfo->type != GoodType::Ship)
-            continue;
-
-        GoodInfo const *shipHullInfo = GoodList::find_by_id(goodInfo->shipHullId);
-
-        // Does the ship package hull's archetype match the ship archetype in question?
-        if (shipHullInfo && shipHullInfo->type == GoodType::Hull && shipHullInfo->shipId == shipId)
+        if (goodInfo && goodInfo->type == GoodType::Ship)
         {
             if (ShipPackageContainsGood(*goodInfo, goodId))
                 return true;
@@ -74,7 +68,7 @@ const MarketGood* FASTCALL GetGoodSoldByBaseOrPartOfShip(const BaseMarket &baseM
     // This should only be checked if the player's ship has remained the same while staying on the base.
     if (playerData.currentShipId
         && playerData.currentShipId == playerData.shipIdOnLand
-        && baseMarket.baseGoods->HasShipPackageWithGood(playerData.currentShipId, goodId))
+        && baseMarket.baseGoods->HasShipPackageWithGood(goodId))
     {
         // Return a MarketGood such that FL's return value check passes.
         static const MarketGood validMarketGood = { 0 };
