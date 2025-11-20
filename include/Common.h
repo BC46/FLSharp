@@ -203,6 +203,9 @@ public:
 
 struct CShip : public CEqObj
 {
+    BYTE x164[0x50];
+    DWORD groupId; // 0x1B4
+
     IMPORT float get_throttle() const;
     IMPORT Archetype::Ship const * shiparch() const;
     IMPORT bool is_using_tradelane() const;
@@ -259,8 +262,27 @@ public:
 
 struct IObjRW
 {
-    BYTE data[0x10];
-    CObject* cobject;
+    BYTE x04[0xC];
+    CObject* cobject; // 0x10
+
+    FILL_VFTABLE(0)
+    FILL_VFTABLE(1)
+    FILL_VFTABLE(2)
+    FILL_VFTABLE(3)
+    FILL_VFTABLE(4)
+    FILL_VFTABLE(5)
+    virtual void Vftable_x60();
+    virtual void Vftable_x64();
+    virtual int get_attitude_towards(float &attitude, IObjRW const *other) const; // 0x68
+    virtual void Vftable_x6C();
+    FILL_VFTABLE(7)
+    FILL_VFTABLE(8)
+    FILL_VFTABLE(9)
+    FILL_VFTABLE(A)
+    virtual void Vftable_xB0();
+    virtual void Vftable_xB4();
+    virtual void Vftable_xB8();
+    virtual bool is_player() const; // 0xBC
 };
 
 struct PhysicsInfo

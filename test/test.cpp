@@ -112,6 +112,7 @@ TEST_CASE("value offsets are correct", "[cship]")
     REQUIRE(offsetof(CShip, nickname) == 0xB0);
     REQUIRE(offsetof(CShip, equipManager) == 0xE4);
     REQUIRE(offsetof(CShip, baseId) == 0x160);
+    REQUIRE(offsetof(CShip, groupId) == 0x1B4);
 }
 
 TEST_CASE("vftable offsets are correct", "[cship]")
@@ -146,6 +147,12 @@ TEST_CASE("vftable offsets are correct", "[ceengine]")
 TEST_CASE("value offsets are correct", "[iobjrw]")
 {
     REQUIRE(offsetof(IObjRW, cobject) == 0x10);
+}
+
+TEST_CASE("vftable offsets are correct", "[iobjrw]")
+{
+    REQUIRE(GetVftableOffset<IObjRW>(&IObjRW::get_attitude_towards) == 0x68);
+    REQUIRE(GetVftableOffset<IObjRW>(&IObjRW::is_player) == 0xBC);
 }
 
 TEST_CASE("value offsets are correct", "[physicsinfo]")

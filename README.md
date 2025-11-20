@@ -46,6 +46,7 @@ These include:
 - Fixed the equipment and commodity dealer menus not opening when clicking the dealer twice.
 - Fixes some crashes that can occur when opening the dealer menus.
 - No longer kick players from the server for re-purchasing the same ship.
+- Allows the player to enter formation with hostile group members.
 
 More fixes and improvements may be added in the future.
 
@@ -71,4 +72,4 @@ Thanks to the following people for helping make some of the features possible:
 - [Schmackbolzen](https://github.com/Schmackbolzen)
   - Provided assistance with troubleshooting the ship preview rendering bug.
 - [Venemon](https://www.moddb.com/members/venemon)
-  - Original implementations of the multi-barrel launcher sound and [weapon animation fixes](https://www.moddb.com/mods/weapon-animations).
+  - Original implementations of the multi-barrel launcher sound and [weapon animation fixes](https://www.moddb.com/mods/weapon-animations). Also provided help with debugging and reverse engineering.

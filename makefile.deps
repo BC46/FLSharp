@@ -105,6 +105,18 @@ obj\Freelancer.obj: \
     makefile.deps \
     makefile
 
+obj\group_members.obj: \
+    include\group_members.h \
+    include\utils.h \
+    include\Common.h \
+    include\fl_math.h \
+    include\vftable.h \
+    include\st6.h \
+    include\Freelancer.h \
+    include\logger.h \
+    makefile.deps \
+    makefile
+
 obj\infocards.obj: \
     include\infocards.h \
     include\Common.h \
@@ -158,6 +170,7 @@ obj\main.obj: \
     include\shield_capacity.h \
     include\dealer_fixes.h \
     include\cheat_detection.h \
+    include\group_members.h \
     makefile.deps \
     makefile
 
