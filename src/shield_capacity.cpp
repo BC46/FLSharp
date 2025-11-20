@@ -7,7 +7,7 @@
 // Replaces the "ftol" function.
 long FASTCALL GetShieldCapcity_Hook(const Archetype::ShieldGenerator &shield, float maxCapacity)
 {
-    // The calculation can be more efficient but to avoid possible differences in rounding, I'm using the same code as FL.
+    // The calculation can be more efficient/concise but to avoid possible differences in rounding, I'm using the same code as FL.
     float shieldCapacity = maxCapacity - (float) ((long) (shield.offlineThreshold * maxCapacity));
 
     if (shieldCapacity < 0.0f)

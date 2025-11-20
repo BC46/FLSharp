@@ -7,7 +7,7 @@
 // This rewrites the original loop present in alchemy.dll.
 // In principle it would have been possible to just patch one asm instruction to fix the bug,
 // but rewriting the loop is cooler.
-Alchemy* FASTCALL GetFinishedAle(int maxIndex, Alchemy* aleArr, float maxProgress)
+const Alchemy* FASTCALL GetFinishedAle(int maxIndex, const Alchemy* aleArr, float maxProgress)
 {
     int i = 0;
 

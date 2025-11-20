@@ -23,7 +23,7 @@ NAKED void PlayFlashEffect_Hook()
 // This function has some asm setup code which redirects us to FLs original code
 // to allow the flash particle to play on a given barrel index.
 // This is convenient because this way we are reusing FL's own code.
-NAKED void CliLauncher::PlayFlashParticleForBarrel(const ID_String& idString, UINT barrelIndex)
+NAKED void CliLauncher::PlayFlashParticleForBarrel(const ID_String& effectName, UINT barrelIndex)
 {
     #define GET_BARREL_INFO_FOR_FLASH_PROJ_CALL_ADDR 0x52D1DC
 
@@ -44,7 +44,7 @@ NAKED void CliLauncher::PlayFlashParticleForBarrel(const ID_String& idString, UI
 
 // In this function we play the flash particle effect for every barrel, instead of only the first barrel.
 // We do this by keeping track of a custom heap-allocated array of size n (n = amount of barrels of the launcher).
-void CliLauncher::PlayAllFlashParticles(const ID_String& idString)
+void CliLauncher::PlayAllFlashParticles(const ID_String& effectName)
 {
     UINT barrelAmount = this->launcher->GetProjectilesPerFire();
 
@@ -66,7 +66,7 @@ void CliLauncher::PlayAllFlashParticles(const ID_String& idString)
         // So temporarily keep a copy of the original array pointer, and after calling the function,
         // save the instance in the original array, and then restore the array at the original offset.
         EffectInstance** ogFlashParticlesArr = this->flashParticlesArr;
-        PlayFlashParticleForBarrel(idString, i);
+        PlayFlashParticleForBarrel(effectName, i);
         ogFlashParticlesArr[i] = this->currentFlashParticle;
         this->flashParticlesArr = ogFlashParticlesArr;
     }

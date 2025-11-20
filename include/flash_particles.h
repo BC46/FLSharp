@@ -71,10 +71,10 @@ struct CliLauncher
         EffectInstance** flashParticlesArr;
     };
 
-    void PlayAllFlashParticles(const ID_String& idString);
+    void PlayAllFlashParticles(const ID_String& effectName);
     // PlayFlashParticleForBarrel must be __cdecl because this code jumps to a vanilla FL function which does ret instead of ret n at the end.
     // Therefore, the caller must clean the stack.
-    void __cdecl PlayFlashParticleForBarrel(const ID_String& idString, UINT barrelIndex);
+    void __cdecl PlayFlashParticleForBarrel(const ID_String& effectName, UINT barrelIndex);
 
     void CleanFlashParticlesPostGame_Hook();
     void CleanFlashParticlesEngine_Hook();
