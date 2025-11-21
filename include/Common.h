@@ -260,7 +260,7 @@ public:
     bool CheckForSync_Hook(const CShip& ship, Vector const &shipPos, Quaternion const &unk);
 };
 
-struct IObjRW
+struct IObjRW // : public IObjInspectImpl
 {
     BYTE x04[0xC];
     CObject* cobject; // 0x10
