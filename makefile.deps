@@ -114,6 +114,7 @@ obj\group_members.obj: \
     include\st6.h \
     include\Freelancer.h \
     include\logger.h \
+    include\fl_func.h \
     makefile.deps \
     makefile
 
@@ -374,6 +375,7 @@ obj\test.obj: \
     include\weapon_anim.h \
     include\dealer_fixes.h \
     include\cheat_detection.h \
+    include\group_members.h \
     makefile.deps \
     makefile
 

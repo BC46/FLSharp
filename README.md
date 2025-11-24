@@ -47,6 +47,7 @@ These include:
 - Fixes some crashes that can occur when opening the dealer menus.
 - No longer kick players from the server for re-purchasing the same ship.
 - Allows the player to enter formation with hostile group members.
+- Prevented hostile group members from being shown as hostile.
 
 More fixes and improvements may be added in the future.
 

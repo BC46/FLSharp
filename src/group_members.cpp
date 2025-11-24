@@ -80,11 +80,23 @@ void InitHostileGroupFormation()
     {
         Logger::PrintModuleError("InitHostileGroupFormation", "common.dll");
     }
+}
 
+// Ensures hostile group members are no longer treated as hostile.
+// For example if you are near a hostile group member, then you will hear the danger/battle music.
+// For such group members there is also an attack marker displayed.
+// These things can be quite distracting. The code below ensures they are treated as neutral instead.
+void InitHostileGroupMembersFix()
+{
     // Doing a trampoline hook was inconvenient here, so just manually hook all the call locations.
     const DWORD getAttitudeTypeCalls[] = {
-        0x475770, 0x48AEAB, 0x4E4950, 0x4EC10E, 0x4EC71A, 0x4EC891, 0x4F1CFF,
-        0x4F22E4, 0x4F2465, 0x53A98C, 0x553290, 0x5532AD, 0x553325, 0x5552A8 };
+        0x48AEAB, 0x4E4950, 0x4EC10E, 0x4EC71A, 0x4EC891, 0x4F1CFF, 0x4F22E4,
+        0x4F2465, 0x53A98C, 0x553290, 0x5532AD, 0x553325, 0x5552A8 };
+
     for (const auto &call : getAttitudeTypeCalls)
         SetRelPointer(call + 1, GetAttitudeType_Hook);
+
+    // TODO: Check 0x475770 for printing "Group member" into current information window. Both values passed to the func are non-zero.
+    // Hook 004757FA, check if the passed address is neutral. Then check if players are group members. If so, print IDS 1551 instead.
+    // But make it lowercase
 }

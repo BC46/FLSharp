@@ -79,6 +79,7 @@ void Init()
     manager.RegisterFeature("dealer_crash_fix",         InitDealerCrashFix,         nullptr,                    ApplyOnlyOnClient);
     manager.RegisterFeature("ship_buy_kick_fix",        InitShipBuyKickFix,         nullptr,                    ApplyOnlyOnServer);
     manager.RegisterFeature("hostile_group_formation",  InitHostileGroupFormation,  nullptr,                    ApplyOnlyOnClient);
+    manager.RegisterFeature("unhostile_group_members",  InitHostileGroupMembersFix, nullptr,                    ApplyOnlyOnClient);
 
     ReadConfig("FLSharp.ini", manager);
 
