@@ -6,3 +6,5 @@ enum AttitudeType : int
 };
 
 void InitHostileGroupFormation();
+
+void InitHostileGroupMembersFix();

@@ -103,6 +103,8 @@ struct WaypointWatcher
 #define WAYPOINT_WATCHER (*((WaypointWatcher**) 0x674BC8))
 
 IObjRW* GetPlayerIObjRW();
+CShip* GetPlayerShip();
+CShip* GetPlayerShipSafe();
 
 bool IsSimpleUnvisited(const CSimple& simple);
 BYTE GetSimpleVisitedValue(const CSimple& simple);

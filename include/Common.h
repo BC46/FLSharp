@@ -201,6 +201,7 @@ public:
     bool is_base() const;
 };
 
+#define CSHIP_CLASS_TYPE 0x503
 struct CShip : public CEqObj
 {
     BYTE x164[0x50];

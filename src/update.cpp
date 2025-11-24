@@ -31,12 +31,6 @@ milliseconds GetMsElapsed()
     return duration_cast<milliseconds>(steady_clock::now() - timeSinceLastUpdate);
 }
 
-CShip* GetPlayerShip()
-{
-    IObjRW* playerIObjRW = GetPlayerIObjRW();
-    return !playerIObjRW ? nullptr : (CShip*) playerIObjRW->cobject;
-}
-
 bool IsEkEnabled(const CShip& ship)
 {
     // This seems to be a relatively fast operation; Freelancer calls it numerous times per frame.

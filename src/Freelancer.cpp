@@ -14,6 +14,25 @@ FL_FUNC(bool WaypointWatcher::GetCurrentWaypointInfo(bool& isPlayerWaypoint, int
 
 FL_FUNC(IObjRW* GetPlayerIObjRW(), 0x54BAF0);
 
+CShip* GetPlayerShip()
+{
+    IObjRW* playerIObjRW = GetPlayerIObjRW();
+    return !playerIObjRW ? nullptr : (CShip*) playerIObjRW->cobject;
+}
+
+CShip* GetPlayerShipSafe()
+{
+    IObjRW* playerIObjRW = GetPlayerIObjRW();
+
+    if (playerIObjRW && playerIObjRW->cobject)
+    {
+        if ((playerIObjRW->cobject->classType & CSHIP_CLASS_TYPE) == CSHIP_CLASS_TYPE)
+            return (CShip*) playerIObjRW->cobject;
+    }
+
+    return nullptr;
+}
+
 FL_FUNC(bool IsSimpleUnvisited(const CSimple& simple), 0x4D4C70);
 FL_FUNC(BYTE GetSimpleVisitedValue(const CSimple& simple), 0x4D4D00);
 FL_FUNC(UINT GetIdsForUnvisitedSimple(const CSimple& simple), 0x4D4D50);
