@@ -13,6 +13,7 @@
 #include "weapon_anim.h"
 #include "dealer_fixes.h"
 #include "cheat_detection.h"
+#include "group_members.h"
 
 // alchemy_crash.h
 TEST_CASE("value offsets are correct", "[alchemy]")
@@ -22,9 +23,19 @@ TEST_CASE("value offsets are correct", "[alchemy]")
 }
 
 // Common.h
+TEST_CASE("size is correct", "[ini_reader]")
+{
+    REQUIRE(sizeof(INI_Reader) == 0x1565);
+}
+
 TEST_CASE("vftable offsets are correct", "[cequip]")
 {
     REQUIRE(GetVftableOffset<CEquip>(&CEquip::Activate) == 0x30);
+}
+
+TEST_CASE("size is correct", "[cequiptraverser]")
+{
+    REQUIRE(sizeof(CEquipTraverser) == 0x10);
 }
 
 TEST_CASE("vftable offsets are correct", "[celightequip]")
@@ -425,4 +436,10 @@ TEST_CASE("value offsets are correct", "[basemarket]")
 {
     REQUIRE(offsetof(BaseMarket, baseName) == 0x0);
     REQUIRE(offsetof(BaseMarket, baseGoods) == 0x4);
+}
+
+// group_members.h
+TEST_CASE("size is correct", "[mousecursor]")
+{
+    REQUIRE(sizeof(MouseCursor) == 0x90);
 }
