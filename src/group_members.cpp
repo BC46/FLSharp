@@ -8,7 +8,7 @@
 #define FASTCALL __fastcall
 #define NEUTRAL_REP (0.0f)
 
-FL_FUNC(AttitudeType GetAttitudeType(const IObjRW* from, const IObjRW* towards), 0x45A490)
+FL_FUNC(AttitudeType GetAttitudeType(const IObjRW* towards, const IObjRW* from), 0x45A490)
 
 float hostileRepThreshold = -0.6f;
 
@@ -27,7 +27,9 @@ int FASTCALL get_attitude_towards_Hook(const IObjRW& target, float& attitude, co
 
     // FL doesn't test the return value so why should I?
     // Check if the reported attitude is hostile and if the target is a player.
-    if (attitude <= hostileRepThreshold && target.is_player() && player == GetPlayerIObjRW())
+    // Also since this hook is called many times, as a sanity check I'm also checking if the player actually is the player.
+    if (attitude <= hostileRepThreshold && target.is_player()
+        && player == GetPlayerIObjRW() && player->cobject)
     {
         if (AreIObjRWsInSameGroup(*player, target))
         {
@@ -40,20 +42,21 @@ int FASTCALL get_attitude_towards_Hook(const IObjRW& target, float& attitude, co
     return result;
 }
 
-AttitudeType GetAttitudeType_Hook(const IObjRW* from, const IObjRW* towards)
+AttitudeType GetAttitudeType_Hook(const IObjRW* towards, const IObjRW* from)
 {
     // Call the original function.
-    AttitudeType result = GetAttitudeType(from, towards);
+    AttitudeType result = GetAttitudeType(towards, from);
 
     if (result != AttitudeType::Hostile)
         return result;
 
-    // If GetAttitudeType returns Attitude::Hostile, that implies from and towards are both non-zero.
-    // Check if the from object is the player and if "towards" is another player.
-    if (from == GetPlayerIObjRW() && towards->is_player())
+    // If GetAttitudeType returns Attitude::Hostile, that implies towards and from are both non-zero.
+    // Check if the towards object is the player and if "from" is another player.
+    // As a sanity check I'm also checking if the towards actually is the player.
+    if (from->is_player() && towards == GetPlayerIObjRW() && towards->cobject)
     {
         // If they're in the same group, treat them as neutral rather than hostile.
-        if (AreIObjRWsInSameGroup(*from, *towards))
+        if (AreIObjRWsInSameGroup(*towards, *from))
         {
             return AttitudeType::Neutral;
         }
