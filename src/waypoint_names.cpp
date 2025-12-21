@@ -72,6 +72,24 @@ UINT GetCShipOrCEqObjName_Hook(const CEqObj &eqObj)
     return result;
 }
 
+MissionObjective* (*GetMissionObjective_Original)(int index);
+
+// When you open the Current Information window while having a random mission waypoint selected, nothing is printed.
+// This is because FL assumes a hard-coded mission objective index of 0 which is only correct for story mission waypoints.
+// This hook attempts to find the correct index dynamically so that the objective is printed for random mission waypoints.
+MissionObjective* GetMissionObjective_Hook(int index)
+{
+    #define SPACE_OBJECTIVE 0xA
+
+    for (int i = 0; MissionObjective* missionObjective = GetMissionObjective_Original(i); ++i)
+    {
+        if ((missionObjective->flags & 0xF) == SPACE_OBJECTIVE)
+            return missionObjective;
+    }
+
+    return nullptr;
+}
+
 // Init some waypoint name and infocard fixes.
 void InitWaypointNameFixes()
 {
@@ -93,4 +111,8 @@ void InitWaypointNameFixes()
     #define GET_OBJ_NAME_TARGET_SELECTION_CALL_ADDR 0x4E8131
     Hook(GET_OBJ_NAME_CURRENT_INFO_CALL_ADDR, GetCShipOrCEqObjName_Hook, 5); // Current Information window
     Hook(GET_OBJ_NAME_TARGET_SELECTION_CALL_ADDR, GetCShipOrCEqObjName_Hook, 5); // Target selection
+
+    // Fix nothing being show in the Current Information window for random mission waypoints
+    #define GET_MISSION_OBJECTIVE_INFO_WINDOW_CALL_ADDR 0x475A94
+    GetMissionObjective_Original = SetRelPointer(GET_MISSION_OBJECTIVE_INFO_WINDOW_CALL_ADDR + 1, GetMissionObjective_Hook);
 }

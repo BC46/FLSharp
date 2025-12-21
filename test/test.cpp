@@ -14,6 +14,7 @@
 #include "dealer_fixes.h"
 #include "cheat_detection.h"
 #include "group_members.h"
+#include "waypoint_names.h"
 
 // alchemy_crash.h
 TEST_CASE("value offsets are correct", "[alchemy]")
@@ -442,4 +443,11 @@ TEST_CASE("value offsets are correct", "[basemarket]")
 TEST_CASE("size is correct", "[mousecursor]")
 {
     REQUIRE(sizeof(MouseCursor) == 0x90);
+}
+
+// waypoint_names.h
+TEST_CASE("value offsets are correct", "[missionobjective]")
+{
+    REQUIRE(offsetof(MissionObjective, fmtStr) == 0x0);
+    REQUIRE(offsetof(MissionObjective, flags) == 0x18);
 }

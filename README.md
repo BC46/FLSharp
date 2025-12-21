@@ -37,7 +37,7 @@ These include:
 - Fixed a crash when selecting a modded/malformed save file in the F1 Load Game menu
 - Fixed a very rare and inconsistent crash in alchemy.dll (crash offset `0x701b`).
 - Fixed waypoints being called "Unknown Object" in the target view and Current Information window.
-- Fixed information about player waypoints being printed incorrectly in the Current Information window.
+- Fixed information about waypoints being printed incorrectly in the Current Information window.
 - Fixed ships part of the `fc_uk_grp` faction having a blank faction in the Current Information window.
 - Fixed a crash that sometimes happens when closing the Server Filter dialog.
 - Fixed a bug that causes the game speed to sometimes suddenly increase when opening the Server Filter dialog.

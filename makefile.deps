@@ -376,6 +376,7 @@ obj\test.obj: \
     include\dealer_fixes.h \
     include\cheat_detection.h \
     include\group_members.h \
+    include\waypoint_names.h \
     makefile.deps \
     makefile
 
