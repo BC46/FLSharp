@@ -1,5 +1,8 @@
 #pragma once
 
+// NOTE: This only works when loaded via Freelancer.exe, not FLServer.exe.
+#define FL_180_OVER_PI (*(float*) 0x5D3D38)
+
 class Vector
 {
 public:
