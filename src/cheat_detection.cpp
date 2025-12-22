@@ -18,7 +18,7 @@ NAKED void GetGoodSoldByBase_Hook()
 {
     __asm {
         mov edx, esi
-        call [GetGoodSoldByBaseOrPartOfShip]
+        call GetGoodSoldByBaseOrPartOfShip
         jmp [getGoodSoldByBaseRetAddr]
     }
 }

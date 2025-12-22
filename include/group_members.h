@@ -12,10 +12,10 @@ enum AttitudeType : int
 struct MouseCursor
 {
 	size_t nicknameLen; // 0x0
-	BYTE nickname[32]; // 0x4
+    char nickname[32]; // 0x4
 	PDWORD unk_0x24; // 0x24
 	size_t animNameLen; // 0x28
-	BYTE animName[24]; // 0x2C
+    char animName[24]; // 0x2C
 	float hotspotX; // 0x44
 	float hotspotY; // 0x48
 	DWORD color; // rgba, 0x4C

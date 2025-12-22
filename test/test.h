@@ -30,17 +30,17 @@
 template <class ObjType, typename Func>
 int GetVftableOffset(Func func, bool stdcall = false)
 {
-    struct CdeclCounterVftable
+    struct ThiscallCounterVftable
     {
         DEFINE_COUNTER_VFTABLE(__thiscall)
-    } cdeclVftable;
+    } thiscallVftable;
 
     struct StdcallCounterVftable
     {
         DEFINE_COUNTER_VFTABLE(__stdcall)
     } stdcallVftable;
 
-    ObjType* obj = stdcall ? (ObjType*) &stdcallVftable : (ObjType*) &cdeclVftable;
+    ObjType* obj = stdcall ? (ObjType*) &stdcallVftable : (ObjType*) &thiscallVftable;
 
     if (stdcall)
     {
@@ -49,7 +49,7 @@ int GetVftableOffset(Func func, bool stdcall = false)
         return (obj->*getIndexFunc)();
     }
 
-    typedef int (__thiscall ObjType::*GetIndexCdecl)();
-    GetIndexCdecl getIndexFunc = (GetIndexCdecl) func;
+    typedef int (__thiscall ObjType::*GetIndexThiscall)();
+    GetIndexThiscall getIndexFunc = (GetIndexThiscall) func;
     return (obj->*getIndexFunc)();
 }

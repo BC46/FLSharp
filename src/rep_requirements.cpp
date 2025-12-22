@@ -31,7 +31,7 @@ NAKED void GetShipRepRequirement_Hook()
 
     __asm {
         mov [esi+0xC], eax                                  // overwritten instruction #1
-        sub esp, 0x4
+        push ecx
         fst dword ptr [esp]                                 // shipLevelRequirement
         push esi                                            // shipListPtr
         mov ecx, ebx                                        // NN_ShipTrader
