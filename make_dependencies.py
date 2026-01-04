@@ -41,8 +41,9 @@ def write_file_dependencies(deps_file, src_dirs, obj_dir):
             #f.write((" " * 4) + cpp_file + " \\\n")
             for dep in deps:
                 f.write((" " * 4) + os.path.relpath(dep) + " \\\n")
-            f.write((" " * 4) + deps_file + " \\\n")
-            f.write((" " * 4) + "makefile\n\n")
+            #f.write((" " * 4) + deps_file + " \\\n")
+            #f.write((" " * 4) + "makefile\n")
+            f.write("\n")
 
     f.close()
 

@@ -2,8 +2,6 @@ obj\alchemy_crash.obj: \
     include\alchemy_crash.h \
     include\utils.h \
     include\logger.h \
-    makefile.deps \
-    makefile
 
 obj\blank_faction.obj: \
     include\Common.h \
@@ -11,16 +9,12 @@ obj\blank_faction.obj: \
     include\vftable.h \
     include\st6.h \
     include\utils.h \
-    makefile.deps \
-    makefile
 
 obj\cgun_wrapper.obj: \
     include\cgun_wrapper.h \
     include\DALib.h \
     include\utils.h \
     include\fl_func.h \
-    makefile.deps \
-    makefile
 
 obj\cheat_detection.obj: \
     include\cheat_detection.h \
@@ -31,8 +25,6 @@ obj\cheat_detection.obj: \
     include\Common.h \
     include\fl_math.h \
     include\vftable.h \
-    makefile.deps \
-    makefile
 
 obj\config_reader.obj: \
     include\config_reader.h \
@@ -42,8 +34,6 @@ obj\config_reader.obj: \
     include\vftable.h \
     include\st6.h \
     include\logger.h \
-    makefile.deps \
-    makefile
 
 obj\copy_paste.obj: \
     include\copy_paste.h \
@@ -52,22 +42,16 @@ obj\copy_paste.obj: \
     include\fl_math.h \
     include\st6.h \
     include\utils.h \
-    makefile.deps \
-    makefile
 
 obj\dealer_fixes.obj: \
     include\dealer_fixes.h \
     include\utils.h \
     include\fl_func.h \
-    makefile.deps \
-    makefile
 
 obj\dll_crash.obj: \
     include\dll_crash.h \
     include\utils.h \
     include\logger.h \
-    makefile.deps \
-    makefile
 
 obj\feature_config.obj: \
     include\feature_config.h \
@@ -75,8 +59,6 @@ obj\feature_config.obj: \
     include\fl_math.h \
     include\vftable.h \
     include\st6.h \
-    makefile.deps \
-    makefile
 
 obj\flash_particles.obj: \
     include\flash_particles.h \
@@ -86,13 +68,9 @@ obj\flash_particles.obj: \
     include\st6.h \
     include\utils.h \
     include\fl_func.h \
-    makefile.deps \
-    makefile
 
 obj\fl_math.obj: \
     include\fl_math.h \
-    makefile.deps \
-    makefile
 
 obj\Freelancer.obj: \
     include\Freelancer.h \
@@ -102,8 +80,6 @@ obj\Freelancer.obj: \
     include\st6.h \
     include\fl_func.h \
     include\utils.h \
-    makefile.deps \
-    makefile
 
 obj\group_members.obj: \
     include\group_members.h \
@@ -115,8 +91,6 @@ obj\group_members.obj: \
     include\Freelancer.h \
     include\logger.h \
     include\fl_func.h \
-    makefile.deps \
-    makefile
 
 obj\infocards.obj: \
     include\infocards.h \
@@ -126,14 +100,10 @@ obj\infocards.obj: \
     include\st6.h \
     include\utils.h \
     include\logger.h \
-    makefile.deps \
-    makefile
 
 obj\logger.obj: \
     include\logger.h \
     include\Dacom.h \
-    makefile.deps \
-    makefile
 
 obj\main.obj: \
     include\feature_config.h \
@@ -172,8 +142,6 @@ obj\main.obj: \
     include\dealer_fixes.h \
     include\cheat_detection.h \
     include\group_members.h \
-    makefile.deps \
-    makefile
 
 obj\projectiles.obj: \
     include\projectiles.h \
@@ -183,8 +151,6 @@ obj\projectiles.obj: \
     include\st6.h \
     include\utils.h \
     include\logger.h \
-    makefile.deps \
-    makefile
 
 obj\rep_requirements.obj: \
     include\rep_requirements.h \
@@ -195,8 +161,6 @@ obj\rep_requirements.obj: \
     include\vftable.h \
     include\st6.h \
     include\fl_func.h \
-    makefile.deps \
-    makefile
 
 obj\resolutions.obj: \
     include\resolutions.h \
@@ -208,13 +172,9 @@ obj\resolutions.obj: \
     include\resolutions_asm.h \
     include\utils.h \
     include\fl_func.h \
-    makefile.deps \
-    makefile
 
 obj\resolutions_asm.obj: \
     include\resolutions_asm.h \
-    makefile.deps \
-    makefile
 
 obj\save_crash.obj: \
     include\save_crash.h \
@@ -224,8 +184,6 @@ obj\save_crash.obj: \
     include\vftable.h \
     include\st6.h \
     include\logger.h \
-    makefile.deps \
-    makefile
 
 obj\server_filter.obj: \
     include\utils.h \
@@ -234,8 +192,6 @@ obj\server_filter.obj: \
     include\fl_math.h \
     include\vftable.h \
     include\st6.h \
-    makefile.deps \
-    makefile
 
 obj\shield_capacity.obj: \
     include\shield_capacity.h \
@@ -244,8 +200,6 @@ obj\shield_capacity.obj: \
     include\vftable.h \
     include\st6.h \
     include\utils.h \
-    makefile.deps \
-    makefile
 
 obj\temp_fixes.obj: \
     include\temp_fixes.h \
@@ -256,8 +210,6 @@ obj\temp_fixes.obj: \
     include\st6.h \
     include\utils.h \
     include\logger.h \
-    makefile.deps \
-    makefile
 
 obj\test_sounds.obj: \
     include\test_sounds.h \
@@ -268,8 +220,6 @@ obj\test_sounds.obj: \
     include\utils.h \
     include\Freelancer.h \
     include\fl_func.h \
-    makefile.deps \
-    makefile
 
 obj\trade_lane_lights.obj: \
     include\trade_lane_lights.h \
@@ -278,8 +228,6 @@ obj\trade_lane_lights.obj: \
     include\vftable.h \
     include\st6.h \
     include\utils.h \
-    makefile.deps \
-    makefile
 
 obj\ui_anim.obj: \
     include\ui_anim.h \
@@ -288,8 +236,6 @@ obj\ui_anim.obj: \
     include\fl_math.h \
     include\st6.h \
     include\utils.h \
-    makefile.deps \
-    makefile
 
 obj\update.obj: \
     include\Freelancer.h \
@@ -300,20 +246,14 @@ obj\update.obj: \
     include\update.h \
     include\RemoteServer.h \
     include\utils.h \
-    makefile.deps \
-    makefile
 
 obj\utils.obj: \
     include\utils.h \
-    makefile.deps \
-    makefile
 
 obj\version_check.obj: \
     include\version_check.h \
     include\Dacom.h \
     include\utils.h \
-    makefile.deps \
-    makefile
 
 obj\waypoint.obj: \
     include\waypoint.h \
@@ -323,8 +263,6 @@ obj\waypoint.obj: \
     include\fl_math.h \
     include\vftable.h \
     include\st6.h \
-    makefile.deps \
-    makefile
 
 obj\waypoint_names.obj: \
     include\waypoint_names.h \
@@ -334,8 +272,6 @@ obj\waypoint_names.obj: \
     include\vftable.h \
     include\st6.h \
     include\utils.h \
-    makefile.deps \
-    makefile
 
 obj\weapon_anim.obj: \
     include\weapon_anim.h \
@@ -346,13 +282,9 @@ obj\weapon_anim.obj: \
     include\utils.h \
     include\fl_func.h \
     include\logger.h \
-    makefile.deps \
-    makefile
 
 obj\catch_amalgamated.obj: \
     test\catch_amalgamated.hpp \
-    makefile.deps \
-    makefile
 
 obj\test.obj: \
     test\test.h \
@@ -377,6 +309,4 @@ obj\test.obj: \
     include\cheat_detection.h \
     include\group_members.h \
     include\waypoint_names.h \
-    makefile.deps \
-    makefile
 

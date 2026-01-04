@@ -49,6 +49,8 @@ void CliLauncher::PlayAllFlashParticles(const ID_String& effectName)
     UINT barrelAmount = this->launcher->GetProjectilesPerFire();
 
     // Create the flash particles array if it doesn't exist yet.
+    // TODO: Check for potential memory leaks due to copy constructors, etc.
+    // Can be checked by keeping track of amount of "new" and "delete" calls and verifying whether they are the same.
     if (!this->flashParticlesArr)
         this->flashParticlesArr = new EffectInstance*[barrelAmount]();
 

@@ -46,19 +46,17 @@ NAKED void GetShipRepRequirement_Hook()
 void NN_ShipTrader::StoreShipRepRequirement(PBYTE shipListPtr, float repRequirement)
 {
     #define SHIP_LIST_PTR_START 0x3FC
+    // This code is run in a loop from 0 to shipCount - 1, so the shipIndex should always be valid.
     int shipIndex = (shipListPtr - (PBYTE) this - SHIP_LIST_PTR_START) / sizeof(int);
 
-    if (IsShipIndexValid(shipIndex))
-        this->shipRepPercentages[shipIndex] = GetRepPercentage(repRequirement);
+    this->shipRepPercentages[shipIndex] = GetRepPercentage(repRequirement);
 }
 
 LPWSTR NN_ShipTrader::PrintFmtShipRepRequirement()
 {
     GetFlString(insufficientRepIds, FL_BUFFER_1, FL_BUFFER_LEN);
 
-    if (!IsShipIndexValid(selectedShipIndex))
-        return FL_BUFFER_1;
-
+    // The selectedShipIndex is always correctly calculated before this code is called.
     swprintf_s(FL_BUFFER_2, FL_BUFFER_LEN, FL_BUFFER_1, shipRepPercentages[selectedShipIndex]);
     return FL_BUFFER_2;
 }

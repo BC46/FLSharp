@@ -21,7 +21,7 @@ NAKED void FDUMP_Asm(DumpSeverity severity, LPCSTR fmt, ...)
 
 void Logger::PrintModuleError(LPCSTR functionName, LPCSTR moduleName)
 {
-    FDUMP_FUNC(DumpSeverity::SEV_ERROR, "FLSharp (%s): Could not get module handle %s.", functionName, moduleName);
+    FDUMP_FUNC(DumpSeverity::SEV_ERROR, "FLSharp (%s): Could not get module handle \"%s\".", functionName, moduleName);
 }
 
 void Logger::PrintFileOpenError(LPCSTR functionName, LPCSTR filePath)

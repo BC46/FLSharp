@@ -11,6 +11,7 @@
 #define INIT_NN_ELEMENTS_CALL_ADDR 0x5D4A80
 #define TEST_RESOLUTIONS_ADDR 0x4B2440
 
+// The buffer length is denoted in WORDs.
 #define FL_BUFFER_1 ((LPWSTR) 0x66DC60)
 #define FL_BUFFER_2 ((LPWSTR) 0x66FC60)
 #define FL_BUFFER_LEN *((PUINT) 0x6119F8)
@@ -123,7 +124,8 @@ inline UINT GetFlString(UINT ids, LPWSTR buffer, UINT bufferLen)
 // 0x370 = ShipTrader3DShip*
 struct NN_ShipTrader
 {
-    BYTE x00[0x3D0];
+    BYTE x00[0x3CC];
+    int shipCount; // 0x3CC
     int selectedShipIndex; // 0x3D0
     BYTE x3D4[0x74];
     int shipRepPercentages[SHIP_TRADER_SHIP_AMOUNT]; // 0x448
@@ -133,11 +135,6 @@ struct NN_ShipTrader
 };
 
 void ExpandNNShipTraderObjMemory();
-
-inline bool IsShipIndexValid(int index)
-{
-    return index >= 0 && index < SHIP_TRADER_SHIP_AMOUNT;
-}
 
 struct FLCursor
 {

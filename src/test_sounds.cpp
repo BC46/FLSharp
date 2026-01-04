@@ -105,7 +105,7 @@ void NN_Preferences::VolumeSliderAdjustEnd_Hook(PVOID adjustedScrollElement)
         { 1412, AMBIENCE_VOLUME_SOUND_ID } // ambience
     };
 
-    for (int i = 0; i < sizeof(scrollElements) / sizeof(scrollElements[0]); ++i)
+    for (int i = 0; i < _countof(scrollElements); ++i)
     {
         if (this->scrollElements[i] != adjustedScrollElement)
             continue;
