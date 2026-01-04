@@ -17,7 +17,7 @@ FL_FUNC(void BaseGoodIt::Advance(), baseGoodItAdvanceAddr)
 NAKED void GetGoodSoldByBase_Hook()
 {
     __asm {
-        mov edx, esi
+        mov edx, esi // PlayerData&
         call GetGoodSoldByBaseOrPartOfShip
         jmp [getGoodSoldByBaseRetAddr]
     }

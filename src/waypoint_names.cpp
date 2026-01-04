@@ -76,7 +76,7 @@ MissionObjective* (*GetMissionObjective_Original)(int index);
 
 // When you open the Current Information window while having a random mission waypoint selected, nothing is printed.
 // This is because FL assumes a hard-coded mission objective index of 0 which is only correct for story mission waypoints.
-// This hook attempts to find the correct index dynamically so that the objective is printed for random mission waypoints.
+// This hook attempts to find the correct index dynamically so that the objective is printed for random mission waypoints, too.
 MissionObjective* GetMissionObjective_Hook(int index)
 {
     #define SPACE_OBJECTIVE 0xA
@@ -87,7 +87,9 @@ MissionObjective* GetMissionObjective_Hook(int index)
             return missionObjective;
     }
 
-    return nullptr;
+    // If a space objective couldn't be found, just return return the first objective which FL does by default.
+    // Index should always be 0.
+    return GetMissionObjective_Original(index);
 }
 
 // Init some waypoint name and infocard fixes.

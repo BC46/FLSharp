@@ -5,8 +5,8 @@
 
 struct MissionObjective
 {
-	BYTE fmtStr[0x16]; // 0x0
-	DWORD flags; // 0x18
+    BYTE fmtStr[0x16]; // 0x0
+    DWORD flags; // 0x18
 };
 
 void InitWaypointNameFixes();

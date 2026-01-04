@@ -29,7 +29,7 @@ int FASTCALL get_attitude_towards_Hook(const IObjRW& target, float& attitude, co
     // Check if the reported attitude is hostile and if the target is a player.
     // Also since this hook is called many times, as a sanity check I'm also checking if the player actually is the player.
     if (attitude <= hostileRepThreshold && target.is_player()
-        && player == GetPlayerIObjRW() && player->cobject)
+        && player && player == GetPlayerIObjRW() && player->cobject)
     {
         if (AreIObjRWsInSameGroup(*player, target))
         {

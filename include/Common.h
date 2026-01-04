@@ -222,10 +222,10 @@ struct CSolar : public CEqObj
     IMPORT bool is_waypoint() const;
     IMPORT Archetype::Solar const * solararch() const;
 
-    static inline const CSolar* cast(const CObject *obj)
+    static inline const CSolar* cast(const CObject& obj)
     {
-        if ((obj->classType & CSOLAR_CLASS_TYPE) == CSOLAR_CLASS_TYPE)
-            return (CSolar*) obj;
+        if ((obj.classType & CSOLAR_CLASS_TYPE) == CSOLAR_CLASS_TYPE)
+            return (const CSolar*) &obj;
 
         return nullptr;
     }
@@ -233,7 +233,7 @@ struct CSolar : public CEqObj
 
 inline bool IsObjectAWaypoint(const CObject& cobject)
 {
-    const CSolar* solar = CSolar::cast(&cobject);
+    const CSolar* solar = CSolar::cast(cobject);
 
     if (!solar)
         return false;

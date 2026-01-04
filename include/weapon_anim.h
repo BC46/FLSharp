@@ -22,8 +22,8 @@ struct ModelBinary
 struct EngAnimation
 {
     // The first parameter seems to be a pointer to a stack-struct with the first three DWORDS set to 0 and then a ModelBinary*.
-    bool SetModel_Hook(PDWORD unk, ModelBinary* model);
-    bool SetModel(PDWORD unk, ModelBinary* model);
+    bool SetModel_Hook(PDWORD unk, const ModelBinary* model);
+    bool SetModel(PDWORD unk, const ModelBinary* model);
 };
 
 struct IAnimation2

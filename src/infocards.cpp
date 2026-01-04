@@ -82,7 +82,7 @@ void GetAltSolarIdsInfo(const CSolar* solar, UINT &idsInfo)
 }
 
 // Function which Freelancer calls to obtain the ids infocard of the selected object in the Current Info window.
-int GetInfocard_Hook(CObject* selectedObj, const int &id, UINT &idsInfo)
+int GetInfocard_Hook(const CObject& selectedObj, const int &id, UINT &idsInfo)
 {
     // Is the selected object a solar?
     if (const CSolar* solar = CSolar::cast(selectedObj))
@@ -135,7 +135,7 @@ void InitDynamicSolarInfocards()
 
     // Add a "push esi" instruction so we can check out the selected CObject in our hook.
     #define GET_INFOCARD_CURRENT_INFO_CALL_ADDR 0x475BD8
-    Patch<BYTE>(GET_INFOCARD_CURRENT_INFO_CALL_ADDR, 0x56); // push esi (CObject*)
+    Patch<BYTE>(GET_INFOCARD_CURRENT_INFO_CALL_ADDR, 0x56); // push esi (CObject&)
     Hook(GET_INFOCARD_CURRENT_INFO_CALL_ADDR + 1, GetInfocard_Hook, 5);
 
     // Fix the stack offset of the return value (shifted by 4 bytes due to the added parameter).
