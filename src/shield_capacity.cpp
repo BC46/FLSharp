@@ -5,7 +5,7 @@
 #define FASTCALL __fastcall
 
 // Replaces the "ftol" function.
-long FASTCALL GetShieldCapcity_Hook(const Archetype::ShieldGenerator &shield, float maxCapacity)
+long FASTCALL GetShieldCapacity_Hook(const Archetype::ShieldGenerator &shield, const float &maxCapacity)
 {
     // The calculation can be more efficient/concise but to avoid possible differences in rounding, I'm using the same code as FL.
     float shieldCapacity = maxCapacity - (float) ((long) (shield.offlineThreshold * maxCapacity));
@@ -25,6 +25,6 @@ void InitShieldCapacityFix()
     #define GET_MAX_SHIELD_CAPACITY_ADDR 0x485055
     #define MAX_SHIELD_CAPACITY_FTOL_ADDR 0x48505B
 
-    Patch<WORD>(GET_MAX_SHIELD_CAPACITY_ADDR, 0xB1FF); // fld dword [ecx+0x94] -> push dword [ecx+0x94]
-    Hook(MAX_SHIELD_CAPACITY_FTOL_ADDR, GetShieldCapcity_Hook, 5);
+    Patch<WORD>(GET_MAX_SHIELD_CAPACITY_ADDR, 0x918D); // fld dword [ecx+0x94] -> lea edx, [ecx+0x94]
+    Hook(MAX_SHIELD_CAPACITY_FTOL_ADDR, GetShieldCapacity_Hook, 5);
 }

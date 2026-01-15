@@ -27,7 +27,7 @@ int FASTCALL get_attitude_towards_Hook(const IObjRW& target, float& attitude, co
 
     // FL doesn't test the return value so why should I?
     // Check if the reported attitude is hostile and if the target is a player.
-    // Also since this hook is called many times, as a sanity check I'm also checking if the player actually is the player.
+    // As a sanity check I'm also checking if the "player" actually is the player.
     if (attitude <= hostileRepThreshold && target.is_player()
         && player && player == GetPlayerIObjRW() && player->cobject)
     {
@@ -50,9 +50,8 @@ AttitudeType GetAttitudeType_Hook(const IObjRW* towards, const IObjRW* from)
     if (result != AttitudeType::Hostile)
         return result;
 
-    // If GetAttitudeType returns Attitude::Hostile, that implies towards and from are both non-zero.
+    // If GetAttitudeType returned Attitude::Hostile, that implies towards and from are both non-zero.
     // Check if the towards object is the player and if "from" is another player.
-    // As a sanity check I'm also checking if the towards actually is the player.
     if (from->is_player() && towards == GetPlayerIObjRW() && towards->cobject)
     {
         // If they're in the same group, treat them as neutral rather than hostile.
