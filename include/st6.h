@@ -55,8 +55,11 @@ namespace st6
 
         iterator begin() { return (_First); }
         const_iterator begin() const { return ((const_iterator)_First); }
+        iterator end() { return (_Last); }
+        const_iterator end() const { return ((const_iterator)_Last); }
 
         size_type size() const { return (_First == 0 ? 0 : _Last - _First); }
+        bool empty() const { return (size() == 0); }
 
         const_reference operator[](size_type _P) const { return (*(begin() + _P)); }
         reference operator[](size_type _P) { return (*(begin() + _P)); }
