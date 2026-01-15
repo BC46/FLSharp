@@ -127,11 +127,16 @@ struct NN_ShipTrader
     BYTE x00[0x3CC];
     int shipCount; // 0x3CC
     int selectedShipIndex; // 0x3D0
-    BYTE x3D4[0x74];
+    BYTE x3D4[0x24];
+    float playerReputationWithBaseOwners; // 0x3F8
+    int shipStatuses[SHIP_TRADER_SHIP_AMOUNT]; // 0x3FC
+    BYTE x408[0x40];
     int shipRepPercentages[SHIP_TRADER_SHIP_AMOUNT]; // 0x448
 
-    void StoreShipRepRequirement(PBYTE shipListPtr, float repRequirement);
-    LPWSTR NN_ShipTrader::PrintFmtShipRepRequirement();
+    void StoreShipRepRequirement(int shipIndex, float repRequirement);
+    LPWSTR PrintFmtShipRepRequirement();
+    int __stdcall GetShipCount();
+    PBYTE SwapShipRepPercentages(PBYTE rhsShipStatusOffset);
 };
 
 void ExpandNNShipTraderObjMemory();

@@ -281,6 +281,8 @@ TEST_CASE("value offsets are correct", "[nn_shiptrader]")
 {
     REQUIRE(offsetof(NN_ShipTrader, shipCount) == 0x3CC);
     REQUIRE(offsetof(NN_ShipTrader, selectedShipIndex) == 0x3D0);
+    REQUIRE(offsetof(NN_ShipTrader, playerReputationWithBaseOwners) == 0x3F8);
+    REQUIRE(offsetof(NN_ShipTrader, shipStatuses) == 0x3FC);
     REQUIRE(offsetof(NN_ShipTrader, shipRepPercentages) == 0x448);
 }
 

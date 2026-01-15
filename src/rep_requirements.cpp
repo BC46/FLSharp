@@ -3,6 +3,7 @@
 #include "Freelancer.h"
 #include "fl_func.h"
 #include <stdio.h>
+#include <algorithm>
 
 #define NAKED __declspec(naked)
 
@@ -63,12 +64,58 @@ NAKED void PrintShipRepRequirement_Hook()
     #define PRINT_SHIP_REP_REQUIREMENT_RET_ADDR 0x4B9017
 
     __asm {
-        mov ecx, esi                                    // NN_ShipTrader
+        mov ecx, esi                                    // NN_ShipTrader*
         call NN_ShipTrader::PrintFmtShipRepRequirement
         push eax                                        // buffer
         push 0x1D                                       // 0x1D means print from buffer, 0x1E means print from IDS
         mov eax, PRINT_SHIP_REP_REQUIREMENT_RET_ADDR
         jmp eax
+    }
+}
+
+// Fixes the ship rep percentage indices being wrong when FL reorders the ships.
+int NN_ShipTrader::GetShipCount()
+{
+    struct ShipStatusCmp
+    {
+        const NN_ShipTrader* shipTrader;
+
+        ShipStatusCmp(const NN_ShipTrader* shipTrader)
+            : shipTrader(shipTrader) {}
+
+        bool operator() (const int& lhs, const int& rhs) const
+        {
+            int lhsIndex = &lhs - shipTrader->shipRepPercentages;
+            int rhsIndex = &rhs - shipTrader->shipRepPercentages;
+
+            return shipTrader->shipStatuses[lhsIndex] > shipTrader->shipStatuses[rhsIndex];
+        }
+    };
+
+    std::stable_sort(shipRepPercentages, shipRepPercentages + shipCount, ShipStatusCmp(this));
+
+    return shipCount; // overwritten instruction
+}
+
+PBYTE NN_ShipTrader::SwapShipRepPercentages(PBYTE rhsShipStatusOffset)
+{
+    #define SHIP_STATUS_PTR_START (offsetof(NN_ShipTrader, shipStatuses)
+    int rhsShipIndex = (rhsShipStatusOffset - (PBYTE) this - SHIP_STATUS_PTR_START)) / sizeof(int);
+    std::swap(shipRepPercentages[rhsShipIndex - 1], shipRepPercentages[rhsShipIndex]);
+
+    return rhsShipStatusOffset; // restore eax
+}
+
+// Fixes the ship rep percentage indices being wrong when FL reorders the ships.
+NAKED PBYTE SwapShips_Hook()
+{
+    __asm {
+        mov ecx, ebx                                    // NN_ShipTrader*
+        push eax                                        // rhsShipStatusOffset
+        call NN_ShipTrader::SwapShipRepPercentages
+        mov ecx, [eax+0x14]                             // overwritten instruction #1
+        xor dl, dl                                      // overwritten instruction #2
+        ret
     }
 }
 
@@ -86,6 +133,8 @@ void InitPrintRepRequirements()
     #define REP_REQUIREMENTS_NOT_MET_ADDR 0x480739
     #define GET_SHIP_REQUIREMENT_ADDR 0x4B9462
     #define PRINT_SHIP_REQUIREMENT_ADDR 0x4B9010
+    #define POST_REORDER_SHIPS_ADDR 0x4B9567
+    #define SWAP_SHIPS_ADDR 0x4B9545
 
     insufficientRepIds = GetValue<UINT>(0x4B9011); // 1564 by default
 
@@ -96,4 +145,8 @@ void InitPrintRepRequirements()
 
     Hook(GET_SHIP_REQUIREMENT_ADDR, GetShipRepRequirement_Hook, 7, true);
     Hook(PRINT_SHIP_REQUIREMENT_ADDR, PrintShipRepRequirement_Hook, 7, true);
+
+    //Patch<WORD>(POST_REORDER_SHIPS_ADDR, 0x53); // push ebx (NN_Dealer*)
+    //Hook(POST_REORDER_SHIPS_ADDR + 1, &NN_ShipTrader::GetShipCount, 5);
+    Hook(SWAP_SHIPS_ADDR, SwapShips_Hook, 5);
 }
