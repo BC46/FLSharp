@@ -2,6 +2,7 @@
 
 #define WIN32_LEAN_AND_MEAN
 #include <windows.h>
+#include <cassert>
 
 void Patch(DWORD vOffset, LPVOID mem, UINT len);
 
@@ -34,6 +35,8 @@ Func SetRelPointer(DWORD location, Func hookFunc)
 template <typename Func>
 void Hook(DWORD location, Func hookFunc, UINT instrLen, bool jmp = false)
 {
+    assert(instrLen >= 5);
+
     // Set the opcode for the call or jmp instruction
     Patch<BYTE>(location, jmp ? 0xE9 : 0xE8); // 0xE9 = jmp, 0xE8 = call
 
