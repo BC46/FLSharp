@@ -136,7 +136,7 @@ struct NN_ShipTrader
     void StoreShipRepRequirement(int shipIndex, float repRequirement);
     LPWSTR PrintFmtShipRepRequirement();
     int __stdcall GetShipCount();
-    PBYTE SwapShipRepPercentages(PBYTE rhsShipStatusOffset);
+    PBYTE SwapShipRepPercentages(PBYTE rhsShipStatusAddr);
 };
 
 void ExpandNNShipTraderObjMemory();
