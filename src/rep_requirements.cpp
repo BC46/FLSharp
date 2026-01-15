@@ -33,7 +33,7 @@ NAKED void GetShipRepRequirement_Hook()
         mov [esi+0xC], eax                                  // overwritten instruction #1
         push ecx
         fst dword ptr [esp]                                 // shipLevelRequirement
-        push esi                                            // shipListPtr
+        push ebp                                            // shipIndex
         mov ecx, ebx                                        // NN_ShipTrader
         call NN_ShipTrader::StoreShipRepRequirement
         mov eax, [esp+0x10]                                 // overwritten instruction #2
@@ -43,12 +43,9 @@ NAKED void GetShipRepRequirement_Hook()
 }
 
 // Calculates the ship index and stores the rep requirement as a percentage in the right location.
-void NN_ShipTrader::StoreShipRepRequirement(PBYTE shipListPtr, float repRequirement)
+void NN_ShipTrader::StoreShipRepRequirement(int shipIndex, float repRequirement)
 {
-    #define SHIP_LIST_PTR_START 0x3FC
     // This code is run in a loop from 0 to shipCount - 1, so the shipIndex should always be valid.
-    int shipIndex = (shipListPtr - (PBYTE) this - SHIP_LIST_PTR_START) / sizeof(int);
-
     this->shipRepPercentages[shipIndex] = GetRepPercentage(repRequirement);
 }
 
