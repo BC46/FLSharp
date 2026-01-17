@@ -31,13 +31,13 @@ DWORD playerLauncherFireRet;
 NAKED void HandlePlayerLauncherFire_Hook()
 {
     __asm {
-        push 0x3F800000                     // overwritten instruction
-        xchg ecx, edi                       // preserve ecx, while also setting the fired CELauncher as the thisptr
-        mov esi, edx                        // preserve edx
+        push 0x3F800000                                     // overwritten instruction
+        xchg ecx, edi                                       // preserve ecx, while also setting the fired CELauncher as the thisptr
+        mov esi, edx                                        // preserve edx
         call dword ptr [CELauncher::GetProjectilesPerFire]
-        mov ecx, edi                        // restore ecx
-        mov edx, esi                        // restore edx
-        push eax                            // push projectiles per fire
+        mov ecx, edi                                        // restore ecx
+        mov edx, esi                                        // restore edx
+        push eax                                            // push projectiles per fire
         jmp [playerLauncherFireRet]
     }
 }

@@ -32,15 +32,17 @@ FeatureManager manager;
 
 void CheckDllVersions()
 {
+    // Stores for each DLL its module name and known 1.0 build version.
     std::pair<LPCSTR, UINT32> dlls[] =
     {
         { "common.dll", 1223 },
         { "server.dll", 1223 },
     };
 
-    // Checks if any of the DLLs are v1.0 instead of v1.1.
+    // Checks if any of the DLLs are 1.0 instead of 1.1.
     for (const auto &dll : dlls)
     {
+        // If the build version is anything higher than the 1.0 build, we'll consider it 1.1.
         if (GetDllProductBuildVersion(dll.first) <= dll.second)
         {
             Logger::PrintV10Warning(dll.first);

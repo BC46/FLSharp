@@ -72,19 +72,25 @@ NAKED void PrintShipRepRequirement_Hook()
     }
 }
 
-// TODO: replace eax with edi to get the lhsShipIndex?
 PBYTE NN_ShipTrader::SwapShipRepPercentages(PBYTE rhsShipStatusAddr)
 {
-    #define SHIP_STATUS_PTR_START (offsetof(NN_ShipTrader, shipStatuses)
-    int rhsShipIndex = (rhsShipStatusAddr - (PBYTE) this - SHIP_STATUS_PTR_START)) / sizeof(int);
+    #define SHIP_STATUS_PTR_START (offsetof(NN_ShipTrader, shipStatuses))
+    int rhsShipIndex = (rhsShipStatusAddr - (PBYTE) this - SHIP_STATUS_PTR_START) / sizeof(int);
+
+    // Swap the left-hand side with the right-hand side.
     std::swap(shipRepPercentages[rhsShipIndex - 1], shipRepPercentages[rhsShipIndex]);
 
     return rhsShipStatusAddr; // restore eax
 }
 
-// Fixes the ship rep percentage indices being wrong when FL reorders the ships.
-NAKED PBYTE SwapShips_Hook()
+// Fixes the ship rep percentages being wrong when FL reorders the ships.
+// FL does a stable sort on the ships based on their availability.
+// This hook is called every time FL swaps two ships as part of the sorting algorithm.
+// We swap the ship rep percentages to keep them in sync with FL's ship ordering.
+NAKED void SwapShips_Hook()
 {
+    // One could do "push edi" to send the lhsShipIndex directly to the function,
+    // but the rhsShipIndex can be calculated from rhsShipStatusAddr.
     __asm {
         mov ecx, ebx                                    // NN_ShipTrader*
         push eax                                        // rhsShipStatusAddr
