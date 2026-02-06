@@ -83,6 +83,7 @@ MissionObjective* GetMissionObjective_Hook(int index)
 
     for (int i = 0; MissionObjective* missionObjective = GetMissionObjective_Original(i); ++i)
     {
+        // Try to find the first space objective.
         if ((missionObjective->flags & 0xF) == SPACE_OBJECTIVE)
             return missionObjective;
     }
@@ -114,7 +115,7 @@ void InitWaypointNameFixes()
     Hook(GET_OBJ_NAME_CURRENT_INFO_CALL_ADDR, GetCShipOrCEqObjName_Hook, 5); // Current Information window
     Hook(GET_OBJ_NAME_TARGET_SELECTION_CALL_ADDR, GetCShipOrCEqObjName_Hook, 5); // Target selection
 
-    // Fix nothing being show in the Current Information window for random mission waypoints
+    // Fix nothing being show in the Current Information window for random mission waypoints.
     #define GET_MISSION_OBJECTIVE_INFO_WINDOW_CALL_ADDR 0x475A94
     GetMissionObjective_Original = SetRelPointer(GET_MISSION_OBJECTIVE_INFO_WINDOW_CALL_ADDR + 1, GetMissionObjective_Hook);
 }

@@ -71,9 +71,9 @@ void InitDealerCrashFix()
     #define SET_HOTSPOT_CALL_ADDR 0x43E9CA
 
     // Fixes a crash when clicking on the ship dealer before the room transition has finished.
-    Patch<DWORD>(SET_SHIP_DEALER_MENU_OPENED_ADDR, 0xC5'89'DA'89); // mov edx, ebx + mov ebp, eax
+    PatchBytes(SET_SHIP_DEALER_MENU_OPENED_ADDR, { 0x89, 0xDA, 0x89, 0xC5 }); // mov edx, ebx + mov ebp, eax
     Hook(SET_SHIP_DEALER_MENU_OPENED_ADDR + sizeof(DWORD), SetShipDealerMenuOpened_Hook, 5);
-    Patch<DWORD>(SET_SHIP_DEALER_MENU_OPENED_ADDR + sizeof(DWORD) + 5, 0x90'66'E8'89); // mov eax, ebp + nop
+    PatchBytes(SET_SHIP_DEALER_MENU_OPENED_ADDR + sizeof(DWORD) + 5, { 0x89, 0xE8, 0x66, 0x90 }); // mov eax, ebp + nop
 
     // Fixes a very rare crash that occurs when randomly clicking on various dealers at a base.
     Hook(GET_ROOM_HOTSPOT_ADDR, GetRoomHotspot_Hook, 5);

@@ -1,9 +1,14 @@
 #include "utils.h"
 
-void Patch(DWORD vOffset, LPVOID mem, UINT len)
+void Patch(DWORD vOffset, const LPVOID mem, UINT len)
 {
     ReadWriteProtect(vOffset, len);
     memcpy((PVOID) vOffset, mem, len);
+}
+
+void PatchBytes(DWORD vOffset, std::initializer_list<BYTE> bytes)
+{
+    Patch(vOffset, (LPVOID) bytes.begin(), bytes.size());
 }
 
 void Nop(DWORD vOffset, UINT len)

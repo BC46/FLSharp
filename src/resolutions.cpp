@@ -222,18 +222,18 @@ void InitBetterResolutions()
     // Hook the resolution call address to allow for an additional resolution check.
     Hook(0x5B17AE, ResolutionInit_Hook, 5);
 
-    int resolutionAmount = resolutions.size();
-
+    size_t resolutionAmount = resolutions.size();
     lastResSupportedArr = new BYTE[resolutionAmount * INDEX_RES_AND_SUP_ARR_ENTRY_SIZE];
 
-    int additionalSize = NN_PREFERENCES_ALLOC_SIZE
-        + resolutionAmount * sizeof(ResolutionInfo) // resolution info
+    size_t& nnPreferencesAllocSize = GetValue<size_t>(NN_PREFERENCES_ALLOC_SIZE_PTR);
+    size_t additionalSize =
+        resolutionAmount * sizeof(ResolutionInfo) // resolution info
         + resolutionAmount // supported array
         + resolutionAmount * sizeof(int) // indices in menu
         + sizeof(UINT) * 3; // active and selected height + pointer to supported array
 
     // Expand the allocated heap memory of the NN_Preferences object so that we can store more resolutions
-    Patch(NN_PREFERENCES_ALLOC_SIZE_PTR, &additionalSize, sizeof(additionalSize));
+    nnPreferencesAllocSize += additionalSize;
 
     // These offsets below are always the same so we can just set them once on startup
 

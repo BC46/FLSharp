@@ -37,7 +37,7 @@ void InitAlchemyCrashFix()
 
     if (alchemyHandle)
     {
-        // mod edx, esi followed by push [esp+0x10] (passes the needed parameters to our hook)
+        // mov edx, esi followed by push [esp+0x10] (passes the needed parameters to our hook)
         BYTE startPatch[] = { 0x89, 0xF2, 0xFF, 0x74, 0x24, 0x10 };
         Patch(alchemyHandle + GET_FINISHED_ALE_START_FILE_OFFSET_ALCHEMY, startPatch, sizeof(startPatch));
         Hook(alchemyHandle + GET_FINISHED_ALE_START_FILE_OFFSET_ALCHEMY + sizeof(startPatch), GetFinishedAle, 20);

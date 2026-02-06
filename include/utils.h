@@ -3,14 +3,17 @@
 #define WIN32_LEAN_AND_MEAN
 #include <windows.h>
 #include <cassert>
+#include <initializer_list>
 
-void Patch(DWORD vOffset, LPVOID mem, UINT len);
+void Patch(DWORD vOffset, const LPVOID mem, UINT len);
 
 template <typename Type>
 inline void Patch(DWORD vOffset, Type value)
 {
     Patch(vOffset, &value, sizeof(Type));
 }
+
+void PatchBytes(DWORD vOffset, std::initializer_list<BYTE> bytes);
 
 void Nop(DWORD vOffset, UINT len);
 

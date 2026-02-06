@@ -238,9 +238,8 @@ void InitTestSounds()
     EnsureTestSoundsPlay();
 
     // Boilerplate code for setting the volume slider adjust end hook.
-    BYTE patches[] = { 0xEB, 0x70, 0x51, 0x89, 0xE9 };
-    Patch(VOLUME_SLIDER_ADJUST_END_CALL - 0x70 - 0x2, patches,     2); // jmp 0x04ACBAB
-    Patch(VOLUME_SLIDER_ADJUST_END_CALL,              patches + 2, 3); // push ecx + mov ecx, ebp
+    PatchBytes(VOLUME_SLIDER_ADJUST_END_CALL - 0x70 - 0x2, { 0xEB, 0x70 });         // jmp 0x04ACBAB
+    PatchBytes(VOLUME_SLIDER_ADJUST_END_CALL,              { 0x51, 0x89, 0xE9 });   // push ecx + mov ecx, ebp
 
     Hook(VOLUME_SLIDER_ADJUST_END_CALL + 3, &NN_Preferences::VolumeSliderAdjustEnd_Hook, 5);
     Hook(GET_BGM_INSTANCE_CALL_ADDR, GetBackgroundMusicHandle_Hook, 5);
