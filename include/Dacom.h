@@ -19,5 +19,5 @@ extern "C"
 #ifndef ASM_FDUMP
     IMPORT FDUMP_HANDLER FDUMP;
 #endif
-    IMPORT int DACOM_GetDllVersion(LPCSTR dllName, UINT32& major, UINT32& minor, UINT32& build);
+    IMPORT int DACOM_GetDllVersion(LPCSTR dllPath, UINT32& major, UINT32& minor, UINT32& build);
 }

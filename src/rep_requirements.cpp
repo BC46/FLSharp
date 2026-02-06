@@ -77,7 +77,7 @@ PBYTE NN_ShipTrader::SwapShipRepPercentages(PBYTE rhsShipStatusAddr)
     #define SHIP_STATUS_PTR_START (offsetof(NN_ShipTrader, shipStatuses))
     int rhsShipIndex = (rhsShipStatusAddr - (PBYTE) this - SHIP_STATUS_PTR_START) / sizeof(int);
 
-    // Swap the left-hand side with the right-hand side.
+    // Swap the left-hand side and the right-hand side.
     std::swap(shipRepPercentages[rhsShipIndex - 1], shipRepPercentages[rhsShipIndex]);
 
     return rhsShipStatusAddr; // restore eax

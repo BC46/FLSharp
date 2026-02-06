@@ -32,7 +32,7 @@ const Alchemy* FASTCALL GetFinishedAle(int maxIndex, const Alchemy* aleArr, floa
 void InitAlchemyCrashFix()
 {
     #define GET_FINISHED_ALE_START_FILE_OFFSET_ALCHEMY 0x6FDD
-    #define GET_FINISHED_ALE_END_FILE_OFFSET_ALCHEMY 0x6FE8
+    #define GET_FINISHED_ALE_END_FILE_OFFSET_ALCHEMY 0x6FF7
     DWORD alchemyHandle = (DWORD) GetModuleHandle("alchemy.dll");
 
     if (alchemyHandle)
@@ -40,11 +40,10 @@ void InitAlchemyCrashFix()
         // mod edx, esi followed by push [esp+0x10] (passes the needed parameters to our hook)
         BYTE startPatch[] = { 0x89, 0xF2, 0xFF, 0x74, 0x24, 0x10 };
         Patch(alchemyHandle + GET_FINISHED_ALE_START_FILE_OFFSET_ALCHEMY, startPatch, sizeof(startPatch));
-        Hook(alchemyHandle + GET_FINISHED_ALE_START_FILE_OFFSET_ALCHEMY + sizeof(startPatch), GetFinishedAle, 5);
+        Hook(alchemyHandle + GET_FINISHED_ALE_START_FILE_OFFSET_ALCHEMY + sizeof(startPatch), GetFinishedAle, 20);
 
-        // mov esi, eax followed by a jmp (set the return value so that the rest of the alchemy code can use it)
-        BYTE endPatch[] = { 0x89, 0xC6, 0xEB, 0x0D };
-        Patch(alchemyHandle + GET_FINISHED_ALE_END_FILE_OFFSET_ALCHEMY, endPatch, sizeof(endPatch));
+        // mov esi, eax (set the return value so that the rest of the alchemy code can use it)
+        Patch<WORD>(alchemyHandle + GET_FINISHED_ALE_END_FILE_OFFSET_ALCHEMY, 0xC689);
     }
     else
     {

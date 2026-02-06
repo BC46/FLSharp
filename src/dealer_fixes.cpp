@@ -43,7 +43,7 @@ void (NavBar::*SetHotspot_Original)(PVOID hotspot);
 
 void NavBar::SetHotspot_Hook(PVOID hotspot)
 {
-    // Yeah, let's not do that.
+    // Yeah, let's not call the function without a valid hotspot.
     if (hotspot)
     {
         (this->*SetHotspot_Original)(hotspot);

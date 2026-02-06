@@ -1,7 +1,7 @@
 #include "trade_lane_lights.h"
 #include "utils.h"
 
-// Hook that gets called each time a tradelane has been disrupted or restored.
+// Hook that gets called each time a trade lane has been disrupted or restored.
 // When it is disrupted, we turn off the lights, and when it's restored, we turn on the lights.
 void TradeLaneEquipObj::SetLightsState_Hook()
 {

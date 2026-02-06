@@ -54,6 +54,8 @@ struct AudioOption
     DWORD x0C, x10, x14;
 };
 
+//#define P_IN_GAME_RES ((ResolutionInfo*) 0x679BC8)
+
 #define NN_PREFERENCES_NEW_DATA 0x98C
 
 // 0x330 = current selected width
@@ -129,13 +131,12 @@ struct NN_ShipTrader
     int selectedShipIndex; // 0x3D0
     BYTE x3D4[0x24];
     float playerReputationWithBaseOwners; // 0x3F8
-    int shipStatuses[SHIP_TRADER_SHIP_AMOUNT]; // 0x3FC
+    int shipStatuses[SHIP_TRADER_SHIP_AMOUNT]; // 0x3FC, basically enums for available, rep too low, or level too low
     BYTE x408[0x40];
     int shipRepPercentages[SHIP_TRADER_SHIP_AMOUNT]; // 0x448
 
     void StoreShipRepRequirement(int shipIndex, float repRequirement);
     LPWSTR PrintFmtShipRepRequirement();
-    int __stdcall GetShipCount();
     PBYTE SwapShipRepPercentages(PBYTE rhsShipStatusAddr);
 };
 
