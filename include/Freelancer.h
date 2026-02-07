@@ -109,6 +109,8 @@ IObjRW* GetPlayerIObjRW();
 CShip* GetPlayerShip();
 CShip* GetPlayerShipSafe();
 
+bool AreIObjRWsInSameGroup(const IObjRW& o1, const IObjRW& o2);
+
 bool IsSimpleUnvisited(const CSimple& simple);
 BYTE GetSimpleVisitedValue(const CSimple& simple);
 UINT GetIdsForUnvisitedSimple(const CSimple& simple);
@@ -153,3 +155,5 @@ struct ServerFilterDialog
 };
 
 void UpdateDeltaTime();
+
+UINT GetNumOfActiveMissionObjectives();

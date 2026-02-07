@@ -225,12 +225,12 @@ void InitBetterResolutions()
     size_t resolutionAmount = resolutions.size();
     lastResSupportedArr = new BYTE[resolutionAmount * INDEX_RES_AND_SUP_ARR_ENTRY_SIZE];
 
-    size_t& nnPreferencesAllocSize = GetValue<size_t>(NN_PREFERENCES_ALLOC_SIZE_PTR);
+    UINT32& nnPreferencesAllocSize = GetValue<UINT32>(NN_PREFERENCES_ALLOC_SIZE_PTR);
     size_t additionalSize =
         resolutionAmount * sizeof(ResolutionInfo) // resolution info
         + resolutionAmount // supported array
         + resolutionAmount * sizeof(int) // indices in menu
-        + sizeof(UINT) * 3; // active and selected height + pointer to supported array
+        + sizeof(UINT32) * 3; // active and selected height + pointer to supported array
 
     // Expand the allocated heap memory of the NN_Preferences object so that we can store more resolutions
     nnPreferencesAllocSize += additionalSize;

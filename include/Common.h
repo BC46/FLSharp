@@ -160,7 +160,7 @@ struct IMPORT CObject : public EngineObject
 struct IMPORT CSimple : CObject
 {
     BYTE x50[0x60];
-    UINT nickname; // xB0
+    UINT nickname; // or simpleId, 0xB0
 };
 
 class CAttachedEquip
@@ -265,6 +265,10 @@ struct IObjRW // : public IObjInspectImpl
 {
     BYTE x04[0xC];
     CObject* cobject; // 0x10
+    BYTE x14[0x8];
+    int unk_x1C; // 0x1C
+    BYTE x20[0x16C];
+    DWORD flags; // 0x18C
 
     FILL_VFTABLE(0)
     FILL_VFTABLE(1)
@@ -276,7 +280,10 @@ struct IObjRW // : public IObjInspectImpl
     virtual void Vftable_x64();
     virtual int get_attitude_towards(float &attitude, IObjRW const *other) const; // 0x68
     virtual void Vftable_x6C();
-    FILL_VFTABLE(7)
+    virtual void Vftable_x70();
+    virtual int get_target(const IObjRW *&target) const; // 0x74
+    virtual void Vftable_x78();
+    virtual void Vftable_x7C();
     FILL_VFTABLE(8)
     FILL_VFTABLE(9)
     FILL_VFTABLE(A)
@@ -284,6 +291,12 @@ struct IObjRW // : public IObjInspectImpl
     virtual void Vftable_xB4();
     virtual void Vftable_xB8();
     virtual bool is_player() const; // 0xBC
+
+    inline bool SentTradeRequest() const
+    {
+        #define TRADE_REQUEST_FLAGS 0x4
+        return (flags & TRADE_REQUEST_FLAGS) != 0;
+    }
 };
 
 struct PhysicsInfo

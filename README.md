@@ -48,6 +48,7 @@ These include:
 - No longer kick players from the server for re-purchasing the same ship.
 - Allows the player to enter formation with hostile group members.
 - Prevented hostile group members from being shown as hostile.
+- Added custom targeting cursor colors for group members and players who sent a trade request.
 
 More fixes and improvements may be added in the future.
 

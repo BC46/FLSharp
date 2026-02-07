@@ -13,7 +13,7 @@
 #include "weapon_anim.h"
 #include "dealer_fixes.h"
 #include "cheat_detection.h"
-#include "group_members.h"
+#include "cursor_colors.h"
 #include "waypoint_names.h"
 
 // alchemy_crash.h
@@ -159,11 +159,14 @@ TEST_CASE("vftable offsets are correct", "[ceengine]")
 TEST_CASE("value offsets are correct", "[iobjrw]")
 {
     REQUIRE(offsetof(IObjRW, cobject) == 0x10);
+    REQUIRE(offsetof(IObjRW, unk_x1C) == 0x1C);
+    REQUIRE(offsetof(IObjRW, flags) == 0x18C);
 }
 
 TEST_CASE("vftable offsets are correct", "[iobjrw]")
 {
     REQUIRE(GetVftableOffset<IObjRW>(&IObjRW::get_attitude_towards) == 0x68);
+    REQUIRE(GetVftableOffset<IObjRW>(&IObjRW::get_target) == 0x74);
     REQUIRE(GetVftableOffset<IObjRW>(&IObjRW::is_player) == 0xBC);
 }
 
@@ -442,10 +445,29 @@ TEST_CASE("value offsets are correct", "[basemarket]")
     REQUIRE(offsetof(BaseMarket, baseGoods) == 0x4);
 }
 
-// group_members.h
+// cursor_colors.h
 TEST_CASE("size is correct", "[mousecursor]")
 {
     REQUIRE(sizeof(MouseCursor) == 0x90);
+}
+
+TEST_CASE("value offsets are correct", "[mousecursor]")
+{
+    REQUIRE(offsetof(MouseCursor, nicknameLen) == 0x0);
+    REQUIRE(offsetof(MouseCursor, nickname) == 0x4);
+    REQUIRE(offsetof(MouseCursor, animNameLen) == 0x28);
+    REQUIRE(offsetof(MouseCursor, animName) == 0x2C);
+    REQUIRE(offsetof(MouseCursor, hotspotX) == 0x44);
+    REQUIRE(offsetof(MouseCursor, hotspotY) == 0x48);
+    REQUIRE(offsetof(MouseCursor, color) == 0x4C);
+    REQUIRE(offsetof(MouseCursor, animValue1) == 0x60);
+    REQUIRE(offsetof(MouseCursor, animState) == 0x64);
+}
+
+TEST_CASE("value offsets are correct", "[targetable_objects]")
+{
+    REQUIRE(offsetof(Targetable_Objects, selectedSimple) == 0x3F0);
+    REQUIRE(offsetof(Targetable_Objects, isAimLocking) == 0x928);
 }
 
 // waypoint_names.h

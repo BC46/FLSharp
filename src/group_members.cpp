@@ -1,6 +1,5 @@
 #include "group_members.h"
 #include "utils.h"
-#include "Common.h"
 #include "Freelancer.h"
 #include "logger.h"
 #include "fl_func.h"
@@ -11,15 +10,6 @@
 FL_FUNC(AttitudeType GetAttitudeType(const IObjRW* towards, const IObjRW* from), 0x45A490)
 
 float hostileRepThreshold = -0.6f;
-
-// Assumes both the CObjects of IObjRWs are CShips.
-bool AreIObjRWsInSameGroup(const IObjRW& o1, const IObjRW& o2)
-{
-    auto& ship1 = (const CShip&) *o1.cobject;
-    auto& ship2 = (const CShip&) *o2.cobject;
-
-    return ship1.groupId && ship1.groupId == ship2.groupId;
-}
 
 int FASTCALL get_attitude_towards_Hook(const IObjRW& target, float& attitude, const IObjRW* player)
 {
@@ -92,8 +82,9 @@ void InitHostileGroupMembersFix()
 {
     // Doing a trampoline hook was inconvenient here, so just manually hook all the call locations,
     // except for 0x475770 which should be handled by the TODO below.
+    // Also the call that determines which targeting cursor is used (0x4EC891), is not hooked here either.
     const DWORD getAttitudeTypeCalls[] = {
-        0x48AEAB, 0x4E4950, 0x4EC10E, 0x4EC71A, 0x4EC891, 0x4F1CFF, 0x4F22E4,
+        0x48AEAB, 0x4E4950, 0x4EC10E, 0x4EC71A, 0x4F1CFF, 0x4F22E4,
         0x4F2465, 0x53A98C, 0x553290, 0x5532AD, 0x553325, 0x5552A8 };
 
     for (const auto &call : getAttitudeTypeCalls)

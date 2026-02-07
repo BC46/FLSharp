@@ -33,6 +33,15 @@ CShip* GetPlayerShipSafe()
     return nullptr;
 }
 
+// Assumes both the CObjects of IObjRWs are CShips.
+bool AreIObjRWsInSameGroup(const IObjRW& o1, const IObjRW& o2)
+{
+    auto& ship1 = (const CShip&) *o1.cobject;
+    auto& ship2 = (const CShip&) *o2.cobject;
+
+    return ship1.groupId && ship1.groupId == ship2.groupId;
+}
+
 FL_FUNC(bool IsSimpleUnvisited(const CSimple& simple), 0x4D4C70);
 FL_FUNC(BYTE GetSimpleVisitedValue(const CSimple& simple), 0x4D4D00);
 FL_FUNC(UINT GetIdsForUnvisitedSimple(const CSimple& simple), 0x4D4D50);
@@ -55,3 +64,5 @@ void ExpandNNShipTraderObjMemory()
 }
 
 FL_FUNC(void UpdateDeltaTime(), 0x42D770)
+
+FL_FUNC(UINT GetNumOfActiveMissionObjectives(), 0x4C4FB0)

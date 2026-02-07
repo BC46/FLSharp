@@ -43,6 +43,16 @@ obj\copy_paste.obj: \
     include\st6.h \
     include\utils.h \
 
+obj\cursor_colors.obj: \
+    include\cursor_colors.h \
+    include\Common.h \
+    include\fl_math.h \
+    include\vftable.h \
+    include\st6.h \
+    include\utils.h \
+    include\Freelancer.h \
+    include\fl_func.h \
+
 obj\dealer_fixes.obj: \
     include\dealer_fixes.h \
     include\utils.h \
@@ -84,11 +94,11 @@ obj\Freelancer.obj: \
 obj\group_members.obj: \
     include\group_members.h \
     include\utils.h \
+    include\Freelancer.h \
     include\Common.h \
     include\fl_math.h \
     include\vftable.h \
     include\st6.h \
-    include\Freelancer.h \
     include\logger.h \
     include\fl_func.h \
 
@@ -142,6 +152,7 @@ obj\main.obj: \
     include\dealer_fixes.h \
     include\cheat_detection.h \
     include\group_members.h \
+    include\cursor_colors.h \
 
 obj\projectiles.obj: \
     include\projectiles.h \
@@ -307,6 +318,6 @@ obj\test.obj: \
     include\weapon_anim.h \
     include\dealer_fixes.h \
     include\cheat_detection.h \
-    include\group_members.h \
+    include\cursor_colors.h \
     include\waypoint_names.h \
 

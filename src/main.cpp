@@ -27,6 +27,7 @@
 #include "dealer_fixes.h"
 #include "cheat_detection.h"
 #include "group_members.h"
+#include "cursor_colors.h"
 
 FeatureManager manager;
 
@@ -82,6 +83,7 @@ void Init()
     manager.RegisterFeature("ship_buy_kick_fix",        InitShipBuyKickFix,         nullptr,                    ApplyOnlyOnServer);
     manager.RegisterFeature("hostile_group_formation",  InitHostileGroupFormation,  nullptr,                    ApplyOnlyOnClient);
     manager.RegisterFeature("unhostile_group_members",  InitHostileGroupMembersFix, nullptr,                    ApplyOnlyOnClient);
+    manager.RegisterFeature("more_cursor_colors",       InitMoreCursorColors,       nullptr,                    ApplyOnlyOnClient);
 
     ReadConfig("FLSharp.ini", manager);
 
