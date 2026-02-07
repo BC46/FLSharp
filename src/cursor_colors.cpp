@@ -18,6 +18,17 @@
 #define GROUP_MEMBER_COLOR (*(PDWORD) 0x679B88)
 #define TRADE_REQUEST_COLOR (*(PDWORD) 0x679B9C)
 
+const IObjRW *lastSelectedObj = nullptr;
+
+FL_FUNC(const IObjRW* FindIObjRW(UINT nickname, DWORD unk), 0x05416C0)
+
+// Calling FindIObjRW manually every time we want to check the highlighted object is inefficient,
+// so we intercept the call that FL make every frame and save the last selected object.
+const IObjRW* FindCurrentSelectedIObjRW_Hook(UINT nickname, DWORD unk)
+{
+    return lastSelectedObj = FindIObjRW(nickname, unk);
+}
+
 std::map<MouseCursor*, std::shared_ptr<MouseCursor>> groupCursors, tradeRequestCursors;
 
 std::shared_ptr<MouseCursor> CreateCustomCursor(const MouseCursor& originalCursor, DWORD color)
@@ -29,6 +40,42 @@ std::shared_ptr<MouseCursor> CreateCustomCursor(const MouseCursor& originalCurso
     return result;
 }
 
+void FillCustomCursorMaps(std::vector<LPCSTR> cursorNames, LPCSTR neutralCursorName)
+{
+    std::vector<MouseCursor*> cursors;
+
+    // Find the relevant cursors.
+    for (UINT i = 0; i < CURSOR_LIST_SIZE; ++i)
+    {
+        for (const auto normalCursorName : cursorNames)
+        {
+            if (strcmp(CURSOR_LIST[i]->nickname, normalCursorName) == 0)
+                cursors.push_back(CURSOR_LIST[i]);
+        }
+    }
+
+    // Get the neutral cursor which we want to copy.
+    auto neutralCursorIt = std::find_if(cursors.begin(), cursors.end(),
+        [neutralCursorName](const MouseCursor* cursor) {
+            return strcmp(cursor->nickname, neutralCursorName) == 0;
+        }
+    );
+
+    // Create new cursors based on the copied neutral cursor
+    // and store them by the original friendly, neutral, and hostile version for easy access.
+    if (neutralCursorIt != cursors.end())
+    {
+        auto groupCursor = CreateCustomCursor(**neutralCursorIt, GROUP_MEMBER_COLOR);
+        auto tradeRequestCursor = CreateCustomCursor(**neutralCursorIt, TRADE_REQUEST_COLOR);
+
+        for (const auto cursor : cursors)
+        {
+            groupCursors.emplace(cursor, groupCursor);
+            tradeRequestCursors.emplace(cursor, tradeRequestCursor);
+        }
+    }
+}
+
 void (*InitCursors_Original)();
 
 void InitCursors_Hook()
@@ -37,144 +84,41 @@ void InitCursors_Hook()
     // After it has finished, we want to create our custom-colored cursors by copying the existing neutral cursors.
     InitCursors_Original();
 
-    MouseCursor* neutralCursor = nullptr;
-    MouseCursor* fireNeutralCursor = nullptr;
+    std::vector<LPCSTR> normalCursorNames = { "friendly", "neutral", "hostile" };
+    std::vector<LPCSTR> fireCursorNames = { "fire_friendly", "fire_neutral", "fire" };
 
-    LPCSTR normalCursorNames[] = { "friendly", "neutral", "hostile" };
-    LPCSTR fireCursorNames[] = { "fire_friendly", "fire_neutral", "fire" };
-
-    std::vector<MouseCursor*> normalCursors, fireCursors;
-
-    // Find the relevant cursors.
-    for (UINT i = 0; i < CURSOR_LIST_SIZE; ++i)
-    {
-        MouseCursor* cursor = CURSOR_LIST[i];
-
-        for (const auto &normalCursorName : normalCursorNames)
-        {
-            if (strcmp(cursor->nickname, normalCursorName) == 0)
-                normalCursors.push_back(cursor);
-        }
-
-        for (const auto &fireCursorName : fireCursorNames)
-        {
-            if (strcmp(cursor->nickname, fireCursorName) == 0)
-                fireCursors.push_back(cursor);
-        }
-    }
-
-    // Get the neutral cursor which we want to copy.
-    auto neutralCursorIt = std::find_if(normalCursors.begin(), normalCursors.end(),
-        [](const MouseCursor* cursor) { return strcmp(cursor->nickname, "neutral") == 0; });
-
-    if (neutralCursorIt != normalCursors.end())
-    {
-        auto groupCursor = CreateCustomCursor(**neutralCursorIt, GROUP_MEMBER_COLOR);
-        auto tradeRequestCursor = CreateCustomCursor(**neutralCursorIt, TRADE_REQUEST_COLOR);
-
-        for (const auto &normalCursor : normalCursors)
-        {
-            groupCursors.emplace(normalCursor, groupCursor);
-            tradeRequestCursors.emplace(normalCursor, tradeRequestCursor);
-        }
-    }
-
-    auto fireNeutralCursorIt = std::find_if(fireCursors.begin(), fireCursors.end(),
-        [](const MouseCursor* cursor) { return strcmp(cursor->nickname, "fire_neutral") == 0; });
-
-    if (fireNeutralCursorIt != fireCursors.end())
-    {
-        auto groupCursor = CreateCustomCursor(**fireNeutralCursorIt, GROUP_MEMBER_COLOR);
-        auto tradeRequestCursor = CreateCustomCursor(**fireNeutralCursorIt, TRADE_REQUEST_COLOR);
-
-        for (const auto &fireCursor : fireCursors)
-        {
-            groupCursors.emplace(fireCursor, groupCursor);
-            tradeRequestCursors.emplace(fireCursor, tradeRequestCursor);
-        }
-    }
+    FillCustomCursorMaps(normalCursorNames, "neutral");
+    FillCustomCursorMaps(fireCursorNames, "fire_neutral");
 }
 
 FL_FUNC(void SetCurrentCursor(LPCSTR cursorName, bool unk), 0x41DDE0)
-FL_FUNC(IObjRW* FindIObjRW(UINT nickname, DWORD unk), 0x05416C0)
 
-// TODO: target is not
-// Check [ebp + 0x928] for bool isTargetting
 void FASTCALL SetCurrentCustomAimCursor(const Targetable_Objects& to, const IObjRW *highlightedObj, LPCSTR cursorName, bool unk)
 {
-    const IObjRW* player = GetPlayerIObjRW();
-
     // This function updates the CURRENT_CURSOR for targeting (aiming).
     SetCurrentCursor(cursorName, unk);
 
+    // Check if the player can be obtained.
+    const IObjRW* player = GetPlayerIObjRW();
     if (!player || player->unk_x1C != 1)
         return;
 
+    // Try to get the target.
     const IObjRW *target = nullptr;
-    // if (to.isAimLocking)
-    // {
-    //     // I'm not testing the return value because FL doesn't do it either.
-    //     player->get_target(target);
-    // }
-
-    // if (!target)
-    // {
-    //     target = highlightedObj;
-    // }
-
-    // if (!target || target == player)
-    //     return;
-
     if (highlightedObj != player)
     {
         target = highlightedObj;
-    } else if (to.selectedSimple) {
-        target = FindIObjRW(to.selectedSimple->nickname, 0);
     }
-
-    // if (to.isAimLocking && to.selectedSimple)
-    // {
-    //     target = FindIObjRW(to.selectedSimple->nickname, 0);
-    // } else if (to.selectedSimple && highlightedObj == player)
-    // {
-    //     target = FindIObjRW(to.selectedSimple->nickname, 0);
-    // } else {
-    //     target = highlightedObj;
-    // }
-
-    // if (highlightedObj && highlightedObj != player)
-    // {
-    //     target = highlightedObj;
-    // }
-    // else
-    // {
-    //     if (to.selectedSimple)
-    //     {
-    //         target = FindIObjRW(to.selectedSimple->nickname, 0);
-    //     }
-    // }
-
-    // if (!to.isAimLocking)
-    // {
-    //     if (to.selectedSimple)
-    //     {
-    //         target = FindIObjRW(to.selectedSimple->nickname, 0);
-    //     }
-    //     else
-    //     {
-    //         target = highlightedObj;
-    //     }
-    // }
-    // else
-    // {
-    //     target = highlightedObj;
-    // }
+    else if (to.selectedSimple && lastSelectedObj)
+    {
+        if (to.selectedSimple == lastSelectedObj->cobject)
+            target = lastSelectedObj;
+    }
 
     if (!target)
-    {
         return;
-    }
 
+    // If the target has been found, check if it is a player who sent a trade request or is a group member.
     std::map<MouseCursor*, std::shared_ptr<MouseCursor>>* customCursorMap = nullptr;
     if (target->is_player())
     {
@@ -184,6 +128,7 @@ void FASTCALL SetCurrentCustomAimCursor(const Targetable_Objects& to, const IObj
             customCursorMap = &groupCursors;
     }
 
+    // If we found a better suitable custom cursor, set it as the current cursor.
     if (customCursorMap)
     {
         auto it = customCursorMap->find(CURRENT_CURSOR);
@@ -196,6 +141,7 @@ void FASTCALL SetCurrentCustomAimCursor(const Targetable_Objects& to, const IObj
     }
 }
 
+// Gets called when FL changes the current aim cursor.
 NAKED void SetCurrentAimCursor_Hook()
 {
     __asm {
@@ -213,6 +159,9 @@ void InitMoreCursorColors()
 {
     #define INIT_CURSORS_CALL_ADDR 0x59D60B
     InitCursors_Original = SetRelPointer(INIT_CURSORS_CALL_ADDR + 1, InitCursors_Hook);
+
+    #define FIND_SELECTED_IOBJRW_CALL_ADDR 0x4F22D6
+    Hook(FIND_SELECTED_IOBJRW_CALL_ADDR, FindCurrentSelectedIObjRW_Hook, 5);
 
     DWORD setCurrentAimCursorCalls[] = { 0x4EC914, 0x4EC953 };
     for (auto aimCursorCall : setCurrentAimCursorCalls)

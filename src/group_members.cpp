@@ -42,7 +42,7 @@ AttitudeType GetAttitudeType_Hook(const IObjRW* towards, const IObjRW* from)
 
     // If GetAttitudeType returned Attitude::Hostile, that implies towards and from are both non-zero.
     // Check if the towards object is the player and if "from" is another player.
-    if (from->is_player() && towards == GetPlayerIObjRW() && towards->cobject)
+    if (from->is_player() && towards == GetPlayerIObjRW() && towards != from && towards->cobject)
     {
         // If they're in the same group, treat them as neutral rather than hostile.
         if (AreIObjRWsInSameGroup(*towards, *from))
