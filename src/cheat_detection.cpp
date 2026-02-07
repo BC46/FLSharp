@@ -8,7 +8,6 @@
 #define NAKED __declspec(naked)
 
 DWORD getGoodSoldByBaseCallAddr = 0;
-DWORD getGoodSoldByBaseRetAddr = 0;
 DWORD baseGoodItAdvanceAddr = 0;
 
 FL_FUNC(const MarketGood* BaseMarket::GetSoldGood(UINT goodId) const, getGoodSoldByBaseCallAddr)
@@ -17,9 +16,8 @@ FL_FUNC(void BaseGoodIt::Advance(), baseGoodItAdvanceAddr)
 NAKED void GetGoodSoldByBase_Hook()
 {
     __asm {
-        mov edx, esi // PlayerData&
-        call GetGoodSoldByBaseOrPartOfShip
-        jmp [getGoodSoldByBaseRetAddr]
+        mov edx, esi                        // PlayerData&
+        jmp GetGoodSoldByBaseOrPartOfShip
     }
 }
 
@@ -99,8 +97,7 @@ void InitShipBuyKickFix()
     }
 
     getGoodSoldByBaseCallAddr = serverHandle + 0x33000;
-    getGoodSoldByBaseRetAddr = serverHandle + 0x6FEF0;
     baseGoodItAdvanceAddr = serverHandle + 0x35DE0;
 
-    Hook(serverHandle + GET_GOOD_SOLD_BY_BASE_CALL_OFFSET_SERVER, GetGoodSoldByBase_Hook, 5, true);
+    Hook(serverHandle + GET_GOOD_SOLD_BY_BASE_CALL_OFFSET_SERVER, GetGoodSoldByBase_Hook, 5);
 }
