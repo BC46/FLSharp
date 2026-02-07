@@ -25,6 +25,9 @@ struct Targetable_Objects
     const CSimple* selectedSimple; // 0x3F0
     BYTE x3F4[0x534];
     bool isAimLocking; // 0x928
+
+    void UpdateTargeting_Hook();
+    void UpdateTargeting();
 };
 
 void InitMoreCursorColors();

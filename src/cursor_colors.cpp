@@ -20,6 +20,16 @@
 
 const IObjRW *lastSelectedObj = nullptr;
 
+FL_FUNC(void Targetable_Objects::UpdateTargeting(), 0x4F2220)
+
+// We want to reset the lastSelectedObj before the targeting is updated
+// to ensure lastSelectedObj never points to invalid memory.
+void Targetable_Objects::UpdateTargeting_Hook()
+{
+    lastSelectedObj = nullptr;
+    UpdateTargeting();
+}
+
 FL_FUNC(const IObjRW* FindIObjRW(UINT nickname, DWORD unk), 0x05416C0)
 
 // Calling FindIObjRW manually every time we want to check the highlighted object is inefficient,
@@ -28,6 +38,25 @@ const IObjRW* FindCurrentSelectedIObjRW_Hook(UINT nickname, DWORD unk)
 {
     return lastSelectedObj = FindIObjRW(nickname, unk);
 }
+
+// Gets called when FL checks the attitude of the targeted (aim locked) object
+NAKED void GetAttitudeOfTarget_Hook()
+{
+    #define GET_ATTITUDE_OF_TARGET_RET_ADDR 0x4F2465
+
+    __asm {
+        test eax, eax
+        je skip
+        mov lastSelectedObj, eax        // save the targeted (aim locked) object
+    skip:
+        mov edx, [esp+0x30]             // overwritten instructions
+        push eax
+        push edx
+        mov ecx, GET_ATTITUDE_OF_TARGET_RET_ADDR
+        jmp ecx
+    }
+}
+
 
 std::map<MouseCursor*, std::shared_ptr<MouseCursor>> groupCursors, tradeRequestCursors;
 
@@ -105,14 +134,13 @@ void FASTCALL SetCurrentCustomAimCursor(const Targetable_Objects& to, const IObj
 
     // Try to get the target.
     const IObjRW *target = nullptr;
-    if (highlightedObj != player)
+    if (highlightedObj != player && !to.isAimLocking)
     {
         target = highlightedObj;
     }
-    else if (to.selectedSimple && lastSelectedObj)
+    else if (lastSelectedObj)
     {
-        if (to.selectedSimple == lastSelectedObj->cobject)
-            target = lastSelectedObj;
+        target = lastSelectedObj;
     }
 
     if (!target)
@@ -160,8 +188,14 @@ void InitMoreCursorColors()
     #define INIT_CURSORS_CALL_ADDR 0x59D60B
     InitCursors_Original = SetRelPointer(INIT_CURSORS_CALL_ADDR + 1, InitCursors_Hook);
 
+    #define UPDATE_TARGETING_CALL_ADDR 0x4EC5EE
+    Hook(UPDATE_TARGETING_CALL_ADDR, &Targetable_Objects::UpdateTargeting_Hook, 5);
+
     #define FIND_SELECTED_IOBJRW_CALL_ADDR 0x4F22D6
     Hook(FIND_SELECTED_IOBJRW_CALL_ADDR, FindCurrentSelectedIObjRW_Hook, 5);
+
+    #define GET_ATTITUDE_OF_TARGET_ADDR 0x4F245F
+    Hook(GET_ATTITUDE_OF_TARGET_ADDR, GetAttitudeOfTarget_Hook, 6, true);
 
     DWORD setCurrentAimCursorCalls[] = { 0x4EC914, 0x4EC953 };
     for (auto aimCursorCall : setCurrentAimCursorCalls)
