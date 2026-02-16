@@ -66,16 +66,16 @@ $(OUTPUT_FILE): $(OBJ_FILES) $(RES_FILE) $(COMMON_LIB) $(DALIB_LIB) $(DACOM_LIB)
 {$(SRC_DIR)}.cpp{$(OBJ_DIR)}.obj::
     $(CPP) $(CPP_FLAGS) $< -I$(INCLUDE_DIR) /Fo./$(OBJ_DIR)/
 
-$(RES_FILE): $(RC_FILE) $(OBJ_DIR) makefile
+$(RES_FILE): $(RC_FILE) $(OBJ_DIR)
     rc $(RC_FLAGS) /fo $(RES_FILE) $(RC_FILE)
 
-$(COMMON_LIB): $(COMMON_DEF) $(INCLUDE_DIR)/Common.h makefile
+$(COMMON_LIB): $(COMMON_DEF) $(INCLUDE_DIR)/Common.h
     lib $(LIB_FLAGS) /def:$(COMMON_DEF) /name:COMMON /out:$(COMMON_LIB)
 
-$(DALIB_LIB): $(DALIB_DEF) $(INCLUDE_DIR)/DALib.h makefile
+$(DALIB_LIB): $(DALIB_DEF) $(INCLUDE_DIR)/DALib.h
     lib $(LIB_FLAGS) /def:$(DALIB_DEF) /name:DALIB /out:$(DALIB_LIB)
 
-$(DACOM_LIB): $(DACOM_DEF) $(INCLUDE_DIR)/Dacom.h makefile
+$(DACOM_LIB): $(DACOM_DEF) $(INCLUDE_DIR)/Dacom.h
     lib $(LIB_FLAGS) /def:$(DACOM_DEF) /name:DACOM /out:$(DACOM_LIB)
 
 $(OBJ_DIR):
@@ -108,6 +108,6 @@ $(TEST_OUTPUT_FILE): $(TEST_OBJ_FILE) $(CATCH_OBJ_FILE)
 clean:
     del $(BIN_DIR)\*.dll $(BIN_DIR)\*.exe $(BIN_DIR)\*.pdb $(BIN_DIR)\*.ipdb $(BIN_DIR)\*.iobj $(BIN_DIR)\*.ilk $(OBJ_DIR)\*.obj $(OBJ_DIR)\*.RES $(OBJ_DIR)\*.lib $(OBJ_DIR)\*.pdb $(OBJ_DIR)\*.exp
 
-$(TEST_SRC_FILE): $(TEST_H_FILE) $(CATCH_H_FILE) makefile
+$(TEST_SRC_FILE): $(TEST_H_FILE) $(CATCH_H_FILE)
 
 !INCLUDE $(DEPS_FILE)
