@@ -15,14 +15,12 @@ FL_FUNC(FlSound* GetSound(const ID_String& ids), 0x42AE40)
 // A crash will occur if otherwise.
 bool IsTestSoundAvailable(LPCSTR nickname)
 {
-    #define FL_SOUND_NOT_FOUND_JMP_ADDR 0x42AEE5
-    static BYTE& notFoundTest = GetValue<BYTE>(FL_SOUND_NOT_FOUND_JMP_ADDR);
-    BYTE notFoundTestOriginal = notFoundTest;
-
-    notFoundTest = 0xF7; // prevent FL from generating a Spew warning if the sound doesn't exist
+    // Generates a Spew warning if the sound is not defined.
+    // I think it is useful because the warning will only appear if FL wants to plays the test sound
+    // while the slider is being dragged but the sound is not defined.
+    // It's a hint to the modder that something is missing.
+    // Moverover, this function is called at most once for each sound, so it won't spam the Spew.
     FlSound* sound = GetSound(ID_String{ CreateID(nickname) });
-    notFoundTest = notFoundTestOriginal; // restore the original value
-
     return sound != nullptr;
 }
 
