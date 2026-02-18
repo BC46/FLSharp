@@ -60,25 +60,25 @@ NAKED void GetAttitudeOfTarget_Hook()
 
 std::map<MouseCursor*, std::shared_ptr<MouseCursor>> groupCursors, tradeRequestCursors;
 
-std::shared_ptr<MouseCursor> CreateCustomCursor(const MouseCursor& originalCursor, DWORD color)
+std::shared_ptr<MouseCursor> CreateCustomCursor(const MouseCursor* originalCursor, DWORD color)
 {
     auto result = std::make_shared<MouseCursor>();
-    *result = originalCursor;
+    *result = *originalCursor;
     result->color = color;
 
     return result;
 }
 
-void FillCustomCursorMaps(std::vector<LPCSTR> cursorNames, LPCSTR neutralCursorName)
+void FillCustomCursorMap(const std::vector<LPCSTR> &cursorNames, LPCSTR neutralCursorName)
 {
     std::vector<MouseCursor*> cursors;
 
     // Find the relevant cursors.
     for (UINT i = 0; i < CURSOR_LIST_SIZE; ++i)
     {
-        for (const auto normalCursorName : cursorNames)
+        for (const auto cursorName : cursorNames)
         {
-            if (strcmp(CURSOR_LIST[i]->nickname, normalCursorName) == 0)
+            if (strcmp(CURSOR_LIST[i]->nickname, cursorName) == 0)
                 cursors.push_back(CURSOR_LIST[i]);
         }
     }
@@ -94,8 +94,8 @@ void FillCustomCursorMaps(std::vector<LPCSTR> cursorNames, LPCSTR neutralCursorN
     // and store them by the original friendly, neutral, and hostile version for easy access.
     if (neutralCursorIt != cursors.end())
     {
-        auto groupCursor = CreateCustomCursor(**neutralCursorIt, GROUP_MEMBER_COLOR);
-        auto tradeRequestCursor = CreateCustomCursor(**neutralCursorIt, TRADE_REQUEST_COLOR);
+        auto groupCursor = CreateCustomCursor(*neutralCursorIt, GROUP_MEMBER_COLOR);
+        auto tradeRequestCursor = CreateCustomCursor(*neutralCursorIt, TRADE_REQUEST_COLOR);
 
         for (const auto cursor : cursors)
         {
@@ -116,8 +116,8 @@ void InitCursors_Hook()
     std::vector<LPCSTR> normalCursorNames = { "friendly", "neutral", "hostile" };
     std::vector<LPCSTR> fireCursorNames = { "fire_friendly", "fire_neutral", "fire" };
 
-    FillCustomCursorMaps(normalCursorNames, "neutral");
-    FillCustomCursorMaps(fireCursorNames, "fire_neutral");
+    FillCustomCursorMap(normalCursorNames, "neutral");
+    FillCustomCursorMap(fireCursorNames, "fire_neutral");
 }
 
 FL_FUNC(void SetCurrentCursor(LPCSTR cursorName, bool unk), 0x41DDE0)
