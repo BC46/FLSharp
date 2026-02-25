@@ -42,6 +42,9 @@ int IAnimation2::Open_Hook(LPCSTR animationScript, int scriptIndex, const CAttac
     if (animationScript && animationScript[0] == '_')
     {
         // Remove the leading underscore.
+        // One could argue removing a leading underscore like this is bad practice
+        // since the address is no longer DWORD-aligned.
+        // However, these string addresses aren't DWORD-aligned out of the box, so it doesn't matter.
         ++animationScript;
 
         if (CObject* parent = equip.parent)
