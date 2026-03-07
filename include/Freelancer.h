@@ -94,8 +94,6 @@ struct NN_Preferences
 void StopSound(BYTE soundId);
 void StartSound(BYTE soundId);
 
-UINT GetFlStringFromResources(DWORD resourcesHandle, UINT ids, LPWSTR buffer, UINT bufferLen);
-
 Waypoint* GetWaypoint(int index);
 
 struct WaypointWatcher
@@ -110,6 +108,7 @@ CShip* GetPlayerShip();
 CShip* GetPlayerShipSafe();
 
 bool AreIObjRWsInSameGroup(const IObjRW& o1, const IObjRW& o2);
+bool AreShipsInSameGroup(const CShip& ship1, const CShip& ship2);
 
 bool IsSimpleUnvisited(const CSimple& simple);
 BYTE GetSimpleVisitedValue(const CSimple& simple);
@@ -117,9 +116,21 @@ UINT GetIdsForUnvisitedSimple(const CSimple& simple);
 
 UINT GetCShipOrCEqObjName(const CEqObj &eqObj);
 
+UINT GetFlStringFromResources(DWORD resourcesHandle, UINT ids, LPWSTR buffer, UINT bufferLen);
+
 inline UINT GetFlString(UINT ids, LPWSTR buffer, UINT bufferLen)
 {
     return GetFlStringFromResources(FL_RESOURCES_HANDLE, ids, buffer, bufferLen);
+}
+
+class RenderDisplayList
+{};
+
+void AppendXmlWsToRdlEx(LPCWSTR ws, UINT wsLen, RenderDisplayList& rdl, DWORD flags);
+
+inline void AppendXmlWsToRdl(LPCWSTR ws, RenderDisplayList& rdl)
+{
+    AppendXmlWsToRdlEx(ws, wcslen(ws), rdl, 0);
 }
 
 #define SHIP_TRADER_SHIP_AMOUNT 3

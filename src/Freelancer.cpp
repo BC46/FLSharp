@@ -7,6 +7,8 @@ FL_FUNC(void StartSound(BYTE soundId), 0x564650)
 
 FL_FUNC(UINT GetFlStringFromResources(DWORD resourcesHandle, UINT ids, LPWSTR buffer, UINT bufferLen), 0x4347E0)
 
+FL_FUNC(void AppendXmlWsToRdlEx(LPCWSTR ws, UINT wsLen, RenderDisplayList& rdl, DWORD flags), 0x57E2C0)
+
 FL_FUNC(NavMapObj* NeuroNetNavMap::GetHighlightedObject(DWORD unk1, DWORD unk2), 0x496D40)
 
 FL_FUNC(Waypoint* GetWaypoint(int index), 0x4C46A0)

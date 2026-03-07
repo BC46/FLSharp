@@ -2,7 +2,7 @@
 #include "utils.h"
 #include "Freelancer.h"
 #include "fl_func.h"
-#include <stdio.h>
+#include <cstdio>
 
 #define NAKED __declspec(naked)
 
