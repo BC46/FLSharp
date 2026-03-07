@@ -1,323 +1,323 @@
 obj\alchemy_crash.obj: \
-    include\alchemy_crash.h \
-    include\utils.h \
-    include\logger.h \
+    include\alchemy_crash.h\
+    include\utils.h\
+    include\logger.h
 
 obj\blank_faction.obj: \
-    include\Common.h \
-    include\fl_math.h \
-    include\vftable.h \
-    include\st6.h \
-    include\utils.h \
+    include\Common.h\
+    include\fl_math.h\
+    include\vftable.h\
+    include\st6.h\
+    include\utils.h
 
 obj\cgun_wrapper.obj: \
-    include\cgun_wrapper.h \
-    include\DALib.h \
-    include\utils.h \
-    include\fl_func.h \
+    include\cgun_wrapper.h\
+    include\DALib.h\
+    include\utils.h\
+    include\fl_func.h
 
 obj\cheat_detection.obj: \
-    include\cheat_detection.h \
-    include\st6.h \
-    include\logger.h \
-    include\fl_func.h \
-    include\utils.h \
-    include\Common.h \
-    include\fl_math.h \
-    include\vftable.h \
+    include\cheat_detection.h\
+    include\st6.h\
+    include\logger.h\
+    include\fl_func.h\
+    include\utils.h\
+    include\Common.h\
+    include\fl_math.h\
+    include\vftable.h
 
 obj\config_reader.obj: \
-    include\config_reader.h \
-    include\feature_config.h \
-    include\Common.h \
-    include\fl_math.h \
-    include\vftable.h \
-    include\st6.h \
-    include\logger.h \
+    include\config_reader.h\
+    include\feature_config.h\
+    include\Common.h\
+    include\fl_math.h\
+    include\vftable.h\
+    include\st6.h\
+    include\logger.h
 
 obj\copy_paste.obj: \
-    include\copy_paste.h \
-    include\vftable.h \
-    include\Common.h \
-    include\fl_math.h \
-    include\st6.h \
-    include\utils.h \
+    include\copy_paste.h\
+    include\vftable.h\
+    include\Common.h\
+    include\fl_math.h\
+    include\st6.h\
+    include\utils.h
 
 obj\cursor_colors.obj: \
-    include\cursor_colors.h \
-    include\Common.h \
-    include\fl_math.h \
-    include\vftable.h \
-    include\st6.h \
-    include\utils.h \
-    include\Freelancer.h \
-    include\fl_func.h \
+    include\cursor_colors.h\
+    include\Common.h\
+    include\fl_math.h\
+    include\vftable.h\
+    include\st6.h\
+    include\utils.h\
+    include\Freelancer.h\
+    include\fl_func.h
 
 obj\dealer_fixes.obj: \
-    include\dealer_fixes.h \
-    include\utils.h \
-    include\fl_func.h \
+    include\dealer_fixes.h\
+    include\utils.h\
+    include\fl_func.h
 
 obj\dll_crash.obj: \
-    include\dll_crash.h \
-    include\utils.h \
-    include\logger.h \
+    include\dll_crash.h\
+    include\utils.h\
+    include\logger.h
 
 obj\feature_config.obj: \
-    include\feature_config.h \
-    include\Common.h \
-    include\fl_math.h \
-    include\vftable.h \
-    include\st6.h \
+    include\feature_config.h\
+    include\Common.h\
+    include\fl_math.h\
+    include\vftable.h\
+    include\st6.h
 
 obj\flash_particles.obj: \
-    include\flash_particles.h \
-    include\Common.h \
-    include\fl_math.h \
-    include\vftable.h \
-    include\st6.h \
-    include\utils.h \
-    include\fl_func.h \
+    include\flash_particles.h\
+    include\Common.h\
+    include\fl_math.h\
+    include\vftable.h\
+    include\st6.h\
+    include\utils.h\
+    include\fl_func.h
 
 obj\fl_math.obj: \
-    include\fl_math.h \
+    include\fl_math.h
 
 obj\Freelancer.obj: \
-    include\Freelancer.h \
-    include\Common.h \
-    include\fl_math.h \
-    include\vftable.h \
-    include\st6.h \
-    include\fl_func.h \
-    include\utils.h \
+    include\Freelancer.h\
+    include\Common.h\
+    include\fl_math.h\
+    include\vftable.h\
+    include\st6.h\
+    include\fl_func.h\
+    include\utils.h
 
 obj\group_members.obj: \
-    include\group_members.h \
-    include\utils.h \
-    include\Freelancer.h \
-    include\Common.h \
-    include\fl_math.h \
-    include\vftable.h \
-    include\st6.h \
-    include\logger.h \
-    include\fl_func.h \
+    include\group_members.h\
+    include\utils.h\
+    include\Freelancer.h\
+    include\Common.h\
+    include\fl_math.h\
+    include\vftable.h\
+    include\st6.h\
+    include\logger.h\
+    include\fl_func.h
 
 obj\infocards.obj: \
-    include\infocards.h \
-    include\Common.h \
-    include\fl_math.h \
-    include\vftable.h \
-    include\st6.h \
-    include\utils.h \
-    include\logger.h \
+    include\infocards.h\
+    include\Common.h\
+    include\fl_math.h\
+    include\vftable.h\
+    include\st6.h\
+    include\utils.h\
+    include\logger.h
 
 obj\logger.obj: \
-    include\logger.h \
-    include\Dacom.h \
+    include\logger.h\
+    include\Dacom.h
 
 obj\main.obj: \
-    include\feature_config.h \
-    include\config_reader.h \
-    include\version_check.h \
-    include\logger.h \
-    include\dacom.h \
-    include\update.h \
-    include\Common.h \
-    include\fl_math.h \
-    include\vftable.h \
-    include\st6.h \
-    include\RemoteServer.h \
-    include\waypoint.h \
-    include\waypoint_names.h \
-    include\projectiles.h \
-    include\resolutions.h \
-    include\Freelancer.h \
-    include\test_sounds.h \
-    include\trade_lane_lights.h \
-    include\copy_paste.h \
-    include\ui_anim.h \
-    include\weapon_anim.h \
-    include\flash_particles.h \
-    include\utils.h \
-    include\rep_requirements.h \
-    include\cgun_wrapper.h \
-    include\temp_fixes.h \
-    include\infocards.h \
-    include\save_crash.h \
-    include\alchemy_crash.h \
-    include\blank_faction.h \
-    include\server_filter.h \
-    include\dll_crash.h \
-    include\shield_capacity.h \
-    include\dealer_fixes.h \
-    include\cheat_detection.h \
-    include\group_members.h \
-    include\cursor_colors.h \
+    include\feature_config.h\
+    include\config_reader.h\
+    include\version_check.h\
+    include\logger.h\
+    include\dacom.h\
+    include\update.h\
+    include\Common.h\
+    include\fl_math.h\
+    include\vftable.h\
+    include\st6.h\
+    include\RemoteServer.h\
+    include\waypoint.h\
+    include\waypoint_names.h\
+    include\projectiles.h\
+    include\resolutions.h\
+    include\Freelancer.h\
+    include\test_sounds.h\
+    include\trade_lane_lights.h\
+    include\copy_paste.h\
+    include\ui_anim.h\
+    include\weapon_anim.h\
+    include\flash_particles.h\
+    include\utils.h\
+    include\rep_requirements.h\
+    include\cgun_wrapper.h\
+    include\temp_fixes.h\
+    include\infocards.h\
+    include\save_crash.h\
+    include\alchemy_crash.h\
+    include\blank_faction.h\
+    include\server_filter.h\
+    include\dll_crash.h\
+    include\shield_capacity.h\
+    include\dealer_fixes.h\
+    include\cheat_detection.h\
+    include\group_members.h\
+    include\cursor_colors.h
 
 obj\projectiles.obj: \
-    include\projectiles.h \
-    include\Common.h \
-    include\fl_math.h \
-    include\vftable.h \
-    include\st6.h \
-    include\utils.h \
-    include\logger.h \
+    include\projectiles.h\
+    include\Common.h\
+    include\fl_math.h\
+    include\vftable.h\
+    include\st6.h\
+    include\utils.h\
+    include\logger.h
 
 obj\rep_requirements.obj: \
-    include\rep_requirements.h \
-    include\utils.h \
-    include\Freelancer.h \
-    include\Common.h \
-    include\fl_math.h \
-    include\vftable.h \
-    include\st6.h \
-    include\fl_func.h \
+    include\rep_requirements.h\
+    include\utils.h\
+    include\Freelancer.h\
+    include\Common.h\
+    include\fl_math.h\
+    include\vftable.h\
+    include\st6.h\
+    include\fl_func.h
 
 obj\resolutions.obj: \
-    include\resolutions.h \
-    include\Freelancer.h \
-    include\Common.h \
-    include\fl_math.h \
-    include\vftable.h \
-    include\st6.h \
-    include\resolutions_asm.h \
-    include\utils.h \
-    include\fl_func.h \
+    include\resolutions.h\
+    include\Freelancer.h\
+    include\Common.h\
+    include\fl_math.h\
+    include\vftable.h\
+    include\st6.h\
+    include\resolutions_asm.h\
+    include\utils.h\
+    include\fl_func.h
 
 obj\resolutions_asm.obj: \
-    include\resolutions_asm.h \
+    include\resolutions_asm.h
 
 obj\save_crash.obj: \
-    include\save_crash.h \
-    include\utils.h \
-    include\Common.h \
-    include\fl_math.h \
-    include\vftable.h \
-    include\st6.h \
-    include\logger.h \
+    include\save_crash.h\
+    include\utils.h\
+    include\Common.h\
+    include\fl_math.h\
+    include\vftable.h\
+    include\st6.h\
+    include\logger.h
 
 obj\server_filter.obj: \
-    include\utils.h \
-    include\Freelancer.h \
-    include\Common.h \
-    include\fl_math.h \
-    include\vftable.h \
-    include\st6.h \
+    include\utils.h\
+    include\Freelancer.h\
+    include\Common.h\
+    include\fl_math.h\
+    include\vftable.h\
+    include\st6.h
 
 obj\shield_capacity.obj: \
-    include\shield_capacity.h \
-    include\Common.h \
-    include\fl_math.h \
-    include\vftable.h \
-    include\st6.h \
-    include\utils.h \
+    include\shield_capacity.h\
+    include\Common.h\
+    include\fl_math.h\
+    include\vftable.h\
+    include\st6.h\
+    include\utils.h
 
 obj\temp_fixes.obj: \
-    include\temp_fixes.h \
-    include\Freelancer.h \
-    include\Common.h \
-    include\fl_math.h \
-    include\vftable.h \
-    include\st6.h \
-    include\utils.h \
-    include\logger.h \
+    include\temp_fixes.h\
+    include\Freelancer.h\
+    include\Common.h\
+    include\fl_math.h\
+    include\vftable.h\
+    include\st6.h\
+    include\utils.h\
+    include\logger.h
 
 obj\test_sounds.obj: \
-    include\test_sounds.h \
-    include\vftable.h \
-    include\Common.h \
-    include\fl_math.h \
-    include\st6.h \
-    include\utils.h \
-    include\Freelancer.h \
-    include\fl_func.h \
+    include\test_sounds.h\
+    include\vftable.h\
+    include\Common.h\
+    include\fl_math.h\
+    include\st6.h\
+    include\utils.h\
+    include\Freelancer.h\
+    include\fl_func.h
 
 obj\trade_lane_lights.obj: \
-    include\trade_lane_lights.h \
-    include\Common.h \
-    include\fl_math.h \
-    include\vftable.h \
-    include\st6.h \
-    include\utils.h \
+    include\trade_lane_lights.h\
+    include\Common.h\
+    include\fl_math.h\
+    include\vftable.h\
+    include\st6.h\
+    include\utils.h
 
 obj\ui_anim.obj: \
-    include\ui_anim.h \
-    include\vftable.h \
-    include\Common.h \
-    include\fl_math.h \
-    include\st6.h \
-    include\utils.h \
+    include\ui_anim.h\
+    include\vftable.h\
+    include\Common.h\
+    include\fl_math.h\
+    include\st6.h\
+    include\utils.h
 
 obj\update.obj: \
-    include\Freelancer.h \
-    include\Common.h \
-    include\fl_math.h \
-    include\vftable.h \
-    include\st6.h \
-    include\update.h \
-    include\RemoteServer.h \
-    include\utils.h \
+    include\Freelancer.h\
+    include\Common.h\
+    include\fl_math.h\
+    include\vftable.h\
+    include\st6.h\
+    include\update.h\
+    include\RemoteServer.h\
+    include\utils.h
 
 obj\utils.obj: \
-    include\utils.h \
+    include\utils.h
 
 obj\version_check.obj: \
-    include\version_check.h \
-    include\Dacom.h \
-    include\utils.h \
+    include\version_check.h\
+    include\Dacom.h\
+    include\utils.h
 
 obj\waypoint.obj: \
-    include\waypoint.h \
-    include\utils.h \
-    include\Freelancer.h \
-    include\Common.h \
-    include\fl_math.h \
-    include\vftable.h \
-    include\st6.h \
+    include\waypoint.h\
+    include\utils.h\
+    include\Freelancer.h\
+    include\Common.h\
+    include\fl_math.h\
+    include\vftable.h\
+    include\st6.h
 
 obj\waypoint_names.obj: \
-    include\waypoint_names.h \
-    include\Freelancer.h \
-    include\Common.h \
-    include\fl_math.h \
-    include\vftable.h \
-    include\st6.h \
-    include\utils.h \
+    include\waypoint_names.h\
+    include\Freelancer.h\
+    include\Common.h\
+    include\fl_math.h\
+    include\vftable.h\
+    include\st6.h\
+    include\utils.h
 
 obj\weapon_anim.obj: \
-    include\weapon_anim.h \
-    include\Common.h \
-    include\fl_math.h \
-    include\vftable.h \
-    include\st6.h \
-    include\utils.h \
-    include\fl_func.h \
-    include\logger.h \
+    include\weapon_anim.h\
+    include\Common.h\
+    include\fl_math.h\
+    include\vftable.h\
+    include\st6.h\
+    include\utils.h\
+    include\fl_func.h\
+    include\logger.h
 
 obj\catch_amalgamated.obj: \
-    test\catch_amalgamated.hpp \
+    test\catch_amalgamated.hpp
 
 obj\test.obj: \
-    test\test.h \
-    test\catch_amalgamated.hpp \
-    include\alchemy_crash.h \
-    include\Common.h \
-    include\fl_math.h \
-    include\vftable.h \
-    include\st6.h \
-    include\copy_paste.h \
-    include\flash_particles.h \
-    include\utils.h \
-    include\Freelancer.h \
-    include\RemoteServer.h \
-    include\rep_requirements.h \
-    include\resolutions.h \
-    include\test_sounds.h \
-    include\trade_lane_lights.h \
-    include\ui_anim.h \
-    include\weapon_anim.h \
-    include\dealer_fixes.h \
-    include\cheat_detection.h \
-    include\cursor_colors.h \
-    include\waypoint_names.h \
+    test\test.h\
+    test\catch_amalgamated.hpp\
+    include\alchemy_crash.h\
+    include\Common.h\
+    include\fl_math.h\
+    include\vftable.h\
+    include\st6.h\
+    include\copy_paste.h\
+    include\flash_particles.h\
+    include\utils.h\
+    include\Freelancer.h\
+    include\RemoteServer.h\
+    include\rep_requirements.h\
+    include\resolutions.h\
+    include\test_sounds.h\
+    include\trade_lane_lights.h\
+    include\ui_anim.h\
+    include\weapon_anim.h\
+    include\dealer_fixes.h\
+    include\cheat_detection.h\
+    include\cursor_colors.h\
+    include\waypoint_names.h
 

@@ -1,3 +1,5 @@
+# NMAKE makefile
+
 BIN_DIR = bin
 INCLUDE_DIR = include
 OBJ_DIR = obj
@@ -13,39 +15,39 @@ DACOM_DEF = $(DEF_DIR)\Dacom.def
 DEPS_FILE = makefile.deps
 
 RES_FILE = $(OBJ_DIR)\main.RES
-OBJ_FILES = $(OBJ_DIR)\fl_math.obj \
-$(OBJ_DIR)\main.obj \
-$(OBJ_DIR)\feature_config.obj \
-$(OBJ_DIR)\config_reader.obj \
-$(OBJ_DIR)\Freelancer.obj \
-$(OBJ_DIR)\update.obj \
-$(OBJ_DIR)\utils.obj \
-$(OBJ_DIR)\logger.obj \
-$(OBJ_DIR)\version_check.obj \
-$(OBJ_DIR)\waypoint.obj \
-$(OBJ_DIR)\waypoint_names.obj \
-$(OBJ_DIR)\projectiles.obj \
-$(OBJ_DIR)\resolutions.obj \
-$(OBJ_DIR)\resolutions_asm.obj \
-$(OBJ_DIR)\test_sounds.obj \
-$(OBJ_DIR)\trade_lane_lights.obj \
-$(OBJ_DIR)\copy_paste.obj \
-$(OBJ_DIR)\ui_anim.obj \
-$(OBJ_DIR)\weapon_anim.obj \
-$(OBJ_DIR)\flash_particles.obj \
-$(OBJ_DIR)\rep_requirements.obj \
-$(OBJ_DIR)\cgun_wrapper.obj \
-$(OBJ_DIR)\infocards.obj \
-$(OBJ_DIR)\temp_fixes.obj \
-$(OBJ_DIR)\save_crash.obj \
-$(OBJ_DIR)\alchemy_crash.obj \
-$(OBJ_DIR)\blank_faction.obj \
-$(OBJ_DIR)\server_filter.obj \
-$(OBJ_DIR)\dll_crash.obj \
-$(OBJ_DIR)\shield_capacity.obj \
-$(OBJ_DIR)\dealer_fixes.obj \
-$(OBJ_DIR)\cheat_detection.obj \
-$(OBJ_DIR)\group_members.obj \
+OBJ_FILES = $(OBJ_DIR)\fl_math.obj\
+$(OBJ_DIR)\main.obj\
+$(OBJ_DIR)\feature_config.obj\
+$(OBJ_DIR)\config_reader.obj\
+$(OBJ_DIR)\Freelancer.obj\
+$(OBJ_DIR)\update.obj\
+$(OBJ_DIR)\utils.obj\
+$(OBJ_DIR)\logger.obj\
+$(OBJ_DIR)\version_check.obj\
+$(OBJ_DIR)\waypoint.obj\
+$(OBJ_DIR)\waypoint_names.obj\
+$(OBJ_DIR)\projectiles.obj\
+$(OBJ_DIR)\resolutions.obj\
+$(OBJ_DIR)\resolutions_asm.obj\
+$(OBJ_DIR)\test_sounds.obj\
+$(OBJ_DIR)\trade_lane_lights.obj\
+$(OBJ_DIR)\copy_paste.obj\
+$(OBJ_DIR)\ui_anim.obj\
+$(OBJ_DIR)\weapon_anim.obj\
+$(OBJ_DIR)\flash_particles.obj\
+$(OBJ_DIR)\rep_requirements.obj\
+$(OBJ_DIR)\cgun_wrapper.obj\
+$(OBJ_DIR)\infocards.obj\
+$(OBJ_DIR)\temp_fixes.obj\
+$(OBJ_DIR)\save_crash.obj\
+$(OBJ_DIR)\alchemy_crash.obj\
+$(OBJ_DIR)\blank_faction.obj\
+$(OBJ_DIR)\server_filter.obj\
+$(OBJ_DIR)\dll_crash.obj\
+$(OBJ_DIR)\shield_capacity.obj\
+$(OBJ_DIR)\dealer_fixes.obj\
+$(OBJ_DIR)\cheat_detection.obj\
+$(OBJ_DIR)\group_members.obj\
 $(OBJ_DIR)\cursor_colors.obj
 
 COMMON_LIB = $(OBJ_DIR)\Common.lib
@@ -110,4 +112,5 @@ clean:
 
 $(TEST_SRC_FILE): $(TEST_H_FILE) $(CATCH_H_FILE)
 
+# Include header file dependencies.
 !INCLUDE $(DEPS_FILE)
