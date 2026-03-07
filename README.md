@@ -49,6 +49,7 @@ These include:
 - Allows the player to enter formation with hostile group members.
 - Prevented hostile group members from being shown as hostile.
 - Added custom targeting cursor colors for group members and players who sent a trade request.
+- Fixed the first entry of every sold item category being misaligned in the Current Information window on some resolutions.
 
 More fixes and improvements may be added in the future.
 
@@ -60,7 +61,7 @@ Optionally, you can download the [FLSharp.ini](https://github.com/BC46/FLSharp/b
 If the `FLSharp.ini` file is missing or if it can't be opened, then all features are enabled by default. When an entry in `FLSharp.ini` is missing, then that particular feature will also be enabled by default. In other words, every feature is by default enabled unless stated otherwise.
 
 ## Build instructions
-Build the project using the `nmake` tool from Visual Studio 2017.
+Build the project using the `NMAKE` tool from Visual Studio 2017.
 This will output the `FLSharp.dll` file in the `bin` folder.
 Building the project using other compilers may require the code to be modified.
 

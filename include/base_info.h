@@ -5,7 +5,6 @@ struct BaseInfoCat
 {
     DWORD headerStyleAddr;
     DWORD headerNamePrintAddr;
-    DWORD firstSpacingAddr;
 };
 
 void InitBaseInfoSpacingFix();

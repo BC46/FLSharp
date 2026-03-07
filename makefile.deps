@@ -3,6 +3,15 @@ obj\alchemy_crash.obj: \
     include\utils.h\
     include\logger.h
 
+obj\base_info.obj: \
+    include\base_info.h\
+    include\Freelancer.h\
+    include\Common.h\
+    include\fl_math.h\
+    include\vftable.h\
+    include\st6.h\
+    include\utils.h
+
 obj\blank_faction.obj: \
     include\Common.h\
     include\fl_math.h\
@@ -152,7 +161,8 @@ obj\main.obj: \
     include\dealer_fixes.h\
     include\cheat_detection.h\
     include\group_members.h\
-    include\cursor_colors.h
+    include\cursor_colors.h\
+    include\base_info.h
 
 obj\projectiles.obj: \
     include\projectiles.h\
