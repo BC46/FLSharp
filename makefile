@@ -67,7 +67,7 @@ $(OUTPUT_FILE): $(OBJ_FILES) $(RES_FILE) $(COMMON_LIB) $(DALIB_LIB) $(DACOM_LIB)
     $(CPP) $(CPP_FLAGS) $< -I$(INCLUDE_DIR) /Fo./$(OBJ_DIR)/
 
 $(RES_FILE): $(RC_FILE) $(OBJ_DIR)
-    rc $(RC_FLAGS) /fo $(RES_FILE) $(RC_FILE)
+    $(RC) $(RC_FLAGS) /fo $(RES_FILE) $(RC_FILE)
 
 $(COMMON_LIB): $(COMMON_DEF) $(INCLUDE_DIR)/Common.h
     lib $(LIB_FLAGS) /def:$(COMMON_DEF) /name:COMMON /out:$(COMMON_LIB)
