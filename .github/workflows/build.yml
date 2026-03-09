@@ -12,9 +12,10 @@ jobs:
       - name: Build project
         run: |
           nmake /nologo
-      - name: Copy license file to bin
+      - name: Copy license and ini file to bin
         run: |
           copy LICENSE "bin/FLSharp_LICENSE.txt"
+          copy FLSharp.ini "bin"
       - name: Upload release build as artifact
         uses: actions/upload-artifact@v4
         with:
@@ -22,6 +23,7 @@ jobs:
           path: |
             bin/FLSharp.dll
             bin/FLSharp.pdb
+            bin/FLSharp.ini
             bin/FLSharp_LICENSE.txt
       - name: Download Catch2 test src file
         uses: robinraju/release-downloader@v1
