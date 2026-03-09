@@ -16,7 +16,7 @@ void PrintInfoCategoryHeader_Hook(UINT headerIds, RenderDisplayList &rdl)
 
 // If you open the "Current Information" window of a base, it shows which ships,
 // equipment, and commodities it is selling/buying. Every item displayed under each category
-// is preceded by a number of spaces. For the first entry has 5 spaces and all the others 4.
+// is preceded by a number of spaces. The first entry has 5 spaces and all the others 4.
 // The different number of spaces was done to fix a misalignment visible on lower 4:3 resolutions.
 // However, the misalignment still happens on higher resolutions; it is caused by the bold header category text.
 // This is because the bold closing tag is not added in the correct place (at least I think).
@@ -24,13 +24,13 @@ void PrintInfoCategoryHeader_Hook(UINT headerIds, RenderDisplayList &rdl)
 // This hook fixes it by making sure all entries use 5 spaces and printing the bold header text correctly.
 void InitBaseInfoSpacingFix()
 {
-    // headerStyleAddr and headerNamePrintAddr, respectively.
+    // Stores for each category, the headerStyleAddr and headerNamePrintAddr, respectively.
     // The address of the first spacing string is always 6 bytes in front of headerNamePrintAddr.
-    static const BaseInfoCat baseInfoCategories[] = {
-        { 0x476177, 0x476203 }, // Ships For Sale (ids 0x669)
-        { 0x476388, 0x476414 }, // Commodities Selling (ids 0x668)
-        { 0x4765F4, 0x476684 }, // Commodities Buying (ids 0x667)
-        { 0x476939, 0x4769E7 }  // Equipment For Sale (ids 0x66A)
+    const BaseInfoCat baseInfoCategories[] = {
+        { 0x476177, 0x476203 }, // Ships For Sale (ids 0x669/1641)
+        { 0x476388, 0x476414 }, // Commodities Selling (ids 0x668/1640)
+        { 0x4765F4, 0x476684 }, // Commodities Buying (ids 0x667/1639)
+        { 0x476939, 0x4769E7 }  // Equipment For Sale (ids 0x66A/1642)
     };
 
     for (const auto &baseInfoCat : baseInfoCategories)
