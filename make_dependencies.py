@@ -36,7 +36,7 @@ def write_file_dependencies(deps_file, src_dirs, obj_dir):
             obj_file = os.path.join(obj_dir, Path(file_name).stem + ".obj")
             cpp_file = os.path.join(src_dir, file_name)
 
-            f.write(obj_file + ": \\\n")
+            f.write(obj_file + ":\\\n")
 
             #f.write((" " * 4) + cpp_file + " \\\n")
             for i, dep in enumerate(deps):
