@@ -27,6 +27,13 @@
 #define EQUIPMENT_DEALER_VISIT_FLAG (1 << 3)
 #define SHIP_DEALER_VISIT_FLAG (1 << 4)
 
+// Time elapsed since startup in miliseconds
+#define FL_TIME_ELAPSED_MS (*(double*) 0x667D38)
+
+// System time in miliseconds
+#define TIMING_DELTA_TICK_COUNT (*(PDWORD) 0x667D14)
+#define TIME_GET_TIME_VAL (*(PDWORD) 0x667D20)
+
 struct Waypoint
 {
     Vector pos;

@@ -33,7 +33,7 @@ void Targetable_Objects::UpdateTargeting_Hook()
 FL_FUNC(const IObjRW* FindIObjRW(UINT nickname, DWORD unk), 0x05416C0)
 
 // Calling FindIObjRW manually every time we want to check the highlighted object is inefficient,
-// so we intercept the call that FL make every frame and save the last selected object.
+// so we intercept the call that FL makes every frame and save the last selected object.
 const IObjRW* FindCurrentSelectedIObjRW_Hook(UINT nickname, DWORD unk)
 {
     return lastSelectedObj = FindIObjRW(nickname, unk);
