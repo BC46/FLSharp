@@ -19,7 +19,7 @@ jobs:
       - name: Upload release build as artifact
         uses: actions/upload-artifact@v4
         with:
-          name: FLSharp release build
+          name: FLSharp
           path: |
             bin/FLSharp.dll
             bin/FLSharp.pdb
