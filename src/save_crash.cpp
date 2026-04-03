@@ -25,7 +25,7 @@ UINT GetShipIdsName_Hook(UINT shipId)
 // Freelancer doesn't check the return value, so it potentially calls a class function on a nullptr.
 // We implement the nullptr check here.
 // Additionally, there is a crash that occurs when selecting a malformed/modded save file in the F1 Load Game Menu,
-// (not the one you can access via the the main menu). We fix that here too.
+// (not the one you can access via the main menu). We fix that here too.
 void InitSaveCrashFix()
 {
     #define GET_UNDAMAGED_COL_GROUP_LIST_FILE_OFFSET_SERVER 0x6766E

@@ -147,7 +147,7 @@ void FASTCALL SetCurrentCustomAimCursor(const Targetable_Objects& to, const IObj
         return;
 
     // If the target has been found, check if it is a player who sent a trade request or is a group member.
-    std::map<MouseCursor*, std::shared_ptr<MouseCursor>>* customCursorMap = nullptr;
+    decltype(groupCursors)* customCursorMap = nullptr;
     if (target->is_player())
     {
         if (target->SentTradeRequest())
