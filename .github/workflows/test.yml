@@ -9,19 +9,12 @@ jobs:
       - uses: ilammy/msvc-dev-cmd@v1
         with:
           arch: win32
-      - name: Download Catch2 test src file
+      - name: Download Catch2 test files
         uses: robinraju/release-downloader@v1
         with:
           repository: 'catchorg/Catch2'
           tag: 'v3.9.1'
-          fileName: 'catch_amalgamated.cpp'
-          out-file-path: 'test'
-      - name: Download Catch2 test header file
-        uses: robinraju/release-downloader@v1
-        with:
-          repository: 'catchorg/Catch2'
-          tag: 'v3.9.1'
-          fileName: 'catch_amalgamated.hpp'
+          fileName: '{catch_amalgamated.cpp,catch_amalgamated.hpp}'
           out-file-path: 'test'
       - name: Run tests
         run: |
