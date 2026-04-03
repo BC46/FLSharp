@@ -173,5 +173,6 @@ struct ServerFilterDialog
 };
 
 void UpdateDeltaTime();
+void UpdateDeltaTimeAndUpTime();
 
 UINT GetNumOfActiveMissionObjectives();

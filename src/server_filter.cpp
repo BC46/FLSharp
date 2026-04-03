@@ -34,7 +34,7 @@ bool (ServerFilterDialog::*OnFrameUpdate_Original)();
 
 bool ServerFilterDialog::OnFrameUpdate_Hook()
 {
-    UpdateDeltaTime();
+    UpdateDeltaTimeAndUpTime();
     return (this->*OnFrameUpdate_Original)();
 }
 

@@ -66,5 +66,6 @@ void ExpandNNShipTraderObjMemory()
 }
 
 FL_FUNC(void UpdateDeltaTime(), 0x42D770)
+FL_FUNC(void UpdateDeltaTimeAndUpTime(), 0x5B2360)
 
 FL_FUNC(UINT GetNumOfActiveMissionObjectives(), 0x4C4FB0)
