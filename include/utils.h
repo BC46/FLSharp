@@ -27,10 +27,11 @@ template <typename Func>
 Func SetRelPointer(DWORD location, Func hookFunc)
 {
     // Set and calculate the relative offset for the hook function
-    DWORD originalPointer = location + GetValue<DWORD>(location) + 4;
+    DWORD& relOriginalLocation = GetValue<DWORD>(location);
+    DWORD originalPointer = location + relOriginalLocation + 4;
 
     DWORD hookFuncLocation = *((PDWORD) &hookFunc);
-    *(PDWORD) location = hookFuncLocation - (location + 4);
+    relOriginalLocation = hookFuncLocation - (location + 4);
 
     return GetFuncDef<Func>(originalPointer);
 }
