@@ -65,6 +65,7 @@ void ExpandNNShipTraderObjMemory()
     }
 }
 
+FL_FUNC(double GetDeltaTime(), 0x42D680)
 FL_FUNC(void UpdateDeltaTime(), 0x42D770)
 FL_FUNC(void UpdateDeltaTimeAndUpTime(), 0x5B2360)
 

@@ -3,8 +3,7 @@
 #include "Common.h"
 #include "RemoteServer.h"
 
-void SetTimeSinceLastUpdate();
+void ResetTimeSinceLastUpdate();
 
 void InitBetterUpdates();
 
-bool ShouldSendUpdate();

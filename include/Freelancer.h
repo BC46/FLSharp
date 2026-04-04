@@ -172,6 +172,7 @@ struct ServerFilterDialog
     bool OnFrameUpdate_Hook();
 };
 
+double GetDeltaTime();
 void UpdateDeltaTime();
 void UpdateDeltaTimeAndUpTime();
 

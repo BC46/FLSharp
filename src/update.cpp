@@ -2,15 +2,12 @@
 #include "update.h"
 #include "utils.h"
 #include <cmath>
-#include <chrono>
 
-using namespace std::chrono;
-
-#define M_PI 3.14159265358979323846f
-#define MIN_SYNC_INTERVAL_MS 40ms
-#define MIN_SYNC_INTERVAL_TLR_MS 750ms
-#define MAX_SYNC_INTERVAL_MS 2000ms
-#define ROTATION_CHECK_INTERVAL_MS 250ms
+#define M_PIF 3.14159265358979323846f
+#define MIN_SYNC_INTERVAL_SEC (40.0f / 1000.0f)
+#define MIN_SYNC_INTERVAL_TLR_SEC (750.0f / 1000.0f)
+#define MAX_SYNC_INTERVAL_SEC (2000.0f / 1000.0f)
+#define ROTATION_CHECK_INTERVAL_SEC (250.0f / 1000.0f)
 
 bool sendUpdateAsap = true;
 bool engineKillEnabledLastTime = false;
@@ -19,16 +16,18 @@ bool engineKillEnabledLastTime = false;
 float shipTurnThreshold = DEFAULT_SHIP_TURN_THRESHOLD;
 
 Quaternion lastOrientation;
-steady_clock::time_point timeSinceLastUpdate;
+float secElapsedSinceLastUpdate = 0.0;
 
-void SetTimeSinceLastUpdate()
+void ResetTimeSinceLastUpdate()
 {
-    timeSinceLastUpdate = steady_clock::now();
+    secElapsedSinceLastUpdate = 0.0;
+    sendUpdateAsap = false;
 }
 
-milliseconds GetMsElapsed()
+void ForceObjUpdate()
 {
-    return duration_cast<milliseconds>(steady_clock::now() - timeSinceLastUpdate);
+    secElapsedSinceLastUpdate = MAX_SYNC_INTERVAL_SEC;
+    sendUpdateAsap = true;
 }
 
 bool IsEkEnabled(const CShip& ship)
@@ -53,9 +52,9 @@ bool IsEkToggled(const CShip& ship)
     return result;
 }
 
-bool HasOrientationChanged(const CShip& ship, milliseconds msElapsed)
+bool HasOrientationChanged(const CShip& ship, float secElapsed)
 {
-    if (msElapsed < ROTATION_CHECK_INTERVAL_MS)
+    if (secElapsed < ROTATION_CHECK_INTERVAL_SEC)
         return false;
 
     float rotationDelta = GetRotationDelta(lastOrientation, ship.get_orientation());
@@ -70,9 +69,9 @@ float GetShipTurnThreshold(const CShip& ship)
     // However, the angular drag factor is kind of an unused feature in FL and not many mods use it.
     // Though some do for instance to increase the weight of the ship based on the amount of cargo you have.
     // This means the turn speed should be continuously recalculated instead of only once on launch.
-    float avgDrag = (shipArch->angularDrag.x + shipArch->angularDrag.y) / 2;
-    float avgTorque = (shipArch->steeringTorque.x + shipArch->steeringTorque.y) / 2;
-    float maxTurnSpeed = (avgTorque / avgDrag) * (180.0f / M_PI);
+    float avgDrag = (shipArch->angularDrag.x + shipArch->angularDrag.y) / 2.0f;
+    float avgTorque = (shipArch->steeringTorque.x + shipArch->steeringTorque.y) / 2.0f;
+    float maxTurnSpeed = (avgTorque / avgDrag) * (180.0f / M_PIF);
 
     return min(DEFAULT_SHIP_TURN_THRESHOLD, 15.0f * sqrtf(maxTurnSpeed) / sqrtf(ship.get_radius()));
 }
@@ -92,7 +91,9 @@ namespace Update
             return;
 
         engineKillEnabledLastTime = false;
-        sendUpdateAsap = true;
+        // TODO: Check if it is really needed to force an update initially.
+        // Does FL already correctly position the ship after undocking with a default velocity?
+        ForceObjUpdate();
 
         if (CShip* ship = GetPlayerShip())
             shipTurnThreshold = GetShipTurnThreshold(*ship);
@@ -101,27 +102,38 @@ namespace Update
     }
 }
 
-bool ShouldSendUpdate(const CShip& ship, milliseconds msElapsed)
+bool ShouldSendUpdate(const CShip& ship, float secElapsed)
 {
     // Has it been a while since the last update?
     // Has the orientation been changed to some extent?
-    return (msElapsed >= MAX_SYNC_INTERVAL_MS) || HasOrientationChanged(ship, msElapsed);
+    return (secElapsed >= MAX_SYNC_INTERVAL_SEC) || HasOrientationChanged(ship, secElapsed);
 }
 
-inline milliseconds GetShipMinSyncInterval(const CShip& ship)
+inline float GetShipMinSyncInterval(const CShip& ship)
 {
     // Ensure updates are sent less frequently when the player ship is taking a tradelane to prevent jitter
-    return ship.is_using_tradelane() ? MIN_SYNC_INTERVAL_TLR_MS : MIN_SYNC_INTERVAL_MS;
+    return ship.is_using_tradelane() ? MIN_SYNC_INTERVAL_TLR_SEC : MIN_SYNC_INTERVAL_SEC;
+}
+
+void (*SendUpdatesToServer_Original)(float deltaTime);
+
+// Hook that keeps track of the elapsed time.
+void SendUpdatesToServer_Hook(float deltaTime)
+{
+    if (!SinglePlayer())
+    {
+        secElapsedSinceLastUpdate += deltaTime;
+        SendUpdatesToServer_Original(deltaTime);
+    }
 }
 
 // Hook for function that determines whether an update should be sent to the server
 bool CRemotePhysicsSimulation::CheckForSync_Hook(const CShip& ship, Vector const &shipPos, Quaternion const &unk)
 {
-    milliseconds msElapsed = GetMsElapsed(); // Time elapsed since the last update
     bool isEkToggled = IsEkToggled(ship);
     bool syncResult = CheckForSync(shipPos, shipPos, unk);
 
-    if (msElapsed < GetShipMinSyncInterval(ship))
+    if (secElapsedSinceLastUpdate < GetShipMinSyncInterval(ship))
     {
         // Prevent the client from sending too many updates in a short amount of time
         // This resolves the jitter issue that occurs when playing on a high framerate
@@ -129,18 +141,17 @@ bool CRemotePhysicsSimulation::CheckForSync_Hook(const CShip& ship, Vector const
         // TODO: If EK has been toggled twice before the min sync interval has passed, then an asap update should actually not be sent because of this.
         // But then you'd also have to check if the asap update *should* be sent because CheckForSync or ShouldSendUpdate returned true. Eh, this sounds complicated.
         if (!sendUpdateAsap)
-            sendUpdateAsap = syncResult || isEkToggled || ShouldSendUpdate(ship, msElapsed);
+            sendUpdateAsap = syncResult || isEkToggled || ShouldSendUpdate(ship, secElapsedSinceLastUpdate);
 
         return false;
     }
     else if (sendUpdateAsap)
     {
         // If an update has been missed, send an update as soon as this becomes possible, but do it only once
-        sendUpdateAsap = false;
         return true;
     }
 
-    return syncResult || isEkToggled || ShouldSendUpdate(ship, msElapsed);
+    return syncResult || isEkToggled || ShouldSendUpdate(ship, secElapsedSinceLastUpdate);
 }
 
 // Hook for function that sends an update to the server
@@ -153,7 +164,7 @@ void IServerImpl::SPObjUpdate_Hook(const CShip& ship, SSPObjUpdateInfo &updateIn
     // Send update to the server
     SPObjUpdate(updateInfo, client);
 
-    SetTimeSinceLastUpdate();
+    ResetTimeSinceLastUpdate();
     lastOrientation = MatrixToQuaternion(ship.get_orientation());
 }
 
@@ -161,7 +172,12 @@ void IServerImpl::SPObjUpdate_Hook(const CShip& ship, SSPObjUpdateInfo &updateIn
 // Also fixes a bug where the client always sends the throttle state as 0.
 void InitBetterUpdates()
 {
-    SetTimeSinceLastUpdate();
+    #define SEND_UPDATES_TO_SERVER_CALL_ADDR (0x54B16D)
+    #define SERVER_UPDATE_SP_CHECK_ADDR (0x54158C)
+
+    SendUpdatesToServer_Original = SetRelPointer(SEND_UPDATES_TO_SERVER_CALL_ADDR + 1, SendUpdatesToServer_Hook);
+    // Wipe out the original single player check because it is already checked for in the hook.
+    Nop(SERVER_UPDATE_SP_CHECK_ADDR, 14);
 
     Update::PostInitDealloc_Original = SetRelPointer(POST_INIT_DEALLOC_CALL_ADDR + 1, Update::PostInitDealloc_Hook);
 
