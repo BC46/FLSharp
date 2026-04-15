@@ -142,6 +142,7 @@ inline void AppendXmlWsToRdl(LPCWSTR ws, RenderDisplayList& rdl)
 
 #define SHIP_TRADER_SHIP_AMOUNT 3
 #define SHIP_TRADER_PLAYER_SHIP_INDEX -2
+#define SHIP_TRADER_NONE_SELECTED_INDEX -1
 
 // 0x370 = ShipTrader3DShip*
 struct NN_ShipTrader

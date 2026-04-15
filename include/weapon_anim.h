@@ -6,24 +6,24 @@
 #include "Common.h"
 #include "vftable.h"
 
-enum ModelType : DWORD
+enum EngModelType : DWORD
 {
-    ShipHull = 0,
-    Launcher = 2,
+    Object = 0,
+    Virtual = 2,
 };
 
-struct ModelBinary
+struct EngModel
 {
-    ModelType type; // 0x00
+    EngModelType type; // 0x00
     BYTE x04[0xC];
-    ModelBinary* parent; // 0x10
+    EngModel* parent; // 0x10
 };
 
 struct EngAnimation
 {
     // The first parameter seems to be a pointer to a stack-struct with the first three DWORDS set to 0 and then a ModelBinary*.
-    bool SetModel_Hook(PDWORD unk, const ModelBinary* model);
-    bool SetModel(PDWORD unk, const ModelBinary* model);
+    bool SetModel_Hook(PDWORD unk, const EngModel* model);
+    bool SetModel(PDWORD unk, const EngModel* model);
 };
 
 struct IAnimation2

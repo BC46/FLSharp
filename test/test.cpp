@@ -243,6 +243,7 @@ TEST_CASE("value offsets are correct", "[clilauncher]")
 {
     REQUIRE(offsetof(CliLauncher, vftable) == 0x0);
     REQUIRE(offsetof(CliLauncher, launcher) == 0x04);
+    REQUIRE(offsetof(CliLauncher, parent) == 0x08);
     REQUIRE(offsetof(CliLauncher, currentFlashParticle) == 0x28);
     REQUIRE(offsetof(CliLauncher, flashParticlesArr) == 0x28);
 }
@@ -266,6 +267,11 @@ TEST_CASE("value offsets are correct", "[audiooption]")
     REQUIRE(offsetof(AudioOption, idsName) == 0x0);
     REQUIRE(offsetof(AudioOption, idsTooltip) == 0x4);
     REQUIRE(offsetof(AudioOption, defaultVolume) == 0x8);
+}
+
+TEST_CASE("size is correct", "[audiooption]")
+{
+    REQUIRE(sizeof(AudioOption) == 0x18);
 }
 
 TEST_CASE("value offsets are correct", "[nn_preferences]")
@@ -375,10 +381,10 @@ TEST_CASE("vftable offsets are correct", "[uitextmsgbutton]")
 }
 
 // weapon_anim.h
-TEST_CASE("value offsets are correct", "[modelbinary]")
+TEST_CASE("value offsets are correct", "[engmodel]")
 {
-    REQUIRE(offsetof(ModelBinary, type) == 0x00);
-    REQUIRE(offsetof(ModelBinary, parent) == 0x10);
+    REQUIRE(offsetof(EngModel, type) == 0x00);
+    REQUIRE(offsetof(EngModel, parent) == 0x10);
 }
 
 TEST_CASE("vftable offsets are correct", "[ianimation2]")

@@ -61,7 +61,8 @@ struct CliLauncher
 {
     DWORD vftable;
     CELauncher* launcher; // 0x04
-    BYTE x08[0x20];
+    IObjRW* parent; // 0x08
+    BYTE x0C[0x1C];
     // After playing the flash particle on a launcher, the effect instance is stored in 0x28.
     // We need to keep track of more than one effect instance if the launcher has multiple barrels.
     // Expanding the struct's memory is not feasible due to there existing many variations of this struct,
