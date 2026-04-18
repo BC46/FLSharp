@@ -35,7 +35,7 @@ These include:
 - Show a fallback infocard based on the solar's archetype in the Current Information window if the solar itself has no infocard.
 - Fixed a startup crash that occurs when Freelancer tries to load a modded/malformed save file.
 - Fixed a crash when selecting a modded/malformed save file in the F1 Load Game menu
-- Fixed a very rare and inconsistent crash in alchemy.dll (crash offset `0x701b`).
+- Fixed a very rare and inconsistent crash in alchemy.dll (crash offsets `0x701b` and `0x77cb`).
 - Fixed waypoints being called "Unknown Object" in the target view and Current Information window.
 - Fixed information about waypoints being printed incorrectly in the Current Information window.
 - Fixed ships part of the `fc_uk_grp` faction having a blank faction in the Current Information window.

@@ -29,24 +29,39 @@ const Alchemy* FASTCALL GetFinishedAle(int maxIndex, const Alchemy* aleArr, floa
 // the fact that it's so inconsistent and rare makes it impossible to bisect.
 // This hook code rewrites the loop such that it never loops beyond maxIndex - 1.
 // If the original problem were to occur, then one or more ALE effects may become invisible, though at least it certainly fixes the crash.
+// Edit 18/04/26: It seems that even if the crash is fixed, there are other occurrences where it can happen.
+// For instance, 0x778D has a loop which looks like it was directly copy pasted from 0x6FDD.
+// Hence, I've looked carefully at the assembly for more similar loops and found two more (but I don't know if they ever get called).
+// All instances now have the same fix applied. Hopefully, this fixes all variations of this particular crash.
 void InitAlchemyCrashFix()
 {
-    #define GET_FINISHED_ALE_START_FILE_OFFSET_ALCHEMY 0x6FDD
-    #define GET_FINISHED_ALE_END_FILE_OFFSET_ALCHEMY 0x6FF7
+    #define GET_FINISHED_ALE_START_TO_END 0x1A
     DWORD alchemyHandle = (DWORD) GetModuleHandle("alchemy.dll");
 
-    if (alchemyHandle)
-    {
-        // mov edx, esi followed by push [esp+0x10] (passes the needed parameters to our hook)
-        BYTE startPatch[] = { 0x89, 0xF2, 0xFF, 0x74, 0x24, 0x10 };
-        Patch(alchemyHandle + GET_FINISHED_ALE_START_FILE_OFFSET_ALCHEMY, startPatch, sizeof(startPatch));
-        Hook(alchemyHandle + GET_FINISHED_ALE_START_FILE_OFFSET_ALCHEMY + sizeof(startPatch), GetFinishedAle, 20);
-
-        // mov esi, eax (set the return value so that the rest of the alchemy code can use it)
-        Patch<WORD>(alchemyHandle + GET_FINISHED_ALE_END_FILE_OFFSET_ALCHEMY, 0xC689);
-    }
-    else
+    if (!alchemyHandle)
     {
         Logger::PrintModuleError("InitAlchemyCrashFix", "alchemy.dll");
+        return;
+    }
+
+    static const AleLoop aleLoops[] = {
+        { 0x6FDD, 0x10 },
+        { 0x778D, 0x10 },
+        // { 0x7F4C, 0x3C },
+        // { 0x4136D, 0x10 }
+        // I noticed these have the exact same kind of loop as the above two.
+        // AFAICT however, these are never actually called, unlike the above two which are called every frame.
+        // Hence I can't properly test if this hook even works for the latter two instances.
+    };
+
+    for (const auto& aleLoop : aleLoops)
+    {
+        // mov edx, esi followed by push [esp+maxProgressOffset] (passes the needed parameters to our hook)
+        PatchBytes(alchemyHandle + aleLoop.startOffset, { 0x89, 0xF2, 0xFF, 0x74, 0x24 });
+        Patch<BYTE>(alchemyHandle + aleLoop.startOffset + 5, aleLoop.maxProgressOffset);
+        Hook(alchemyHandle + aleLoop.startOffset + 6, GetFinishedAle, 20);
+
+        // mov esi, eax (set the return value so that the rest of the alchemy code can use it)
+        Patch<WORD>(alchemyHandle + aleLoop.startOffset + GET_FINISHED_ALE_START_TO_END, 0xC689);
     }
 }
