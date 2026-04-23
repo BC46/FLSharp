@@ -132,7 +132,7 @@ NAKED void CurrentResInfoCheck4()
     __asm {
         cmp edi, [esp+0x48]
         jne notequal
-        push 0xFFFFFFFF
+        push 0xFFFFFFFF // -1
         push edi
         push esi
         lea ecx, [esp+0x20]
