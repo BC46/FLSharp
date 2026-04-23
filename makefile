@@ -36,7 +36,7 @@ $(OBJ_DIR)\ui_anim.obj\
 $(OBJ_DIR)\weapon_anim.obj\
 $(OBJ_DIR)\flash_particles.obj\
 $(OBJ_DIR)\rep_requirements.obj\
-$(OBJ_DIR)\cgun_wrapper.obj\
+$(OBJ_DIR)\exit.obj\
 $(OBJ_DIR)\infocards.obj\
 $(OBJ_DIR)\temp_fixes.obj\
 $(OBJ_DIR)\save_crash.obj\

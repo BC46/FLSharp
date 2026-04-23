@@ -19,12 +19,6 @@ obj\blank_faction.obj:\
     include\st6.h\
     include\utils.h
 
-obj\cgun_wrapper.obj:\
-    include\cgun_wrapper.h\
-    include\DALib.h\
-    include\utils.h\
-    include\fl_func.h
-
 obj\cheat_detection.obj:\
     include\cheat_detection.h\
     include\st6.h\
@@ -71,6 +65,12 @@ obj\dll_crash.obj:\
     include\dll_crash.h\
     include\utils.h\
     include\logger.h
+
+obj\exit.obj:\
+    include\exit.h\
+    include\DALib.h\
+    include\utils.h\
+    include\fl_func.h
 
 obj\feature_config.obj:\
     include\feature_config.h\
@@ -149,7 +149,7 @@ obj\main.obj:\
     include\flash_particles.h\
     include\utils.h\
     include\rep_requirements.h\
-    include\cgun_wrapper.h\
+    include\exit.h\
     include\temp_fixes.h\
     include\infocards.h\
     include\save_crash.h\

@@ -1,4 +1,4 @@
-#include "cgun_wrapper.h"
+#include "exit.h"
 #include "DALib.h"
 #include "utils.h"
 #include "fl_func.h"
@@ -35,6 +35,36 @@ bool HandleMessages_Hook(WPARAM *msgWParam)
 // nor was I able to come up with a "clean fix" for it. So now instead of calling the function with WaitForSingleObject after the exit,
 // I call it before the exit. The thread still takes a very long time to close the DirectPlay connection (which I think is a bug too),
 // but at least there is no more deadlock and the Freelancer process will eventually close, as it should.
+void InitPostGameDeadlockFix()
+{
+    #define CGUNWRAPPER_SHUTDOWN_CALL_ADDR 0x5B2190
+    #define FL_EXE_EXIT_CALL_ADDR 0x5B81C6
+
+    Nop(CGUNWRAPPER_SHUTDOWN_CALL_ADDR, 5); // nop out the post-game CGunWrapper::Shutdown() call; call it in the exit hook instead
+    Hook(FL_EXE_EXIT_CALL_ADDR, exit_Hook, 6);
+}
+
+// Freelancer has a message handler function which can be called from multiple places.
+// Normally it is called by the "main" function. However, if for example you see the "disconnected"
+// dialog, the message handler is actually called from somewhere else.
+// This is normally not a problem, unless you exit the game while that dialog is showing.
+// The message handler function returns false if the "Quit" message was retrieved.
+// When the main caller sees that false was returned, it exits from the loop and shuts down the game.
+// This does not happen when the disconnected dialog is showing; it will continue handling messages as normal.
+// The "Quit" message is only retrieved once, so when the main handler takes over, it will continue handling messages forever,
+// despite the the window being closed by the user.
+// This hook fixes the problem by always returning false after the message handler returned false at some point.
+void InitQuitMessageFix()
+{
+    #define HANDLE_MESSAGES_ADDR 0x5B0B60
+
+    HandleMessages_Original = Trampoline(HANDLE_MESSAGES_ADDR, HandleMessages_Hook, 5);
+}
+
+void CleanupQuitMessageFix()
+{
+    CleanupTrampoline(HandleMessages_Original);
+}
 
 // TODO: If anyone would like to look into this further: in dpnet.dll there's a function called "DN_Close" (locate it by downloading the debug symbols from Microsoft).
 // I believe this function is supposed to represent IDirectPlay8Client::Close. It is this exact function that takes ~40 seconds to return on my end.
@@ -58,20 +88,3 @@ bool HandleMessages_Hook(WPARAM *msgWParam)
 // dalib.dll: file offset 0x4C82 = load library call of gundll.dll. Use this to set hooks
 // dxcheckOK( DirectPlayClient->Close(DPNCLOSE_IMMEDIATE) ); // WARNING DPNCLOSE_IMMEDIATE is a DP feature from DirectX 9 (released shortly after FL came out)
 // 		SafeRelease( DirectPlayClient );
-
-void InitPostGameDeadlockFix()
-{
-    #define CGUNWRAPPER_SHUTDOWN_CALL_ADDR 0x5B2190
-    #define FL_EXE_EXIT_CALL_ADDR 0x5B81C6
-
-    Nop(CGUNWRAPPER_SHUTDOWN_CALL_ADDR, 5); // nop out the post-game CGunWrapper::Shutdown() call; call it in the exit hook instead
-    Hook(FL_EXE_EXIT_CALL_ADDR, exit_Hook, 6);
-
-    #define HANDLE_MESSAGES_ADDR 0x5B0B60
-    HandleMessages_Original = Trampoline(HANDLE_MESSAGES_ADDR, HandleMessages_Hook, 5);
-}
-
-void CleanupPostGameDeadlockFix()
-{
-    CleanupTrampoline(HandleMessages_Original);
-}

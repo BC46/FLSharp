@@ -30,6 +30,7 @@ These include:
 - Improved the slide-out animation for some UI buttons in the multiplayer menus.
 - When the "You must be on friendlier terms to purchase this." message is displayed in the Dealer menus, allow the exact reputation requirement to be printed too. Include `%d` in the IDS (S 1564, `resources.dll`) to make it work.
 - Fixed a bug that caused the Freelancer process to not always terminate after closing the game.
+- Fixed Freelancer sometimes getting stuck in the message loop after the "Quit" message is retrieved.
 - Automatically set rotation lock and auto leveling to the default value when launching to space to prevent control-related issues from occurring (e.g. mouse flight not working).
 - Allows infocards for dynamic solars (based on `missioncreatedsolars.ini`) to be displayed in the Current Information window; see [these entries](https://github.com/FLHDE/freelancer-hd-edition/blob/b1c99db03f37d389aac12048b5b8b28e110cf37c/DATA/UNIVERSE/missioncreatedsolars.ini#L46-L54) for an example on how to make infocards work for non-dockable dynamic solars.
 - Show a fallback infocard based on the solar's archetype in the Current Information window if the solar itself has no infocard.
