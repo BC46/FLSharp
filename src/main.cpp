@@ -69,7 +69,7 @@ void Init()
     manager.RegisterFeature("weapon_anim_fix",          InitWeaponAnimFix,          nullptr,                    ApplyOnlyOnClient);
     manager.RegisterFeature("flash_particle_fix",       InitFlashParticlesFix,      nullptr,                    ApplyOnlyOnClient);
     manager.RegisterFeature("print_rep_requirements",   InitPrintRepRequirements,   nullptr,                    ApplyOnlyOnClient);
-    manager.RegisterFeature("post_game_deadlock_fix",   InitPostGameDeadlockFix,    nullptr,                    ApplyOnlyOnClient);
+    manager.RegisterFeature("post_game_deadlock_fix",   InitPostGameDeadlockFix,    CleanupPostGameDeadlockFix, ApplyOnlyOnClient);
     manager.RegisterFeature("flight_controls_fix",      InitFlightControlsFix,      nullptr,                    ApplyOnlyOnClient);
     manager.RegisterFeature("dynamic_solar_infocards",  InitDynamicSolarInfocards,  nullptr,                    ApplyOnlyOnClient);
     manager.RegisterFeature("save_crash_fix",           InitSaveCrashFix,           nullptr,                    ApplyAlways);
