@@ -18,7 +18,8 @@ bool ShowMouseCursor_Hook()
     // Freelancer seems to have a pretty hard time figuring out
     // whether the cursor should be shown when it is at the bottom-edge of the window.
     // Whatever, I'll just blame it on DirectInput.
-    if (MOUSE_X >= WINDOW_WIDTH || MOUSE_Y > WINDOW_HEIGHT)
+    // It seems it's putting minimal effort into clamping the cursor's y-position near the bottom-edge.
+    if (MOUSE_X >= WINDOW_WIDTH || MOUSE_Y >= WINDOW_HEIGHT)
         return false;
 
     return SHOW_MOUSE_CURSOR;
