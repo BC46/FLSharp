@@ -29,6 +29,7 @@
 #include "group_members.h"
 #include "cursor_colors.h"
 #include "base_info.h"
+#include "mouse.h"
 
 FeatureManager manager;
 
@@ -87,6 +88,7 @@ void Init()
     manager.RegisterFeature("unhostile_group_members",  InitHostileGroupMembersFix, nullptr,                    ApplyOnlyOnClient);
     manager.RegisterFeature("more_cursor_colors",       InitMoreCursorColors,       nullptr,                    ApplyOnlyOnClient);
     manager.RegisterFeature("base_info_spacing_fix",    InitBaseInfoSpacingFix,     nullptr,                    ApplyOnlyOnClient);
+    manager.RegisterFeature("mouse_fix",                InitMouseFix,               nullptr,                    ApplyOnlyOnClient);
 
     ReadConfig("FLSharp.ini", manager);
 

@@ -162,7 +162,12 @@ obj\main.obj:\
     include\cheat_detection.h\
     include\group_members.h\
     include\cursor_colors.h\
-    include\base_info.h
+    include\base_info.h\
+    include\mouse.h
+
+obj\mouse.obj:\
+    include\mouse.h\
+    include\utils.h
 
 obj\projectiles.obj:\
     include\projectiles.h\

@@ -61,8 +61,6 @@ struct AudioOption
     DWORD x0C, x10, x14;
 };
 
-//#define P_IN_GAME_RES ((ResolutionInfo*) 0x679BC8)
-
 #define NN_PREFERENCES_NEW_DATA 0x98C
 
 // 0x330 = current selected width
