@@ -36,7 +36,11 @@ FL_FUNC(const IObjRW* FindIObjRW(UINT nickname, DWORD unk), 0x05416C0)
 // so we intercept the call that FL makes every frame and save the last selected object.
 const IObjRW* FindCurrentSelectedIObjRW_Hook(UINT nickname, DWORD unk)
 {
-    return lastSelectedObj = FindIObjRW(nickname, unk);
+    const IObjRW* result = FindIObjRW(nickname, unk);
+    if (result)
+        lastSelectedObj = result;
+
+    return result;
 }
 
 // Gets called when FL checks the attitude of the targeted (aim locked) object
@@ -45,7 +49,7 @@ NAKED void GetAttitudeOfTarget_Hook()
     #define GET_ATTITUDE_OF_TARGET_RET_ADDR 0x4F2465
 
     __asm {
-        test eax, eax
+        test ebx, ebx
         je skip
         mov lastSelectedObj, eax        // save the targeted (aim locked) object
     skip:
@@ -60,10 +64,11 @@ NAKED void GetAttitudeOfTarget_Hook()
 
 std::map<MouseCursor*, std::shared_ptr<MouseCursor>> groupCursors, tradeRequestCursors;
 
-std::shared_ptr<MouseCursor> CreateCustomCursor(const MouseCursor* originalCursor, DWORD color)
+std::shared_ptr<MouseCursor> CreateCustomCursor(const MouseCursor* originalCursor, DWORD color, LPCSTR suffix)
 {
     auto result = std::make_shared<MouseCursor>();
     *result = *originalCursor;
+    strcat_s(result->nickname, sizeof(result->nickname), suffix);
     result->color = color;
 
     return result;
@@ -94,8 +99,8 @@ void FillCustomCursorMap(const std::vector<LPCSTR> &cursorNames, LPCSTR neutralC
     // and store them by the original friendly, neutral, and hostile version for easy access.
     if (neutralCursorIt != cursors.end())
     {
-        auto groupCursor = CreateCustomCursor(*neutralCursorIt, GROUP_MEMBER_COLOR);
-        auto tradeRequestCursor = CreateCustomCursor(*neutralCursorIt, TRADE_REQUEST_COLOR);
+        auto groupCursor = CreateCustomCursor(*neutralCursorIt, GROUP_MEMBER_COLOR, "_group");
+        auto tradeRequestCursor = CreateCustomCursor(*neutralCursorIt, TRADE_REQUEST_COLOR, "_trade");
 
         for (const auto cursor : cursors)
         {
@@ -180,7 +185,7 @@ NAKED void SetCurrentAimCursor_Hook()
 }
 
 // In Multiplayer, if you hover over a group member with the mouse, the cursor does not honor the pink group color.
-// Similarly, if you hover over someone who sent you a trade request, cursor is not dark purple, either.
+// Similarly, if you hover over someone who sent you a trade request, the cursor is not dark purple, either.
 // This code fixes this by creating custom cursors based on the existing neutral cursors
 // and showing them if it has been detected that the target is a group member or someone who sent a trade request.
 void InitMoreCursorColors()
