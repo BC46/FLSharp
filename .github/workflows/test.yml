@@ -5,10 +5,7 @@ jobs:
   test:
     runs-on: windows-latest
     steps:
-      - uses: actions/checkout@v4
-      - uses: ilammy/msvc-dev-cmd@v1
-        with:
-          arch: win32
+      - uses: actions/checkout@v6
       - name: Download Catch2 test files
         uses: robinraju/release-downloader@v1
         with:
@@ -17,5 +14,7 @@ jobs:
           fileName: '{catch_amalgamated.cpp,catch_amalgamated.hpp}'
           out-file-path: 'test'
       - name: Run tests
+        shell: cmd
         run: |
+          call "C:\Program Files\Microsoft Visual Studio\2022\Enterprise\VC\Auxiliary\Build\vcvars32.bat"
           nmake /nologo test

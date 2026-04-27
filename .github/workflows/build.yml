@@ -5,19 +5,18 @@ jobs:
   build:
     runs-on: windows-latest
     steps:
-      - uses: actions/checkout@v4
-      - uses: ilammy/msvc-dev-cmd@v1
-        with:
-          arch: win32
+      - uses: actions/checkout@v6
       - name: Build project
+        shell: cmd
         run: |
+          call "C:\Program Files\Microsoft Visual Studio\2022\Enterprise\VC\Auxiliary\Build\vcvars32.bat"
           nmake /nologo
       - name: Copy license and ini file to bin
         run: |
           copy LICENSE "bin/FLSharp_LICENSE.txt"
           copy FLSharp.ini "bin"
       - name: Upload release build as artifact
-        uses: actions/upload-artifact@v4
+        uses: actions/upload-artifact@v7
         with:
           name: FLSharp
           path: |
