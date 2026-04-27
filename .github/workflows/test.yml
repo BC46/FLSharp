@@ -6,6 +6,8 @@ jobs:
     runs-on: windows-latest
     steps:
       - uses: actions/checkout@v6
+        with:
+          ref: ${{ github.ref }}
       - name: Download Catch2 test files
         uses: robinraju/release-downloader@v1
         with:
