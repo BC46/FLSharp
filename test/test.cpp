@@ -170,6 +170,20 @@ TEST_CASE("vftable offsets are correct", "[iobjrw]")
     REQUIRE(GetVftableOffset<IObjRW>(&IObjRW::is_player) == 0xBC);
 }
 
+TEST_CASE("value offsets are correct", "[iobjinspect]")
+{
+    REQUIRE(offsetof(IObjInspect, cobject) == 0x10);
+    REQUIRE(offsetof(IObjInspect, unk_x1C) == 0x1C);
+    REQUIRE(offsetof(IObjInspect, flags) == 0x18C);
+}
+
+TEST_CASE("vftable offsets are correct", "[iobjinspect]")
+{
+    REQUIRE(GetVftableOffset<IObjInspect>(&IObjInspect::get_attitude_towards) == 0x68);
+    REQUIRE(GetVftableOffset<IObjInspect>(&IObjInspect::get_target) == 0x74);
+    REQUIRE(GetVftableOffset<IObjInspect>(&IObjInspect::is_player) == 0xBC);
+}
+
 TEST_CASE("value offsets are correct", "[physicsinfo]")
 {
     REQUIRE(offsetof(PhysicsInfo, autoLevel) == 0x2F);

@@ -38,10 +38,15 @@ CShip* GetPlayerShipSafe()
 // Assumes both the CObjects of IObjRWs are CShips.
 bool AreIObjRWsInSameGroup(const IObjRW& o1, const IObjRW& o2)
 {
-    auto& ship1 = (const CShip&) *o1.cobject;
-    auto& ship2 = (const CShip&) *o2.cobject;
+    auto* ship1 = (const CShip*) o1.cobject;
+    auto* ship2 = (const CShip*) o2.cobject;
 
-    return ship1.groupId && ship1.groupId == ship2.groupId;
+    return AreShipsInSameGroup(ship1, ship2);
+}
+
+bool AreShipsInSameGroup(const CShip* ship1, const CShip* ship2)
+{
+    return ship1->groupId && ship1->groupId == ship2->groupId;
 }
 
 FL_FUNC(bool IsSimpleUnvisited(const CSimple& simple), 0x4D4C70);

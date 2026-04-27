@@ -54,6 +54,21 @@ AttitudeType GetAttitudeType_Hook(const IObjRW* towards, const IObjRW* from)
     return result;
 }
 
+// Called as part of the "Closest Enemy" function.
+// CShip is the player and obj is the target candidate.
+// We want to ensure group members cannot be chosen as nearest enemies.
+bool CShip::is_enemy_Hook(IObjInspect *obj)
+{
+    bool enemy = is_enemy(obj);
+
+    if (enemy && obj->is_player())
+    {
+        return !AreShipsInSameGroup(this, (CShip*) obj->cobject);
+    }
+
+    return enemy;
+}
+
 // In Freelancer, it's not possible to enter formation with group members that are hostile to you.
 // This code fixes that by checking if the player's selected target is a group member.
 void InitHostileGroupFormation()
@@ -89,6 +104,9 @@ void InitHostileGroupMembersFix()
 
     for (const auto &call : getAttitudeTypeCalls)
         SetRelPointer(call + 1, GetAttitudeType_Hook);
+
+    #define NEAREST_ENEMY_CHECK_ADDR (0x544A8E)
+    Hook(NEAREST_ENEMY_CHECK_ADDR, &CShip::is_enemy_Hook, 6);
 
     // TODO: Check 0x475770 for printing "Group member" into current information window. Both values passed to the func are non-zero.
     // Hook 004757FA, check if the passed address is neutral. Then check if players are group members. If so, print IDS 1551 instead.

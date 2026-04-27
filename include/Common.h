@@ -201,6 +201,8 @@ public:
     bool is_base() const;
 };
 
+struct IObjInspect;
+
 #define CSHIP_CLASS_TYPE 0x503
 struct CShip : public CEqObj
 {
@@ -211,8 +213,10 @@ struct CShip : public CEqObj
     IMPORT Archetype::Ship const * shiparch() const;
     IMPORT bool is_using_tradelane() const;
     IMPORT UINT get_group_name() const;
+    IMPORT bool is_enemy(IObjInspect *obj);
 
     UINT get_group_name_Hook() const;
+    bool is_enemy_Hook(IObjInspect *obj);
 };
 
 #define CSOLAR_CLASS_TYPE 0x303
@@ -297,6 +301,10 @@ struct IObjRW // : public IObjInspectImpl
         #define TRADE_REQUEST_FLAGS 0x4
         return (flags & TRADE_REQUEST_FLAGS) != 0;
     }
+};
+
+struct IObjInspect : public IObjRW
+{
 };
 
 struct PhysicsInfo
