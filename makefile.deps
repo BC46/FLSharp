@@ -167,7 +167,8 @@ obj\main.obj:\
 
 obj\mouse.obj:\
     include\mouse.h\
-    include\utils.h
+    include\utils.h\
+    include\fl_func.h
 
 obj\projectiles.obj:\
     include\projectiles.h\

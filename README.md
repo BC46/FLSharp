@@ -52,6 +52,7 @@ These include:
 - Added custom targeting cursor colors for group members and players who sent a trade request.
 - Fixed the first entry of every sold item category being misaligned in the Current Information window on some resolutions.
 - Fixed the in-game mouse cursor remaining visible when the cursor is outside the window.
+- Fixed the Windows mouse cursor flickering when it touches the screen borders in borderless windowed mode.
 
 More fixes and improvements may be added in the future.
 
