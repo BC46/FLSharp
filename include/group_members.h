@@ -11,3 +11,5 @@ enum AttitudeType : int
 void InitHostileGroupFormation();
 
 void InitHostileGroupMembersFix();
+
+void InitGroupMemberAttitudeFix();

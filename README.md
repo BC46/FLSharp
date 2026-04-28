@@ -49,6 +49,7 @@ These include:
 - No longer kick players from the server for re-purchasing the same ship.
 - Allows the player to enter formation with hostile group members.
 - Prevented hostile group members from being shown as hostile.
+- Shows the "GROUP MEMBER" attitude for group members in the Current Information window.
 - Added custom targeting cursor colors for group members and players who sent a trade request.
 - Fixed the first entry of every sold item category being misaligned in the Current Information window on some resolutions.
 - Fixed the in-game mouse cursor remaining visible when the cursor is outside the window.

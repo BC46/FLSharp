@@ -131,13 +131,16 @@ void InitHostileGroupMembersFix()
     // Fixes enemy group members being selected as "nearest enemies".
     #define NEAREST_ENEMY_CHECK_ADDR (0x544A8E)
     Hook(NEAREST_ENEMY_CHECK_ADDR, &CShip::is_enemy_Hook, 6);
+}
 
+// If the Current Information window is opened on a group member, this code will make it show "GROUP MEMBER" as the attitude.
+void InitGroupMemberAttitudeFix()
+{
     #define GET_ATTITUDE_TYPE_CURRENT_INFO_ADDR 0x475770
     #define CLEAN_STACK_GET_ATTITUDE_STRING_ADDR 0x47579F
     #define ATTITUDE_CHECK_CURRENT_INFO_ADDR 0x4757A2
     #define CLEAN_WCSCAT_STACK_ADDR 0x47580B
 
-    // If the Current Information window is opened on a group member, this code will make it show "GROUP MEMBER" as the attitude.
     Nop(GET_ATTITUDE_TYPE_CURRENT_INFO_ADDR, 5); // wipe out GetAttitudeType call
     GetValue<BYTE>(CLEAN_STACK_GET_ATTITUDE_STRING_ADDR + 2) -= sizeof(DWORD) * 2; // ensure "towards" and "from" remain on the stack
     Hook(ATTITUDE_CHECK_CURRENT_INFO_ADDR, GetAttitudeString_Hook, 5);

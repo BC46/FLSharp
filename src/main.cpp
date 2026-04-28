@@ -86,6 +86,7 @@ void Init()
     manager.RegisterFeature("ship_buy_kick_fix",        InitShipBuyKickFix,         nullptr,                    ApplyOnlyOnServer);
     manager.RegisterFeature("hostile_group_formation",  InitHostileGroupFormation,  nullptr,                    ApplyOnlyOnClient);
     manager.RegisterFeature("unhostile_group_members",  InitHostileGroupMembersFix, nullptr,                    ApplyOnlyOnClient);
+    manager.RegisterFeature("group_member_attitude",    InitGroupMemberAttitudeFix, nullptr,                    ApplyOnlyOnClient);
     manager.RegisterFeature("more_cursor_colors",       InitMoreCursorColors,       nullptr,                    ApplyOnlyOnClient);
     manager.RegisterFeature("base_info_spacing_fix",    InitBaseInfoSpacingFix,     nullptr,                    ApplyOnlyOnClient);
     manager.RegisterFeature("mouse_fix",                InitMouseFix,               nullptr,                    ApplyOnlyOnClient);
