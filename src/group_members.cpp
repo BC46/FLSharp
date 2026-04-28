@@ -54,7 +54,7 @@ AttitudeType GetAttitudeType_Hook(const IObjRW* towards, const IObjRW* from)
     return result;
 }
 
-#define NEUTRAL_ATTITUDE_IDS 1127
+#define NEUTRAL_ATTITUDE_IDS 1589
 #define GROUP_MEMBER_IDS 1551
 
 // Prints "GROUP MEMBER" as the "ATTITUDE" in the current information window if the ship is a group member.
@@ -67,12 +67,13 @@ void GetAttitudeString_Hook(const IObjRW& towards, const IObjRW* from)
     {
         // TODO: GROUP_MEMBER_IDS is capitalized, as opposed to the attitude IDS'.
         // It could be converted to lowercase using towlower but this may not work on localizations that use non-Latin characters.
+        // For now I changed the other attitude IDS' to capitalized versions as well, since the "ATTITUDE: " prefix is spelled in all caps too.
         ids = GROUP_MEMBER_IDS;
     }
     else
     {
         AttitudeType attitude = GetAttitudeType(&towards, from);
-        ids = (UINT) ((int) NEUTRAL_ATTITUDE_IDS + attitude);
+        ids = (UINT) ((int) NEUTRAL_ATTITUDE_IDS - attitude);
     }
 
     GetFlString(ids, FL_BUFFER_1, FL_BUFFER_LEN);
