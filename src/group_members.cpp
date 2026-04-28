@@ -54,6 +54,30 @@ AttitudeType GetAttitudeType_Hook(const IObjRW* towards, const IObjRW* from)
     return result;
 }
 
+#define NEUTRAL_ATTITUDE_IDS 1127
+#define GROUP_MEMBER_IDS 1551
+
+// Prints "GROUP MEMBER" as the "ATTITUDE" in the current information window if the ship is a group member.
+void GetAttitudeString_Hook(const IObjRW& towards, const IObjRW* from)
+{
+    UINT ids;
+
+    // Is the target a group member?
+    if (from && from->is_player() && AreIObjRWsInSameGroup(towards, *from))
+    {
+        // TODO: GROUP_MEMBER_IDS is capitalized, as opposed to the attitude IDS'.
+        // It could be converted to lowercase using towlower but this may not work on localizations that use non-Latin characters.
+        ids = GROUP_MEMBER_IDS;
+    }
+    else
+    {
+        AttitudeType attitude = GetAttitudeType(&towards, from);
+        ids = (UINT) ((int) NEUTRAL_ATTITUDE_IDS + attitude);
+    }
+
+    GetFlString(ids, FL_BUFFER_1, FL_BUFFER_LEN);
+}
+
 // Called as part of the "Closest Enemy" function.
 // CShip is the player and obj is the target candidate.
 // We want to ensure group members cannot be chosen as nearest enemies.
@@ -104,11 +128,19 @@ void InitHostileGroupMembersFix()
     for (const auto &call : getAttitudeTypeCalls)
         SetRelPointer(call + 1, GetAttitudeType_Hook);
 
+    // Fixes enemy group members being selected as "nearest enemies".
     #define NEAREST_ENEMY_CHECK_ADDR (0x544A8E)
     Hook(NEAREST_ENEMY_CHECK_ADDR, &CShip::is_enemy_Hook, 6);
 
-    // TODO: Check 0x475770 for printing "Group member" into current information window. Both values passed to the func are non-zero.
-    // Hook 004757FA, check if the passed address is neutral. Then check if players are group members. If so, print IDS 1551 instead.
-    // The problem is that there exists no "Group member" string in the English vanilla FL resource DLLs. There is only an uppercase version.
-    // It can be converted to lowercase using towlower but this may not work on localizations that use non-Latin characters.
+    #define GET_ATTITUDE_TYPE_CURRENT_INFO_ADDR 0x475770
+    #define CLEAN_STACK_GET_ATTITUDE_STRING_ADDR 0x47579F
+    #define ATTITUDE_CHECK_CURRENT_INFO_ADDR 0x4757A2
+    #define CLEAN_WCSCAT_STACK_ADDR 0x47580B
+
+    // If the Current Information window is opened on a group member, this code will make it show "GROUP MEMBER" as the attitude.
+    Nop(GET_ATTITUDE_TYPE_CURRENT_INFO_ADDR, 5); // wipe out GetAttitudeType call
+    GetValue<BYTE>(CLEAN_STACK_GET_ATTITUDE_STRING_ADDR + 2) -= sizeof(DWORD) * 2; // ensure "towards" and "from" remain on the stack
+    Hook(ATTITUDE_CHECK_CURRENT_INFO_ADDR, GetAttitudeString_Hook, 5);
+    Patch<WORD>(ATTITUDE_CHECK_CURRENT_INFO_ADDR + 5, 0x56EB); // Jump directly to wcscat after our hook executed
+    GetValue<BYTE>(CLEAN_WCSCAT_STACK_ADDR + 2) -= sizeof(DWORD) * 2; // two params were removed so do not clean them up
 }

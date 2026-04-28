@@ -90,4 +90,5 @@ void InitMouseFix()
     // This patch prevents that from happening.
     #define CURSOR_BOTTOM_BORDER_CHECK_ADDR 0x41EA9B
     Patch<BYTE>(CURSOR_BOTTOM_BORDER_CHECK_ADDR, 0xEB);
+    // TODO: Do the same for 0x41ECBF? Doesn't look necessary.
 }
