@@ -30,6 +30,7 @@
 #include "cursor_colors.h"
 #include "base_info.h"
 #include "mouse.h"
+#include "pilot_names.h"
 
 FeatureManager manager;
 
@@ -90,6 +91,7 @@ void Init()
     manager.RegisterFeature("more_cursor_colors",       InitMoreCursorColors,       nullptr,                    ApplyOnlyOnClient);
     manager.RegisterFeature("base_info_spacing_fix",    InitBaseInfoSpacingFix,     nullptr,                    ApplyOnlyOnClient);
     manager.RegisterFeature("mouse_fix",                InitMouseFix,               nullptr,                    ApplyOnlyOnClient);
+    manager.RegisterFeature("pilot_names_fix",          InitPilotNamesFix,          nullptr,                    ApplyOnlyOnClient);
 
     ReadConfig("FLSharp.ini", manager);
 

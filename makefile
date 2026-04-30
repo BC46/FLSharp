@@ -50,7 +50,8 @@ $(OBJ_DIR)\cheat_detection.obj\
 $(OBJ_DIR)\group_members.obj\
 $(OBJ_DIR)\cursor_colors.obj\
 $(OBJ_DIR)\base_info.obj\
-$(OBJ_DIR)\mouse.obj
+$(OBJ_DIR)\mouse.obj\
+$(OBJ_DIR)\pilot_names.obj
 
 COMMON_LIB = $(OBJ_DIR)\Common.lib
 DALIB_LIB = $(OBJ_DIR)\DALib.lib

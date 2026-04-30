@@ -163,12 +163,23 @@ obj\main.obj:\
     include\group_members.h\
     include\cursor_colors.h\
     include\base_info.h\
-    include\mouse.h
+    include\mouse.h\
+    include\pilot_names.h
 
 obj\mouse.obj:\
     include\mouse.h\
     include\utils.h\
     include\fl_func.h
+
+obj\pilot_names.obj:\
+    include\pilot_names.h\
+    include\fl_func.h\
+    include\Freelancer.h\
+    include\Common.h\
+    include\fl_math.h\
+    include\vftable.h\
+    include\st6.h\
+    include\utils.h
 
 obj\projectiles.obj:\
     include\projectiles.h\
@@ -325,6 +336,7 @@ obj\test.obj:\
     include\flash_particles.h\
     include\utils.h\
     include\Freelancer.h\
+    include\pilot_names.h\
     include\RemoteServer.h\
     include\rep_requirements.h\
     include\resolutions.h\

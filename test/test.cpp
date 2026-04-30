@@ -4,6 +4,7 @@
 #include "copy_paste.h"
 #include "flash_particles.h"
 #include "Freelancer.h"
+#include "pilot_names.h"
 #include "RemoteServer.h"
 #include "rep_requirements.h"
 #include "resolutions.h"
@@ -314,6 +315,13 @@ TEST_CASE("value offsets are correct", "[flcursor]")
     REQUIRE(offsetof(FLCursor, xPos) == 0x0);
     REQUIRE(offsetof(FLCursor, yPos) == 0x4);
     REQUIRE(offsetof(FLCursor, distFromZero) == 0x8);
+}
+
+// pilot_names.h
+TEST_CASE("value offsets are correct", "[strbuffer]")
+{
+    REQUIRE(offsetof(StrBuffer, str) == 0x0);
+    REQUIRE(offsetof(StrBuffer, capacity) == 0x4);
 }
 
 // RemoteServer.h
