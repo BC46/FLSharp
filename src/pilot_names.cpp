@@ -12,7 +12,12 @@ FL_FUNC(bool GetSimpleName(const CSimple &simple, StrBuffer &buffer, NameType ty
 // Only problem is that GetSimpleName writes stuff to FL_BUFFER_1 and FL_BUFFER_2.
 size_t GetCShipPilotName_Hook(const CSimple &simple, StrBuffer &buffer)
 {
-    // TODO: Check if GetSimpleName actually returns the same thing as GetCShipPilotName
+    // If it's not a ship, just call GetCShipPilotName, otherwise the next code will think it's a pilot.
+    // The function doesn't actually get a name and returns 0 in this case,
+    // but it does allocate the buffer if it's empty.
+    if ((simple.classType & CSHIP_CLASS_TYPE) != CSHIP_CLASS_TYPE)
+        return GetCShipPilotName(simple, buffer);
+
     bool success = GetSimpleName(simple, buffer, NameType::PilotName, true);
 
     // GetSimpleName modifies FL_BUFFER_1 and FL_BUFFER_2, so null both buffers
