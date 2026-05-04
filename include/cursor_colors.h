@@ -5,6 +5,7 @@
 #include "Common.h"
 
 // Read from the [Cursor] values in DATA\mouse.ini.
+// Constructor: 0x41E550
 struct MouseCursor
 {
     UINT32 nicknameLen; // 0x0

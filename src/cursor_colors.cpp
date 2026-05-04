@@ -64,11 +64,13 @@ NAKED void GetAttitudeOfTarget_Hook()
 
 std::map<MouseCursor*, std::shared_ptr<MouseCursor>> groupCursors, tradeRequestCursors;
 
-std::shared_ptr<MouseCursor> CreateCustomCursor(const MouseCursor* originalCursor, DWORD color, LPCSTR suffix)
+std::shared_ptr<MouseCursor> CreateCustomCursor(const MouseCursor* originalCursor, DWORD color, LPCSTR nicknameSuffix)
 {
     auto result = std::make_shared<MouseCursor>();
     *result = *originalCursor;
-    strcat_s(result->nickname, sizeof(result->nickname), suffix);
+
+    strcat_s(result->nickname, sizeof(result->nickname), nicknameSuffix);
+    result->nicknameLen = strlen(result->nickname);
     result->color = color;
 
     return result;
