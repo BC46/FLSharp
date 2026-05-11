@@ -23,6 +23,11 @@ jobs:
           name: FLSharp
           path: |
             bin/FLSharp.dll
-            bin/FLSharp.pdb
             bin/FLSharp.ini
             bin/FLSharp_LICENSE.txt
+      - name: Upload debug symbols as artifact
+        uses: actions/upload-artifact@v7
+        with:
+          name: FLSharp debug symbols
+          path: |
+            bin/FLSharp.pdb
