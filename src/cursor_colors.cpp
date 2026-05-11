@@ -66,8 +66,7 @@ std::map<MouseCursor*, std::shared_ptr<MouseCursor>> groupCursors, tradeRequestC
 
 std::shared_ptr<MouseCursor> CreateCustomCursor(const MouseCursor* originalCursor, DWORD color, LPCSTR nicknameSuffix)
 {
-    auto result = std::make_shared<MouseCursor>();
-    *result = *originalCursor;
+    auto result = std::make_shared<MouseCursor>(*originalCursor);
 
     strcat_s(result->nickname, sizeof(result->nickname), nicknameSuffix);
     result->nicknameLen = strlen(result->nickname);
