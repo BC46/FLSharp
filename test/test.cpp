@@ -16,6 +16,7 @@
 #include "cheat_detection.h"
 #include "cursor_colors.h"
 #include "waypoint_names.h"
+#include "mouse.h"
 
 // alchemy_crash.h
 TEST_CASE("value offsets are correct", "[alchemy]")
@@ -503,4 +504,12 @@ TEST_CASE("value offsets are correct", "[missionobjective]")
 {
     REQUIRE(offsetof(MissionObjective, fmtStr) == 0x0);
     REQUIRE(offsetof(MissionObjective, flags) == 0x18);
+}
+
+// mouse.h
+TEST_CASE("vftable offsets are correct", "[idirectinputdevice8]")
+{
+    REQUIRE(GetVftableOffset<IDirectInputDevice8>(&IDirectInputDevice8::Acquire, true) == 0x1C);
+    REQUIRE(GetVftableOffset<IDirectInputDevice8>(&IDirectInputDevice8::Unacquire, true) == 0x20);
+    REQUIRE(GetVftableOffset<IDirectInputDevice8>(&IDirectInputDevice8::SetCooperativeLevel, true) == 0x34);
 }

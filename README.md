@@ -54,12 +54,13 @@ These include:
 - Fixed the first entry of every sold item category being misaligned in the Current Information window on some resolutions.
 - Fixed the in-game mouse cursor remaining visible when the cursor is outside the window.
 - Fixed the Windows mouse cursor flickering when it touches the screen borders in borderless windowed mode.
+- Fixed the mouse sometimes warping to the center of the game window in (borderless) windowed mode.
 - Fixed pilots with long names having their name truncated in the Current Information window, comm text, and the "Hand over your cargo" dialog.
 
 More fixes and improvements may be added in the future.
 
 ## Installation instructions
-Download the latest `FLSharp.zip` from [Releases](https://github.com/BC46/FLSharp/releases). Extract the zip's contents to the `EXE` folder of your Freelancer installation (the `.pdb` and `.ini` file are optional). Next, open `dacom.ini` and  `dacomsrv.ini` and in both files append `FLSharp.dll` to the `[Libraries]` section. **Note that FLSharp requires the official 1.1 patch.** Some of the plugin's features may work fine with 1.0 but this is not guaranteed.
+Download the latest `FLSharp.zip` from [Releases](https://github.com/BC46/FLSharp/releases). Extract the zip's contents to the `EXE` folder of your Freelancer installation. Next, open `dacom.ini` and  `dacomsrv.ini` and in both files append `FLSharp.dll` to the `[Libraries]` section. **Note that FLSharp requires the official 1.1 patch.** Some of the plugin's features may work fine with 1.0 but this is not guaranteed.
 
 In the `FLSharp.ini` file, you can specify for every individual feature whether or not it should be enabled. To disable a feature, change its value from `true` to `false`. In almost all cases, having every feature enabled is ideal since these are all quality of life improvements. However, you may want to disable one or more features if you do not like them for whatever reason or if they introduce compatibility issues with other plugins.
 

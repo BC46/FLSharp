@@ -90,7 +90,8 @@ void Init()
     manager.RegisterFeature("group_member_attitude",    InitGroupMemberAttitudeFix, nullptr,                    ApplyOnlyOnClient);
     manager.RegisterFeature("more_cursor_colors",       InitMoreCursorColors,       nullptr,                    ApplyOnlyOnClient);
     manager.RegisterFeature("base_info_spacing_fix",    InitBaseInfoSpacingFix,     nullptr,                    ApplyOnlyOnClient);
-    manager.RegisterFeature("mouse_fix",                InitMouseFix,               nullptr,                    ApplyOnlyOnClient);
+    manager.RegisterFeature("cursor_fix",               InitCursorFix,              nullptr,                    ApplyOnlyOnClient);
+    manager.RegisterFeature("mouse_warp_fix",           InitMouseWarpFix,           nullptr,                    ApplyOnlyOnClient);
     manager.RegisterFeature("pilot_names_fix",          InitPilotNamesFix,          nullptr,                    ApplyOnlyOnClient);
 
     ReadConfig("FLSharp.ini", manager);
