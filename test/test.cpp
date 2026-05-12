@@ -167,6 +167,7 @@ TEST_CASE("value offsets are correct", "[iobjrw]")
 
 TEST_CASE("vftable offsets are correct", "[iobjrw]")
 {
+    REQUIRE(GetVftableOffset<IObjRW>(&IObjRW::get_simple_id) == 0x20);
     REQUIRE(GetVftableOffset<IObjRW>(&IObjRW::get_attitude_towards) == 0x68);
     REQUIRE(GetVftableOffset<IObjRW>(&IObjRW::get_target) == 0x74);
     REQUIRE(GetVftableOffset<IObjRW>(&IObjRW::is_player) == 0xBC);
@@ -181,6 +182,7 @@ TEST_CASE("value offsets are correct", "[iobjinspect]")
 
 TEST_CASE("vftable offsets are correct", "[iobjinspect]")
 {
+    REQUIRE(GetVftableOffset<IObjInspect>(&IObjInspect::get_simple_id) == 0x20);
     REQUIRE(GetVftableOffset<IObjInspect>(&IObjInspect::get_attitude_towards) == 0x68);
     REQUIRE(GetVftableOffset<IObjInspect>(&IObjInspect::get_target) == 0x74);
     REQUIRE(GetVftableOffset<IObjInspect>(&IObjInspect::is_player) == 0xBC);

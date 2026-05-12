@@ -276,7 +276,10 @@ struct IObjRW // : public IObjInspectImpl
 
     FILL_VFTABLE(0)
     FILL_VFTABLE(1)
-    FILL_VFTABLE(2)
+    virtual UINT get_simple_id() const; // 0x20
+    virtual void Vftable_x24();
+    virtual void Vftable_x28();
+    virtual void Vftable_x2C();
     FILL_VFTABLE(3)
     FILL_VFTABLE(4)
     FILL_VFTABLE(5)

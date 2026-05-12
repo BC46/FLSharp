@@ -17,10 +17,15 @@
 
 #define GROUP_MEMBER_COLOR (*(PDWORD) 0x679B88)
 #define TRADE_REQUEST_COLOR (*(PDWORD) 0x679B9C)
+// The yellow color of objects using radio, but it is not used in the contact list.
+// Presumably because this color is already reserved for the selected target.
+#define HIGHLIGHT_COLOR (*(PDWORD) 0x679BA4)
 
 const IObjRW *lastSelectedObj = nullptr;
 
 FL_FUNC(void Targetable_Objects::UpdateTargeting(), 0x4F2220)
+
+FL_FUNC(bool IsSimpleUsingRadio(UINT simpleId), 0x4CC880)
 
 // We want to reset the lastSelectedObj before the targeting is updated
 // to ensure lastSelectedObj never points to invalid memory.
@@ -63,6 +68,7 @@ NAKED void GetAttitudeOfTarget_Hook()
 
 
 std::map<MouseCursor*, std::shared_ptr<MouseCursor>> groupCursors, tradeRequestCursors;
+//std::map<MouseCursor*, std::shared_ptr<MouseCursor>> radioCursors;
 
 std::shared_ptr<MouseCursor> CreateCustomCursor(const MouseCursor* originalCursor, DWORD color, LPCSTR nicknameSuffix)
 {
@@ -102,11 +108,13 @@ void FillCustomCursorMap(const std::vector<LPCSTR> &cursorNames, LPCSTR neutralC
     {
         auto groupCursor = CreateCustomCursor(*neutralCursorIt, GROUP_MEMBER_COLOR, "_group");
         auto tradeRequestCursor = CreateCustomCursor(*neutralCursorIt, TRADE_REQUEST_COLOR, "_trade");
+        //auto radioCursor = CreateCustomCursor(*neutralCursorIt, HIGHLIGHT_COLOR, "_radio");
 
         for (const auto cursor : cursors)
         {
             groupCursors.emplace(cursor, groupCursor);
             tradeRequestCursors.emplace(cursor, tradeRequestCursor);
+            //radioCursors.emplace(cursor, radioCursor);
         }
     }
 }
@@ -154,6 +162,12 @@ void FASTCALL SetCurrentCustomAimCursor(const Targetable_Objects& to, const IObj
 
     // If the target has been found, check if it is a player who sent a trade request or is a group member.
     decltype(groupCursors)* customCursorMap = nullptr;
+
+    // if (IsSimpleUsingRadio(target->get_simple_id()))
+    // {
+    //     customCursorMap = &radioCursors;
+    // }
+    // else
     if (target->is_player())
     {
         if (target->SentTradeRequest())
