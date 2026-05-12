@@ -34,6 +34,10 @@
 #define TIMING_DELTA_TICK_COUNT (*(PDWORD) 0x667D14)
 #define TIME_GET_TIME_VAL (*(PDWORD) 0x667D20)
 
+#define SHOW_MOUSE_CURSOR (*(bool*) 0x6107DC)
+
+#define FL_HWND (*(HWND*) 0x67ECA0)
+
 struct Waypoint
 {
     Vector pos;

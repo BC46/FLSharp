@@ -1,6 +1,7 @@
 #include "dealer_fixes.h"
 #include "utils.h"
 #include "fl_func.h"
+#include "Freelancer.h"
 
 #define FASTCALL __fastcall
 
@@ -15,13 +16,13 @@ bool DealerOpenCamera::StartAnimation_Hook(LPCSTR name, PVOID unk, NavBar* navBa
     return StartAnimation(name, unk, navBar, unk2);
 }
 
-void FASTCALL SetShipDealerMenuOpened_Hook(PVOID unkUiElement, NavBar& navBar)
+void FASTCALL SetShipDealerMenuOpened_Hook(ObjectDeformable* dealerCharacter, NavBar& navBar)
 {
-    navBar.unkUiElement = unkUiElement; // overwritten instruction
+    navBar.dealerCharacter = dealerCharacter; // overwritten instruction
 
     // Don't allow the ship dealer menu to be opened if the room transition hasn't finished yet.
     // Otherwise it'll crash the game.
-    bool roomTransitionFinished = (navBar.maneuverFrame->flags & UI_ELEMENT_VISIBLE) == UI_ELEMENT_VISIBLE;
+    bool roomTransitionFinished = SHOW_MOUSE_CURSOR;
     navBar.shipDealerMenuOpened = roomTransitionFinished;
 }
 

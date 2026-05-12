@@ -1,6 +1,7 @@
 #include "mouse.h"
 #include "utils.h"
 #include "fl_func.h"
+#include "Freelancer.h"
 
 #define WIN32_LEAN_AND_MEAN
 #include <windows.h>
@@ -12,10 +13,6 @@
 
 #define WINDOW_WIDTH (*(int*) 0x679BC8)
 #define WINDOW_HEIGHT (*(int*) 0x679BCC)
-
-#define SHOW_MOUSE_CURSOR (*(bool*) 0x6107DC)
-
-#define FL_HWND (*(HWND*) 0x67ECA0)
 
 #define FL_RES_FLAGS (*(PDWORD) 0x679BE5)
 #define FULLSCREEN_FLAG (1)

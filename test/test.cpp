@@ -423,10 +423,16 @@ TEST_CASE("value offsets are correct", "[maneuverframe]")
     REQUIRE(offsetof(ManeuverFrame, flags) == 0x6C);
 }
 
+TEST_CASE("vftable offsets are correct", "[objectdeformable]")
+{
+    REQUIRE(GetVftableOffset<ObjectDeformable>(&ObjectDeformable::Destroy) == 0x0);
+}
+
 TEST_CASE("value offsets are correct", "[navbar]")
 {
+    REQUIRE(offsetof(NavBar, roomTransitionInProgress) == 0x344);
     REQUIRE(offsetof(NavBar, maneuverFrame) == 0x3D8);
-    REQUIRE(offsetof(NavBar, unkUiElement) == 0x3E0);
+    REQUIRE(offsetof(NavBar, dealerCharacter) == 0x3E0);
     REQUIRE(offsetof(NavBar, shipDealerMenuOpened) == 0x3E4);
 }
 

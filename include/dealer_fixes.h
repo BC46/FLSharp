@@ -11,12 +11,20 @@ struct ManeuverFrame
     BYTE flags; // 0x6C
 };
 
+struct ObjectDeformable
+{
+    // If bit 1 is set, that means the ObjectDeformable itself gets freed as well.
+    virtual ObjectDeformable* Destroy(DWORD flags = 1);
+};
+
 struct NavBar
 {
-    BYTE x00[0x3D8];
+    BYTE x00[0x344];
+    bool roomTransitionInProgress; // 0x344
+    BYTE x345[0x93];
     ManeuverFrame* maneuverFrame; // 0x3D8
     BYTE x3DC[0x4];
-    PVOID unkUiElement; // 0x3E0
+    ObjectDeformable* dealerCharacter; // 0x3E0
     bool shipDealerMenuOpened; // 0x3E4
 
     void SetHotspot_Hook(PVOID hotspot);
