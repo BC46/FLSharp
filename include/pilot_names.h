@@ -4,7 +4,7 @@
 struct StrBuffer
 {
 	LPWSTR str;
-	size_t capacity;
+	size_t capacity; // in number of words
 };
 
 enum NameType : DWORD

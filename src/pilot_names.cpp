@@ -31,7 +31,7 @@ size_t GetCShipPilotName_Hook(const CSimple &simple, StrBuffer &buffer)
 
 // Many UI elements in FL call GetCShipPilotName which returns a string with a max buffer length of 24.
 // Hence if the pilot name is longer than 23 characters, it will be truncated.
-// This doesn't matter ofr player names in MP as those are limited to 23 characters.
+// This doesn't matter for player names in MP as those are limited to 23 characters.
 // However, with some NPCs I did notice the names being truncated, in particular with some Transport and Corsair pilots who often have long names.
 // This issue is fixed by hooking all the GetCShipPilotName calls where we instead call GetSimpleName; this function always returns the full string.
 void InitPilotNamesFix()
