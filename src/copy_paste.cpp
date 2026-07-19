@@ -19,7 +19,7 @@ NAKED void HandleDefaultInputKey_Hook()
 
 void InputBoxWindow::CopyFromClipboard()
 {
-    if (!OpenClipboard(nullptr))
+    if (!IsClipboardFormatAvailable(CF_UNICODETEXT) || !OpenClipboard(nullptr))
         return;
 
     HANDLE clipboard = GetClipboardData(CF_UNICODETEXT);
