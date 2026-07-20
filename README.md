@@ -67,7 +67,7 @@ In the `FLSharp.ini` file, you can specify for every individual feature whether 
 If the `FLSharp.ini` file is missing or if it can't be opened, then all features are enabled by default. When an entry in `FLSharp.ini` is missing, then that particular feature will also be enabled by default. In other words, every feature is by default enabled unless stated otherwise.
 
 ## Build instructions
-Build the project using the `NMAKE` tool from Visual Studio 2017.
+Build the project using the `NMAKE` tool from Visual Studio 2017 or newer.
 This will output the `FLSharp.dll` file in the `bin` folder.
 Building the project using other compilers may require the code to be modified.
 
@@ -78,6 +78,8 @@ Thanks to the following people for helping make some of the features possible:
   - Provided source code of many Freelancer plugins.
 - [Aingar](https://github.com/Aingar)
   - Identification of the client-to-server communication improvements and providing code from DiscoveryGC's client hook.
+- FLHook contributors
+  - Reverse engineered and documented Freelancer data structures as part of the [FLHook SDK](https://github.com/TheStarport/FLHookSDK).
 - [Schmackbolzen](https://github.com/Schmackbolzen)
   - Provided assistance with troubleshooting the ship preview rendering bug.
 - [Venemon](https://www.moddb.com/members/venemon)

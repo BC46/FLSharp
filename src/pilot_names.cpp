@@ -36,7 +36,7 @@ size_t GetCShipPilotName_Hook(const CSimple &simple, StrBuffer &buffer)
 // This issue is fixed by hooking all the GetCShipPilotName calls where we instead call GetSimpleName; this function always returns the full string.
 void InitPilotNamesFix()
 {
-        DWORD getPilotNameCallAddrs[] = {
+    DWORD getPilotNameCallAddrs[] = {
         0x4756F8, // Current Information window
         0x48AB1F, // Hand over your cargo or I'll open fire window
         0x4CB85F, // Comm text

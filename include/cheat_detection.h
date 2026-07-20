@@ -48,6 +48,7 @@ struct BaseGoodCollection
     UINT launchpadName; // 0x4
     DWORD unk_x08; // 0x8
     float unk_x0C; // 0xC
+    // TODO: This is actually an st6::map.
     st6::list<BaseGood> goods; // 0x10
 
     bool HasShipPackageWithGood(UINT goodId);
