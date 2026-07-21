@@ -6,7 +6,7 @@
 std::map<UINT, UINT> msnBaseIdsInfoMap;
 std::map<UINT, UINT> msnNicknameIdsInfoMap;
 
-void ParseEntries(INI_Reader& reader, const std::map<UINT, InfocardEntry>& entries)
+static void ParseEntries(INI_Reader& reader, const std::map<UINT, InfocardEntry>& entries)
 {
     while (reader.read_header())
     {
@@ -37,7 +37,7 @@ void ParseEntries(INI_Reader& reader, const std::map<UINT, InfocardEntry>& entri
 }
 
 // Parses the MissionCreatedSolars.ini file and for every solar stores its ids_info in a map.
-void ParseMsnCreatedSolars(LPCSTR iniPath)
+static void ParseMsnCreatedSolars(LPCSTR iniPath)
 {
     INI_Reader reader;
 
@@ -56,7 +56,7 @@ void ParseMsnCreatedSolars(LPCSTR iniPath)
     reader.close();
 }
 
-bool FindValueInMap(std::map<UINT, UINT>& map, UINT key, UINT& foundValue)
+static bool FindValueInMap(std::map<UINT, UINT>& map, UINT key, UINT& foundValue)
 {
     auto it = map.find(key);
     if (it != map.end())
@@ -68,7 +68,7 @@ bool FindValueInMap(std::map<UINT, UINT>& map, UINT key, UINT& foundValue)
     return false;
 }
 
-void GetAltSolarIdsInfo(const CSolar* solar, UINT &idsInfo)
+static void GetAltSolarIdsInfo(const CSolar* solar, UINT &idsInfo)
 {
     const Archetype::Solar* solarArch = solar->solararch();
 

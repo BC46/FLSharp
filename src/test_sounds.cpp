@@ -13,7 +13,7 @@ FL_FUNC(FlSound* GetSound(const ID_String& ids), 0x42AE40)
 // Checks whether a test sound exists.
 // This is important, because if it does not exist, then the game should not attempt to play it.
 // A crash will occur if otherwise.
-bool IsTestSoundAvailable(LPCSTR nickname)
+static bool IsTestSoundAvailable(LPCSTR nickname)
 {
     // Generates a Spew warning if the sound is not defined.
     // I think it is useful because the warning will only appear if FL wants to plays the test sound
@@ -24,19 +24,19 @@ bool IsTestSoundAvailable(LPCSTR nickname)
     return sound != nullptr;
 }
 
-bool IsInterfaceTestSoundAvailable()
+static bool IsInterfaceTestSoundAvailable()
 {
     static bool result = IsTestSoundAvailable("ui_interface_test");
     return result;
 }
 
-bool IsAmbienceTestSoundAvailable()
+static bool IsAmbienceTestSoundAvailable()
 {
     static bool result = IsTestSoundAvailable("ui_ambiance_test");
     return result;
 }
 
-void EnsureTestSoundsPlay()
+static void EnsureTestSoundsPlay()
 {
     #define INDEPENDENT_INTERFACE_VOLUME_VAL_ADDR 0x4B1503
     #define INDEPENDENT_AMBIENCE_VOLUME_VAL_ADDR 0x4B1554
@@ -162,7 +162,7 @@ void StartAmbienceTestSound_Hook(BYTE soundId) // soundId should always be 0x22 
     PauseSound(shouldResumeBGM, GetBackgroundMusicHandle, true);
 }
 
-void PauseSound(bool &shouldResume, GetSoundHandleFunc getHandle, bool force)
+static void PauseSound(bool &shouldResume, GetSoundHandleFunc getHandle, bool force)
 {
     SoundHandle *handle = nullptr;
     if (!getHandle(&handle))
@@ -181,7 +181,7 @@ void PauseSound(bool &shouldResume, GetSoundHandleFunc getHandle, bool force)
     handle->FreeReference();
 }
 
-void ResumeSound(bool &shouldResume, GetSoundHandleFunc getHandle, bool force)
+static void ResumeSound(bool &shouldResume, GetSoundHandleFunc getHandle, bool force)
 {
     SoundHandle *handle = nullptr;
     if (!getHandle(&handle))

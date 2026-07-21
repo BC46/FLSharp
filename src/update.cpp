@@ -18,19 +18,19 @@ float shipTurnThreshold = DEFAULT_SHIP_TURN_THRESHOLD;
 Quaternion lastOrientation;
 float secElapsedSinceLastUpdate = 0.0;
 
-void ResetTimeSinceLastUpdate()
+static void ResetTimeSinceLastUpdate()
 {
     secElapsedSinceLastUpdate = 0.0;
     sendUpdateAsap = false;
 }
 
-void ForceObjUpdate()
+static void ForceObjUpdate()
 {
     secElapsedSinceLastUpdate = MAX_SYNC_INTERVAL_SEC;
     sendUpdateAsap = true;
 }
 
-bool IsEkEnabled(const CShip& ship)
+static bool IsEkEnabled(const CShip& ship)
 {
     // This seems to be a relatively fast operation; Freelancer calls it numerous times per frame.
     CEEngine const * engine = CEEngine::cast(ship.equipManager.FindFirst(ENGINE_TYPE));
@@ -42,7 +42,7 @@ bool IsEkEnabled(const CShip& ship)
 }
 
 // Checks if engine kill has been toggled and update the last known value.
-bool IsEkToggled(const CShip& ship)
+static bool IsEkToggled(const CShip& ship)
 {
     bool engineKillEnabled = IsEkEnabled(ship);
 
@@ -52,7 +52,7 @@ bool IsEkToggled(const CShip& ship)
     return result;
 }
 
-bool HasOrientationChanged(const CShip& ship, float secElapsed)
+static bool HasOrientationChanged(const CShip& ship, float secElapsed)
 {
     if (secElapsed < ROTATION_CHECK_INTERVAL_SEC)
         return false;
@@ -61,7 +61,7 @@ bool HasOrientationChanged(const CShip& ship, float secElapsed)
     return rotationDelta >= shipTurnThreshold;
 }
 
-float GetShipTurnThreshold(const CShip& ship)
+static float GetShipTurnThreshold(const CShip& ship)
 {
     Archetype::Ship const * shipArch = ship.shiparch();
 
@@ -102,14 +102,14 @@ namespace Update
     }
 }
 
-bool ShouldSendUpdate(const CShip& ship, float secElapsed)
+static bool ShouldSendUpdate(const CShip& ship, float secElapsed)
 {
     // Has it been a while since the last update?
     // Has the orientation been changed to some extent?
     return (secElapsed >= MAX_SYNC_INTERVAL_SEC) || HasOrientationChanged(ship, secElapsed);
 }
 
-inline float GetShipMinSyncInterval(const CShip& ship)
+inline static float GetShipMinSyncInterval(const CShip& ship)
 {
     // Ensure updates are sent less frequently when the player ship is taking a tradelane to prevent jitter
     return ship.is_using_tradelane() ? MIN_SYNC_INTERVAL_TLR_SEC : MIN_SYNC_INTERVAL_SEC;

@@ -23,7 +23,7 @@ BYTE* lastResSupportedArr = nullptr;
 
 WidthHeight mainMonitorRes;
 
-WidthHeight GetMainMonitorResolution()
+static WidthHeight GetMainMonitorResolution()
 {
     WidthHeight result;
 
@@ -44,7 +44,7 @@ WidthHeight GetMainMonitorResolution()
     return result;
 }
 
-void AddFlResolutions()
+static void AddFlResolutions()
 {
     const WidthHeight defaultResolutions[] =
         { { 800, 600 }, { 1024, 768 }, { 1152, 864 }, { 1280, 960 }, { 1600, 1200 } };
@@ -56,7 +56,7 @@ void AddFlResolutions()
     }
 }
 
-void AddWindowRectResolutions()
+static void AddWindowRectResolutions()
 {
     RECT desktop;
 
@@ -67,7 +67,7 @@ void AddWindowRectResolutions()
     }
 }
 
-void AddMainMonitorResolutions()
+static void AddMainMonitorResolutions()
 {
     SetMainResWidth(mainMonitorRes.width);
     SetMainResHeight(mainMonitorRes.height);
@@ -81,7 +81,7 @@ void AddMainMonitorResolutions()
     resolutions.emplace(mainMonitorRes.width, mainMonitorRes.height, 32);
 }
 
-void AddDisplaySettingsResolutions()
+static void AddDisplaySettingsResolutions()
 {
     bool isMainResNarrow = IsResolutionNarrow(mainMonitorRes.width, mainMonitorRes.height);
     DEVMODE dm = { 0 };
@@ -184,7 +184,7 @@ void NN_Preferences::TestResolutions_Hook(DWORD unk)
     mainMonitorRes = currentMainRes;
 }
 
-void DiscardLowestResolutions(size_t newSize)
+static void DiscardLowestResolutions(size_t newSize)
 {
     auto it = resolutions.begin();
 

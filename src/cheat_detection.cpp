@@ -21,7 +21,7 @@ NAKED void GetGoodSoldByBase_Hook()
     }
 }
 
-bool ShipPackageContainsGood(GoodInfo const &shipPackage, UINT goodId)
+static bool ShipPackageContainsGood(GoodInfo const &shipPackage, UINT goodId)
 {
     for (const auto& equipDescList : shipPackage.equipDescLists) {
         bool containsGoodId = std::any_of(equipDescList.list.begin(), equipDescList.list.end(),

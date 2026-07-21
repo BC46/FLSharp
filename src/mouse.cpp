@@ -29,12 +29,12 @@ bool ShowMouseCursor_Hook()
     return SHOW_MOUSE_CURSOR;
 }
 
-bool IsGameFullscreen()
+static bool IsGameFullscreen()
 {
     return FL_RES_FLAGS & FULLSCREEN_FLAG;
 }
 
-void ForceShowWindowsCursor()
+static void ForceShowWindowsCursor()
 {
     // Same code as FL.
     while (ShowCursor(TRUE) < 1);

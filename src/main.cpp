@@ -34,7 +34,7 @@
 
 FeatureManager manager;
 
-void CheckDllVersions()
+static void CheckDllVersions()
 {
     // Stores for each DLL its module name and known 1.0 build version.
     std::pair<LPCSTR, UINT32> dlls[] =

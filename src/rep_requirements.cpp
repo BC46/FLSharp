@@ -11,7 +11,7 @@ UINT insufficientRepIds = 1564;
 FL_FUNC(void NN_Dealer::PrintFmtStrPurchaseInfo(UINT idsPurchaseInfo, int fmtValue), 0x47FD50)
 
 // Converts the reputation value to a percentage.
-int GetRepPercentage(float repValue)
+static int GetRepPercentage(float repValue)
 {
     return static_cast<int>(repValue * 100.0f);
 }
