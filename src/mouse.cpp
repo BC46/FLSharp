@@ -125,6 +125,39 @@ void InitMouseWarpFix()
     #define THIS_PTR_ACQUIRE_MOUSE_ADDR 0x41F7D1
     #define ACQUIRE_MOUSE_ADDR 0x41F7D3
 
+    // TODO: "Unacquire" sets cursor pos as well
     Patch<BYTE>(THIS_PTR_ACQUIRE_MOUSE_ADDR, 0x4E); // mov eax, [esi+0x10] -> mov ecx, [esi+0x10]
     Hook(ACQUIRE_MOUSE_ADDR, Acquire_Hook, 6);
+}
+
+void (*DestroyStartupScreenOg)();
+
+#define STARTUP_SCREEN_OBJ (*(PVOID*) 0x67C3BC)
+
+// Fixes the mouse cursor being initially positioned in the top-left corner in fullscreen mode.
+// With this fix, the initial position of the mouse cursor will be in the center of the screen, like most fullscreen games.
+void DestroyStartupScreen_Hook()
+{
+    // This function gets called every time before the main menu is opened.
+    // We want our code to only be called before the very first menu visit
+    // When the game starts, it creates a startup screen object and destroys it after it is shown.
+    // Therefore, this object will no longer exist in subsequent menu visits.
+    // We can check if it is the first menu visit by testing if the startup screen object exists.
+    if (STARTUP_SCREEN_OBJ && IsGameFullscreen())
+    {
+        POINT p;
+        if (GetCursorPos(&p) && ScreenToClient(FL_HWND, &p))
+        {
+            MOUSE_X = p.x;
+            MOUSE_Y = p.y;
+        }
+    }
+
+    DestroyStartupScreenOg();
+}
+
+void InitMenuMousePosFix()
+{
+    #define DESTROY_STARTUP_SCREEN_CALL_ADDR (0x57432A)
+    DestroyStartupScreenOg = SetRelPointer(DESTROY_STARTUP_SCREEN_CALL_ADDR + 1, DestroyStartupScreen_Hook);
 }

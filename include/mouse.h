@@ -11,6 +11,8 @@ void InitCursorFix();
 
 void InitMouseWarpFix();
 
+void InitMenuMousePosFix();
+
 // Redefining this because I don't want the project to depend on the DirectX SDK...
 struct IDirectInputDevice8
 {

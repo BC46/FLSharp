@@ -92,6 +92,7 @@ void Init()
     manager.RegisterFeature("base_info_spacing_fix",    InitBaseInfoSpacingFix,     nullptr,                    ApplyOnlyOnClient);
     manager.RegisterFeature("cursor_fix",               InitCursorFix,              nullptr,                    ApplyOnlyOnClient);
     manager.RegisterFeature("mouse_warp_fix",           InitMouseWarpFix,           nullptr,                    ApplyOnlyOnClient);
+    manager.RegisterFeature("mouse_pos_fix",            InitMenuMousePosFix,        nullptr,                    ApplyOnlyOnClient);
     manager.RegisterFeature("pilot_names_fix",          InitPilotNamesFix,          nullptr,                    ApplyOnlyOnClient);
 
     ReadConfig("FLSharp.ini", manager);
