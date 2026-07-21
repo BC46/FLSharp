@@ -58,11 +58,12 @@ void Init()
 {
     // All registered features must be able to work independently of each other.
     // They must not assume a certain load order or that another feature is active/inactive.
+
+    // Client only fixes
     manager.RegisterFeature("better_updates",           InitBetterUpdates,          nullptr,                    ApplyOnlyOnClient);
     manager.RegisterFeature("waypoint_fixes",           InitWaypointFixes,          nullptr,                    ApplyOnlyOnClient);
     manager.RegisterFeature("waypoint_name_fixes",      InitWaypointNameFixes,      nullptr,                    ApplyOnlyOnClient);
     manager.RegisterFeature("projectiles_sound_fix",    InitProjectilesSoundFix,    nullptr,                    ApplyOnlyOnClient);
-    manager.RegisterFeature("projectiles_server_fix",   InitProjectilesServerFix,   nullptr,                    ApplyAlways);
     manager.RegisterFeature("better_resolutions",       InitBetterResolutions,      CleanupBetterResolutions,   ApplyOnlyOnClient);
     manager.RegisterFeature("more_test_sounds",         InitTestSounds,             nullptr,                    ApplyOnlyOnClient);
     manager.RegisterFeature("trade_lane_lights_fix",    InitTradeLaneLightsFix,     nullptr,                    ApplyOnlyOnClient);
@@ -75,16 +76,13 @@ void Init()
     manager.RegisterFeature("quit_message_fix",         InitQuitMessageFix,         CleanupQuitMessageFix,      ApplyOnlyOnClient);
     manager.RegisterFeature("flight_controls_fix",      InitFlightControlsFix,      nullptr,                    ApplyOnlyOnClient);
     manager.RegisterFeature("dynamic_solar_infocards",  InitDynamicSolarInfocards,  nullptr,                    ApplyOnlyOnClient);
-    manager.RegisterFeature("save_crash_fix",           InitSaveCrashFix,           nullptr,                    ApplyAlways);
     manager.RegisterFeature("alchemy_crash_fix",        InitAlchemyCrashFix,        nullptr,                    ApplyOnlyOnClient);
     manager.RegisterFeature("blank_faction_fix",        InitBlankFactionNameFix,    nullptr,                    ApplyOnlyOnClient);
     manager.RegisterFeature("server_filter_crash_fix",  InitServerFilterCrashFix,   nullptr,                    ApplyOnlyOnClient);
     manager.RegisterFeature("server_filter_speed_fix",  InitServerFilterSpeedFix,   nullptr,                    ApplyOnlyOnClient);
-    manager.RegisterFeature("freelancer_dll_crash_fix", InitMissingDllCrashFix,     nullptr,                    ApplyAlways);
     manager.RegisterFeature("shield_capacity_fix",      InitShieldCapacityFix,      nullptr,                    ApplyOnlyOnClient);
     manager.RegisterFeature("dealer_menu_open_fix",     InitDealerOpenFix,          nullptr,                    ApplyOnlyOnClient);
     manager.RegisterFeature("dealer_crash_fix",         InitDealerCrashFix,         nullptr,                    ApplyOnlyOnClient);
-    manager.RegisterFeature("ship_buy_kick_fix",        InitShipBuyKickFix,         nullptr,                    ApplyOnlyOnServer);
     manager.RegisterFeature("hostile_group_formation",  InitHostileGroupFormation,  nullptr,                    ApplyOnlyOnClient);
     manager.RegisterFeature("unhostile_group_members",  InitHostileGroupMembersFix, nullptr,                    ApplyOnlyOnClient);
     manager.RegisterFeature("group_member_attitude",    InitGroupMemberAttitudeFix, nullptr,                    ApplyOnlyOnClient);
@@ -94,6 +92,14 @@ void Init()
     manager.RegisterFeature("mouse_warp_fix",           InitMouseWarpFix,           nullptr,                    ApplyOnlyOnClient);
     manager.RegisterFeature("mouse_pos_fix",            InitMenuMousePosFix,        nullptr,                    ApplyOnlyOnClient);
     manager.RegisterFeature("pilot_names_fix",          InitPilotNamesFix,          nullptr,                    ApplyOnlyOnClient);
+
+    // Server only fixes
+    manager.RegisterFeature("ship_buy_kick_fix",        InitShipBuyKickFix,         nullptr,                    ApplyOnlyOnServer);
+
+    // Client and server fixes
+    manager.RegisterFeature("projectiles_server_fix",   InitProjectilesServerFix,   nullptr,                    ApplyAlways);
+    manager.RegisterFeature("save_crash_fix",           InitSaveCrashFix,           nullptr,                    ApplyAlways);
+    manager.RegisterFeature("freelancer_dll_crash_fix", InitMissingDllCrashFix,     nullptr,                    ApplyAlways);
 
     ReadConfig("FLSharp.ini", manager);
 
