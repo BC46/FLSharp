@@ -11,7 +11,10 @@
 #define DEFAULT_RES_HEIGHT_PTR_2 (DEFAULT_RES_WIDTH_PTR_2 + 0x5)
 
 // sizeof(int) + sizeof(BYTE) = for the indices in menu and supported array entry
-#define INDEX_RES_AND_SUP_ARR_ENTRY_SIZE (sizeof(int) + sizeof(BYTE))
+
+#define NEXT_DWORD_ALIGNED_VAL(val) ((val + 3) & ~0x3)
+
+#define INDEX_RES_AND_SUP_ARR_SIZE (resolutions.size() * sizeof(int) + NEXT_DWORD_ALIGNED_VAL(resolutions.size()))
 
 std::set<ResolutionInfo> resolutions;
 UINT lastSupportedResAmount = 0;
@@ -110,22 +113,23 @@ bool NN_Preferences::InitElements_Hook(DWORD unk1, DWORD unk2)
         *nextInfo = *it;
     }
 
-    memset((PBYTE) ++nextInfo, 0x00, resolutions.size());
+    ZeroMemory(++nextInfo, resolutions.size());
 
-    PBYTE resIndicesVOffset = (PBYTE) nextInfo + resolutions.size();
+    size_t supportedArrSize = NEXT_DWORD_ALIGNED_VAL(resolutions.size());
+    PBYTE resIndicesVOffset = ((PBYTE) nextInfo) + supportedArrSize;
     memset(resIndicesVOffset, 0xFF, resolutions.size() * sizeof(int));
 
     this->resSupportedArr = (bool*) nextInfo;
-    int resSupportedInfoOffset = ((PBYTE) nextInfo) - ((PBYTE) this);
+    int resSupportedArrOffset = ((PBYTE) nextInfo) - ((PBYTE) this);
     int resIndicesOffset = resIndicesVOffset - ((PBYTE) this);
 
     // +0x944
-    const DWORD supportedInfoRefs[] = { 0x4B1005, 0x4B24B3, 0x4B1C73, 0x4B0773, 0x4ACEDA };
-    for (const auto& ref : supportedInfoRefs)
-        Patch<int>(ref, resSupportedInfoOffset);
+    const DWORD supportedArrRefs[] = { 0x4B1005, 0x4B24B3, 0x4B1C73, 0x4B0773, 0x4ACEDA };
+    for (const auto& ref : supportedArrRefs)
+        Patch<int>(ref, resSupportedArrOffset);
 
     // weird negated value (note the minus sign)
-    Patch<int>(0x4B24A5, -resSupportedInfoOffset);
+    Patch<int>(0x4B24A5, -resSupportedArrOffset);
 
     // +0x954
     const DWORD resIndicesRefs[] = { 0x4B249C, 0x4B17E0, 0x4B0FFA, 0x4ACEF9, 0x4B0764 };
@@ -161,7 +165,7 @@ void NN_Preferences::TestResolutions_Hook(DWORD unk)
     {
         // If the monitor settings haven't changed and we know the supported resolution info,
         // set the info without testing the resolutions
-        memcpy(this->resSupportedArr, lastResSupportedArr, resolutions.size() * INDEX_RES_AND_SUP_ARR_ENTRY_SIZE);
+        memcpy(this->resSupportedArr, lastResSupportedArr, INDEX_RES_AND_SUP_ARR_SIZE);
         this->supportedResAmount = lastSupportedResAmount;
         this->unk_x97C = lastUnk_x97C;
     }
@@ -172,7 +176,7 @@ void NN_Preferences::TestResolutions_Hook(DWORD unk)
         (this->*TestResolutions_Original)(unk);
 
         // Save the supported resolution info for later use
-        memcpy(lastResSupportedArr, this->resSupportedArr, resolutions.size() * INDEX_RES_AND_SUP_ARR_ENTRY_SIZE);
+        memcpy(lastResSupportedArr, this->resSupportedArr, INDEX_RES_AND_SUP_ARR_SIZE);
         lastSupportedResAmount = this->supportedResAmount;
         lastUnk_x97C = this->unk_x97C;
     }
@@ -222,14 +226,12 @@ void InitBetterResolutions()
     // Hook the resolution call address to allow for an additional resolution check.
     Hook(0x5B17AE, ResolutionInit_Hook, 5);
 
-    size_t resolutionAmount = resolutions.size();
-    lastResSupportedArr = new BYTE[resolutionAmount * INDEX_RES_AND_SUP_ARR_ENTRY_SIZE];
+    lastResSupportedArr = new BYTE[INDEX_RES_AND_SUP_ARR_SIZE];
 
     UINT32& nnPreferencesAllocSize = GetValue<UINT32>(NN_PREFERENCES_ALLOC_SIZE_PTR);
     size_t additionalSize =
-        resolutionAmount * sizeof(ResolutionInfo) // resolution info
-        + resolutionAmount // supported array
-        + resolutionAmount * sizeof(int) // indices in menu
+        resolutions.size() * sizeof(ResolutionInfo) // resolution info
+        + INDEX_RES_AND_SUP_ARR_SIZE // indices in menu and supported array
         + sizeof(UINT32) * 3; // active and selected height + pointer to supported array
 
     // Expand the allocated heap memory of the NN_Preferences object so that we can store more resolutions
