@@ -17,6 +17,7 @@
 #include "cursor_colors.h"
 #include "waypoint_names.h"
 #include "mouse.h"
+#include "fl_math.h"
 
 // alchemy_crash.h
 TEST_CASE("value offsets are correct", "[alchemy]")
@@ -320,6 +321,23 @@ TEST_CASE("value offsets are correct", "[flcursor]")
     REQUIRE(offsetof(FLCursor, distFromZero) == 0x8);
 }
 
+TEST_CASE("value offsets are correct", "[transform]")
+{
+    REQUIRE(offsetof(Transform, rot) == 0x0);
+    REQUIRE(offsetof(Transform, pos) == 0x24);
+}
+
+TEST_CASE("value offsets are correct", "[camera]")
+{
+    REQUIRE(offsetof(Camera, pos) == 0x28);
+    REQUIRE(offsetof(Camera, watchable) == 0xC0);
+    REQUIRE(offsetof(Camera, shipOffset) == 0x14C);
+    REQUIRE(offsetof(Camera, distFromObj) == 0x1F0);
+    REQUIRE(offsetof(Camera, x1F4) == 0x1F4);
+    REQUIRE(offsetof(Camera, x1F8) == 0x1F8);
+    REQUIRE(offsetof(Camera, x1FC) == 0x1FC);
+}
+
 // pilot_names.h
 TEST_CASE("value offsets are correct", "[strbuffer]")
 {
@@ -520,4 +538,61 @@ TEST_CASE("vftable offsets are correct", "[idirectinputdevice8]")
     REQUIRE(GetVftableOffset<IDirectInputDevice8>(&IDirectInputDevice8::Acquire, true) == 0x1C);
     REQUIRE(GetVftableOffset<IDirectInputDevice8>(&IDirectInputDevice8::Unacquire, true) == 0x20);
     REQUIRE(GetVftableOffset<IDirectInputDevice8>(&IDirectInputDevice8::SetCooperativeLevel, true) == 0x34);
+}
+
+// fl_math.h
+TEST_CASE("value offsets are correct", "[vector]")
+{
+    REQUIRE(offsetof(Vector, x) == 0x0);
+    REQUIRE(offsetof(Vector, y) == 0x4);
+    REQUIRE(offsetof(Vector, z) == 0x8);
+}
+
+TEST_CASE("value offsets are correct", "[quaternion]")
+{
+    REQUIRE(offsetof(Quaternion, w) == 0x0);
+    REQUIRE(offsetof(Quaternion, x) == 0x4);
+    REQUIRE(offsetof(Quaternion, y) == 0x8);
+    REQUIRE(offsetof(Quaternion, z) == 0xC);
+}
+
+TEST_CASE("value offsets are correct", "[matrix]")
+{
+    REQUIRE(offsetof(Matrix, data) == 0x0);
+}
+
+TEST_CASE("transpose works", "[matrix]")
+{
+    Matrix m;
+    for (int i = 0; i < 3; ++i)
+        for (int j = 0; j < 3; ++j)
+            m.data[i][j] = (float) ((i * 3) + j + 1);
+
+    m = m.Transpose();
+
+    for (int i = 0; i < 3; ++i)
+        for (int j = 0; j < 3; ++j)
+            REQUIRE(m.data[j][i] == (float) ((i * 3) + j + 1));
+}
+
+TEST_CASE("matrix-vector multiplication works", "[matrix]")
+{
+    Matrix m;
+    m.data[0][0] = 9.0f;
+    m.data[0][1] = 5.0f;
+    m.data[0][2] = 4.0f;
+    m.data[1][0] = 6.0f;
+    m.data[1][1] = 1.0f;
+    m.data[1][2] = 2.0f;
+    m.data[2][0] = 5.0f;
+    m.data[2][1] = 8.0f;
+    m.data[2][2] = 9.0f;
+
+    Vector v = { 9.0f, 7.0f, 8.0f };
+
+    Vector mv = m * v;
+
+    REQUIRE(mv.x == 148.0f);
+    REQUIRE(mv.y == 77.0f);
+    REQUIRE(mv.z == 173.0f);
 }

@@ -184,7 +184,7 @@ UINT GetNumOfActiveMissionObjectives();
 struct Transform
 {
     Matrix rot;
-    Vector pos;
+    Vector pos; // 0x24
 };
 
 struct Camera

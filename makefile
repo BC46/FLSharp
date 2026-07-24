@@ -14,8 +14,10 @@ DALIB_DEF = $(DEF_DIR)\DALib.def
 DACOM_DEF = $(DEF_DIR)\Dacom.def
 DEPS_FILE = makefile.deps
 
+FL_MATH_OBJ_FILE = $(OBJ_DIR)\fl_math.obj
+
 RES_FILE = $(OBJ_DIR)\main.RES
-OBJ_FILES = $(OBJ_DIR)\fl_math.obj\
+OBJ_FILES = $(FL_MATH_OBJ_FILE)\
 $(OBJ_DIR)\main.obj\
 $(OBJ_DIR)\feature_config.obj\
 $(OBJ_DIR)\config_reader.obj\
@@ -105,8 +107,8 @@ TEST_LD_FLAGS = /NOLOGO /RELEASE
 test: $(TEST_OUTPUT_FILE)
     $(TEST_OUTPUT_FILE)
 
-$(TEST_OUTPUT_FILE): $(BIN_DIR) $(OBJ_DIR) $(TEST_OBJ_FILE) $(CATCH_OBJ_FILE)
-    link $(TEST_OBJ_FILE) $(CATCH_OBJ_FILE) $(TEST_LD_FLAGS) /OUT:$(TEST_OUTPUT_FILE)
+$(TEST_OUTPUT_FILE): $(BIN_DIR) $(OBJ_DIR) $(TEST_OBJ_FILE) $(CATCH_OBJ_FILE) $(FL_MATH_OBJ_FILE)
+    link $(TEST_OBJ_FILE) $(CATCH_OBJ_FILE) $(FL_MATH_OBJ_FILE) $(TEST_LD_FLAGS) /OUT:$(TEST_OUTPUT_FILE)
 
 {$(TEST_DIR)}.cpp{$(OBJ_DIR)}.obj::
     $(CPP) $(TEST_CPP_FLAGS) $< -I$(INCLUDE_DIR) /Fo./$(OBJ_DIR)/
@@ -114,7 +116,7 @@ $(TEST_OUTPUT_FILE): $(BIN_DIR) $(OBJ_DIR) $(TEST_OBJ_FILE) $(CATCH_OBJ_FILE)
 clean:
     del $(BIN_DIR)\*.dll $(BIN_DIR)\*.exe $(BIN_DIR)\*.pdb $(BIN_DIR)\*.ipdb $(BIN_DIR)\*.iobj $(BIN_DIR)\*.ilk $(OBJ_DIR)\*.obj $(OBJ_DIR)\*.RES $(OBJ_DIR)\*.lib $(OBJ_DIR)\*.pdb $(OBJ_DIR)\*.exp
 
-$(TEST_SRC_FILE): $(TEST_H_FILE) $(CATCH_H_FILE)
+$(TEST_SRC_FILE): $(TEST_H_FILE) $(CATCH_H_FILE) $(CATCH_SRC_FILE)
 
 # Include header file dependencies.
 !INCLUDE $(DEPS_FILE)
