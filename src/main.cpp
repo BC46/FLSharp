@@ -16,7 +16,7 @@
 #include "flash_particles.h"
 #include "rep_requirements.h"
 #include "exit.h"
-#include "temp_fixes.h"
+#include "flight_controls.h"
 #include "infocards.h"
 #include "save_crash.h"
 #include "alchemy_crash.h"

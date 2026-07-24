@@ -21,13 +21,13 @@ obj\blank_faction.obj:\
 
 obj\camera.obj:\
     include\camera.h\
-    include\utils.h\
-    include\fl_func.h\
     include\Freelancer.h\
     include\Common.h\
     include\fl_math.h\
     include\vftable.h\
-    include\st6.h
+    include\st6.h\
+    include\utils.h\
+    include\fl_func.h
 
 obj\cheat_detection.obj:\
     include\cheat_detection.h\
@@ -103,6 +103,16 @@ obj\flash_particles.obj:\
     include\utils.h\
     include\fl_func.h
 
+obj\flight_controls.obj:\
+    include\flight_controls.h\
+    include\Freelancer.h\
+    include\Common.h\
+    include\fl_math.h\
+    include\vftable.h\
+    include\st6.h\
+    include\utils.h\
+    include\logger.h
+
 obj\fl_math.obj:\
     include\fl_math.h
 
@@ -165,7 +175,7 @@ obj\main.obj:\
     include\utils.h\
     include\rep_requirements.h\
     include\exit.h\
-    include\temp_fixes.h\
+    include\flight_controls.h\
     include\infocards.h\
     include\save_crash.h\
     include\alchemy_crash.h\
@@ -259,16 +269,6 @@ obj\shield_capacity.obj:\
     include\vftable.h\
     include\st6.h\
     include\utils.h
-
-obj\temp_fixes.obj:\
-    include\temp_fixes.h\
-    include\Freelancer.h\
-    include\Common.h\
-    include\fl_math.h\
-    include\vftable.h\
-    include\st6.h\
-    include\utils.h\
-    include\logger.h
 
 obj\test_sounds.obj:\
     include\test_sounds.h\
