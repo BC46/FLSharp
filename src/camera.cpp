@@ -42,12 +42,10 @@ const IObjRW* Camera::GetTarget() const
     return nullptr;
 }
 
-Camera* previousCamera = nullptr;
-
 FL_FUNC(BOOL IsPlayerInCutscene(), 0x41A3E0)
 
 // SetCameraTransform
-bool (__fastcall *DoStuff_Og)(Camera* camera, DWORD edx, DWORD transform, float deltaTime, bool resetValues);
+bool (__fastcall *UpdateCamera_Og)(Camera* camera, DWORD edx, DWORD transform, float deltaTime, bool resetValues);
 
 Vector MulMatAndVec(const Matrix& matrix, const Vector& v)
 {
@@ -68,44 +66,40 @@ Matrix TransposeMatrix(const Matrix& matrix)
     return result;
 }
 
-float velocityX = 0.0f;
-float velocityY = 0.0f;
-float velocityZ = 0.0f;
+Vector offsetCorrection = { 0.0f, 0.0f, 0.0f };
+bool cameraSwitched = false;
 
-// TODO: rename this
-bool __fastcall DoStuff(Camera* camera, DWORD edx, DWORD transform, float deltaTime, bool resetValues)
+bool __fastcall UpdateCamera(Camera* camera, DWORD edx, DWORD transform, float deltaTime, bool resetValues)
 {
     CShip* ship = GetPlayerShip();
     Vector velocity = ship->get_velocity();
     Matrix orient = ship->get_orientation();
 
     orient = TransposeMatrix(orient);
-
-    float ogDist = camera->distFromObj;
-    float ogDist2 = camera->x1F4;
-    Vector ogOffset = camera->shipOffset;
-
     velocity = MulMatAndVec(orient, velocity);
+    Vector ogOffsetCorrection = offsetCorrection;
 
-    // TODO: If delta time is really high (less than 10 fps), skip this
     if (!IsPlayerInCutscene())
     {
+        // The provided deltaTime parameter is 0 because this is the "init" function, so we obtain the delta time manually.
         float dt = (float) GetDeltaTime();
 
-        velocityX += dt * velocity.x;
-        velocityY += dt * velocity.y;
-        velocityZ += dt * velocity.z;
+        // The velocity fix makes things worse if the frame rate is very low.
+        if (dt <= 0.125f)
+        {
+            offsetCorrection.x += dt * velocity.x;
+            offsetCorrection.y += dt * velocity.y;
+            offsetCorrection.z += dt * velocity.z;
+            cameraSwitched = true;
+        }
     }
 
-    bool result = DoStuff_Og(camera, edx, transform, deltaTime, resetValues);
+    bool result = UpdateCamera_Og(camera, edx, transform, deltaTime, resetValues);
 
-    camera->distFromObj = ogDist;
+    offsetCorrection = ogOffsetCorrection;
+    cameraSwitched = false;
 
-    velocityX = 0.0f;
-    velocityY = 0.0f;
-    velocityZ = 0.0f; // TODO: get from code?
-
-    return result; // DoStuff_Og(camera, edx, transform, (float) GetDeltaTime(), false);
+    return result;
 }
 
 struct VectorStack
@@ -115,11 +109,17 @@ struct VectorStack
     const Vector v1;    // 0x34
 };
 
+// v2 is the camera offset.
+// v1 is the offset based on the target's velocity.
 void VectorAdd_Hook(VectorStack& s, const Camera& camera, Vector& v2)
 {
-    v2.x = velocityX;
-    v2.y = velocityY;
-    v2.z += velocityZ;
+    if (cameraSwitched)
+    {
+        // Correct the velocity values such that the camera does not stutter in the first frame.
+        v2.x += offsetCorrection.x;
+        v2.y += offsetCorrection.y;
+        v2.z += offsetCorrection.z;
+    }
 
     s.result.x = s.v1.x + v2.x;
     s.result.y = s.v1.y + v2.y;
@@ -131,8 +131,12 @@ void InitCameraSwitchFix()
     // -z is up on nav map and +z is down on nav map
     // -x is left on nav map and +x is right on nav map
     // +y is up vertically and -y is down vertically
-    DoStuff_Og = SetRelPointer(0x518DBE + 1, DoStuff);
+    UpdateCamera_Og = SetRelPointer(0x518DBE + 1, UpdateCamera);
 
     SetRelPointer(0x00519300 + 1, VectorAdd_Hook);
     Patch<BYTE>(0x5192F7, 0x55);
+
+    // The default z offset is not hardcoded.
+    offsetCorrection.x = GetValue<float>(0x5192DA);
+	offsetCorrection.y = GetValue<float>(0x5192E2);
 }
