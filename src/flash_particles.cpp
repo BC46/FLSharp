@@ -125,18 +125,18 @@ void InitFlashParticlesFix()
 
     BYTE ecxPatch[] = { 0x89, 0xF1, 0x90 }; // mov ecx, esi followed by nop
 
-    Patch(CLI_LAUNCHER_POST_GAME_CLEANUP_ADDR, ecxPatch, sizeof(ecxPatch) - 1); // mov ecx, esi
+    PatchMem(CLI_LAUNCHER_POST_GAME_CLEANUP_ADDR, ecxPatch, sizeof(ecxPatch) - 1); // mov ecx, esi
     Patch<WORD>(CLI_LAUNCHER_POST_GAME_CLEANUP_ADDR + 0x2, 0x74EB); // jmp
     Hook(CLI_LAUNCHER_POST_GAME_FREE_HEAP_CALL_ADDR, &CliLauncher::CleanFlashParticlesPostGame_Hook, 5);
 
-    Patch(CLI_LAUNCHER_RELEASE_MEMORY_ADDR, ecxPatch, sizeof(ecxPatch));
+    PatchMem(CLI_LAUNCHER_RELEASE_MEMORY_ADDR, ecxPatch, sizeof(ecxPatch));
     Hook(CLI_LAUNCHER_RELEASE_MEMORY_ADDR + 0x3, &CliLauncher::CleanFlashParticlesMemory_Hook, 5);
 
     const DWORD engineDeallocCalls[] = { 0x52CD0F, 0x52D68D, 0x52D836, 0x52DBC7 };
     for (const auto& call : engineDeallocCalls)
     {
         Nop(call, 6);
-        Patch(call + 0x6, ecxPatch, sizeof(ecxPatch) - 1); // mov ecx, esi
+        PatchMem(call + 0x6, ecxPatch, sizeof(ecxPatch) - 1); // mov ecx, esi
         Hook(call + 0x8, &CliLauncher::CleanFlashParticlesEngine_Hook, 5);
     }
 }

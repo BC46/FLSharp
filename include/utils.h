@@ -5,12 +5,12 @@
 #include <cassert>
 #include <initializer_list>
 
-void Patch(DWORD vOffset, const LPVOID mem, UINT len);
+void PatchMem(DWORD vOffset, const LPVOID mem, UINT len);
 
 template <typename Type>
 inline void Patch(DWORD vOffset, Type value)
 {
-    Patch(vOffset, &value, sizeof(Type));
+    PatchMem(vOffset, &value, sizeof(Type));
 }
 
 void PatchBytes(DWORD vOffset, std::initializer_list<BYTE> bytes);

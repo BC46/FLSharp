@@ -1,6 +1,6 @@
 #include "utils.h"
 
-void Patch(DWORD vOffset, const LPVOID mem, UINT len)
+void PatchMem(DWORD vOffset, const LPVOID mem, UINT len)
 {
     ReadWriteProtect(vOffset, len);
     memcpy((PVOID) vOffset, mem, len);
@@ -8,7 +8,7 @@ void Patch(DWORD vOffset, const LPVOID mem, UINT len)
 
 void PatchBytes(DWORD vOffset, std::initializer_list<BYTE> bytes)
 {
-    Patch(vOffset, (LPVOID) bytes.begin(), bytes.size());
+    PatchMem(vOffset, (LPVOID) bytes.begin(), bytes.size());
 }
 
 void Nop(DWORD vOffset, UINT len)
@@ -38,7 +38,7 @@ void Nop(DWORD vOffset, UINT len)
     {
         while (len >= nopStr.len)
         {
-            Patch(vOffset, (PBYTE) nopStr.nopSequence, nopStr.len);
+            PatchMem(vOffset, (PBYTE) nopStr.nopSequence, nopStr.len);
             len -= nopStr.len;
             vOffset += nopStr.len;
         }
