@@ -180,3 +180,28 @@ void UpdateDeltaTime();
 void UpdateDeltaTimeAndUpTime();
 
 UINT GetNumOfActiveMissionObjectives();
+
+struct Transform
+{
+    Matrix rot;
+    Vector pos;
+};
+
+struct Camera
+{
+    BYTE x00[0x28];
+    Vector pos; // 0x28
+    BYTE x34[0x8C];
+    PBYTE watchable; // 0xC0
+    BYTE xC4[0x88];
+    Vector shipOffset; // 0x14C
+    BYTE x158[0x98];
+    float distFromObj; // 0x1F0
+    float x1F4;
+    float x1F8;
+    float x1FC;
+
+    const IObjRW* GetTarget() const;
+};
+
+BOOL IsPlayerInCutscene();

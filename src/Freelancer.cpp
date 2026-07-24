@@ -75,3 +75,15 @@ FL_FUNC(void UpdateDeltaTime(), 0x42D770)
 FL_FUNC(void UpdateDeltaTimeAndUpTime(), 0x5B2360)
 
 FL_FUNC(UINT GetNumOfActiveMissionObjectives(), 0x4C4FB0)
+
+const IObjRW* Camera::GetTarget() const
+{
+    if (watchable)
+    {
+        return (IObjRW*) (watchable - 0x8);
+    }
+
+    return nullptr;
+}
+
+FL_FUNC(BOOL IsPlayerInCutscene(), 0x41A3E0)

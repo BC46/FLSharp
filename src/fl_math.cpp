@@ -35,3 +35,23 @@ float GetRotationDelta(const Quaternion& quat, const Matrix& rot)
 {
     return QuaternionAngleDifference(quat, MatrixToQuaternion(rot));
 }
+
+Matrix Matrix::Transpose() const
+{
+    Matrix result;
+
+    for (int i = 0; i < 3; ++i)
+        for (int j = 0; j < 3; ++j)
+            result.data[i][j] = data[j][i];
+
+    return result;
+}
+
+Vector Matrix::operator*(Vector const &v) const
+{
+    Vector result;
+    result.x = data[0][0] * v.x + data[0][1] * v.y + data[0][2] * v.z;
+    result.y = data[1][0] * v.x + data[1][1] * v.y + data[1][2] * v.z;
+    result.z = data[2][0] * v.x + data[2][1] * v.y + data[2][2] * v.z;
+    return result;
+}
