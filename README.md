@@ -57,6 +57,7 @@ These include:
 - Fixed the mouse sometimes warping to the center of the game window in (borderless) windowed mode.
 - Fixed the mouse cursor being initially positioned in the top-left corner in fullscreen mode.
 - Fixed pilots with long names having their name truncated in the Current Information window, comm text, and the "Hand over your cargo" dialog.
+- Fixed the camera stuttering when switching to third-person view.
 
 More fixes and improvements may be added in the future.
 

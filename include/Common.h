@@ -155,6 +155,10 @@ struct IMPORT CObject : public EngineObject
     Archetype::Root* get_archetype() const;
 
     DWORD classType; // 0x4C
+
+    FILL_VFTABLE(4);
+    virtual void Vftable_x50();
+    virtual Vector get_velocity() const; // 0x54
 };
 
 struct IMPORT CSimple : CObject
@@ -184,8 +188,8 @@ public:
 struct IMPORT CEqObj : public CSimple
 {
 private:
-    FILL_VFTABLE(4);
-    FILL_VFTABLE(5);
+    virtual void Vftable_x58();
+    virtual void Vftable_x5C();
     FILL_VFTABLE(6);
     FILL_VFTABLE(7);
     virtual void Vftable_x80();
