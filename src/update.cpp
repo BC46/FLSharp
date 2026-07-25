@@ -136,7 +136,7 @@ bool CRemotePhysicsSimulation::CheckForSync_Hook(const CShip& ship, Vector const
     if (secElapsedSinceLastUpdate < GetShipMinSyncInterval(ship))
     {
         // Prevent the client from sending too many updates in a short amount of time
-        // This resolves the jitter issue that occurs when playing on a high framerate
+        // This resolves the jitter issue that occurs when playing on a high frame rate
 
         // TODO: If EK has been toggled twice before the min sync interval has passed, then an asap update should actually not be sent because of this.
         // But then you'd also have to check if the asap update *should* be sent because CheckForSync or ShouldSendUpdate returned true. Eh, this sounds complicated.

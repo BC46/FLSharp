@@ -94,6 +94,7 @@ void Init()
     manager.RegisterFeature("mouse_pos_fix",            InitMenuMousePosFix,        nullptr,                    ApplyOnlyOnClient);
     manager.RegisterFeature("pilot_names_fix",          InitPilotNamesFix,          nullptr,                    ApplyOnlyOnClient);
     manager.RegisterFeature("camera_switch_fix",        InitCameraSwitchFix,        nullptr,                    ApplyOnlyOnClient);
+    manager.RegisterFeature("camera_motion_fix",        InitCameraMotionFix,        nullptr,                    ApplyOnlyOnClient);
 
     // Server only fixes
     manager.RegisterFeature("ship_buy_kick_fix",        InitShipBuyKickFix,         nullptr,                    ApplyOnlyOnServer);

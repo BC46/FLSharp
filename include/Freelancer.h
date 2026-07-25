@@ -195,7 +195,14 @@ struct Camera
     PBYTE watchable; // 0xC0
     BYTE xC4[0x88];
     Vector shipOffset; // 0x14C
-    BYTE x158[0x98];
+    BYTE x158[0x7C];
+    float angularAcceleration;      // 0x1D4
+    float angularSlerpMultiplier;   // 0x1D8
+    float horizontalTurnAngle;      // 0x1DC (per degree)
+    float verticalTurnUpAngle;      // 0x1E0
+    float verticalTurnDownAngle;    // 0x1E4 (per degree)
+    float turnLookAheadSlerpAmount; // 0x1E8 (per degree)
+    DWORD x1EC;
     float distFromObj; // 0x1F0
     float x1F4;
     float x1F8;

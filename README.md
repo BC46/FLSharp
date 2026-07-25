@@ -14,7 +14,7 @@ These include:
     - at least every 2 seconds;
     - when engine kill has been toggled;
     - if after every 0.25 seconds the ship's orientation has been changed to some extent.
-- Sets the minimum time between client-server updates to 40 milliseconds (or 750 ms while in a trade lane) such that jitter is prevented when playing with a high or inconsistent framerate.
+- Sets the minimum time between client-server updates to 40 milliseconds (or 750 ms while in a trade lane) such that jitter is prevented when playing with a high or inconsistent frame rate.
 - Allow `ui_music_test` to play when the current background music has finished playing.
 - Added support for playing the `ui_interface_test` and `ui_ambiance_test` sounds when adjusting the respective sliders in the options menu.
 - Automatically prevent crashes while adjusting the interface and ambience volume sliders in the event that the test sounds are not defined.
@@ -58,6 +58,7 @@ These include:
 - Fixed the mouse cursor being initially positioned in the top-left corner in fullscreen mode.
 - Fixed pilots with long names having their name truncated in the Current Information window, comm text, and the "Hand over your cargo" dialog.
 - Fixed the camera stuttering when switching to third-person view.
+- Fixed the third person camera motion being tied to the game's frame rate.
 
 More fixes and improvements may be added in the future.
 
@@ -80,6 +81,7 @@ Thanks to the following people for helping make some of the features possible:
   - Provided source code of many Freelancer plugins.
 - [Aingar](https://github.com/Aingar)
   - Identification of the client-to-server communication improvements and providing code from DiscoveryGC's client hook.
+  - Original implementation of the [camera acceleration fix](https://codeberg.org/TheStarport/FLUF/src/branch/master/FLUF/Source/Client/Fixes/CameraAcceleration.cpp).
 - FLHook contributors
   - Reverse engineered and documented Freelancer data structures as part of the [FLHook SDK](https://github.com/TheStarport/FLHookSDK).
 - [Schmackbolzen](https://github.com/Schmackbolzen)

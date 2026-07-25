@@ -332,6 +332,13 @@ TEST_CASE("value offsets are correct", "[camera]")
     REQUIRE(offsetof(Camera, pos) == 0x28);
     REQUIRE(offsetof(Camera, watchable) == 0xC0);
     REQUIRE(offsetof(Camera, shipOffset) == 0x14C);
+    REQUIRE(offsetof(Camera, angularAcceleration) == 0x1D4);
+    REQUIRE(offsetof(Camera, angularSlerpMultiplier) == 0x1D8);
+    REQUIRE(offsetof(Camera, horizontalTurnAngle) == 0x1DC);
+    REQUIRE(offsetof(Camera, verticalTurnUpAngle) == 0x1E0);
+    REQUIRE(offsetof(Camera, verticalTurnDownAngle) == 0x1E4);
+    REQUIRE(offsetof(Camera, turnLookAheadSlerpAmount) == 0x1E8);
+    REQUIRE(offsetof(Camera, x1EC) == 0x1EC);
     REQUIRE(offsetof(Camera, distFromObj) == 0x1F0);
     REQUIRE(offsetof(Camera, x1F4) == 0x1F4);
     REQUIRE(offsetof(Camera, x1F8) == 0x1F8);
