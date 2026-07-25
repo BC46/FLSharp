@@ -59,6 +59,7 @@ These include:
 - Fixed pilots with long names having their name truncated in the Current Information window, comm text, and the "Hand over your cargo" dialog.
 - Fixed the camera stuttering when switching to third-person view.
 - Fixed the third person camera motion being tied to the game's frame rate.
+- Fixed the maneuver frame flickering after the undocking sequence ends.
 
 More fixes and improvements may be added in the future.
 

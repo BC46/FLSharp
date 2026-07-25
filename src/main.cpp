@@ -32,6 +32,7 @@
 #include "mouse.h"
 #include "pilot_names.h"
 #include "camera.h"
+#include "maneuver_frame.h"
 
 FeatureManager manager;
 
@@ -95,6 +96,7 @@ void Init()
     manager.RegisterFeature("pilot_names_fix",          InitPilotNamesFix,          nullptr,                    ApplyOnlyOnClient);
     manager.RegisterFeature("camera_switch_fix",        InitCameraSwitchFix,        nullptr,                    ApplyOnlyOnClient);
     manager.RegisterFeature("camera_motion_fix",        InitCameraMotionFix,        nullptr,                    ApplyOnlyOnClient);
+    manager.RegisterFeature("maneuver_frame_fix",       InitManeuverFrameFix,       nullptr,                    ApplyOnlyOnClient);
 
     // Server only fixes
     manager.RegisterFeature("ship_buy_kick_fix",        InitShipBuyKickFix,         nullptr,                    ApplyOnlyOnServer);
