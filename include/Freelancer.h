@@ -211,4 +211,8 @@ struct Camera
     const IObjRW* GetTarget() const;
 };
 
+#define TURRET_VIEW_CAMERA ((Camera*) 0x678F60)
+#define CINEMATICS_CAMERA ((Camera*) 0x679634)
+#define ACTIVE_CAMERA (*(Camera**) 0x6164DC)
+
 BOOL IsPlayerInCutscene();

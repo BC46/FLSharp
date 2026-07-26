@@ -55,7 +55,8 @@ $(OBJ_DIR)\base_info.obj\
 $(OBJ_DIR)\mouse.obj\
 $(OBJ_DIR)\pilot_names.obj\
 $(OBJ_DIR)\camera.obj\
-$(OBJ_DIR)\maneuver_frame.obj
+$(OBJ_DIR)\maneuver_frame.obj\
+$(OBJ_DIR)\player_lights.obj
 
 COMMON_LIB = $(OBJ_DIR)\Common.lib
 DALIB_LIB = $(OBJ_DIR)\DALib.lib

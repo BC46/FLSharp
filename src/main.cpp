@@ -33,6 +33,7 @@
 #include "pilot_names.h"
 #include "camera.h"
 #include "maneuver_frame.h"
+#include "player_lights.h"
 
 FeatureManager manager;
 
@@ -97,6 +98,7 @@ void Init()
     manager.RegisterFeature("camera_switch_fix",        InitCameraSwitchFix,        nullptr,                    ApplyOnlyOnClient);
     manager.RegisterFeature("camera_motion_fix",        InitCameraMotionFix,        nullptr,                    ApplyOnlyOnClient);
     manager.RegisterFeature("maneuver_frame_fix",       InitManeuverFrameFix,       nullptr,                    ApplyOnlyOnClient);
+    manager.RegisterFeature("player_lights_fix",        InitPlayerLightsFix,        nullptr,                    ApplyOnlyOnClient);
 
     // Server only fixes
     manager.RegisterFeature("ship_buy_kick_fix",        InitShipBuyKickFix,         nullptr,                    ApplyOnlyOnServer);

@@ -60,6 +60,7 @@ These include:
 - Fixed the camera stuttering when switching to third-person view.
 - Fixed the third person camera motion being tied to the game's frame rate.
 - Fixed the maneuver frame flickering after the undocking sequence ends.
+- Fixed light sources not working when attached to the player's ship; i.e. enabled "lightsource_cone" just for the player ship.
 
 More fixes and improvements may be added in the future.
 
