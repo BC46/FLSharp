@@ -1,5 +1,5 @@
 # FLSharp
-FLSharp (FL# for short) is a plugin for the game Freelancer (2003) that aims to apply game-related fixes and improvements using client hooks.
+FLSharp (FL# for short) is a plugin for the game Freelancer (2003) that aims to apply hook-based fixes and improvements to both the client and server.
 These include:
 - Fixed a bug that caused the lights of a trade lane to never turn back on after the trade lane gets disrupted.
 - Fixed a bug that caused waypoints to be cleared when the player reaches the coordinates in a different system.
@@ -64,11 +64,11 @@ These include:
 More fixes and improvements may be added in the future.
 
 ## Installation instructions
-Download the latest `FLSharp.zip` from [Releases](https://github.com/BC46/FLSharp/releases). Extract the zip's contents to the `EXE` folder of your Freelancer installation. Next, open `dacom.ini` and  `dacomsrv.ini` and in both files append `FLSharp.dll` to the `[Libraries]` section. **Note that FLSharp requires the official 1.1 patch.** Some of the plugin's features may work fine with 1.0 but this is not guaranteed.
+Download the `FLSharp.zip` file from [the latest release](https://github.com/BC46/FLSharp/releases/latest). Extract the zip's contents to the `EXE` folder of your Freelancer installation. Next, open `dacom.ini` and  `dacomsrv.ini` and in both files append `FLSharp.dll` to the `[Libraries]` section. **Note that FLSharp requires the official 1.1 patch.** Some of the plugin's features may work fine with 1.0, but this is not guaranteed.
 
-In the `FLSharp.ini` file, you can specify for every individual feature whether or not it should be enabled. To disable a feature, change its value from `true` to `false`. In almost all cases, having every feature enabled is ideal since these are all quality of life improvements. However, you may want to disable one or more features if you do not like them for whatever reason or if they introduce compatibility issues with other plugins.
+In the `FLSharp.ini` file, you can specify for every individual feature whether or not it should be enabled. To disable a feature, change its value from `true` to `false`. In almost all cases, having every feature enabled is ideal since each feature offers an improvement to the gameplay experience. However, you may want to disable one or more features if you do not like them for whatever reason or if they introduce compatibility issues with other plugins.
 
-If the `FLSharp.ini` file is missing or if it can't be opened, then all features are enabled by default. When an entry in `FLSharp.ini` is missing, then that particular feature will also be enabled by default. In other words, every feature is by default enabled unless stated otherwise.
+If the `FLSharp.ini` file is missing or if it cannot be opened, then all features are enabled by default. When an entry in `FLSharp.ini` is missing, then that particular feature will also be enabled by default. In other words, every feature is by default enabled unless stated otherwise.
 
 ## Build instructions
 Build the project using the `NMAKE` tool from Visual Studio 2017 or newer.
