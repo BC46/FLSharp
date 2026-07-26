@@ -61,6 +61,7 @@ These include:
 - Fixed the third person camera motion being tied to the game's frame rate.
 - Fixed the maneuver frame flickering after the undocking sequence ends.
 - Fixed light sources not working when attached to the player's ship; i.e. enabled "lightsource_cone" just for the player ship.
+- Increased Freelancer's limit of simultaneously enabled lights to at most 10.
 
 More fixes and improvements may be added in the future.
 
@@ -88,5 +89,7 @@ Thanks to the following people for helping make some of the features possible:
   - Reverse engineered and documented Freelancer data structures as part of the [FLHook SDK](https://github.com/TheStarport/FLHookSDK).
 - [Schmackbolzen](https://github.com/Schmackbolzen)
   - Provided assistance with troubleshooting the ship preview rendering bug.
+- [Squaresome](https://github.com/HaydnTrigg)
+  - Figured out how to increase Freelancer's simultaneously enabled light limit.
 - [Venemon](https://www.moddb.com/members/venemon)
   - Original implementations of the multi-barrel launcher sound and [weapon animation fixes](https://www.moddb.com/mods/weapon-animations). Also provided help with debugging and reverse engineering.

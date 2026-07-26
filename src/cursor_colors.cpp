@@ -35,7 +35,7 @@ void Targetable_Objects::UpdateTargeting_Hook()
     UpdateTargeting();
 }
 
-FL_FUNC(const IObjRW* FindIObjRW(UINT nickname, DWORD unk), 0x05416C0)
+FL_FUNC(const IObjRW* FindIObjRW(UINT nickname, DWORD unk), 0x5416C0)
 
 // Calling FindIObjRW manually every time we want to check the highlighted object is inefficient,
 // so we intercept the call that FL makes every frame and save the last selected object.

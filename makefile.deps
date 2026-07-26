@@ -145,6 +145,17 @@ obj\infocards.obj:\
     include\utils.h\
     include\logger.h
 
+obj\light_limit.obj:\
+    include\light_limit.h\
+    include\vftable.h\
+    include\utils.h\
+    include\logger.h\
+    include\fl_func.h\
+    include\Freelancer.h\
+    include\Common.h\
+    include\fl_math.h\
+    include\st6.h
+
 obj\logger.obj:\
     include\logger.h\
     include\Dacom.h
@@ -190,7 +201,15 @@ obj\main.obj:\
     include\base_info.h\
     include\mouse.h\
     include\pilot_names.h\
-    include\camera.h
+    include\camera.h\
+    include\maneuver_frame.h\
+    include\player_lights.h\
+    include\light_limit.h
+
+obj\maneuver_frame.obj:\
+    include\maneuver_frame.h\
+    include\fl_func.h\
+    include\utils.h
 
 obj\mouse.obj:\
     include\mouse.h\
@@ -206,6 +225,14 @@ obj\pilot_names.obj:\
     include\pilot_names.h\
     include\fl_func.h\
     include\Freelancer.h\
+    include\Common.h\
+    include\fl_math.h\
+    include\vftable.h\
+    include\st6.h\
+    include\utils.h
+
+obj\player_lights.obj:\
+    include\player_lights.h\
     include\Common.h\
     include\fl_math.h\
     include\vftable.h\

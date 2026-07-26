@@ -18,6 +18,7 @@
 #include "waypoint_names.h"
 #include "mouse.h"
 #include "fl_math.h"
+#include "light_limit.h"
 
 // alchemy_crash.h
 TEST_CASE("value offsets are correct", "[alchemy]")
@@ -602,4 +603,15 @@ TEST_CASE("matrix-vector multiplication works", "[matrix]")
     REQUIRE(mv.x == 148.0f);
     REQUIRE(mv.y == 77.0f);
     REQUIRE(mv.z == 173.0f);
+}
+
+// light_limit.h
+TEST_CASE("value offsets are correct", "[d3dcaps8]")
+{
+    REQUIRE(offsetof(D3DCAPS8, MaxActiveLights) == 0xA0);
+}
+
+TEST_CASE("vftable offsets are correct", "[idirect3ddevice8]")
+{
+    REQUIRE(GetVftableOffset<IDirect3DDevice8>(&IDirect3DDevice8::GetDeviceCaps, true) == 0x1C);
 }

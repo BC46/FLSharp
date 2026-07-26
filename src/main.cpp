@@ -34,6 +34,7 @@
 #include "camera.h"
 #include "maneuver_frame.h"
 #include "player_lights.h"
+#include "light_limit.h"
 
 FeatureManager manager;
 
@@ -99,6 +100,7 @@ void Init()
     manager.RegisterFeature("camera_motion_fix",        InitCameraMotionFix,        nullptr,                    ApplyOnlyOnClient);
     manager.RegisterFeature("maneuver_frame_fix",       InitManeuverFrameFix,       nullptr,                    ApplyOnlyOnClient);
     manager.RegisterFeature("player_lights_fix",        InitPlayerLightsFix,        nullptr,                    ApplyOnlyOnClient);
+    manager.RegisterFeature("increased_light_limit",    IncreaseLightLimit,         nullptr,                    ApplyOnlyOnClient);
 
     // Server only fixes
     manager.RegisterFeature("ship_buy_kick_fix",        InitShipBuyKickFix,         nullptr,                    ApplyOnlyOnServer);
@@ -120,8 +122,6 @@ void Cleanup()
 
 BOOL WINAPI DllMain(HINSTANCE hinstDLL, DWORD fdwReason, LPVOID lpReserved)
 {
-    UNREFERENCED_PARAMETER(lpReserved);
-
     if (fdwReason == DLL_PROCESS_ATTACH)
     {
         DisableThreadLibraryCalls(hinstDLL);
