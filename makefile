@@ -10,7 +10,6 @@ TEST_DIR = test
 
 RC_FILE = $(RC_DIR)\main.rc
 COMMON_DEF = $(DEF_DIR)\Common.def
-DALIB_DEF = $(DEF_DIR)\DALib.def
 DACOM_DEF = $(DEF_DIR)\Dacom.def
 DEPS_FILE = makefile.deps
 
@@ -61,7 +60,6 @@ $(OBJ_DIR)\light_limit.obj\
 $(OBJ_DIR)\equip_stats.obj
 
 COMMON_LIB = $(OBJ_DIR)\Common.lib
-DALIB_LIB = $(OBJ_DIR)\DALib.lib
 DACOM_LIB = $(OBJ_DIR)\DACOM.lib
 EXTERNAL_LIBS = User32.lib Gdi32.lib
 
@@ -72,8 +70,8 @@ LD_FLAGS = /LTCG /DLL /NOLOGO /DEBUG
 LIB_FLAGS = /NOLOGO /MACHINE:X86
 RC_FLAGS = /nologo
 
-$(OUTPUT_FILE): $(BIN_DIR) $(OBJ_DIR) $(OBJ_FILES) $(RES_FILE) $(COMMON_LIB) $(DALIB_LIB) $(DACOM_LIB)
-    link $(OBJ_FILES) $(EXTERNAL_LIBS) $(COMMON_LIB) $(DALIB_LIB) $(DACOM_LIB) $(RES_FILE) $(LD_FLAGS) /OUT:$(OUTPUT_FILE)
+$(OUTPUT_FILE): $(BIN_DIR) $(OBJ_DIR) $(OBJ_FILES) $(RES_FILE) $(COMMON_LIB) $(DACOM_LIB)
+    link $(OBJ_FILES) $(EXTERNAL_LIBS) $(COMMON_LIB) $(DACOM_LIB) $(RES_FILE) $(LD_FLAGS) /OUT:$(OUTPUT_FILE)
 
 {$(SRC_DIR)}.cpp{$(OBJ_DIR)}.obj::
     $(CPP) $(CPP_FLAGS) $< -I$(INCLUDE_DIR) /Fo./$(OBJ_DIR)/
@@ -83,9 +81,6 @@ $(RES_FILE): $(RC_FILE)
 
 $(COMMON_LIB): $(COMMON_DEF) $(INCLUDE_DIR)/Common.h
     lib $(LIB_FLAGS) /def:$(COMMON_DEF) /name:COMMON /out:$(COMMON_LIB)
-
-$(DALIB_LIB): $(DALIB_DEF) $(INCLUDE_DIR)/DALib.h
-    lib $(LIB_FLAGS) /def:$(DALIB_DEF) /name:DALIB /out:$(DALIB_LIB)
 
 $(DACOM_LIB): $(DACOM_DEF) $(INCLUDE_DIR)/Dacom.h
     lib $(LIB_FLAGS) /def:$(DACOM_DEF) /name:DACOM /out:$(DACOM_LIB)

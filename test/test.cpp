@@ -19,6 +19,7 @@
 #include "mouse.h"
 #include "fl_math.h"
 #include "light_limit.h"
+#include "exit.h"
 
 // alchemy_crash.h
 TEST_CASE("value offsets are correct", "[alchemy]")
@@ -614,4 +615,11 @@ TEST_CASE("value offsets are correct", "[d3dcaps8]")
 TEST_CASE("vftable offsets are correct", "[idirect3ddevice8]")
 {
     REQUIRE(GetVftableOffset<IDirect3DDevice8>(&IDirect3DDevice8::GetDeviceCaps, true) == 0x1C);
+}
+
+// exit.h
+TEST_CASE("vftable offsets are correct", "[idirectplay8client]")
+{
+    REQUIRE(GetVftableOffset<IDirectPlay8Client>(&IDirectPlay8Client::CancelAsyncOperation, true) == 0x18);
+    REQUIRE(GetVftableOffset<IDirectPlay8Client>(&IDirectPlay8Client::Close, true) == 0x38);
 }

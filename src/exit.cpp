@@ -1,17 +1,69 @@
 #include "exit.h"
-#include "DALib.h"
 #include "utils.h"
-#include "fl_func.h"
+#include "logger.h"
 
-FL_FUNC(void exit_Original(int const status), dword ptr ds:[0x5C713C])
+#define CLOSE_DP_CLIENT_CONNECTION_F_OF (0x302EF)
 
-void exit_Hook(int const status)
+// Function which is called to close the DirectPlay connection.
+long STDCALL IDirectPlay8Client::Close_Hook(const DWORD dwFlags)
 {
-    // Call the original function with WaitForSingleObject.
-    CGunWrapper::Shutdown();
+    // According to the ancient DirectPlay documentation, this function can be called to close all the threads.
+    CancelAsyncOperation(0, DPNCANCEL_ALL_OPERATIONS);
 
-    // Call the original exit function.
-    exit_Original(status);
+    // The CancelAsyncOperation call alone is not enough to fix the Close function taking ~45 seconds to finish.
+    // Passing DPNCLOSE_IMMEDIATE (0x1) to Close does fix it.
+    // However, this parameter is part of the DirectX 9 SDK while Freelancer uses DirectX 8.
+    // Still, Freelancer comes bundled with a DirectX 9 installer, so using this parameter shouldn't cause any issues.
+    return Close(DPNCLOSE_IMMEDIATE);
+}
+
+typedef DWORD (WINAPI *CloseDirectPlayConnection)(LPVOID lpParameter);
+
+// Hook function that FL calls to create the thread that closes the DirectPlay connection.
+// We will not create a thread, but instead call the routine on the main thread with a couple of patches.
+// Not creating a thread fixes the deadlock.
+HANDLE WINAPI CreateThread_Hook(LPSECURITY_ATTRIBUTES lpThreadAttributes,
+    SIZE_T dwStackSize, LPTHREAD_START_ROUTINE lpStartAddress,
+    LPVOID lpParameter, DWORD dwCreationFlags, LPDWORD lpThreadId)
+{
+    // Patch the call to the DirectPlay Close function to ensure all async operations are properly canceled first.
+    DWORD gundllHandle = (DWORD) GetModuleHandle("gundll.dll");
+    if (gundllHandle)
+    {
+        Patch<WORD>(gundllHandle + CLOSE_DP_CLIENT_CONNECTION_F_OF, 0x5056); // push esi, push eax
+        Hook(gundllHandle + CLOSE_DP_CLIENT_CONNECTION_F_OF + 2, &IDirectPlay8Client::Close_Hook, 5);
+    }
+
+    // Call the CloseDirectPlayConnection function on the main thread.
+    ((CloseDirectPlayConnection) lpStartAddress)(lpParameter);
+
+    return (HANDLE) 0;
+}
+
+// In Freelancer, when you close the server list menu (provided that there were servers listed),
+// a thread would be created that closes the DirectPlay connection (takes ~45 seconds to execute).
+// If you quit the game before the DirectPlay was connection closed, a WaitForSingleObject call would be made
+// which actually waited indefinitely for the thread to finish.
+// Consequently, the Freelancer process would remain open until forcefully closed (via Task Manager for instance).
+// Turns out that whenever the thread calls FreeLibrary after FL's main exit function had already been called,
+// that FreeLibrary call would never return, and thus the thread would never finish its task.
+// After looking at the few DirectPlay samples I could find online, I came to the conclusion that the problem must be a deadlock.
+// Freelancer spins up a thread to close the DirectPlay connection. None of the samples I checked did this; they closed the connection on the main thread.
+// Since threads are usually the reason why deadlocks happen, I implemented a solution where the connection is closed on the main thread.
+// The long waiting time is fixed by essentially forcing the connection to close. Now the closing time is so short that it will not freeze the main thread.
+void InitPostGameDeadlockFix()
+{
+    DWORD dalibHandle = (DWORD) GetModuleHandle("dalib.dll");
+
+    if (!dalibHandle)
+    {
+        Logger::PrintModuleError("InitPostGameDeadlockFix", "dalib.dll");
+        return;
+    }
+
+    #define CREATE_THREAD_DP_CLOSE_CALL_F_OF (0x4D8E + 0xC00)
+    Hook(dalibHandle + CREATE_THREAD_DP_CLOSE_CALL_F_OF, CreateThread_Hook, 5);
+    PatchBytes(dalibHandle + CREATE_THREAD_DP_CLOSE_CALL_F_OF + 5, { 0xE9, 0xCB, 0x00, 0x00, 0x00 }); // jmp
 }
 
 bool noQuitMsgRetrieved = true;
@@ -21,27 +73,6 @@ bool HandleMessages_Hook(WPARAM *msgWParam)
 {
     bool result = HandleMessages_Original(msgWParam);
     return noQuitMsgRetrieved &= result;
-}
-
-
-// In Freelancer, when you close the server list menu (provided that there were servers listed),
-// a thread would be created that closes the DirectPlay connection (takes 15-30 seconds to execute).
-// If you quit the game before the DirectPlay was connection closed, a WaitForSingleObject call would be made
-// which actually waited indefinitely for the thread to finish.
-// Consequently, the Freelancer process would remain open until forcefully closed (via Task Manager for instance).
-// Turns out that whenever the thread calls FreeLibrary after FL's main exit function had already been called,
-// that FreeLibrary call would never return, and thus the thread would never finish its task.
-// I believe this was caused by a deadlock. Yet, I could not explain why this deadlock would occur under these circumstances,
-// nor was I able to come up with a "clean fix" for it. So now instead of calling the function with WaitForSingleObject after the exit,
-// I call it before the exit. The thread still takes a very long time to close the DirectPlay connection (which I think is a bug too),
-// but at least there is no more deadlock and the Freelancer process will eventually close, as it should.
-void InitPostGameDeadlockFix()
-{
-    #define CGUNWRAPPER_SHUTDOWN_CALL_ADDR 0x5B2190
-    #define FL_EXE_EXIT_CALL_ADDR 0x5B81C6
-
-    Nop(CGUNWRAPPER_SHUTDOWN_CALL_ADDR, 5); // nop out the post-game CGunWrapper::Shutdown() call; call it in the exit hook instead
-    Hook(FL_EXE_EXIT_CALL_ADDR, exit_Hook, 6);
 }
 
 // Freelancer has a message handler function which can be called from multiple places.
@@ -65,26 +96,3 @@ void CleanupQuitMessageFix()
 {
     CleanupTrampoline(HandleMessages_Original);
 }
-
-// TODO: If anyone would like to look into this further: in dpnet.dll there's a function called "DN_Close" (locate it by downloading the debug symbols from Microsoft).
-// I believe this function is supposed to represent IDirectPlay8Client::Close. It is this exact function that takes ~40 seconds to return on my end.
-// This seems strange since in all online examples I could find that closed some DirectPlay connection, it is always done on the main thread.
-// Surely, something must have been done incorrectly in one of the DirectPlay calls. Since DA couldn't figure out what,
-// they took the band-aid approach and closed the connection on a separate thread.
-// Otherwise the screen freezes for 40 seconds every time the server list menu is closed.
-
-// TODO Idea: File offset 0x30896 in gundll.dll. This is a call to IDirectPlay8Client::Connect.
-// phAsyncHandle
-//      A DPNHANDLE. When the method returns, phAsyncHandle will point to a handle that you can pass to IDirectPlay8Client::CancelAsyncOperation to cancel the operation.
-//      This parameter must be set to NULL if you set the DPNCONNECT_SYNC flag in dwFlags.
-// What happens if you call IDirectPlay8Client::CancelAsyncOperation before? See dplay.doc in Downloads folder.
-// IDirectPlay8Client::CancelAsyncOperation
-// Cancels asynchronous requests. Many methods of the IDirectPlay8Client interface run asynchronously by default. Depending on the situation, you might want to cancel requests before they are processed. All the methods of this interface that can be run asynchronously return a hAsyncHandle parameter.
-// Specific requests are canceled by passing the hAsyncHandle of the request in this method’s hAsyncHandle parameter. You can cancel all pending asynchronous operations by calling this method, specifying NULL in the hAsyncHandle parameter, and specifying DPNCANCEL_ALL_OPERATIONS in the dwFlags parameter. If a specific handle is provided to this method, no flags should be set.
-// DirectPlayClient->CancelAsyncOperation( NULL, DPNCANCEL_ALL_OPERATIONS ); Find where DirectPlayClient is
-
-// gundll.dll: file offset 0x8376. change xor esi, esi in the function call to mov esi, 1. This fixes the 30 second timer
-// Test if this works in Win XP too
-// dalib.dll: file offset 0x4C82 = load library call of gundll.dll. Use this to set hooks
-// dxcheckOK( DirectPlayClient->Close(DPNCLOSE_IMMEDIATE) ); // WARNING DPNCLOSE_IMMEDIATE is a DP feature from DirectX 9 (released shortly after FL came out)
-// 		SafeRelease( DirectPlayClient );
