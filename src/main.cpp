@@ -102,7 +102,7 @@ void Init()
     manager.RegisterFeature("maneuver_frame_fix",       InitManeuverFrameFix,       nullptr,                    ApplyOnlyOnClient);
     manager.RegisterFeature("player_lights_fix",        InitPlayerLightsFix,        nullptr,                    ApplyOnlyOnClient);
     manager.RegisterFeature("increased_light_limit",    InitIncreaseLightLimit,     nullptr,                    ApplyOnlyOnClient);
-    manager.RegisterFeature("equip_stat_flicker_fix",   InitEquipStatFlickerFix,    nullptr,                    ApplyOnlyOnClient);
+    manager.RegisterFeature("equip_stat_flicker_fix",   InitEquipStatFlickerFix,    CleanupEquipStatFlickerFix, ApplyOnlyOnClient);
 
     // Server only fixes
     manager.RegisterFeature("ship_buy_kick_fix",        InitShipBuyKickFix,         nullptr,                    ApplyOnlyOnServer);

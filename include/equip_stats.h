@@ -7,3 +7,5 @@ struct NN_Inventory
 };
 
 void InitEquipStatFlickerFix();
+
+void CleanupEquipStatFlickerFix();

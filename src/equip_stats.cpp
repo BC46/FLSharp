@@ -104,3 +104,9 @@ void InitEquipStatFlickerFix()
     #define SUB_QUANTITY_OF_BOUGHT_ITEM_ADDR 0x47EB35
     Hook(SUB_QUANTITY_OF_BOUGHT_ITEM_ADDR, SubtractQuantityOfBoughtItem_Hook, 5, true);
 }
+
+void CleanupEquipStatFlickerFix()
+{
+    CleanupTrampoline(RefreshPlayerInventory_Original);
+    CleanupTrampoline(RefreshDealerInventory_Original);
+}
