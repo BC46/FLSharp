@@ -3,211 +3,104 @@
 
 #define NAKED __declspec(naked)
 
-// int prevUnmountedEquipAmount = -1;
+#define UPDATE_PLAYER_INV_INFOCARD_CHECK_ADDR ((WORD*) 0x47E00D)
+#define UPDATE_DEALER_INV_INFOCARD_CHECK_ADDR ((BYTE*) 0x482C43)
 
-// NAKED void UpdateUnmountedEquipAmount_Hook()
-// {
-//     #define UPDATE_UNMOUNTED_EQUIP_AMOUNT_RET_ADDR 0x47DF94
-
-//     __asm {
-//         mov eax, [edi+0x3C8]
-//         mov prevUnmountedEquipAmount, eax       // store unmounted equip amount
-//         mov [edi+0x3C8], ebp                    // overwritten instruction
-//         mov eax, UPDATE_UNMOUNTED_EQUIP_AMOUNT_RET_ADDR
-//         jmp eax
-//     }
-// }
-
-// #define UPDATE_INFOCARD_ON_MOUNT_ADDR 0x47E059
-// #define CLEAR_INFOCARD_ADDR 0x47E068
-// #define PRESERVE_INFOCARD_ADDR 0x47E0A9
-
-// NAKED void UpdateInfocardOnMountCheck_Hook()
-// {
-//     __asm {
-//     //     mov eax, [esp+0x1C]     // overwritten instruction #1
-//     //     test eax, eax           // overwritten instruction #2
-//     //     je clear
-//     //     cmp ebp, prevUnmountedEquipAmount
-//     //     je preserve
-//     //     mov ecx, UPDATE_INFOCARD_ON_MOUNT_ADDR
-//     //     jmp ecx
-//     // clear:
-//     //     mov ecx, CLEAR_INFOCARD_ADDR
-//     //     jmp ecx
-//     // preserve:
-//     //     mov ecx, PRESERVE_INFOCARD_ADDR
-//     //     jmp ecx
-
-//         cmp ebp, prevUnmountedEquipAmount
-//         jne preserve
-//         mov eax, [esp+0x1C]     // overwritten instruction #1
-//         test eax, eax           // overwritten instruction #2
-//         je clear
-//         mov ecx, UPDATE_INFOCARD_ON_MOUNT_ADDR
-//         jmp ecx
-//     clear:
-//         mov ecx, CLEAR_INFOCARD_ADDR
-//         jmp ecx
-//     preserve:
-//         mov ecx, PRESERVE_INFOCARD_ADDR
-//         jmp ecx
-//     }
-// }
-
-// bool checkvalue = false;
-
-// NAKED void UpdateInfocardOnUnmountCheck_Hook()
-// {
-//     __asm {
-//     //     mov eax, [esp+0x50]     // overwritten instruction #1
-//     //     cmp eax, ebx            // overwritten instruction #2
-//     //     je no_update
-//     //     cmp ebp, prevUnmountedEquipAmount
-//     //     jne preserve
-//     //     mov ecx, UPDATE_INFOCARD_ON_UNMOUNT_ADDR
-//     //     jmp ecx
-//     // no_update:
-//     //     mov ecx, UpdateInfocardOnMountCheck_Hook
-//     //     jmp ecx
-//     // preserve:
-//     //     mov ecx, PRESERVE_INFOCARD_ADDR
-//     //     jmp ecx
-//         cmp checkvalue, 1
-//         je preserve
-//         mov eax, [esp+0x50]     // overwritten instruction #1
-//         cmp eax, ebx            // overwritten instruction #2
-//         je mount_check
-//         mov ecx, UPDATE_INFOCARD_ON_UNMOUNT_ADDR
-//         jmp ecx
-//     mount_check:
-//         mov ecx, UPDATE_INFOCARD_ON_MOUNT_CHECK_ADDR
-//         jmp ecx
-//     preserve:
-//         mov checkvalue, 0
-//         mov ecx, PRESERVE_INFOCARD_ADDR
-//         jmp ecx
-//     }
-// }
-
-struct NN_Inventory
-{
-    void RefreshPlayerInventory_Hook(DWORD a, DWORD b, DWORD c);
-    void RefreshDealerInventory_Hook();
-};
-
-void (NN_Inventory::*RefreshPlayerInventory_Original)(DWORD a, DWORD b, DWORD c);
+void (NN_Inventory::*RefreshPlayerInventory_Original)(EquipDescList& list, DWORD unused, bool unk);
 void (NN_Inventory::*RefreshDealerInventory_Original)();
 
-int count1 = 0;
-bool hooked1 = false;
+int playerInvCount = 0;
+bool playerInvPatched = false;
 
 // Checks if RefreshInventory was recursively called.
-// If so, do not allow the
-void NN_Inventory::RefreshPlayerInventory_Hook(DWORD a, DWORD b, DWORD c)
+// If so, don't allow the player infocard to be updated.
+void NN_Inventory::RefreshPlayerInventory_Hook(EquipDescList& list, DWORD unused, bool unk)
 {
-    ++count1;
+    ++playerInvCount;
 
-    (this->*RefreshPlayerInventory_Original)(a, b, c);
+    (this->*RefreshPlayerInventory_Original)(list, unused, unk);
 
-    if (count1 >= 2)
+    if (playerInvCount >= 2)
     {
-        PatchBytes(0x47E00D, { 0xE9, 0x97, 0x00, 0x00, 0x00, 0x90, 0x90, 0x90 });
-        hooked1 = true;
+        // If the RefreshPlayerInventory function is called recursively, disable the infocard printing.
+        *UPDATE_PLAYER_INV_INFOCARD_CHECK_ADDR = 0x10EB;
+        playerInvPatched = true;
     }
-    else if (hooked1)
+    else if (playerInvPatched)
     {
-        PatchBytes(0x47E00D, { 0x74, 0x15, 0x8B, 0x97, 0x48, 0x03, 0x00, 0x00 });
-        hooked1 = false;
+        // Turn the infocard printing back on after the recursive call's caller is finished.
+        *UPDATE_PLAYER_INV_INFOCARD_CHECK_ADDR = 0x1574;
+        playerInvPatched = false;
     }
 
-    --count1;
+    --playerInvCount;
 }
 
-int count2 = 0;
-bool hooked2 = false;
 bool quantity0 = false;
-int rounds = 3;
+int dealerInvCount = 0;
+int iterations = 3;
 
-#define UPDATE_INFOCARD_DEALER_ITEM_CHECK 0x482C3D
-
+// The flickering happens in the dealer menu when an item is purchased which is now no longer available.
+// Usually because it has a limited quantity while the player purchases all copies
 void NN_Inventory::RefreshDealerInventory_Hook()
 {
-    // lastSelectedItem = 0;
-    if (count2 == 0 && quantity0 && rounds == 3)
+    // This one is a bit more tricky than the player inventory as the dealer inventory prints
+    // the "wrong" infocard for two iterations after the quantity 0 equipment has been purchased.
+    // So we keep track of the number of iterations when patching and restoring.
+    if (dealerInvCount == 0 && quantity0 && iterations >= 3)
     {
-        Patch<BYTE>(0x482C43, 0xEB);
-        rounds = 2;
+        *UPDATE_DEALER_INV_INFOCARD_CHECK_ADDR = 0xEB;
+        iterations = 2;
     }
 
-    ++count2;
-
+    ++dealerInvCount;
     (this->*RefreshDealerInventory_Original)();
+    --dealerInvCount;
 
-    --count2;
-
-    if (count2 == 0 && quantity0)
+    if (dealerInvCount == 0 && quantity0)
     {
-        if (--rounds == 0)
+        if (--iterations <= 0)
         {
-            Patch<BYTE>(0x482C43, 0x74);
+            *UPDATE_DEALER_INV_INFOCARD_CHECK_ADDR = 0x74;
             quantity0 = false;
-            rounds = 3;
+            iterations = 3;
         }
     }
-
-    // if (count2 == 0)
-    // {
-    //     Hook(UPDATE_INFOCARD_DEALER_ITEM_CHECK, UpdateInfocardDealerItemCheck_Hook, 6, true);
-    // }
 }
 
-#define UPDATE_INFOCARD_DEALER_ITEM 0x482C45
-#define PRESERVE_INFOCARD_DEALER_ITEM 0x482C5B
-
-// PDWORD lastSelectedItem = 0;
-
-// NAKED void UpdateInfocardDealerItemCheck_Hook()
-// {
-//     __asm {
-//         mov eax, [esp+0x1C]         // overwritten instruction #1
-//         test eax, eax               // overwritten instruction #2
-//         je preserve
-//         mov lastSelectedItem, eax
-//         mov ecx, UPDATE_INFOCARD_DEALER_ITEM
-//         jmp ecx
-//     preserve:
-//         mov ecx, PRESERVE_INFOCARD_DEALER_ITEM
-//         jmp ecx
-//     }
-// }
-
+// Check if an item was bought which is now no longer available (quantity 0).
 NAKED void SubtractQuantityOfBoughtItem_Hook()
 {
+    #define SUB_QUANTITY_OF_BOUGHT_ITEM_RET_ADDR 0x47EB3A
+
     __asm {
-        sub eax, edi
-        mov [ebx+0x1C], eax
+        sub eax, edi        // overwritten instruction #1
+        mov [ebx+0x1C], eax // overwritten instruction #2
         test eax, eax
-        sete quantity0
-        mov eax, 0x47EB3A
+        sete quantity0      // test if the quantity is now 0
+        mov eax, SUB_QUANTITY_OF_BOUGHT_ITEM_RET_ADDR
         jmp eax
     }
 }
 
+// If you mount or unmount equipment in the inventory or dealer menu, the stat infocard will sometimes flicker.
+// This happens because for one or two frames when the equipment is already moved, your "cursor" is still in the same place as before,
+// and thus it either selects an empty hardpoint, or a another type of equipment. This is then reflected in the stat infocard.
+// The same problem happens when you sell an equipment you have and rebuy it. This is because this item has a limited quantity
+// and goes away when you buy the last copies.
+// We fix both problems by ensuring the infocard is not updated when the flickering happens.
+// TODO: I think these solutions area really ugly, but I couldn't find a better way. It would be nice if a better approach could be found.
 void InitEquipStatFlickerFix()
 {
-    #define UPDATE_UNMOUNTED_EQUIP_AMOUNT_ADDR 0x47DF8E
-    //Hook(UPDATE_UNMOUNTED_EQUIP_AMOUNT_ADDR, UpdateUnmountedEquipAmount_Hook, 6, true);
+    ReadWriteProtect((DWORD) UPDATE_PLAYER_INV_INFOCARD_CHECK_ADDR, sizeof(WORD));
+    ReadWriteProtect((DWORD) UPDATE_DEALER_INV_INFOCARD_CHECK_ADDR, sizeof(BYTE));
 
-    #define UPDATE_INFOCARD_ON_UNMOUNT_CHECK_ADDR 0x47E036
-    //Hook(UPDATE_INFOCARD_ON_UNMOUNT_CHECK_ADDR, UpdateInfocardOnUnmountCheck_Hook, 6, true);
+    #define REFERSH_PLAYER_INV_ADDR 0x47D2F0
+    RefreshPlayerInventory_Original = Trampoline(REFERSH_PLAYER_INV_ADDR, &NN_Inventory::RefreshPlayerInventory_Hook, 6);
 
-    RefreshPlayerInventory_Original = Trampoline(0x47D2F0, &NN_Inventory::RefreshPlayerInventory_Hook, 6);
-    RefreshDealerInventory_Original = Trampoline(0x482A90, &NN_Inventory::RefreshDealerInventory_Hook, 6);
+    #define REFERSH_DEALER_INV_ADDR 0x482A90
+    RefreshDealerInventory_Original = Trampoline(REFERSH_DEALER_INV_ADDR, &NN_Inventory::RefreshDealerInventory_Hook, 6);
 
-    #define UPDATE_INFOCARD_DEALER_ITEM_CHECK 0x482C3D
-    //Hook(UPDATE_INFOCARD_DEALER_ITEM_CHECK, UpdateInfocardDealerItemCheck_Hook, 6, true);
-
-    //Hook(UPDATE_INFOCARD_ON_MOUNT_CHECK_ADDR, UpdateInfocardOnMountCheck_Hook, 6, true);
-    Hook(0x0047EB35, SubtractQuantityOfBoughtItem_Hook, 5, true);
+    #define SUB_QUANTITY_OF_BOUGHT_ITEM_ADDR 0x47EB35
+    Hook(SUB_QUANTITY_OF_BOUGHT_ITEM_ADDR, SubtractQuantityOfBoughtItem_Hook, 5, true);
 }
