@@ -1,3 +1,5 @@
+#pragma once
+
 #include "Freelancer.h"
 
 struct ThirdPersonCamera : public Camera

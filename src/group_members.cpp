@@ -121,7 +121,7 @@ void InitHostileGroupFormation()
 void InitHostileGroupMembersFix()
 {
     // Doing a trampoline hook was inconvenient here, so just manually hook all the call locations,
-    // except for 0x475770 which should be handled by the TODO below.
+    // except for 0x475770 which is handled by a different fix.
     const DWORD getAttitudeTypeCalls[] = {
         0x48AEAB, 0x4E4950, 0x4EC10E, 0x4EC71A, 0x4EC891, 0x4F1CFF, 0x4F22E4,
         0x4F2465, 0x53A98C, 0x553290, 0x5532AD, 0x553325, 0x5552A8 };
