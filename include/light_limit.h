@@ -5,7 +5,7 @@
 
 #define STDCALL __stdcall
 
-void IncreaseLightLimit();
+void InitIncreaseLightLimit();
 
 // Redefining these structs because I don't want the project to depend on the DirectX SDK...
 struct D3DCAPS8

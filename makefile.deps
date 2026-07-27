@@ -81,6 +81,10 @@ obj\dll_crash.obj:\
     include\utils.h\
     include\logger.h
 
+obj\equip_stats.obj:\
+    include\equip_stats.h\
+    include\utils.h
+
 obj\exit.obj:\
     include\exit.h\
     include\DALib.h\
@@ -204,7 +208,8 @@ obj\main.obj:\
     include\camera.h\
     include\maneuver_frame.h\
     include\player_lights.h\
-    include\light_limit.h
+    include\light_limit.h\
+    include\equip_stats.h
 
 obj\maneuver_frame.obj:\
     include\maneuver_frame.h\
@@ -396,5 +401,6 @@ obj\test.obj:\
     include\cheat_detection.h\
     include\cursor_colors.h\
     include\waypoint_names.h\
-    include\mouse.h
+    include\mouse.h\
+    include\light_limit.h
 

@@ -42,13 +42,13 @@ void CreateAndHandleLights(const Camera& camera, PVOID systemLights, float unk1,
 // Freelancer has an infamous simultaneous active light limit of just four.
 // This means that if there are more than four light sources active, then only the first four will work.
 // D3D8 has a hard limit of 10 (on most devices), so FL's limit can be safely increased to this amount.
-void IncreaseLightLimit()
+void InitIncreaseLightLimit()
 {
     DWORD rp8Handle = (DWORD) GetModuleHandle("rp8.dll");
 
     if (!rp8Handle)
     {
-        Logger::PrintModuleError("IncreaseLightLimit", "rp8.dll");
+        Logger::PrintModuleError("InitIncreaseLightLimit", "rp8.dll");
         return;
     }
 

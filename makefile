@@ -57,7 +57,8 @@ $(OBJ_DIR)\pilot_names.obj\
 $(OBJ_DIR)\camera.obj\
 $(OBJ_DIR)\maneuver_frame.obj\
 $(OBJ_DIR)\player_lights.obj\
-$(OBJ_DIR)\light_limit.obj
+$(OBJ_DIR)\light_limit.obj\
+$(OBJ_DIR)\equip_stats.obj
 
 COMMON_LIB = $(OBJ_DIR)\Common.lib
 DALIB_LIB = $(OBJ_DIR)\DALib.lib
@@ -67,7 +68,7 @@ EXTERNAL_LIBS = User32.lib Gdi32.lib
 OUTPUT_FILE = $(BIN_DIR)\FLSharp.dll
 
 CPP_FLAGS = /c /O2 /Oi /nologo /W3 /WX /GL /LD /MT /EHsc /Zc:threadSafeInit- /DNDEBUG /DUSE_ST6
-LD_FLAGS = /LTCG:incremental /DLL /NOLOGO /DEBUG
+LD_FLAGS = /LTCG /DLL /NOLOGO /DEBUG
 LIB_FLAGS = /NOLOGO /MACHINE:X86
 RC_FLAGS = /nologo
 
