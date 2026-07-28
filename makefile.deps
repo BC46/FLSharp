@@ -213,7 +213,8 @@ obj\main.obj:\
     include\maneuver_frame.h\
     include\player_lights.h\
     include\light_limit.h\
-    include\equip_stats.h
+    include\equip_stats.h\
+    include\sub_target.h
 
 obj\maneuver_frame.obj:\
     include\maneuver_frame.h\
@@ -307,6 +308,13 @@ obj\shield_capacity.obj:\
     include\utils.h
 
 obj\sub_target.obj:\
+    include\sub_target.h\
+    include\Freelancer.h\
+    include\Common.h\
+    include\fl_math.h\
+    include\vftable.h\
+    include\st6.h\
+    include\utils.h
 
 obj\test_sounds.obj:\
     include\test_sounds.h\

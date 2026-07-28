@@ -57,7 +57,8 @@ $(OBJ_DIR)\camera.obj\
 $(OBJ_DIR)\maneuver_frame.obj\
 $(OBJ_DIR)\player_lights.obj\
 $(OBJ_DIR)\light_limit.obj\
-$(OBJ_DIR)\equip_stats.obj
+$(OBJ_DIR)\equip_stats.obj\
+$(OBJ_DIR)\sub_target.obj
 
 COMMON_LIB = $(OBJ_DIR)\Common.lib
 DACOM_LIB = $(OBJ_DIR)\DACOM.lib

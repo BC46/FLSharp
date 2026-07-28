@@ -94,6 +94,11 @@ struct FlUiElement
     virtual void Vftable_xA0();
     virtual void Vftable_xA4();
     virtual int Transform(TransformType type, DWORD param1, DWORD param2); // 0xA0
+
+    inline bool IsVisible()
+    {
+        return (flags & UI_ELEMENT_VISIBLE) == UI_ELEMENT_VISIBLE;
+    }
 };
 
 #define NN_PREFERENCES_NEW_DATA 0x98C

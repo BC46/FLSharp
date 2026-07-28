@@ -36,6 +36,7 @@
 #include "player_lights.h"
 #include "light_limit.h"
 #include "equip_stats.h"
+#include "sub_target.h"
 
 FeatureManager manager;
 
@@ -103,6 +104,7 @@ void Init()
     manager.RegisterFeature("player_lights_fix",        InitPlayerLightsFix,        nullptr,                    ApplyOnlyOnClient);
     manager.RegisterFeature("increased_light_limit",    InitIncreaseLightLimit,     nullptr,                    ApplyOnlyOnClient);
     manager.RegisterFeature("equip_stat_flicker_fix",   InitEquipStatFlickerFix,    CleanupEquipStatFlickerFix, ApplyOnlyOnClient);
+    manager.RegisterFeature("sub_target_fix",           InitSubTargetFix,           nullptr,                    ApplyOnlyOnClient);
 
     // Server only fixes
     manager.RegisterFeature("ship_buy_kick_fix",        InitShipBuyKickFix,         nullptr,                    ApplyOnlyOnServer);
