@@ -99,7 +99,7 @@ bool ThirdPersonCamera::Update_Hook(const Transform& transform, float deltaTime,
     float ogAngularSlerpMultiplier = angularSlerpMultiplier;
 
     // Correct the angular acceleration and angular slerp multiplier using the 60 FPS deviation ratio.
-    float correctionRatio = 60.0f * deltaTime;
+    const float correctionRatio = 60.0f * deltaTime;
     angularAcceleration *= correctionRatio;
     angularSlerpMultiplier *= correctionRatio;
 

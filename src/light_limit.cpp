@@ -42,6 +42,8 @@ void CreateAndHandleLights(const Camera& camera, PVOID systemLights, float unk1,
 // Freelancer has an infamous simultaneous active light limit of just four.
 // This means that if there are more than four light sources active, then only the first four will work.
 // D3D8 has a hard limit of 10 (on most devices), so FL's limit can be safely increased to this amount.
+// We intercept the GetDeviceCaps function such that we know what the actual device's light limit is.
+// Then we use that value to replace FL's light limit.
 void InitIncreaseLightLimit()
 {
     DWORD rp8Handle = (DWORD) GetModuleHandle("rp8.dll");
@@ -73,5 +75,4 @@ void InitIncreaseLightLimit()
 
     // Return directly after the hook.
     PatchBytes(CREATE_LIGHTS_CALL_ADDR + 5, { 0x83, 0xC4, 0x14, 0x5F, 0x5D, 0x5B, 0x83, 0xC4, 0x1C, 0xC3 });
-
 }

@@ -86,7 +86,7 @@ Thanks to the following people for helping make some of the features possible:
 - [Aingar](https://github.com/Aingar)
   - Identification of the client-to-server communication improvements and providing code from DiscoveryGC's client hook.
   - Original implementation of the [camera acceleration fix](https://codeberg.org/TheStarport/FLUF/src/branch/master/FLUF/Source/Client/Fixes/CameraAcceleration.cpp).
-- FLHook contributors
+- [FLHook](https://github.com/TheStarport/FLHook) contributors
   - Reverse engineered and documented Freelancer data structures as part of the [FLHook SDK](https://github.com/TheStarport/FLHookSDK).
 - [Schmackbolzen](https://github.com/Schmackbolzen)
   - Provided assistance with troubleshooting the ship preview rendering bug.
