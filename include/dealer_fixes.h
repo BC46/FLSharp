@@ -3,13 +3,7 @@
 #define WIN32_LEAN_AND_MEAN
 #include <windows.h>
 
-#define UI_ELEMENT_VISIBLE 0x3
-
-struct ManeuverFrame
-{
-    BYTE x00[0x6C];
-    BYTE flags; // 0x6C
-};
+#include "Freelancer.h"
 
 struct ObjectDeformable
 {
@@ -22,7 +16,7 @@ struct NavBar
     BYTE x00[0x344];
     bool roomTransitionInProgress; // 0x344
     BYTE x345[0x93];
-    ManeuverFrame* maneuverFrame; // 0x3D8
+    FlUiElement* maneuverFrame; // 0x3D8
     BYTE x3DC[0x4];
     ObjectDeformable* dealerCharacter; // 0x3E0
     bool shipDealerMenuOpened; // 0x3E4

@@ -347,6 +347,16 @@ TEST_CASE("value offsets are correct", "[camera]")
     REQUIRE(offsetof(Camera, x1FC) == 0x1FC);
 }
 
+TEST_CASE("value offsets are correct", "[fluielement]")
+{
+    REQUIRE(offsetof(FlUiElement, flags) == 0x6C);
+}
+
+TEST_CASE("vftable offsets are correct", "[fluielement]")
+{
+    REQUIRE(GetVftableOffset<FlUiElement>(&FlUiElement::Transform) == 0xA8);
+}
+
 // pilot_names.h
 TEST_CASE("value offsets are correct", "[strbuffer]")
 {
@@ -429,7 +439,7 @@ TEST_CASE("value offsets are correct", "[uitextmsgbutton]")
 
 TEST_CASE("vftable offsets are correct", "[uitextmsgbutton]")
 {
-    REQUIRE(GetVftableOffset<UITextMsgButton>(&UITextMsgButton::UpdatePosition) == 0xA8);
+    REQUIRE(GetVftableOffset<UITextMsgButton>(&UITextMsgButton::Transform) == 0xA8);
 }
 
 // weapon_anim.h
@@ -445,11 +455,6 @@ TEST_CASE("vftable offsets are correct", "[ianimation2]")
 }
 
 // dealer_fixes.h
-TEST_CASE("value offsets are correct", "[maneuverframe]")
-{
-    REQUIRE(offsetof(ManeuverFrame, flags) == 0x6C);
-}
-
 TEST_CASE("vftable offsets are correct", "[objectdeformable]")
 {
     REQUIRE(GetVftableOffset<ObjectDeformable>(&ObjectDeformable::Destroy) == 0x0);

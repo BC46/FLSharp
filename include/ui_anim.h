@@ -3,7 +3,7 @@
 #define WIN32_LEAN_AND_MEAN
 #include <windows.h>
 #include "vftable.h"
-#include "Common.h"
+#include "Freelancer.h"
 
 struct BigImage
 {
@@ -12,28 +12,12 @@ struct BigImage
     virtual DWORD __stdcall Destroy();
 };
 
-struct UITextMsgButton
+struct UITextMsgButton : public FlUiElement
 {
 public:
-    int UpdatePosition_Hook(BYTE unk1, const Vector* newPosOffset, BYTE unk2);
+    int UpdatePosition_Hook(TransformType type, const Vector* newPosOffset, DWORD unk);
 
-    FILL_VFTABLE(0)
-    FILL_VFTABLE(1)
-    FILL_VFTABLE(2)
-    FILL_VFTABLE(3)
-    FILL_VFTABLE(4)
-    FILL_VFTABLE(5)
-    FILL_VFTABLE(6)
-    FILL_VFTABLE(7)
-    FILL_VFTABLE(8)
-    FILL_VFTABLE(9)
-    virtual void Vftable_xA0();
-    virtual void Vftable_xA4();
-    // UpdatePosition is actually Transform and unk1 is the transform type, with 6 = UPDATE_POS.
-    // Thus the function actually has more purposes than just updating the position.
-    virtual int UpdatePosition(BYTE unk1, const Vector* newPosOffset, BYTE unk2);
-
-    BYTE x04[0x3E8];
+    BYTE x70[0x37C];
     BigImage* textImage; // 0x3EC. textImage = nullptr will prevent the text from rendering
     BYTE x3F0[0x81];
     bool disableHovering; // 0x471

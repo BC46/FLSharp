@@ -65,6 +65,37 @@ struct AudioOption
     DWORD x0C, x10, x14;
 };
 
+#define UI_ELEMENT_VISIBLE 0x3
+
+enum TransformType : DWORD
+{
+    Hide = 1,
+    SetPos = 6,
+    SetTextFromBuffer = 0x1D,
+    SetTextFromIds = 0x1E,
+    TypingEffect = 0x50
+};
+
+struct FlUiElement
+{
+    BYTE x04[0x68];
+    BYTE flags; // 0x6C
+
+    FILL_VFTABLE(0)
+    FILL_VFTABLE(1)
+    FILL_VFTABLE(2)
+    FILL_VFTABLE(3)
+    FILL_VFTABLE(4)
+    FILL_VFTABLE(5)
+    FILL_VFTABLE(6)
+    FILL_VFTABLE(7)
+    FILL_VFTABLE(8)
+    FILL_VFTABLE(9)
+    virtual void Vftable_xA0();
+    virtual void Vftable_xA4();
+    virtual int Transform(TransformType type, DWORD param1, DWORD param2); // 0xA0
+};
+
 #define NN_PREFERENCES_NEW_DATA 0x98C
 
 // 0x330 = current selected width
