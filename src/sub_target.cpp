@@ -12,9 +12,9 @@ DWORD Target::HandleSubtargetHotkey(bool previous)
     static const BYTE returnSuffixes[] = { 0x63, 0x86, 0x98, 0xBB };
 
     FlUiElement* targetButton = previous ? hudTarget.targetPreviousButton : hudTarget.targetNextButton;
-    bool visible = targetButton && targetButton->IsVisible();
+    bool skipCode = targetButton && targetButton->IsVisible();
 
-    return HANDLE_SUBTARGET_HOTKEY_RET_ADDR_PREFIX + returnSuffixes[((int) previous) * 2 + ((int) !visible)];
+    return HANDLE_SUBTARGET_HOTKEY_RET_ADDR_PREFIX + returnSuffixes[((int) previous) * 2 + ((int) !skipCode)];
 }
 
 NAKED void HandleSubtargetHotkey_Hook()
@@ -39,6 +39,34 @@ void InitSubTargetFix()
 
     for (int i = 0; i < SUBTARGET_HOTKEY_COUNT; ++i)
     {
-        SetPointer(0x4E2EEC + i * sizeof(DWORD), HandleSubtargetHotkey_Hook);
+        SetPointer(CONTACT_LIST_HOTKEY_JMP_TABLE_ADDR + i * sizeof(DWORD), HandleSubtargetHotkey_Hook);
     }
+}
+
+#define HANDLE_FORMATION_LIST_RET_ADDR 0x4E2BF6
+#define FORMATION_LIST_SKIP_OFFSET 0x23
+
+DWORD Target::HandleFormationListHotkey()
+{
+    // If the Contact List is minimized, the Formation List button is always hidden, even when the player is in formation.
+    // Therefore, checking if the Formation List button is visible is not a reliable way to determine whether the code can be skipped.
+    // Fortunately, there is a "isPlayerInFormation" boolean in the HUD_Target struct, which is exactly what we need.
+    bool skipCode = !hudTarget.isPlayerInFormation;
+    return HANDLE_FORMATION_LIST_RET_ADDR + ((int) skipCode) * FORMATION_LIST_SKIP_OFFSET;
+}
+
+NAKED void HandleFormationList_Hook()
+{
+    __asm {
+        lea ecx, [edi-0x384]    // Target*
+        call Target::HandleFormationListHotkey
+        jmp eax
+    }
+}
+
+// Same fix as the Sub-Target hotkey above, but now for the Formation List hotkey (also added by JFLP).
+void InitFormationListFix()
+{
+    #define FORMATION_LIST_HOTKEY_JMP_TABLE_ENTRY_ADDR 0x4E2F0C
+    SetPointer(FORMATION_LIST_HOTKEY_JMP_TABLE_ENTRY_ADDR, HandleFormationList_Hook);
 }

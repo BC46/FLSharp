@@ -105,6 +105,7 @@ void Init()
     manager.RegisterFeature("increased_light_limit",    InitIncreaseLightLimit,     nullptr,                    ApplyOnlyOnClient);
     manager.RegisterFeature("equip_stat_flicker_fix",   InitEquipStatFlickerFix,    CleanupEquipStatFlickerFix, ApplyOnlyOnClient);
     manager.RegisterFeature("sub_target_fix",           InitSubTargetFix,           nullptr,                    ApplyOnlyOnClient);
+    manager.RegisterFeature("formation_list_fix",       InitFormationListFix,       nullptr,                    ApplyOnlyOnClient);
 
     // Server only fixes
     manager.RegisterFeature("ship_buy_kick_fix",        InitShipBuyKickFix,         nullptr,                    ApplyOnlyOnServer);

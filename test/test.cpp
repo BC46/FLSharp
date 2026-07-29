@@ -20,6 +20,7 @@
 #include "fl_math.h"
 #include "light_limit.h"
 #include "exit.h"
+#include "sub_target.h"
 
 // alchemy_crash.h
 TEST_CASE("value offsets are correct", "[alchemy]")
@@ -627,4 +628,23 @@ TEST_CASE("vftable offsets are correct", "[idirectplay8client]")
 {
     REQUIRE(GetVftableOffset<IDirectPlay8Client>(&IDirectPlay8Client::CancelAsyncOperation, true) == 0x18);
     REQUIRE(GetVftableOffset<IDirectPlay8Client>(&IDirectPlay8Client::Close, true) == 0x38);
+}
+
+// sub_target.h
+TEST_CASE("value offsets are correct", "[target]")
+{
+    REQUIRE(offsetof(Target, hudTarget) == 0x38);
+}
+
+TEST_CASE("value offsets are correct", "[hud_target]")
+{
+    REQUIRE(offsetof(HUD_Target, targetScanButton) == 0x4D0);
+    REQUIRE(offsetof(HUD_Target, targetTractorButton) == 0x4D4);
+    REQUIRE(offsetof(HUD_Target, targetCloseButton) == 0x4D8);
+    REQUIRE(offsetof(HUD_Target, targetPreviousButton) == 0x4DC);
+    REQUIRE(offsetof(HUD_Target, targetNextButton) == 0x4E0);
+    REQUIRE(offsetof(HUD_Target, targetCommButton) == 0x4E4);
+    REQUIRE(offsetof(HUD_Target, tradeRequestGroupButton) == 0x4E8);
+    REQUIRE(offsetof(HUD_Target, formationList) == 0x60C);
+    REQUIRE(offsetof(HUD_Target, isPlayerInFormation) == 0x618);
 }
