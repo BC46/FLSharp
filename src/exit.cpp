@@ -2,8 +2,6 @@
 #include "utils.h"
 #include "logger.h"
 
-#define CLOSE_DP_CLIENT_CONNECTION_F_OF (0x302EF)
-
 // Function which is called to close the DirectPlay connection.
 long STDCALL IDirectPlay8Client::Close_Hook(const DWORD dwFlags)
 {
@@ -17,6 +15,12 @@ long STDCALL IDirectPlay8Client::Close_Hook(const DWORD dwFlags)
     return Close(DPNCLOSE_IMMEDIATE);
 }
 
+// Just close the client connection immediately in this hook because CancelAsyncOperation is already called in the original code.
+long STDCALL IDirectPlay8Client::Close_Hook2(const DWORD dwFlags)
+{
+    return Close(DPNCLOSE_IMMEDIATE);
+}
+
 typedef DWORD (WINAPI *CloseDirectPlayConnection)(LPVOID lpParameter);
 
 // Hook function that FL calls to create the thread that closes the DirectPlay connection.
@@ -26,12 +30,14 @@ HANDLE WINAPI CreateThread_Hook(LPSECURITY_ATTRIBUTES lpThreadAttributes,
     SIZE_T dwStackSize, LPTHREAD_START_ROUTINE lpStartAddress,
     LPVOID lpParameter, DWORD dwCreationFlags, LPDWORD lpThreadId)
 {
+    // TODO: Instead patch this function at the LoadLibraryA call at dalib.dll 0x4C82
     // Patch the call to the DirectPlay Close function to ensure all async operations are properly canceled first.
     DWORD gundllHandle = (DWORD) GetModuleHandle("gundll.dll");
     if (gundllHandle)
     {
-        Patch<WORD>(gundllHandle + CLOSE_DP_CLIENT_CONNECTION_F_OF, 0x5056); // push esi, push eax
-        Hook(gundllHandle + CLOSE_DP_CLIENT_CONNECTION_F_OF + 2, &IDirectPlay8Client::Close_Hook, 5);
+        #define CLOSE_DP_CLIENT_CONNECTION_F_OF_GUN (0x302EF)
+        Patch<WORD>(gundllHandle + CLOSE_DP_CLIENT_CONNECTION_F_OF_GUN, 0x5056); // push esi, push eax
+        Hook(gundllHandle + CLOSE_DP_CLIENT_CONNECTION_F_OF_GUN + 2, &IDirectPlay8Client::Close_Hook, 5);
     }
 
     // Call the CloseDirectPlayConnection function on the main thread.
@@ -64,6 +70,18 @@ void InitPostGameDeadlockFix()
     #define CREATE_THREAD_DP_CLOSE_CALL_F_OF (0x4D8E + 0xC00)
     Hook(dalibHandle + CREATE_THREAD_DP_CLOSE_CALL_F_OF, CreateThread_Hook, 5);
     PatchBytes(dalibHandle + CREATE_THREAD_DP_CLOSE_CALL_F_OF + 5, { 0xE9, 0xCB, 0x00, 0x00, 0x00 }); // jmp
+
+    // This patch does "push esi" instead of "push 0", so there are not enough bytes to simply patch it to "push 1".
+    // Instead, a hook is needed to change the parameter.
+    #define CLOSE_DP_CLIENT_CONNECTION_CALL_F_OF1 (0x1615 + 0xC00)
+    Patch<WORD>(dalibHandle + CLOSE_DP_CLIENT_CONNECTION_CALL_F_OF1, 0x5056); // push esi, push eax
+    Hook(dalibHandle + CLOSE_DP_CLIENT_CONNECTION_CALL_F_OF1 + 2, &IDirectPlay8Client::Close_Hook2, 5);
+
+    #define CLOSE_DP_CLIENT_CONNECTION_CALL_F_OF2 (0x170C + 0xC00)
+    Patch<BYTE>(dalibHandle + CLOSE_DP_CLIENT_CONNECTION_CALL_F_OF2 + 1, 1);
+
+    #define CLOSE_DP_CLIENT_CONNECTION_CALL_F_OF3 (0x1BAC + 0xC00)
+    Patch<BYTE>(dalibHandle + CLOSE_DP_CLIENT_CONNECTION_CALL_F_OF3 + 1, 1);
 }
 
 bool noQuitMsgRetrieved = true;

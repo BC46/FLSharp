@@ -24,6 +24,7 @@ struct IDirectPlay8Client
     virtual long STDCALL Close(const DWORD dwFlags); // 0x38
 
     long STDCALL Close_Hook(const DWORD dwFlags);
+    long STDCALL Close_Hook2(const DWORD dwFlags);
 };
 
 void InitPostGameDeadlockFix();
