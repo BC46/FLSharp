@@ -3,7 +3,7 @@
 #include "logger.h"
 
 // Function which is called to close the DirectPlay connection.
-long STDCALL IDirectPlay8Client::Close_Hook(const DWORD dwFlags)
+long STDCALL IDirectPlay8Client::Close_Hook()
 {
     // According to the ancient DirectPlay documentation, this function can be called to close all the threads.
     CancelAsyncOperation(0, DPNCANCEL_ALL_OPERATIONS);
@@ -16,7 +16,7 @@ long STDCALL IDirectPlay8Client::Close_Hook(const DWORD dwFlags)
 }
 
 // Just close the client connection immediately in this hook because CancelAsyncOperation is already called in the original code.
-long STDCALL IDirectPlay8Client::Close_Hook2(const DWORD dwFlags)
+long STDCALL IDirectPlay8Client::Close_Hook2()
 {
     return Close(DPNCLOSE_IMMEDIATE);
 }
@@ -36,8 +36,8 @@ HANDLE WINAPI CreateThread_Hook(LPSECURITY_ATTRIBUTES lpThreadAttributes,
     if (gundllHandle)
     {
         #define CLOSE_DP_CLIENT_CONNECTION_F_OF_GUN (0x302EF)
-        Patch<WORD>(gundllHandle + CLOSE_DP_CLIENT_CONNECTION_F_OF_GUN, 0x5056); // push esi, push eax
-        Hook(gundllHandle + CLOSE_DP_CLIENT_CONNECTION_F_OF_GUN + 2, &IDirectPlay8Client::Close_Hook, 5);
+        Patch<WORD>(gundllHandle + CLOSE_DP_CLIENT_CONNECTION_F_OF_GUN, 0x50); // push eax
+        Hook(gundllHandle + CLOSE_DP_CLIENT_CONNECTION_F_OF_GUN + 1, &IDirectPlay8Client::Close_Hook, 6);
     }
 
     // Call the CloseDirectPlayConnection function on the main thread.
@@ -74,8 +74,8 @@ void InitPostGameDeadlockFix()
     // This patch does "push esi" instead of "push 0", so there are not enough bytes to simply patch it to "push 1".
     // Instead, a hook is needed to change the parameter.
     #define CLOSE_DP_CLIENT_CONNECTION_CALL_F_OF1 (0x1615 + 0xC00)
-    Patch<WORD>(dalibHandle + CLOSE_DP_CLIENT_CONNECTION_CALL_F_OF1, 0x5056); // push esi, push eax
-    Hook(dalibHandle + CLOSE_DP_CLIENT_CONNECTION_CALL_F_OF1 + 2, &IDirectPlay8Client::Close_Hook2, 5);
+    Patch<WORD>(dalibHandle + CLOSE_DP_CLIENT_CONNECTION_CALL_F_OF1, 0x50); // push eax
+    Hook(dalibHandle + CLOSE_DP_CLIENT_CONNECTION_CALL_F_OF1 + 1, &IDirectPlay8Client::Close_Hook2, 6);
 
     #define CLOSE_DP_CLIENT_CONNECTION_CALL_F_OF2 (0x170C + 0xC00)
     Patch<BYTE>(dalibHandle + CLOSE_DP_CLIENT_CONNECTION_CALL_F_OF2 + 1, 1);

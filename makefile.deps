@@ -418,5 +418,6 @@ obj\test.obj:\
     include\waypoint_names.h\
     include\mouse.h\
     include\light_limit.h\
-    include\exit.h
+    include\exit.h\
+    include\sub_target.h
 
