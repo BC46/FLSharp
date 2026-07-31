@@ -2,6 +2,7 @@
 #include "utils.h"
 
 #define NAKED __declspec(naked)
+#define FASTCALL __fastcall
 
 #define HANDLE_SUBTARGET_HOTKEY_RET_ADDR_PREFIX 0x4E2B00
 
@@ -46,7 +47,7 @@ void InitSubTargetFix()
 #define HANDLE_FORMATION_LIST_RET_ADDR 0x4E2BF6
 #define FORMATION_LIST_SKIP_OFFSET 0x23
 
-DWORD Target::HandleFormationListHotkey(const CShip& playerShip)
+DWORD FASTCALL HandleFormationListHotkey(const CShip& playerShip)
 {
     // If the Contact List is minimized, the Formation List button is always hidden, even when the player is in formation.
     // Therefore, checking if the Formation List button is visible is not a reliable way to determine whether the code can be skipped.
@@ -61,9 +62,7 @@ DWORD Target::HandleFormationListHotkey(const CShip& playerShip)
 NAKED void HandleFormationList_Hook()
 {
     __asm {
-        push ecx                // CShip&
-        lea ecx, [edi-0x384]    // Target*
-        call Target::HandleFormationListHotkey
+        call HandleFormationListHotkey
         jmp eax
     }
 }

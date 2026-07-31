@@ -15,7 +15,7 @@ void HUD_TargetH::RenderTargetBaseBackground_Hook()
 // When you have a player selected such that the "Request to Trade" button is visible,
 // and then open the Target Status window, the RTT button blinks briefly.
 // Note, I'm not referring to the RTT button flickering which happens when opening the
-// Target Status window while *no& player is selected; this can fixed with the following patch: Freelancer.exe, 0E19C6, 6A 00 -> EB 09.
+// Target Status window while *no* player is selected; this can fixed with the following patch: Freelancer.exe, 0E19C6, 6A 00 -> EB 09.
 // The blinking happens because during the opening animation, the main frame is made hidden.
 // At this point, its children, including the RTT button, will not render.
 // The game fixes this by rendering the RTT button manually during the animation.
