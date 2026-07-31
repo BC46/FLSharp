@@ -63,8 +63,9 @@ These include:
 - Fixed light sources not working when attached to the player's ship; i.e. enabled "lightsource_cone" just for the player ship.
 - Increased Freelancer's limit of simultaneously enabled lights to at most 10.
 - Fixed the equipment stats flickering in the inventory menu when (un)mounting equipment and purchasing equipment with limited availability.
-- Fixed the previous and next Sub-Target hotkeys messing up the Contact List when the Target View is not open.
-- Fixed the Formation List hotkey messing up the Contact List when not in formation.
+- Fixed the previous and next Sub-Target hotkeys messing up the Target Status window when the Target View is not open.
+- Fixed the Formation List hotkey messing up the Target Status window when not in formation.
+- Fixed the "Request to Trade" button blinking when opening the Target Status window.
 
 More fixes and improvements may be added in the future.
 

@@ -355,6 +355,7 @@ TEST_CASE("value offsets are correct", "[fluielement]")
 
 TEST_CASE("vftable offsets are correct", "[fluielement]")
 {
+    REQUIRE(GetVftableOffset<FlUiElement>(&FlUiElement::Render) == 0x34);
     REQUIRE(GetVftableOffset<FlUiElement>(&FlUiElement::Transform) == 0xA8);
 }
 
@@ -440,6 +441,7 @@ TEST_CASE("value offsets are correct", "[uitextmsgbutton]")
 
 TEST_CASE("vftable offsets are correct", "[uitextmsgbutton]")
 {
+    REQUIRE(GetVftableOffset<UITextMsgButton>(&UITextMsgButton::Render) == 0x34);
     REQUIRE(GetVftableOffset<UITextMsgButton>(&UITextMsgButton::Transform) == 0xA8);
 }
 
@@ -638,13 +640,15 @@ TEST_CASE("value offsets are correct", "[target]")
 
 TEST_CASE("value offsets are correct", "[hud_target]")
 {
+    REQUIRE(offsetof(HUD_Target, targetBaseBackground) == 0x494);
     REQUIRE(offsetof(HUD_Target, targetScanButton) == 0x4D0);
     REQUIRE(offsetof(HUD_Target, targetTractorButton) == 0x4D4);
-    REQUIRE(offsetof(HUD_Target, targetCloseButton) == 0x4D8);
+    REQUIRE(offsetof(HUD_Target, targetTradeButton) == 0x4D8);
     REQUIRE(offsetof(HUD_Target, targetPreviousButton) == 0x4DC);
     REQUIRE(offsetof(HUD_Target, targetNextButton) == 0x4E0);
     REQUIRE(offsetof(HUD_Target, targetCommButton) == 0x4E4);
     REQUIRE(offsetof(HUD_Target, tradeRequestGroupButton) == 0x4E8);
+    REQUIRE(offsetof(HUD_Target, targetCloseButton) == 0x4EC);
     REQUIRE(offsetof(HUD_Target, formationList) == 0x60C);
     REQUIRE(offsetof(HUD_Target, isPlayerInFormation) == 0x618);
 }

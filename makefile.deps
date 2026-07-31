@@ -214,7 +214,8 @@ obj\main.obj:\
     include\player_lights.h\
     include\light_limit.h\
     include\equip_stats.h\
-    include\sub_target.h
+    include\sub_target.h\
+    include\target_trade.h
 
 obj\maneuver_frame.obj:\
     include\maneuver_frame.h\
@@ -309,6 +310,15 @@ obj\shield_capacity.obj:\
 
 obj\sub_target.obj:\
     include\sub_target.h\
+    include\Freelancer.h\
+    include\Common.h\
+    include\fl_math.h\
+    include\vftable.h\
+    include\st6.h\
+    include\utils.h
+
+obj\target_trade.obj:\
+    include\target_trade.h\
     include\Freelancer.h\
     include\Common.h\
     include\fl_math.h\

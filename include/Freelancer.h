@@ -84,7 +84,10 @@ struct FlUiElement
     FILL_VFTABLE(0)
     FILL_VFTABLE(1)
     FILL_VFTABLE(2)
-    FILL_VFTABLE(3)
+    virtual void Vftable_x30();
+    virtual void Render(); // 0x34
+    virtual void Vftable_x38();
+    virtual void Vftable_x3C();
     FILL_VFTABLE(4)
     FILL_VFTABLE(5)
     FILL_VFTABLE(6)
@@ -252,3 +255,22 @@ struct Camera
 #define ACTIVE_CAMERA (*(Camera**) 0x6164DC)
 
 BOOL IsPlayerInCutscene();
+
+struct HUD_Target
+{
+    BYTE x00[0x494];
+    FlUiElement* targetBaseBackground; // 0x494
+    BYTE x498[0x38];
+    FlUiElement* targetScanButton; // 0x4D0
+    FlUiElement* targetTractorButton; // 0x4D4
+    FlUiElement* targetTradeButton; // 0x4D8
+    FlUiElement* targetPreviousButton; // 0x4DC
+    FlUiElement* targetNextButton; // 0x4E0
+    FlUiElement* targetCommButton; // 0x4E4
+    FlUiElement* tradeRequestGroupButton; // 0x4E8
+    FlUiElement* targetCloseButton; // 0x4EC
+    BYTE x4F0[0x11C];
+    FlUiElement* formationList; // 0x60C
+    BYTE x610[0x8];
+    bool isPlayerInFormation; // 0x618
+};
