@@ -26,8 +26,7 @@ namespace TempFixes
         // Call original function.
         PostInitDealloc_Original(obj);
 
-        IBehaviorManager* behaviorManager = GetBehaviorManager(GetPlayerIObjRW());
-
+        const IBehaviorManager* behaviorManager = GetBehaviorManager(GetPlayerIObjRW());
         if (behaviorManager)
         {
             ROTATION_LOCK = behaviorManager->rotationLock;

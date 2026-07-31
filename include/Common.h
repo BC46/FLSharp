@@ -134,6 +134,31 @@ namespace Archetype
     };
 }
 
+struct PhysicsInfo
+{
+    BYTE x00[0x2F];
+    bool autoLevel; // 0x2F
+};
+
+enum ManeuverType : DWORD
+{
+    Goto = 2,
+    Docking = 7,
+    Formation = 10,
+    FreeFlight = 19
+};
+
+class IBehaviorManager
+{
+public:
+    BYTE x00[0x08];
+    PhysicsInfo* physicsInfo; // 0x08
+    BYTE x0C[0xB4];
+    ManeuverType currentManeuver; // 0xC0
+    BYTE xC4[0x35];
+    bool rotationLock; // 0xF9
+};
+
 class IMPORT EngineObject
 {
 public:
@@ -200,9 +225,12 @@ public:
     CEquipManager equipManager; // 0xE4
     BYTE x104[0x5C];
     UINT baseId; // 0x160
+    BYTE x164[0x30];
+    IBehaviorManager* behaviorInterface; // 0x194
 
     virtual UINT get_name() const; // 0x88
     bool is_base() const;
+    IBehaviorManager* get_behavior_interface();
 };
 
 struct IObjInspect;
@@ -210,7 +238,7 @@ struct IObjInspect;
 #define CSHIP_CLASS_TYPE 0x503
 struct CShip : public CEqObj
 {
-    BYTE x164[0x50];
+    BYTE x198[0x1C];
     DWORD groupId; // 0x1B4
 
     IMPORT float get_throttle() const;
@@ -312,21 +340,6 @@ struct IObjRW // : public IObjInspectImpl
 
 struct IObjInspect : public IObjRW
 {
-};
-
-struct PhysicsInfo
-{
-    BYTE x00[0x2F];
-    bool autoLevel; // 0x2F
-};
-
-class IBehaviorManager
-{
-public:
-    BYTE x00[0x08];
-    PhysicsInfo* physicsInfo; // 0x08
-    BYTE x0C[0xED];
-    bool rotationLock; // 0xF9
 };
 
 IMPORT IBehaviorManager* GetBehaviorManager(IObjRW *iObjRw);

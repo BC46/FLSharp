@@ -70,6 +70,7 @@ struct AudioOption
 enum TransformType : DWORD
 {
     Hide = 1,
+    SetModel = 4,
     SetPos = 6,
     SetTextFromBuffer = 0x1D,
     SetTextFromIds = 0x1E,

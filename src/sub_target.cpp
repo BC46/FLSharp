@@ -46,18 +46,22 @@ void InitSubTargetFix()
 #define HANDLE_FORMATION_LIST_RET_ADDR 0x4E2BF6
 #define FORMATION_LIST_SKIP_OFFSET 0x23
 
-DWORD Target::HandleFormationListHotkey()
+DWORD Target::HandleFormationListHotkey(const CShip& playerShip)
 {
     // If the Contact List is minimized, the Formation List button is always hidden, even when the player is in formation.
     // Therefore, checking if the Formation List button is visible is not a reliable way to determine whether the code can be skipped.
-    // Fortunately, there is a "isPlayerInFormation" boolean in the HUD_Target struct, which is exactly what we need.
-    bool skipCode = !hudTarget.isPlayerInFormation;
+    // A "isPlayerInFormation" boolean exists in the HUD_Target struct, but it's only updated while the Contact List is not minimized.
+    // Hence, it's not useful in our case either. We check if the player is in formation using its behavior manager instead.
+    const IBehaviorManager* behaviorManager = playerShip.behaviorInterface;
+    bool skipCode = behaviorManager && behaviorManager->currentManeuver != ManeuverType::Formation;
+
     return HANDLE_FORMATION_LIST_RET_ADDR + ((int) skipCode) * FORMATION_LIST_SKIP_OFFSET;
 }
 
 NAKED void HandleFormationList_Hook()
 {
     __asm {
+        push ecx                // CShip&
         lea ecx, [edi-0x384]    // Target*
         call Target::HandleFormationListHotkey
         jmp eax

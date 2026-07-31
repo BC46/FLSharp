@@ -8,7 +8,7 @@ struct Target
     HUD_Target hudTarget; // 0x38
 
     DWORD HandleSubtargetHotkey(bool previous);
-    DWORD HandleFormationListHotkey();
+    DWORD HandleFormationListHotkey(const CShip& playerShip);
 };
 
 void InitSubTargetFix();

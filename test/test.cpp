@@ -116,6 +116,7 @@ TEST_CASE("value offsets are correct", "[ceqobj]")
     REQUIRE(offsetof(CEqObj, nickname) == 0xB0);
     REQUIRE(offsetof(CEqObj, equipManager) == 0xE4);
     REQUIRE(offsetof(CEqObj, baseId) == 0x160);
+    REQUIRE(offsetof(CEqObj, behaviorInterface) == 0x194);
 }
 
 TEST_CASE("vftable offsets are correct", "[ceqobj]")
@@ -130,6 +131,7 @@ TEST_CASE("value offsets are correct", "[cship]")
     REQUIRE(offsetof(CShip, nickname) == 0xB0);
     REQUIRE(offsetof(CShip, equipManager) == 0xE4);
     REQUIRE(offsetof(CShip, baseId) == 0x160);
+    REQUIRE(offsetof(CShip, behaviorInterface) == 0x194);
     REQUIRE(offsetof(CShip, groupId) == 0x1B4);
 }
 
@@ -145,6 +147,7 @@ TEST_CASE("value offsets are correct", "[csolar]")
     REQUIRE(offsetof(CSolar, nickname) == 0xB0);
     REQUIRE(offsetof(CSolar, equipManager) == 0xE4);
     REQUIRE(offsetof(CSolar, baseId) == 0x160);
+    REQUIRE(offsetof(CSolar, behaviorInterface) == 0x194);
 }
 
 TEST_CASE("vftable offsets are correct", "[csolar]")
@@ -200,6 +203,7 @@ TEST_CASE("value offsets are correct", "[physicsinfo]")
 TEST_CASE("value offsets are correct", "[ibehaviormanager]")
 {
     REQUIRE(offsetof(IBehaviorManager, physicsInfo) == 0x08);
+    REQUIRE(offsetof(IBehaviorManager, currentManeuver) == 0xC0);
     REQUIRE(offsetof(IBehaviorManager, rotationLock) == 0xF9);
 }
 

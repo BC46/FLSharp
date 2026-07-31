@@ -26,6 +26,7 @@ EXPORTS
 ?IsTriggered@FuseAction@@UBE_NXZ
 ?cast@CEEngine@@SAPBV1@PBVCEquip@@@Z
 ?is_base@CEqObj@@QBE_NXZ
+?get_behavior_interface@CEqObj@@QAEPAVIBehaviorManager@@XZ
 ?is_dynamic@CSolar@@QBE_NXZ
 ?is_waypoint@CSolar@@QBE_NXZ
 ?solararch@CSolar@@QBEPBUSolar@Archetype@@XZ
