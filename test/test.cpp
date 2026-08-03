@@ -569,6 +569,31 @@ TEST_CASE("value offsets are correct", "[vector]")
     REQUIRE(offsetof(Vector, z) == 0x8);
 }
 
+TEST_CASE("length works", "[vector]")
+{
+    Vector v;
+    v.x = 2;
+    v.y = 3;
+    v.z = 6;
+
+    REQUIRE(v.Length() == 7.0f);
+}
+
+TEST_CASE("normalization works", "[vector]")
+{
+    Vector v;
+    v.x = 3;
+    v.y = 4;
+    v.z = 12;
+    v = v.Normalize();
+
+    REQUIRE(v.x == 3.0f / 13.0f);
+    REQUIRE(v.y == 4.0f / 13.0f);
+    REQUIRE(v.z == 12.0f / 13.0f);
+    REQUIRE(v.Length() == 1.0f);
+}
+
+
 TEST_CASE("value offsets are correct", "[quaternion]")
 {
     REQUIRE(offsetof(Quaternion, w) == 0x0);

@@ -1,5 +1,7 @@
 #pragma once
 
+#include "cmath"
+
 // NOTE: This only works when loaded via Freelancer.exe, not FLServer.exe.
 #define FL_180_OVER_PI (*(float*) 0x5D3D38)
 
@@ -7,6 +9,24 @@ class Vector
 {
 public:
     float x, y, z;
+
+    float Length() const
+    {
+        return std::sqrtf(x * x + y * y + z * z);
+    }
+
+    Vector Normalize()
+    {
+        Vector result;
+        float len = Length();
+        if (len > 0.0f)
+        {
+            result.x = x / len;
+            result.y = y / len;
+            result.z = z / len;
+        }
+        return result;
+    }
 };
 
 class Quaternion

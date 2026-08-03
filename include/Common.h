@@ -244,6 +244,7 @@ struct CShip : public CEqObj
     IMPORT float get_throttle() const;
     IMPORT Archetype::Ship const * shiparch() const;
     IMPORT bool is_using_tradelane() const;
+    IMPORT float get_tradelane_speed();
     IMPORT UINT get_group_name() const;
     IMPORT bool is_enemy(IObjInspect *obj);
 

@@ -23,6 +23,23 @@ bool ThirdPersonCamera::UpdateInit_Hook(const Transform& transform, float deltaT
         if (const CObject* targetObj = targetIObjRW->cobject)
         {
             Vector velocity = targetObj->get_velocity();
+
+            // When taking a trade lane, the actual speed is not respected in the velocity value.
+            // Therefore, calculate the actual velocity using the TLR speed.
+            // TODO: The correction is still a little bit off.
+            if ((targetObj->classType & CSHIP_CLASS_TYPE) == CSHIP_CLASS_TYPE)
+            {
+                CShip* targetShip = (CShip*) targetObj;
+                if (targetShip->is_using_tradelane())
+                {
+                    float tlrSpeed = targetShip->get_tradelane_speed();
+                    velocity = velocity.Normalize();
+                    velocity.x *= tlrSpeed;
+                    velocity.y *= tlrSpeed;
+                    velocity.z *= tlrSpeed;
+                }
+            }
+
             Matrix orient = targetObj->get_orientation().Transpose();
             relVelocity = orient * velocity;
         }
