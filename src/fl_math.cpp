@@ -55,3 +55,54 @@ Vector Matrix::operator*(Vector const &v) const
     result.z = data[2][0] * v.x + data[2][1] * v.y + data[2][2] * v.z;
     return result;
 }
+
+float Vector::Length() const
+{
+    return std::sqrtf(x * x + y * y + z * z);
+}
+
+Vector Vector::Normalize() const
+{
+    Vector result;
+
+    float len = Length();
+    if (len > 0.0f)
+    {
+        result.x = x / len;
+        result.y = y / len;
+        result.z = z / len;
+    }
+    else
+    {
+        result.x = result.y = result.z = 0.0f;
+    }
+
+    return result;
+}
+
+Vector Vector::operator+(Vector const &v) const
+{
+    Vector result;
+    result.x = x + v.x;
+    result.y = y + v.y;
+    result.z = z + v.z;
+    return result;
+}
+
+Vector Vector::operator-(Vector const &v) const
+{
+    Vector result;
+    result.x = x - v.x;
+    result.y = y - v.y;
+    result.z = z - v.z;
+    return result;
+}
+
+Vector Vector::operator*(float c) const
+{
+    Vector result;
+    result.x = x * c;
+    result.y = y * c;
+    result.z = z * c;
+    return result;
+}

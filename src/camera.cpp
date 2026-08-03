@@ -49,25 +49,17 @@ bool ThirdPersonCamera::UpdateInit_Hook(const Transform& transform, float deltaT
                     float tlrSpeed = targetShip->get_tradelane_speed();
 
                     const Vector& tgtPos = targetObj->get_position();
-                    Vector tgtMovement;
-                    tgtMovement.x = tgtPos.x - previousTgtPos.x;
-                    tgtMovement.y = tgtPos.y - previousTgtPos.y;
-                    tgtMovement.z = tgtPos.z - previousTgtPos.z;
+                    Vector tgtMovement = tgtPos - previousTgtPos;
 
                     if (tgtMovement.Length() > 0.0001f)
                     {
                         Vector tgtDirection = tgtMovement.Normalize();
-                        velocity.x = tgtDirection.x * tlrSpeed;
-                        velocity.y = tgtDirection.y * tlrSpeed;
-                        velocity.z = tgtDirection.z * tlrSpeed;
+                        velocity = tgtDirection * tlrSpeed;
                     }
                     else
                     {
                         // Fallback.
-                        velocity = velocity.Normalize();
-                        velocity.x *= tlrSpeed;
-                        velocity.y *= tlrSpeed;
-                        velocity.z *= tlrSpeed;
+                        velocity = velocity.Normalize() * tlrSpeed;
                     }
                 }
             }
@@ -88,9 +80,7 @@ bool ThirdPersonCamera::UpdateInit_Hook(const Transform& transform, float deltaT
         // At 10 FPS, there are still very minor stutters with the fix, but at this frame rate it still looks better than without the fix.
         if (dt <= 0.125f)
         {
-            offsetCorrection.x = dt * relVelocity.x;
-            offsetCorrection.y = dt * relVelocity.y;
-            offsetCorrection.z = dt * relVelocity.z;
+            offsetCorrection = relVelocity * dt;
             correctOffset = true;
         }
     }
@@ -113,14 +103,10 @@ void GetRelativeCameraOffset(Vector& result, const Vector& cameraOffset, Vector&
     if (correctOffset)
     {
         // Correct the velocity offset such that the camera does not stutter in the first frame.
-        velocityOffset.x += offsetCorrection.x;
-        velocityOffset.y += offsetCorrection.y;
-        velocityOffset.z += offsetCorrection.z;
+        velocityOffset = velocityOffset + offsetCorrection;
     }
 
-    result.x = cameraOffset.x + velocityOffset.x;
-    result.y = cameraOffset.y + velocityOffset.y;
-    result.z = cameraOffset.z + velocityOffset.z;
+    result = cameraOffset + velocityOffset;
 }
 
 // There is a bug where if you switch from third-person mode to turret mode and back to third-person mode,

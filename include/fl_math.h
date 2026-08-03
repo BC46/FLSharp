@@ -10,23 +10,13 @@ class Vector
 public:
     float x, y, z;
 
-    float Length() const
-    {
-        return std::sqrtf(x * x + y * y + z * z);
-    }
+    float Length() const;
 
-    Vector Normalize()
-    {
-        Vector result;
-        float len = Length();
-        if (len > 0.0f)
-        {
-            result.x = x / len;
-            result.y = y / len;
-            result.z = z / len;
-        }
-        return result;
-    }
+    Vector Normalize() const;
+
+    Vector operator+(Vector const& v) const;
+    Vector operator-(Vector const& v) const;
+    Vector operator*(float c) const;
 };
 
 class Quaternion

@@ -598,6 +598,59 @@ TEST_CASE("normalization works", "[vector]")
     REQUIRE(v.Length() == 1.0f);
 }
 
+TEST_CASE("addition works", "[vector]")
+{
+    Vector v1;
+    v1.x = 10.0f;
+    v1.y = 20.0f;
+    v1.z = 30.0f;
+
+    Vector v2;
+    v2.x = 1.0f;
+    v2.y = -2.0f;
+    v2.z = 3.0f;
+
+    Vector result = v1 + v2;
+
+    REQUIRE(result.x == 11.0f);
+    REQUIRE(result.y == 18.0f);
+    REQUIRE(result.z == 33.0f);
+}
+
+TEST_CASE("subtraction works", "[vector]")
+{
+    Vector v1;
+    v1.x = 10.0f;
+    v1.y = 8.0f;
+    v1.z = -6.0f;
+
+    Vector v2;
+    v2.x = 9.0f;
+    v2.y = 3.0f;
+    v2.z = 2.0f;
+
+    Vector result = v1 - v2;
+
+    REQUIRE(result.x == 1.0f);
+    REQUIRE(result.y == 5.0f);
+    REQUIRE(result.z == -8.0f);
+}
+
+TEST_CASE("scalar multiplication works", "[vector]")
+{
+    Vector v1;
+    v1.x = 3.0f;
+    v1.y = 4.0f;
+    v1.z = 10.0f;
+
+    float c = 5.0f;
+
+    Vector result = v1 * c;
+
+    REQUIRE(result.x == 15.0f);
+    REQUIRE(result.y == 20.0f);
+    REQUIRE(result.z == 50.0f);
+}
 
 TEST_CASE("value offsets are correct", "[quaternion]")
 {
