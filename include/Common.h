@@ -164,6 +164,7 @@ class IMPORT EngineObject
 public:
     float const get_radius() const;
     Matrix const & get_orientation() const;
+    const Vector& get_position() const;
 
     long engineInstance; // 0x04
     BYTE x08[0x44];

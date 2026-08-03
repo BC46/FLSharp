@@ -10,6 +10,11 @@ struct ThirdPersonCamera : public Camera
     bool Update_Hook(const Transform& transform, float deltaTime, bool resetValues);
 };
 
+struct CurrentCamera : public Camera
+{
+    void MainUpdate_Hook(float deltaTime);
+};
+
 void InitCameraSwitchFix();
 
 void InitCameraMotionFix();

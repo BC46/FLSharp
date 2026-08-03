@@ -352,6 +352,11 @@ TEST_CASE("value offsets are correct", "[camera]")
     REQUIRE(offsetof(Camera, x1FC) == 0x1FC);
 }
 
+TEST_CASE("vftable offsets are correct", "[camera]")
+{
+    REQUIRE(GetVftableOffset<Camera>(&Camera::MainUpdate) == 0x6C);
+}
+
 TEST_CASE("value offsets are correct", "[fluielement]")
 {
     REQUIRE(offsetof(FlUiElement, flags) == 0x6C);

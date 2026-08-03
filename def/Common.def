@@ -24,6 +24,7 @@ EXPORTS
 ?is_enemy@CShip@@QAE_NPAUIObjInspect@@@Z
 ?get_radius@EngineObject@@QBE?BMXZ
 ?get_orientation@EngineObject@@QBEABVMatrix@@XZ
+?get_position@EngineObject@@QBEABVVector@@XZ
 ?IsTriggered@FuseAction@@UBE_NXZ
 ?cast@CEEngine@@SAPBV1@PBVCEquip@@@Z
 ?is_base@CEqObj@@QBE_NXZ

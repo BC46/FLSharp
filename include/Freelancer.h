@@ -229,7 +229,7 @@ struct Transform
 
 struct Camera
 {
-    BYTE x00[0x28];
+    BYTE x04[0x24];
     Vector pos; // 0x28
     BYTE x34[0x8C];
     PBYTE watchable; // 0xC0
@@ -249,6 +249,17 @@ struct Camera
     float x1FC;
 
     const IObjRW* GetTarget() const;
+
+    FILL_VFTABLE(0)
+    FILL_VFTABLE(1)
+    FILL_VFTABLE(2)
+    FILL_VFTABLE(3)
+    FILL_VFTABLE(4)
+    FILL_VFTABLE(5)
+    virtual void Vftable_x60();
+    virtual void Vftable_x64();
+    virtual void Vftable_x68();
+    virtual void MainUpdate(float deltaTime); // 0x6C
 };
 
 #define TURRET_VIEW_CAMERA ((Camera*) 0x678F60)
