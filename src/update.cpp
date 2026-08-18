@@ -71,9 +71,17 @@ static float GetShipTurnThreshold(const CShip& ship)
     // This means the turn speed should be continuously recalculated instead of only once on launch.
     float avgDrag = (shipArch->angularDrag.x + shipArch->angularDrag.y) / 2.0f;
     float avgTorque = (shipArch->steeringTorque.x + shipArch->steeringTorque.y) / 2.0f;
+    float radius = ship.get_radius();
+
+    // Guard against modded ship archetypes with zero (or negative) angular drag, torque, or radius.
+    // Without this, the divisions below produce NaN/Inf, and since NaN >= threshold is always false,
+    // all orientation-based sync updates would silently stop working.
+    if (avgDrag <= 0.0f || avgTorque <= 0.0f || radius <= 0.0f)
+        return DEFAULT_SHIP_TURN_THRESHOLD;
+
     float maxTurnSpeed = (avgTorque / avgDrag) * (180.0f / M_PIF);
 
-    return min(DEFAULT_SHIP_TURN_THRESHOLD, 15.0f * sqrtf(maxTurnSpeed) / sqrtf(ship.get_radius()));
+    return min(DEFAULT_SHIP_TURN_THRESHOLD, 15.0f * sqrtf(maxTurnSpeed) / sqrtf(radius));
 }
 
 namespace Update

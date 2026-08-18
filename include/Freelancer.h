@@ -97,7 +97,7 @@ struct FlUiElement
     FILL_VFTABLE(9)
     virtual void Vftable_xA0();
     virtual void Vftable_xA4();
-    virtual int Transform(TransformType type, DWORD param1, DWORD param2); // 0xA0
+    virtual int Transform(TransformType type, DWORD param1, DWORD param2); // 0xA8
 
     inline bool IsVisible()
     {

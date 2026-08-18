@@ -79,7 +79,7 @@ bool GetBackgroundMusicHandle_Hook(SoundHandle **pBgm)
         }
 
         bgm->FreeReference();
-        bgm = nullptr;
+        *pBgm = nullptr;
     }
 
     // Pause the background ambience.

@@ -1,6 +1,8 @@
 #include "copy_paste.h"
 #include "utils.h"
 
+#include <cwctype>
+
 #define NAKED __declspec(naked)
 
 NAKED void HandleDefaultInputKey_Hook()
@@ -103,12 +105,12 @@ void InputBoxWindow::HandleCopyPaste(const KeyMapInfo& kmi)
     if (kmi.IsCtrlPressed())
     {
         // Ctrl + V pressed?
-        if (toupper(kmi.enteredKey) == L'V')
+        if (std::towupper(kmi.enteredKey) == L'V')
         {
             CopyFromClipboard();
         }
         // Ctrl + C pressed?
-        else if (toupper(kmi.enteredKey) == L'C')
+        else if (std::towupper(kmi.enteredKey) == L'C')
         {
             CopyToClipboard();
         }

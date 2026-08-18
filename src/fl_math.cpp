@@ -5,14 +5,22 @@
 
 #define M_PI 3.14159265358979323846f
 
+// Returns the square root of the given value, clamping it to 0 first.
+// The components of a rotation matrix can contain small rounding errors, so the argument
+// of the square root can be slightly negative.
+static float SafeSqrt(float value)
+{
+    return sqrtf(value > 0.0f ? value : 0.0f);
+}
+
 Quaternion MatrixToQuaternion(const Matrix& m)
 {
     Quaternion result;
 
-    result.w = sqrtf(max(0, 1 + m.data[0][0] + m.data[1][1] + m.data[2][2])) / 2;
-    result.x = sqrtf(max(0, 1 + m.data[0][0] - m.data[1][1] - m.data[2][2])) / 2;
-    result.y = sqrtf(max(0, 1 - m.data[0][0] + m.data[1][1] - m.data[2][2])) / 2;
-    result.z = sqrtf(max(0, 1 - m.data[0][0] - m.data[1][1] + m.data[2][2])) / 2;
+    result.w = SafeSqrt(1 + m.data[0][0] + m.data[1][1] + m.data[2][2]) / 2;
+    result.x = SafeSqrt(1 + m.data[0][0] - m.data[1][1] - m.data[2][2]) / 2;
+    result.y = SafeSqrt(1 - m.data[0][0] + m.data[1][1] - m.data[2][2]) / 2;
+    result.z = SafeSqrt(1 - m.data[0][0] - m.data[1][1] + m.data[2][2]) / 2;
     result.x = copysign(result.x, m.data[2][1] - m.data[1][2]);
     result.y = copysign(result.y, m.data[0][2] - m.data[2][0]);
     result.z = copysign(result.z, m.data[1][0] - m.data[0][1]);
@@ -28,6 +36,15 @@ float QuaternionDotProduct(const Quaternion &left, const Quaternion &right)
 float QuaternionAngleDifference(const Quaternion &left, const Quaternion &right)
 {
     float dot = QuaternionDotProduct(left, right);
+
+    // MatrixToQuaternion only produces approximately normalized quaternions, so the dot
+    // product can be slightly outside [-1, 1]. Clamp it to prevent acosf from returning
+    // NaN, which would silently break rotation-based checks by the caller.
+    if (dot > 1.0f)
+        dot = 1.0f;
+    else if (dot < -1.0f)
+        dot = -1.0f;
+
     return acosf(fabsf(dot)) * 2 * (180.0f / M_PI);
 }
 

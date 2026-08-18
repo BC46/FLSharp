@@ -32,7 +32,8 @@ static void ParseEntries(INI_Reader& reader, const std::map<UINT, InfocardEntry>
             }
         }
 
-        it->second.map.emplace(key, value);
+        if (key)
+            it->second.map.emplace(key, value);
     }
 }
 

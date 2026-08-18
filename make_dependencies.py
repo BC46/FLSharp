@@ -21,6 +21,13 @@ def get_file_dependencies(file_path):
         if (Path(os.getcwd()) in Path(abs_path).parents):
             result.append(abs_path)
 
+    proc.wait()
+
+    # Fail loudly instead of silently writing empty dependency blocks if cl is missing
+    # or the compile check failed for some other reason.
+    if proc.returncode != 0:
+        raise SystemExit(f"cl failed with code {proc.returncode} for {file_path}")
+
     return result
 
 def write_file_dependencies(deps_file, src_dirs, obj_dir):

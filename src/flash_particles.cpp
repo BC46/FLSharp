@@ -76,6 +76,12 @@ void CliLauncher::PlayAllFlashParticles(const ID_String& effectName)
 
 void CliLauncher::CleanFlashParticlesArr(void (EffectInstance::*deallocFunc)())
 {
+    // The array is only allocated once the launcher has fired at least once.
+    // If it doesn't exist (e.g. the launcher never fired, or the array has already been
+    // cleaned up by another cleanup path), there is nothing to do.
+    if (!flashParticlesArr)
+        return;
+
     UINT barrelAmount = this->launcher->GetProjectilesPerFire();
 
     // Deallocate all active flash particle instances.

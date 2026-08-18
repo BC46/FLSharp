@@ -67,7 +67,7 @@ EXTERNAL_LIBS = User32.lib Gdi32.lib
 
 OUTPUT_FILE = $(BIN_DIR)\FLSharp.dll
 
-CPP_FLAGS = /c /O2 /Oi /nologo /W3 /WX /GL /LD /MT /EHsc /Zc:threadSafeInit- /DNDEBUG /DUSE_ST6
+CPP_FLAGS = /c /O2 /Oi /nologo /W3 /WX /GL /LD /MT /EHsc /Zc:threadSafeInit- /DNDEBUG /DUSE_ST6 /Zi
 LD_FLAGS = /LTCG /DLL /NOLOGO /DEBUG
 LIB_FLAGS = /NOLOGO /MACHINE:X86
 RC_FLAGS = /nologo
@@ -102,7 +102,7 @@ CATCH_OBJ_FILE = $(OBJ_DIR)\catch_amalgamated.obj
 TEST_OBJ_FILE = $(OBJ_DIR)\test.obj
 TEST_OUTPUT_FILE = $(BIN_DIR)\test.exe
 
-TEST_CPP_FLAGS = /c /nologo /W3 /WX /EHsc /DNDEBUG /DUSE_ST6
+TEST_CPP_FLAGS = /c /nologo /W3 /WX /EHsc /MT /DNDEBUG /DUSE_ST6
 TEST_LD_FLAGS = /NOLOGO /RELEASE
 
 test: $(TEST_OUTPUT_FILE)

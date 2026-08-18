@@ -55,8 +55,6 @@ private:
     }
 };
 
-EffectInstance** CreateFlashParticlesArray(UINT barrelAmount);
-
 struct CliLauncher
 {
     DWORD vftable;

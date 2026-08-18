@@ -64,7 +64,7 @@ NAKED void CurrentResInfoWrite6()
     __asm {
         mov [esi+0x330], eax
         mov eax, [esi+ACTIVE_HEIGHT_OF]
-        mov [esi+ACTIVE_HEIGHT_OF], eax
+        mov [esi+SELECTED_HEIGHT_OF], eax
         ret
     }
 }
