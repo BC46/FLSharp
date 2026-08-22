@@ -5,7 +5,7 @@
 
 FL_FUNC(size_t GetCShipPilotName(const CSimple &simple, StrBuffer &buffer), 0x5472D0)
 
-FL_FUNC(bool GetSimpleName(const CSimple &simple, StrBuffer &buffer, NameType type, bool unk), 0x4E8100)
+FL_FUNC(bool GetSimpleName(const CSimple &simple, StrBuffer &buffer, NameType type, bool includeAffiliation), 0x4E8100)
 
 // GetCShipPilotName calls CShip::get_pilot_name() which returns a truncated string if the length is large.
 // GetSimpleName on the other hand returns the full string, so this function is preferred if the entire name is needed.
@@ -18,7 +18,7 @@ size_t GetCShipPilotName_Hook(const CSimple &simple, StrBuffer &buffer)
     if ((simple.classType & CSHIP_CLASS_TYPE) != CSHIP_CLASS_TYPE)
         return GetCShipPilotName(simple, buffer);
 
-    bool success = GetSimpleName(simple, buffer, NameType::PilotName, true);
+    bool success = GetSimpleName(simple, buffer, NameType::PilotName, false);
 
     // GetSimpleName modifies FL_BUFFER_1 and FL_BUFFER_2, so null both buffers
     // because the code that comes after this may assume that the buffers are nulled.
