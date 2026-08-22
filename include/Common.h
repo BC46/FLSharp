@@ -60,7 +60,7 @@ public:
 class IMPORT CELightEquip : public CEquip
 {
 public:
-    static CELightEquip * cast(CEquip * equip);
+    static CELightEquip* cast(CEquip* equip);
 };
 
 class CELauncher
@@ -81,8 +81,8 @@ private:
 class IMPORT CEquipManager
 {
 public:
-    CEquip const * FindFirst(UINT type) const;
-    CEquip * Traverse(CEquipTraverser& equipTraverser);
+    const CEquip* FindFirst(UINT type) const;
+    CEquip* Traverse(CEquipTraverser& equipTraverser);
 
 private:
     BYTE x00[0x20];
@@ -243,7 +243,7 @@ struct CShip : public CEqObj
     DWORD groupId; // 0x1B4
 
     IMPORT float get_throttle() const;
-    IMPORT Archetype::Ship const * shiparch() const;
+    IMPORT const Archetype::Ship* shiparch() const;
     IMPORT bool is_using_tradelane() const;
     IMPORT float get_tradelane_speed();
     IMPORT UINT get_group_name() const;
@@ -258,7 +258,7 @@ struct CSolar : public CEqObj
 {
     IMPORT bool is_dynamic() const;
     IMPORT bool is_waypoint() const;
-    IMPORT Archetype::Solar const * solararch() const;
+    IMPORT const Archetype::Solar* solararch() const;
 
     static inline const CSolar* cast(const CObject& obj)
     {
@@ -289,7 +289,7 @@ public:
 class IMPORT CEEngine : public FuseAction
 {
 public:
-    static CEEngine const * cast(CEquip const * equip);
+    static const CEEngine* cast(const CEquip* equip);
 };
 
 class CRemotePhysicsSimulation
@@ -319,7 +319,7 @@ struct IObjRW // : public IObjInspectImpl
     FILL_VFTABLE(5)
     virtual void Vftable_x60();
     virtual void Vftable_x64();
-    virtual int get_attitude_towards(float &attitude, IObjRW const *other) const; // 0x68
+    virtual int get_attitude_towards(float &attitude, const IObjRW* other) const; // 0x68
     virtual void Vftable_x6C();
     virtual void Vftable_x70();
     virtual int get_target(const IObjRW *&target) const; // 0x74
@@ -399,7 +399,7 @@ struct GoodInfo
 
 namespace GoodList
 {
-    IMPORT GoodInfo const * find_by_id(UINT id);
+    IMPORT const GoodInfo* find_by_id(UINT id);
 };
 
 

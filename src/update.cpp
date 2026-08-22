@@ -33,7 +33,7 @@ static void ForceObjUpdate()
 static bool IsEkEnabled(const CShip& ship)
 {
     // This seems to be a relatively fast operation; Freelancer calls it numerous times per frame.
-    CEEngine const * engine = CEEngine::cast(ship.equipManager.FindFirst(ENGINE_TYPE));
+    const CEEngine* engine = CEEngine::cast(ship.equipManager.FindFirst(ENGINE_TYPE));
 
     if (!engine)
         return false;
@@ -63,7 +63,7 @@ static bool HasOrientationChanged(const CShip& ship, float secElapsed)
 
 static float GetShipTurnThreshold(const CShip& ship)
 {
-    Archetype::Ship const * shipArch = ship.shiparch();
+    const Archetype::Ship* shipArch = ship.shiparch();
 
     // TODO: The angular drag is meant to be calculated dynamically using the CShip::get_angular_drag() function.
     // However, the angular drag factor is kind of an unused feature in FL and not many mods use it.

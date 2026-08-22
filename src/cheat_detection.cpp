@@ -21,7 +21,7 @@ NAKED void GetGoodSoldByBase_Hook()
     }
 }
 
-static bool ShipPackageContainsGood(GoodInfo const &shipPackage, UINT goodId)
+static bool ShipPackageContainsGood(const GoodInfo &shipPackage, UINT goodId)
 {
     for (const auto& equipDescList : shipPackage.equipDescLists) {
         bool containsGoodId = std::any_of(equipDescList.list.begin(), equipDescList.list.end(),
@@ -42,7 +42,7 @@ bool BaseGoodCollection::HasShipPackageWithGood(UINT goodId)
         if (!goodIt->IsShipCandidate())
             continue;
 
-        GoodInfo const *goodInfo = GoodList::find_by_id(goodIt->goodId);
+        const GoodInfo* goodInfo = GoodList::find_by_id(goodIt->goodId);
 
         // Is it a ship package?
         if (goodInfo && goodInfo->type == GoodType::Ship)
