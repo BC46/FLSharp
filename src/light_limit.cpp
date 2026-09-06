@@ -3,6 +3,7 @@
 #include "logger.h"
 #include "fl_func.h"
 #include "Freelancer.h"
+#include <algorithm>
 
 #define MAX_ACTIVE_LIGHTS_MINIMUM 4
 #define MAX_ACTIVE_LIGHTS_LIMIT 10
@@ -22,8 +23,8 @@ long STDCALL IDirect3DDevice8::GetDeviceCaps_Hook(D3DCAPS8* pCaps)
     {
         // It is unclear what happens when the limit is higher than 10.
         // 10 seems to be the maximum that D3D8 returns.
-        if (pCaps->MaxActiveLights >= MAX_ACTIVE_LIGHTS_MINIMUM && pCaps->MaxActiveLights <= MAX_ACTIVE_LIGHTS_LIMIT)
-            maxActiveLights = (int) pCaps->MaxActiveLights;
+        if (pCaps->MaxActiveLights >= MAX_ACTIVE_LIGHTS_MINIMUM)
+            maxActiveLights = std::min<int>((int) pCaps->MaxActiveLights, MAX_ACTIVE_LIGHTS_LIMIT);
     }
 
     return result;
