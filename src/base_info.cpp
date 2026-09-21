@@ -6,7 +6,7 @@
 // Prints the header name in bold.
 void PrintInfoCategoryHeader_Hook(UINT headerIds, RenderDisplayList &rdl)
 {
-	WCHAR headerName[128];
+	WCHAR headerName[256];
 	GetFlString(headerIds, headerName, _countof(headerName));
 
 	LPCWSTR rdlBoldTextFmt = L"<RDL><PUSH/><TRA bold=\"true\"/><TEXT>%s</TEXT><TRA bold=\"false\"/><POP/></RDL>";
