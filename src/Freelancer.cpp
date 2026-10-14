@@ -5,7 +5,7 @@
 FL_FUNC(void StopSound(BYTE soundId), 0x5646E0)
 FL_FUNC(void StartSound(BYTE soundId), 0x564650)
 
-FL_FUNC(UINT GetFlStringFromResources(DWORD resourcesHandle, UINT ids, LPWSTR buffer, UINT bufferLen), 0x4347E0)
+FL_FUNC(UINT GetFlStringFromResources(HINSTANCE resourcesHandle, UINT ids, LPWSTR buffer, UINT bufferLen), 0x4347E0)
 
 FL_FUNC(void AppendXmlWsToRdlEx(LPCWSTR ws, UINT wsLen, RenderDisplayList& rdl, DWORD flags), 0x57E2C0)
 

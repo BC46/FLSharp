@@ -15,7 +15,7 @@
 #define FL_BUFFER_1 ((LPWSTR) 0x66DC60)
 #define FL_BUFFER_2 ((LPWSTR) 0x66FC60)
 #define FL_BUFFER_LEN *((PUINT) 0x6119F8)
-#define FL_RESOURCES_HANDLE *((PDWORD) 0x67ECA8)
+#define FL_RESOURCES_HANDLE *((HINSTANCE*) 0x67ECA8)
 
 #define UNKNOWN_OBJECT_IDS 1191
 #define WAYPOINT_IDS 1090
@@ -165,7 +165,7 @@ UINT GetIdsForUnvisitedSimple(const CSimple& simple);
 
 UINT GetCShipOrCEqObjName(const CEqObj &eqObj);
 
-UINT GetFlStringFromResources(DWORD resourcesHandle, UINT ids, LPWSTR buffer, UINT bufferLen);
+UINT GetFlStringFromResources(HINSTANCE resourcesHandle, UINT ids, LPWSTR buffer, UINT bufferLen);
 
 inline UINT GetFlString(UINT ids, LPWSTR buffer, UINT bufferLen)
 {
