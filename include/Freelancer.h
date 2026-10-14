@@ -229,7 +229,7 @@ struct Transform
 
 struct Camera
 {
-    BYTE x04[0x24];
+    Matrix rot; // 0x4
     Vector pos; // 0x28
     BYTE x34[0x8C];
     PBYTE watchable; // 0xC0

@@ -86,6 +86,7 @@ Thanks to the following people for helping make some of the features possible:
 
 - [adoxa](https://github.com/adoxa)
   - Provided source code of many Freelancer plugins.
+  - Initial research on weapon animation fixes.
 - [Aingar](https://github.com/Aingar)
   - Identification of the client-to-server communication improvements and providing code from DiscoveryGC's client hook.
   - Original implementation of the [camera acceleration fix](https://codeberg.org/TheStarport/FLUF/src/branch/master/FLUF/Source/Client/Fixes/CameraAcceleration.cpp).
@@ -96,4 +97,5 @@ Thanks to the following people for helping make some of the features possible:
 - [Squaresome](https://github.com/HaydnTrigg)
   - Figured out how to increase Freelancer's simultaneously enabled light limit.
 - [Venemon](https://www.moddb.com/members/venemon)
-  - Original implementations of the multi-barrel launcher sound and [weapon animation fixes](https://www.moddb.com/mods/weapon-animations). Also provided help with debugging and reverse engineering.
+  - Original implementations of the multi-barrel launcher sound and [weapon animation fixes](https://www.moddb.com/mods/weapon-animations).
+  - Provided help with debugging and reverse engineering.

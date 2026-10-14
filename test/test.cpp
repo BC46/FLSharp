@@ -336,6 +336,7 @@ TEST_CASE("value offsets are correct", "[transform]")
 
 TEST_CASE("value offsets are correct", "[camera]")
 {
+    REQUIRE(offsetof(Camera, rot) == 0x4);
     REQUIRE(offsetof(Camera, pos) == 0x28);
     REQUIRE(offsetof(Camera, watchable) == 0xC0);
     REQUIRE(offsetof(Camera, shipOffset) == 0x14C);

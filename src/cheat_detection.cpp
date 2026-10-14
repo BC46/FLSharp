@@ -82,7 +82,7 @@ const MarketGood* FASTCALL GetGoodSoldByBaseOrPartOfShip(const BaseMarket &baseM
 // This check only proceeds if your ship hasn't changed since you landed on the base.
 // If you buy a ship, you usually get some additional equipment as part of the package (e.g. shield).
 // However, after re-buying the same ship and undocking, you still have the same ship as far as the game is concerned,
-// and you have a shield which is not sold by the base, and thus you get kicked.
+// and you acquired equipment which is not sold by the base, and thus you get kicked.
 // This code fixes it by checking if the "cheated" equipment is part of any of the base's offered ship packages.
 void InitShipBuyKickFix()
 {

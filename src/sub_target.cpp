@@ -21,7 +21,7 @@ DWORD Target::HandleSubtargetHotkey(bool previous)
 NAKED void HandleSubtargetHotkey_Hook()
 {
     __asm {
-        lea esi, [edi-0x384]    // overwritten instruction
+        lea esi, [edi-0x384]    // overwritten instruction (TargetStatusHandler* -> Target*)
         push eax                // jump table index (0 for next, 1 for previous)
         mov ecx, esi            // Target*
         call Target::HandleSubtargetHotkey
