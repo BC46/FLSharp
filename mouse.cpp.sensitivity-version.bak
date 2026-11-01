@@ -1,0 +1,556 @@
+#include "mouse.h"
+#include "utils.h"
+#include "fl_func.h"
+#include "Freelancer.h"
+
+#define WIN32_LEAN_AND_MEAN
+#include <windows.h>
+
+#define FASTCALL __fastcall
+
+#define MOUSE_X (*(int*) 0x616840)
+#define MOUSE_Y (*(int*) 0x616844)
+
+#define WINDOW_WIDTH (*(int*) 0x679BC8)
+#define WINDOW_HEIGHT (*(int*) 0x679BCC)
+
+#define FL_RES_FLAGS (*(PDWORD) 0x679BE5)
+#define FULLSCREEN_FLAG (1)
+
+// Set to 1 to write FLSharp_mouse.log (in the game's working directory) to diagnose mouse problems.
+#define MOUSE_DEBUG_LOG 1
+
+#if MOUSE_DEBUG_LOG
+#include <cstdio>
+#include <cstdarg>
+#include <cstring>
+
+static void MouseLog(const char* format, ...)
+{
+    static FILE* file = nullptr;
+    static bool opened = false;
+    if (!opened)
+    {
+        opened = true;
+        fopen_s(&file, "FLSharp_mouse.log", "w");
+    }
+
+    if (!file)
+        return;
+
+    fprintf(file, "[%10lu] ", GetTickCount());
+
+    va_list args;
+    va_start(args, format);
+    vfprintf(file, format, args);
+    va_end(args);
+
+    fputc('\n', file);
+    fflush(file);
+}
+
+// The Windows cursor position in client coordinates.
+static POINT MouseLogPointer()
+{
+    POINT p{ -99999, -99999 };
+    if (GetCursorPos(&p))
+        ScreenToClient(FL_HWND, &p);
+    return p;
+}
+#define MOUSE_LOG(...) MouseLog(__VA_ARGS__)
+
+#include <intrin.h>
+#pragma intrinsic(_ReturnAddress)
+
+// Describes which module and offset a return address belongs to, e.g. "dinput8.dll+0x13f45".
+static void DescribeCaller(void* address, char* out, size_t size)
+{
+    HMODULE module = nullptr;
+    char path[MAX_PATH] = "?";
+    if (GetModuleHandleExA(GET_MODULE_HANDLE_EX_FLAG_FROM_ADDRESS | GET_MODULE_HANDLE_EX_FLAG_UNCHANGED_REFCOUNT, (LPCSTR) address, &module))
+        GetModuleFileNameA(module, path, MAX_PATH);
+
+    const char* name = strrchr(path, '\\');
+    sprintf_s(out, size, "%s+0x%X", name ? name + 1 : path, (unsigned) ((PBYTE) address - (PBYTE) module));
+}
+
+static void* HookImport(HMODULE module, const char* functionName, void* hook)
+{
+    PBYTE base = (PBYTE) module;
+    PIMAGE_NT_HEADERS nt = (PIMAGE_NT_HEADERS) (base + ((PIMAGE_DOS_HEADER) base)->e_lfanew);
+    IMAGE_DATA_DIRECTORY dir = nt->OptionalHeader.DataDirectory[IMAGE_DIRECTORY_ENTRY_IMPORT];
+    if (!dir.VirtualAddress)
+        return nullptr;
+
+    for (PIMAGE_IMPORT_DESCRIPTOR desc = (PIMAGE_IMPORT_DESCRIPTOR) (base + dir.VirtualAddress); desc->Name; ++desc)
+    {
+        PIMAGE_THUNK_DATA thunk = (PIMAGE_THUNK_DATA) (base + desc->FirstThunk);
+        PIMAGE_THUNK_DATA names = (PIMAGE_THUNK_DATA) (base + (desc->OriginalFirstThunk ? desc->OriginalFirstThunk : desc->FirstThunk));
+
+        for (; names->u1.AddressOfData; ++names, ++thunk)
+        {
+            if (IMAGE_SNAP_BY_ORDINAL(names->u1.Ordinal))
+                continue;
+
+            PIMAGE_IMPORT_BY_NAME byName = (PIMAGE_IMPORT_BY_NAME) (base + names->u1.AddressOfData);
+            if (strcmp((const char*) byName->Name, functionName) != 0)
+                continue;
+
+            // Already hooked, so the current function is our own hook and not the original.
+            if (thunk->u1.Function == (DWORD) hook)
+                return nullptr;
+
+            DWORD oldProtect;
+            VirtualProtect(&thunk->u1.Function, sizeof(void*), PAGE_READWRITE, &oldProtect);
+            void* original = (void*) thunk->u1.Function;
+            thunk->u1.Function = (DWORD) hook;
+            VirtualProtect(&thunk->u1.Function, sizeof(void*), oldProtect, &oldProtect);
+            return original;
+        }
+    }
+
+    return nullptr;
+}
+
+// Original functions, per hooked module (one pointer is enough because they all point to the same user32 function).
+static BOOL (WINAPI *SetCursorPosOg)(int, int);
+static BOOL (WINAPI *ClipCursorOg)(const RECT*);
+static void (WINAPI *MouseEventOg)(DWORD, DWORD, DWORD, DWORD, ULONG_PTR);
+
+static BOOL WINAPI SetCursorPos_Log(int x, int y)
+{
+    char caller[MAX_PATH + 32];
+    DescribeCaller(_ReturnAddress(), caller, sizeof(caller));
+
+    POINT before = MouseLogPointer();
+    POINT client{ x, y };
+    ScreenToClient(FL_HWND, &client);
+    BOOL result = SetCursorPosOg(x, y);
+    MOUSE_LOG("  SetCursorPos(screen %d,%d = client %d,%d) from %s; pointer was (%d,%d) now (%d,%d); FL cursor=(%d,%d)",
+        x, y, client.x, client.y, caller, before.x, before.y, MouseLogPointer().x, MouseLogPointer().y, MOUSE_X, MOUSE_Y);
+    return result;
+}
+
+static BOOL WINAPI ClipCursor_Log(const RECT* rect)
+{
+    char caller[MAX_PATH + 32];
+    DescribeCaller(_ReturnAddress(), caller, sizeof(caller));
+
+    if (rect)
+        MOUSE_LOG("  ClipCursor(%d,%d,%d,%d) from %s", rect->left, rect->top, rect->right, rect->bottom, caller);
+    else
+        MOUSE_LOG("  ClipCursor(NULL) from %s", caller);
+
+    return ClipCursorOg(rect);
+}
+
+static void WINAPI MouseEvent_Log(DWORD flags, DWORD dx, DWORD dy, DWORD data, ULONG_PTR extra)
+{
+    char caller[MAX_PATH + 32];
+    DescribeCaller(_ReturnAddress(), caller, sizeof(caller));
+    MOUSE_LOG("  mouse_event(flags=%lx, %ld, %ld) from %s", flags, (long) dx, (long) dy, caller);
+    MouseEventOg(flags, dx, dy, data, extra);
+}
+
+static void InstallMouseCallLogging(HMODULE module)
+{
+    static HMODULE hooked[8];
+    static int hookedCount = 0;
+
+    if (!module)
+        return;
+
+    for (int i = 0; i < hookedCount; ++i)
+        if (hooked[i] == module)
+            return;
+
+    if (hookedCount < 8)
+        hooked[hookedCount++] = module;
+
+    void* og;
+    if ((og = HookImport(module, "SetCursorPos", SetCursorPos_Log)) != nullptr) SetCursorPosOg = (decltype(SetCursorPosOg)) og;
+    if ((og = HookImport(module, "ClipCursor", ClipCursor_Log)) != nullptr) ClipCursorOg = (decltype(ClipCursorOg)) og;
+    if ((og = HookImport(module, "mouse_event", MouseEvent_Log)) != nullptr) MouseEventOg = (decltype(MouseEventOg)) og;
+    MOUSE_LOG("Installed call logging in module %p", (void*) module);
+}
+
+// DirectInput is loaded some time after the game starts, so it is hooked when the first Acquire call happens.
+static void InstallDinputCallLogging()
+{
+    static bool installed = false;
+    if (installed)
+        return;
+    installed = true;
+
+    InstallMouseCallLogging(GetModuleHandleA("dinput8.dll"));
+
+    char path[MAX_PATH];
+    GetSystemDirectoryA(path, MAX_PATH);
+    strcat_s(path, "\\dinput8.dll");
+    InstallMouseCallLogging(GetModuleHandleA(path)); // In case dinput8.dll in the game folder is a proxy
+}
+#else
+#define MOUSE_LOG(...) ((void) 0)
+#endif
+
+static void ForceShowWindowsCursor();
+
+// State of the most recent hand-over of the mouse to Windows (see SetMouseCaptured_Hook).
+// target: where FL's cursor and the Windows cursor were placed.
+// cursorHidden: the Windows cursor is hidden for a short moment because Windows can move it back for a few frames.
+static struct { bool active; bool cursorHidden; POINT target; DWORD tick; DWORD firstTick; } handOver = {};
+
+// How long after handing over the mouse (or after the last time the pointer was put back) a sudden pointer jump
+// back into the window is considered a snap, and how long that can go on at most.
+#define HANDOVER_GUARD_MS 250
+#define HANDOVER_GUARD_MAX_MS 500
+#define HANDOVER_SNAP_DISTANCE 40
+
+// How long the pointer must have stayed where it was put before the Windows cursor is shown again.
+#define HANDOVER_SETTLE_MS 40
+
+// Hook that prevents the in-game cursor from being shown when it is outside the game window.
+bool ShowMouseCursor_Hook()
+{
+    // This hook runs every frame, also while the mouse is not acquired, which makes it a good place to
+    // show the Windows cursor again after it has been hidden for a short moment after a hand-over.
+    if (handOver.cursorHidden)
+    {
+        // The pointer is put back right before this runs, so looking at its position doesn't tell whether it stays there.
+        // It is only shown once the pointer hasn't had to be put back for a few frames.
+        DWORD now = GetTickCount();
+        if (now - handOver.tick > HANDOVER_SETTLE_MS || now - handOver.firstTick > HANDOVER_GUARD_MAX_MS)
+        {
+            handOver.cursorHidden = false;
+            ForceShowWindowsCursor();
+        }
+    }
+
+    if (MOUSE_X < 0 || MOUSE_Y < 0)
+        return false;
+
+    if (MOUSE_X >= WINDOW_WIDTH || MOUSE_Y >= WINDOW_HEIGHT)
+        return false;
+
+    return SHOW_MOUSE_CURSOR;
+}
+
+static bool IsGameFullscreen()
+{
+    return FL_RES_FLAGS & FULLSCREEN_FLAG;
+}
+
+static void ForceShowWindowsCursor()
+{
+    // Same code as FL.
+    while (ShowCursor(TRUE) < 1);
+}
+
+#define MOUSE_DEVICE (*(IDirectInputDevice8**) 0x6167C8)
+
+// Code that FL calls to force show the Windows cursor when it is on the edge of the game window.
+// FL doesn't properly track mouse when you move the cursor outside the screen.
+// TODO: Currently in windowed mode, if your mouse is on the bottom edge of the window,
+// both the in-game and Windows cursor become invisible.
+// I couldn't get around it because DirectInput threw a wrench.
+// Every time I wanted to show the Windows cursor right on the bottom edge, it would either start flickering or warp to the center.
+// I spent way too much time on trying to get it to work so I gave up and just let it be invisible for now.
+void STDCALL ShowCursor_Hook()
+{
+    // if (IsGameFullscreen())
+    // {
+    //     // Normal routine, although that'll probably never happen because this code is never called in fullscreen mode AFAIK...
+    //     ForceShowWindowsCursor();
+    //     return;
+    // }
+
+    // Get the actual cursor position.
+    POINT p;
+    if (GetCursorPos(&p) && ScreenToClient(FL_HWND, &p))
+    {
+        // TODO: Well, here's an annoying edge case that I can't fix.
+        // If you have the game running in borderless windowed mode on a large primary monitor,
+        // and you move your mouse in the top-left corner towards a smaller secondary monitor on the left,
+        // the mouse cursor is supposed to "teleport" to the top right-corner of the second monitor without issues.
+        // This seems to happen fine if you try it for the first time. However, if you give focus to another window on the second monitor,
+        // and then let the FL window regain focus, the mouse cursor will now get stuck if you retry the above steps.
+        // If you place the ForceShowWindowsCursor call at the very start of the function without the if-statements, this issue does not occur.
+        // However, this results in other things being broken, for instance the flickering of the cursor when the mouse is near the edges.
+        // The exact purpose of this hook is to fix this flickering bug in particular.
+        if (p.x < 0 || p.y < 0 || p.x >= WINDOW_WIDTH || p.y > WINDOW_HEIGHT)
+        {
+            ForceShowWindowsCursor();
+        }
+
+        MOUSE_LOG("ShowCursor_Hook: pointer=(%d,%d) FL cursor (%d,%d) -> (%d,%d)", p.x, p.y, MOUSE_X, MOUSE_Y, p.x, p.y);
+
+        // Prevent the in-game mouse cursor from going outside the screen.
+        MOUSE_X = p.x;
+        MOUSE_Y = p.y;
+    }
+}
+
+static bool syncCursorToPointer = false;
+
+// Fixes the mouse snapping to the center of the game in (borderless) windowed mode.
+long FASTCALL Acquire_Hook(IDirectInputDevice8& mouseDevice)
+{
+#if MOUSE_DEBUG_LOG
+    InstallDinputCallLogging();
+#endif
+
+    if (handOver.active && !IsGameFullscreen())
+    {
+        POINT cur;
+        DWORD now = GetTickCount();
+        if (now - handOver.tick > HANDOVER_GUARD_MS || now - handOver.firstTick > HANDOVER_GUARD_MAX_MS)
+        {
+            handOver.active = false;
+        }
+        else if (GetCursorPos(&cur) && ScreenToClient(FL_HWND, &cur))
+        {
+            int dx = cur.x - handOver.target.x;
+            int dy = cur.y - handOver.target.y;
+            bool inside = cur.x >= 0 && cur.y >= 0 && cur.x < WINDOW_WIDTH && cur.y < WINDOW_HEIGHT;
+
+            // Something moved the Windows cursor from the border back into the window right after the hand-over,
+            // which would make FL take the mouse over there. Put the Windows cursor back and don't acquire yet.
+            if (inside && dx * dx + dy * dy > HANDOVER_SNAP_DISTANCE * HANDOVER_SNAP_DISTANCE)
+            {
+                MOUSE_LOG("Acquire refused: pointer jumped back to (%d,%d), restoring (%d,%d)", cur.x, cur.y, handOver.target.x, handOver.target.y);
+
+                POINT t = handOver.target;
+                if (ClientToScreen(FL_HWND, &t) && SetCursorPos(t.x, t.y))
+                {
+                    MOUSE_X = handOver.target.x;
+                    MOUSE_Y = handOver.target.y;
+                    handOver.tick = now;
+                    return 0x8007000C; // DIERR_NOTACQUIRED, FL simply tries again in the next frame
+                }
+            }
+        }
+    }
+
+    // FL is allowed to take the mouse over, which hides the Windows cursor on its own.
+    handOver.active = false;
+    handOver.cursorHidden = false;
+
+    // Acquire can sometimes warp the mouse to the center of the game window in (borderless) windowed mode.
+    // To fix that, we set the cursor position to the original value after the Acquire call.
+    // The original value is the actual Windows cursor position right before Acquire,
+    // not FL's own cursor position, because the two can differ (see UpdateCursor_Hook).
+    POINT original;
+    bool hasOriginal = GetCursorPos(&original);
+
+    MOUSE_LOG("Acquire: begin pointer=(%d,%d) FL cursor=(%d,%d)", MouseLogPointer().x, MouseLogPointer().y, MOUSE_X, MOUSE_Y);
+
+    long result = mouseDevice.Acquire();
+
+    MOUSE_LOG("Acquire: result=%lx pointer after=(%d,%d) FL cursor=(%d,%d) fullscreen=%d",
+        result, MouseLogPointer().x, MouseLogPointer().y, MOUSE_X, MOUSE_Y, (int) IsGameFullscreen());
+
+    if (result == S_OK && hasOriginal && !IsGameFullscreen())
+    {
+        SetCursorPos(original.x, original.y);
+
+        // FL's cursor is moved to the Windows cursor once, on the first update after acquiring (see UpdateCursor_Hook).
+        syncCursorToPointer = true;
+    }
+
+    return result;
+}
+
+// FL moves its own cursor by integrating the DirectInput mouse deltas multiplied by the in-game sensitivity,
+// while the Windows cursor moves with the Windows pointer speed. In windowed mode the two cursors therefore
+// differ. The Windows cursor must not be moved every frame to keep them together, because the resulting mouse move
+// messages make DirectInput warp the cursor to the center of the window. Instead, FL's cursor starts at the Windows
+// cursor when acquiring (here) and the Windows cursor is placed at FL's cursor when handing over (SetMouseCaptured_Hook).
+#define MOUSE_STATE_FLAGS (*(PBYTE) 0x6167CC)
+#define CLAMP_CURSOR_FLAG (0x10) // When set, FL clamps its cursor to the screen instead of leaving the window (e.g. in flight).
+
+static bool (FASTCALL *UpdateCursorOg)(void* mouseObj);
+
+static int Clamp(int value, int min, int max)
+{
+    return value < min ? min : (value > max ? max : value);
+}
+
+#if MOUSE_DEBUG_LOG
+static int lastLoggedX = 0, lastLoggedY = 0;
+static bool hasLastLogged = false;
+#endif
+
+bool FASTCALL UpdateCursor_Hook(void* mouseObj)
+{
+#if MOUSE_DEBUG_LOG
+    // Someone other than the update function below changed FL's cursor since the previous frame.
+    if (hasLastLogged && (MOUSE_X != lastLoggedX || MOUSE_Y != lastLoggedY))
+        MOUSE_LOG("EXTERNAL change of FL cursor between frames: (%d,%d) -> (%d,%d) pointer=(%d,%d)",
+            lastLoggedX, lastLoggedY, MOUSE_X, MOUSE_Y, MouseLogPointer().x, MouseLogPointer().y);
+#endif
+
+    bool track = !IsGameFullscreen() && !(MOUSE_STATE_FLAGS & CLAMP_CURSOR_FLAG);
+
+    POINT p;
+
+    // Right after acquiring, make FL's cursor start at the actual Windows cursor position.
+    if (syncCursorToPointer)
+    {
+        syncCursorToPointer = false;
+
+        if (track && GetCursorPos(&p) && ScreenToClient(FL_HWND, &p))
+        {
+            MOUSE_X = p.x;
+            MOUSE_Y = p.y;
+        }
+    }
+
+    // Always call the original because it does way more than just updating the cursor position.
+    bool result = UpdateCursorOg(mouseObj);
+
+#if MOUSE_DEBUG_LOG
+    lastLoggedX = MOUSE_X;
+    lastLoggedY = MOUSE_Y;
+    hasLastLogged = true;
+
+    // Log every frame while FL's cursor or the Windows cursor is close to the border.
+    POINT logPointer = MouseLogPointer();
+    const int margin = 4;
+    if (MOUSE_X < margin || MOUSE_Y < margin || MOUSE_X >= WINDOW_WIDTH - margin || MOUSE_Y >= WINDOW_HEIGHT - margin ||
+        logPointer.x < margin || logPointer.y < margin || logPointer.x >= WINDOW_WIDTH - margin || logPointer.y >= WINDOW_HEIGHT - margin)
+        MOUSE_LOG("Update (near border): FL cursor=(%d,%d) pointer=(%d,%d) window=%dx%d flags=%02x",
+            MOUSE_X, MOUSE_Y, logPointer.x, logPointer.y, WINDOW_WIDTH, WINDOW_HEIGHT, MOUSE_STATE_FLAGS);
+#endif
+
+    return result;
+}
+
+// FL calls this function with FALSE when its cursor reaches the window border (to hand the mouse back to Windows)
+// and with TRUE when it takes the mouse over again. Handing back unacquires the mouse device,
+// which makes DirectInput restore its own saved mouse position. FL only places the Windows cursor on its own cursor
+// if the Windows cursor is hidden, but DirectInput already shows it again by then. That would leave the Windows cursor
+// somewhere else, which looks like the mouse snapping. Therefore we put the Windows cursor where FL's cursor is.
+static void (FASTCALL *SetMouseCapturedOg)(void* mouseObj, void* edx, bool captured);
+
+// How far outside of the window the Windows cursor is allowed to be placed when FL's cursor is far beyond the border.
+#define MAX_HANDOVER_OVERSHOOT 32
+
+void FASTCALL SetMouseCaptured_Hook(void* mouseObj, void* edx, bool captured)
+{
+    // Remember where FL's cursor was when it reached the border. It can be outside of the window.
+    int flX = MOUSE_X;
+    int flY = MOUSE_Y;
+
+    MOUSE_LOG("SetMouseCaptured(%d) begin: FL cursor=(%d,%d) pointer=(%d,%d) flags=%02x",
+        (int) captured, flX, flY, MouseLogPointer().x, MouseLogPointer().y, MOUSE_STATE_FLAGS);
+
+    SetMouseCapturedOg(mouseObj, edx, captured);
+
+    MOUSE_LOG("SetMouseCaptured(%d) after original: FL cursor=(%d,%d) pointer=(%d,%d)",
+        (int) captured, MOUSE_X, MOUSE_Y, MouseLogPointer().x, MouseLogPointer().y);
+
+    if (captured || IsGameFullscreen())
+        return;
+
+    // The cursor is placed (almost) exactly where FL's cursor is, always outside of the window.
+    // If it were inside, FL would immediately take over the mouse again and the cursor would keep flipping.
+    POINT p{ Clamp(flX, -MAX_HANDOVER_OVERSHOOT, WINDOW_WIDTH - 1 + MAX_HANDOVER_OVERSHOOT),
+             Clamp(flY, -MAX_HANDOVER_OVERSHOOT, WINDOW_HEIGHT - 1 + MAX_HANDOVER_OVERSHOOT) };
+
+    if (!ClientToScreen(FL_HWND, &p) || !SetCursorPos(p.x, p.y))
+        return;
+
+    // Keep FL's cursor in sync with the Windows cursor, which may have been moved further by Windows (screen edges).
+    if (GetCursorPos(&p) && ScreenToClient(FL_HWND, &p))
+    {
+        MOUSE_X = p.x;
+        MOUSE_Y = p.y;
+    }
+
+    handOver.active = true;
+    handOver.target.x = MOUSE_X;
+    handOver.target.y = MOUSE_Y;
+    handOver.tick = GetTickCount();
+    handOver.firstTick = handOver.tick;
+
+    // Windows moves the cursor back to its old position for a few frames, which would be visible as a flash.
+    // It is shown again by ShowMouseCursor_Hook as soon as the cursor is outside of the window or after a short while.
+    while (ShowCursor(FALSE) >= 0);
+    handOver.cursorHidden = true;
+
+    MOUSE_LOG("SetMouseCaptured(0) end: FL cursor=(%d,%d) pointer=(%d,%d)", MOUSE_X, MOUSE_Y, MouseLogPointer().x, MouseLogPointer().y);
+}
+
+// Fixes the in-game mouse cursor remaining visible in windowed mode
+// despite the actual cursor being outside the game window.
+void InitCursorFix()
+{
+    #define SHOW_MOUSE_CURSOR_CHECK_ADDR 0x41F30A
+    Hook(SHOW_MOUSE_CURSOR_CHECK_ADDR, ShowMouseCursor_Hook, 5);
+
+    #define SHOW_WIN_CURSOR_ADDR 0x420335
+    Hook(SHOW_WIN_CURSOR_ADDR, ShowCursor_Hook, 19);
+
+    // Freelancer appears to have a pretty hard time figuring out
+    // whether the cursor should be shown when it is at the bottom-edge of the window.
+    // It seems it's putting minimal effort into clamping the cursor's y-position near the bottom-edge.
+    // This patch prevents that from happening.
+    #define CURSOR_BOTTOM_BORDER_CHECK_ADDR 0x41EA9B
+    Patch<BYTE>(CURSOR_BOTTOM_BORDER_CHECK_ADDR, 0xEB);
+    // TODO: Do the same for 0x41ECBF? Doesn't look necessary.
+}
+
+void InitMouseWarpFix()
+{
+    #define THIS_PTR_ACQUIRE_MOUSE_ADDR 0x41F7D1
+    #define ACQUIRE_MOUSE_ADDR 0x41F7D3
+
+    Patch<BYTE>(THIS_PTR_ACQUIRE_MOUSE_ADDR, 0x4E); // mov eax, [esi+0x10] -> mov ecx, [esi+0x10]
+    Hook(ACQUIRE_MOUSE_ADDR, Acquire_Hook, 6);
+
+#if MOUSE_DEBUG_LOG
+    InstallMouseCallLogging(GetModuleHandleA(nullptr));
+#endif
+
+    // Call to the function that integrates the DirectInput mouse deltas into FL's cursor position.
+    #define UPDATE_CURSOR_CALL_ADDR 0x41F267
+    UpdateCursorOg = SetRelPointer(UPDATE_CURSOR_CALL_ADDR + 1, UpdateCursor_Hook);
+
+    // Both calls to the function that hands the mouse to Windows (FALSE) and takes it back (TRUE).
+    #define HAND_OVER_MOUSE_CALL_ADDR 0x41F2C6
+    #define TAKE_BACK_MOUSE_CALL_ADDR 0x4205A5
+    SetMouseCapturedOg = SetRelPointer(HAND_OVER_MOUSE_CALL_ADDR + 1, SetMouseCaptured_Hook);
+    SetRelPointer(TAKE_BACK_MOUSE_CALL_ADDR + 1, SetMouseCaptured_Hook);
+}
+
+void (*DestroyStartupScreenOg)();
+
+#define STARTUP_SCREEN_OBJ (*(PVOID*) 0x67C3BC)
+
+// Fixes the mouse cursor being initially positioned in the top-left corner in fullscreen mode.
+// With this fix, the initial position of the mouse cursor will be in the center of the screen, like most fullscreen games.
+void DestroyStartupScreen_Hook()
+{
+    // This function gets called every time before the main menu is opened.
+    // We want our code to only be called before the very first menu visit
+    // When the game starts, it creates a startup screen object and destroys it after it is shown.
+    // Therefore, this object will no longer exist in subsequent menu visits.
+    // We can check if it is the first menu visit by testing if the startup screen object exists.
+    if (STARTUP_SCREEN_OBJ && IsGameFullscreen())
+    {
+        POINT p;
+        if (GetCursorPos(&p) && ScreenToClient(FL_HWND, &p))
+        {
+            MOUSE_X = p.x;
+            MOUSE_Y = p.y;
+        }
+    }
+
+    DestroyStartupScreenOg();
+}
+
+void InitMenuMousePosFix()
+{
+    #define DESTROY_STARTUP_SCREEN_CALL_ADDR (0x57432A)
+    DestroyStartupScreenOg = SetRelPointer(DESTROY_STARTUP_SCREEN_CALL_ADDR + 1, DestroyStartupScreen_Hook);
+}
